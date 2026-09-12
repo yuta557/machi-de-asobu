@@ -278,6 +278,13 @@ a.mark{text-decoration:none}
 }
 
 
+
+.fband-link{text-decoration:none;color:inherit;transition:transform .18s,box-shadow .18s}
+.fband-link:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(18,63,99,.10)}
+.fband-link::after{content:"→";position:absolute;right:18px;bottom:10px;font-family:"Outfit",sans-serif;font-size:15px;color:var(--navy);opacity:.5}
+.fband-link:hover::after{opacity:1}
+@media(max-width:760px){.fband-link::after{right:12px;bottom:8px;font-size:14px}}
+
 /* ---------- クレジット帯 ---------- */
 .credits{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--card)}
 .credits-in{max-width:1140px;margin:0 auto;padding:18px 24px;display:flex;flex-wrap:wrap;gap:10px 40px;align-items:baseline;justify-content:center}
@@ -316,6 +323,9 @@ a.mark{text-decoration:none}
 .board.touched .tip{background:rgba(255,253,248,.9);color:var(--ink-soft);font-size:13px}
 .board.touched .tip .pip{display:none}
 .board-foot{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;font-size:13.5px;color:var(--ink-soft);margin:14px 0 0}
+.tip-sp{display:none}
+@media(max-width:900px){.tip-pc{display:none}.tip-sp{display:inline}}
+@media(hover:none) and (pointer:coarse){.tip-pc{display:none}.tip-sp{display:inline}}
 /* ---------- セクション共通（復元） ---------- */
 .wrap{max-width:1140px;margin:0 auto;padding:0 24px}
 .sec{padding:64px 0}
@@ -676,38 +686,38 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
   <div class="wrap">
     <div class="flow-head rv">
       <h2>当日の進め方<svg class="h-underline" viewBox="0 0 300 12" preserveAspectRatio="none" aria-hidden="true"><path class="u1" d="M5,7 C70,2 150,10 230,4 C260,2 280,5 295,4"/></svg></h2>
-      <p>知る → 体験する → つくる → 共有する。この一本の流れで120分です。</p>
+      <p>知る → 体験する → つくる → 共有する。この一本の流れで120分です。<br>このあと、それぞれを順に紹介します。</p>
     </div>
     <div class="flow-list">
       <div class="fstep s1 rv">
         <span class="fnum">1</span>
-        <div class="fband">
+        <a class="fband fband-link" href="#change">
           <div class="ftext">
             <h3>知る</h3>
             <p>宇治のまちの話を聞く<br>Playable City の事例を見る</p>
           </div>
           <span class="ftime">0:00 – 0:30</span>
-        </div>
+        </a>
       </div>
       <div class="fstep s2 rv">
         <span class="fnum">2</span>
-        <div class="fband">
+        <a class="fband fband-link" href="#colorshift">
           <div class="ftext">
             <h3>体験する</h3>
-            <p>Color Shift Walk を歩く<br>足あとが重なるのを見る</p>
+            <p>歩くと光の足あとが現れる装置（Color Shift Walk）を歩く<br>足あとが重なるのを見る</p>
           </div>
           <span class="ftime">0:30 – 0:50</span>
-        </div>
+        </a>
       </div>
       <div class="fstep s3 rv">
         <span class="fnum">3</span>
-        <div class="fband">
+        <a class="fband fband-link" href="#sheets">
           <div class="ftext">
             <h3>つくる</h3>
             <p>遊びたい場所を絵にする<br>グループで1枚にまとめる</p>
           </div>
           <span class="ftime">0:50 – 1:25</span>
-        </div>
+        </a>
       </div>
       <div class="fstep s4 rv">
         <span class="fnum">4</span>
@@ -805,10 +815,10 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
       <div class="demo-cursor" id="democursor" aria-hidden="true">
         <svg width="26" height="26" viewBox="0 0 26 26"><path d="M4 2 L20 12 L12.5 13.5 L9.5 21 Z" fill="#1B1A16" stroke="#FFFDF8" stroke-width="1.4" stroke-linejoin="round"/></svg>
       </div>
-      <div class="tip"><span class="pip"></span><span>マウスでこの上をなぞってみてください</span></div>
+      <div class="tip"><span class="pip"></span><span class="tip-pc">マウスでこの上をなぞってみてください</span><span class="tip-sp">指でこの上をなぞってみてください</span></div>
     </div>
   </div>
-  <p class="board-foot"><span>スマートフォンでは指でなぞってください。</span><span>当日は、これが会場の床いっぱいに投影されます。</span></p>
+  <p class="board-foot"><span>当日は、同様の体験のデモ版を体験していただける予定です。</span></p>
 </div>
 
 <!-- アイデアシート -->
