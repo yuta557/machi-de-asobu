@@ -1031,7 +1031,7 @@ function runOpening(done){
   var x0=W*0.13,y0=H*0.94,x1=W*0.87,y1=H*0.12, dx=x1-x0, dy=y1-y0, L=Math.hypot(dx,dy);
   var ang=Math.atan2(dy,dx)+Math.PI/2, nx=-dy/L, ny=dx/L;
   var STEPS=9, size=Math.min(W,H)*0.105, gap=Math.min(W,H)*0.030, placed=0;
-  var INTERVAL=135, ended=false, stepTimer=null, endTimer=null, capTimer=null;
+  var INTERVAL=135, ended=false, rafId=null, endTimer=null, capTimer=null;
 
   function end(){
     if(ended) return; ended=true;
@@ -1044,24 +1044,27 @@ function runOpening(done){
     var p=(i+0.5)/STEPS, side=(i%2===0)?1:-1;
     drawFoot(c, x0+dx*p+nx*gap*side, y0+dy*p+ny*gap*side, ang+side*0.09, size, i*0.10, side);
   }
-  /* 1回のタイマーで1歩だけ置き、次の足あとは描き終えてから測る。
-     以前は経過時間から歩数を逆算していたため、読み込みが重かったり
-     requestAnimationFrame が止まっていたりすると、再開した瞬間に
-     9歩ぶんがまとめて描かれていた。 */
-  function step(){
-    placeFoot(placed); placed++;
-    if(placed<STEPS) stepTimer=setTimeout(step,INTERVAL);
+  /* 描画フレームに同期させて1フレームにつき1歩ずつ置く。
+     タイマーだけで進めると、読み込みが重い端末では画面が描かれないうちに
+     9歩ぶんが終わってしまい、オープニングを見られないまま消えていた。
+     requestAnimationFrame は描画が止まっているあいだ呼ばれないので、
+     実際に見えているコマだけで進む。前の足あとから INTERVAL 以上あける。 */
+  var last=0, started=false;
+  function tick(now){
+    if(!started){ started=true; last=now+160-INTERVAL; }
+    if(now-last>=INTERVAL){ placeFoot(placed); placed++; last=now; }
+    if(placed<STEPS) rafId=requestAnimationFrame(tick);
     else endTimer=setTimeout(end,820);
   }
-  stepTimer=setTimeout(step,160);
+  rafId=requestAnimationFrame(tick);
 
-  capTimer=setTimeout(end,6500); /* 保険：極端に遅い場合の上限 */
-  function bail(){ clearTimeout(stepTimer); clearTimeout(endTimer); clearTimeout(capTimer); end(); }
+  capTimer=setTimeout(end,7000); /* 保険：極端に遅い場合の上限 */
+  function bail(){ if(rafId) cancelAnimationFrame(rafId); clearTimeout(endTimer); clearTimeout(capTimer); end(); }
   window.addEventListener("keydown",bail,{once:true});
   window.addEventListener("wheel",bail,{once:true,passive:true});
   opening.addEventListener("click",bail,{once:true});
   if(skipBtn) skipBtn.addEventListener("click",bail);
-  setTimeout(function(){ if(!ended){ opening.remove(); document.body.classList.remove("locked"); done(); } },6000);
+  setTimeout(function(){ if(!ended){ opening.remove(); document.body.classList.remove("locked"); done(); } },9000);
   }
 }
 function startMain(){ document.body.classList.add("ready"); }
