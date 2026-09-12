@@ -132,15 +132,12 @@ a{color:inherit}
 .title-img{left:5.26cqw;top:4.6cqw;width:46.7cqw;height:auto;display:block}
 .facts-bg{left:0;top:40.2cqw;width:60cqw;height:18cqw;background:rgba(255,255,255,.93);border-radius:3cqw;filter:blur(16px);z-index:0}
 .facts-img{left:2.2cqw;top:42.4cqw;width:54cqw;height:auto;display:block;z-index:1}
-.hnote,.hnote p,.hnote-demo p{font-family:"Yomogi","Zen Maru Gothic",cursive,sans-serif}
+.hnote,.hnote p{font-family:"Yomogi","Zen Maru Gothic",cursive,sans-serif}
 .hnote{position:absolute;line-height:1.55}
-.hnote-demo{left:62.8cqw;top:7.9cqw;width:14.9cqw;height:11.4cqw;background:#FDF0A8;transform:rotate(-5deg);
-  box-shadow:.2cqw .35cqw 0 rgba(20,80,120,.07);display:grid;place-items:center}
-.hnote-demo p{margin:0;font-family:"Yomogi",cursive;font-size:1.6cqw;line-height:1.62;color:#0F5B96;transform:rotate(-3deg);text-align:left}
-.hnote-spark{position:absolute;width:3cqw;height:5cqw}
-.hnote-spark path{stroke:#1E7BC0;stroke-width:5;stroke-linecap:round;fill:none}
-.hnote-spark.a{left:59.4cqw;top:11.6cqw;transform:rotate(4deg)}
-.hnote-spark.b{left:78.2cqw;top:8.4cqw;transform:scaleX(-1) rotate(4deg)}
+/* デモ体験の付箋（左右のアクセントも画像に含まれる）
+   付箋本体が旧レイアウトと同じ位置・同じ幅(14.9cqw)になるよう、
+   画像の余白ぶんを差し引いた値を指定 */
+.hnote-demo-img{position:absolute;left:61.94cqw;top:7.42cqw;width:16.51cqw;height:auto;display:block}
 .hnote-map{left:44.06cqw;top:27.6cqw;width:5.4cqw;font-size:1.05cqw;line-height:1.45;color:#1D6F8B;text-align:center;transform:rotate(-15.6deg);transform-origin:50% 50%}
 
 /* イラスト上の情報帯 */
@@ -172,7 +169,7 @@ a{color:inherit}
   .title-img{left:4cqw;top:5cqw;width:81.9cqw}
   .facts-img{left:2cqw;top:auto;bottom:4cqw;width:96cqw}
   .facts-bg{left:0;top:auto;bottom:2cqw;width:100cqw;height:29cqw;border-radius:4cqw;filter:blur(12px)}
-  .hnote-demo,.hnote-spark,.hnote-map,  .below{display:none}
+  .hnote-demo-img,.hnote-map,.below{display:none}
 }
 
 
@@ -618,9 +615,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
       <img class="title-img" width="1400" height="819" src="assets/hero-title.webp?v=2" alt="まちで遊ぶことは まちを好きになること／まちであそぶ、をつくる — Playable City 入門ワークショップ" decoding="async">
       <span class="facts-bg" aria-hidden="true"></span>
       <img class="facts-img" width="1935" height="463" src="assets/hero-facts.webp" alt="DATE 2026年9月下旬の週末／PLACE 宇治市産業会館 多目的ホール／WHO 小学4年生〜中学生とその保護者／FEE 無料／TIME 120分" decoding="async">
-      <svg class="hnote-spark a" viewBox="0 0 30 50" aria-hidden="true"><path d="M24 8 L6 16 M24 25 L6 26 M24 42 L8 38"/></svg>
-      <div class="hnote hnote-demo" aria-hidden="true"><p>歩くと光る<br>仕掛けの<br>デモ体験！</p></div>
-      <svg class="hnote-spark b" viewBox="0 0 30 50" aria-hidden="true"><path d="M24 8 L6 16 M24 25 L6 26 M24 42 L8 38"/></svg>
+      <img class="hnote-demo-img" src="assets/hero-note-demo.webp" width="560" height="493" alt="" aria-hidden="true" decoding="async">
       <p class="hnote hnote-map" aria-hidden="true">こんな<br>まちに<br>したい！</p>
     </div>
     <div class="hero-copy sr-only">
