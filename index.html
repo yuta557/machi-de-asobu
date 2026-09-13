@@ -84,7 +84,10 @@ a{color:inherit}
    本文と同じ層で描かれる sticky にしている */
 :root{--nav-h:calc(clamp(58px,5.2vw,92px) + 1px)}
 html{scroll-padding-top:var(--nav-h)}
-.nav{position:sticky;top:0;z-index:60;background:#fff;border-bottom:1px solid rgba(30,96,143,.10)}
+/* 紙の目・色ムラ（body::before/after, z-index 9997-9998）は position:fixed のため iOS では
+   アドレスバーの裏に届かず、ヘッダーだけわずかに灰色がかって延長部分と色がずれる。
+   ヘッダーをその上に置き、延長部分と同じ真っ白にそろえる */
+.nav{position:sticky;top:0;z-index:9999;background:#fff;border-bottom:1px solid rgba(30,96,143,.10)}
 .nav::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:100vh;background:inherit;pointer-events:none}
 .nav-in{position:relative;z-index:1;max-width:none;margin:0;padding:0 3.4vw 0 4.7vw;height:5.2vw;min-height:58px;max-height:92px;
   display:flex;align-items:center;gap:0}
@@ -544,7 +547,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
 @keyframes up{to{opacity:1;transform:none}}
 
 /* オープニング */
-#opening{position:fixed;inset:0;z-index:9999;background:var(--bg);display:grid;place-items:center;
+#opening{position:fixed;inset:0;z-index:10001;background:var(--bg);display:grid;place-items:center;
   transform-origin:50% 100%;transition:transform .95s cubic-bezier(.7,0,.3,1),box-shadow .95s}
 #opening.lift{transform:translateY(-102%) rotate(-1.2deg);box-shadow:0 24px 40px rgba(27,26,22,.25)}
 #opening::after{content:"";position:absolute;left:0;right:0;bottom:-14px;height:14px;background:var(--bg);
@@ -563,7 +566,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
 .op-title .b .mk{stroke:var(--yellow);stroke-width:26;stroke-linecap:round;fill:none;filter:url(#pencil);
   stroke-dasharray:520;stroke-dashoffset:520;animation:mark .5s .78s cubic-bezier(.4,0,.2,1) forwards}
 .op-sub{font-size:16px;color:var(--ink);text-shadow:0 0 7px var(--bg),0 0 7px var(--bg),0 0 3px var(--bg);opacity:0;animation:up .6s 1.05s forwards}
-#skip{position:fixed;right:20px;bottom:18px;z-index:10000;background:none;border:0;color:var(--ink-soft);
+#skip{position:fixed;right:20px;bottom:18px;z-index:10002;background:none;border:0;color:var(--ink-soft);
   font-family:inherit;font-size:13.5px;cursor:pointer;opacity:0;animation:fadeIn .5s 1.4s forwards;padding:8px 12px}
 #skip:hover{color:var(--ink)}
 
