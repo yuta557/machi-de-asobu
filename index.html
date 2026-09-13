@@ -314,9 +314,19 @@ a.mark{text-decoration:none}
 @media(max-width:900px){.board-shell{margin-top:34px;padding:0 16px}.board-shell+.board-foot,.board-foot{margin-top:16px}}
 .board{position:relative;border-radius:20px;border:1px solid var(--line);background:var(--card);overflow:hidden}
 .board-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--bg)}
-.dot{width:9px;height:9px;border-radius:50%;background:var(--line)}
-.board-title{font-size:13px;color:var(--ink-soft)}
-.board-stage{position:relative;height:min(56vw,440px);min-height:300px;touch-action:none}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--line);flex:none;transition:background .2s}
+.board-title{font-size:13px;color:var(--ink-soft);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* 足あとの配色切り替え */
+.board-themes{margin-left:auto;display:flex;gap:6px;flex:none}
+.theme-pill{font:inherit;font-size:12px;font-weight:500;line-height:1;padding:7px 12px;border-radius:999px;cursor:pointer;
+  border:1px solid var(--line);background:#fff;color:var(--ink-soft);transition:background .15s,color .15s,border-color .15s}
+.theme-pill:hover{border-color:var(--ink-soft);color:var(--ink)}
+.theme-pill:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.theme-pill[aria-pressed="true"]{color:#fff;border-color:transparent}
+.theme-pill[data-theme-pick="blue"][aria-pressed="true"]{background:#1E9BF0}
+.theme-pill[data-theme-pick="green"][aria-pressed="true"]{background:#2E9E6A}
+@media(hover:none) and (pointer:coarse){.theme-pill{padding:10px 14px}}
+.board-stage{position:relative;height:min(56vw,440px);min-height:300px;touch-action:none;background:#FDFCF7}
 #cscanvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:crosshair}
 .ring{position:absolute;inset:0;pointer-events:none}
 .board.hint .ring{animation:ringPulse 2.2s infinite}
@@ -838,8 +848,12 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
     <div class="board-bar">
       <span class="dot"></span><span class="dot"></span><span class="dot"></span>
       <span class="board-title">まちであそぶボード — Color Shift Walk 体験版</span>
+      <span class="board-themes" role="group" aria-label="足あとの配色">
+        <button type="button" class="theme-pill" data-theme-pick="blue" aria-pressed="true">ブルー</button>
+        <button type="button" class="theme-pill" data-theme-pick="green" aria-pressed="false">グリーン</button>
+      </span>
     </div>
-    <div class="board-stage" id="stage">
+    <div class="board-stage" id="stage" role="img" aria-label="なぞると色鉛筆の足あとが描かれ、重なったところに「あそべるまち」の文字が浮かぶ体験ボード">
       <canvas id="cscanvas"></canvas>
       <div class="ring"></div>
       <div class="demo-cursor" id="democursor" aria-hidden="true">
@@ -891,7 +905,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
       <div>
         <p class="label" style="margin:0">企画・開発</p>
         <h3>野寺悠太（灘高校）</h3>
-        <p>宇治市未来キャンパス受講生。歩くと足跡が残る体験「Color Shift Walk」をつくりながら、まちを「問題を解決する場所」だけでなく「新しい楽しさを足せる場所」として考えています。このワークショップの企画・当日の運営・装置の開発を担当します。</p>
+        <p>宇治市未来キャンパス受講生。いつもの道をもっと面白くしたいと思い、歩くと光の足あとが現れる装置「Color Shift Walk」をつくっています。このワークショップでは、企画・当日の運営・装置の開発を担当します。</p>
       </div>
     </div>
   </div>
@@ -1112,151 +1126,329 @@ if(navEl){
 }
 
 /* ===== Color Shift Walk ボード ===== */
-var board=document.getElementById("board"), stage=document.getElementById("stage");
-var cv=document.getElementById("cscanvas"), cur=document.getElementById("democursor");
-if(cv && stage){
-  var ctx=cv.getContext("2d");
-  var user=document.createElement("canvas"), uc=user.getContext("2d");
-  var demo=document.createElement("canvas"), dc=demo.getContext("2d");
-  var comp=document.createElement("canvas"), cc=comp.getContext("2d");
-  var ringc=document.createElement("canvas"), rc=ringc.getContext("2d");
-  var W=0,H=0,R=1, HID="あそべるまち";
+(function(){
+  var board=document.getElementById("board"), stage=document.getElementById("stage");
+  var cv=document.getElementById("cscanvas"), cursor=document.getElementById("democursor");
+  if(!board || !stage || !cv) return;
 
-  function sizeAll(){
-    var r=stage.getBoundingClientRect();
-    W=Math.max(320,r.width); H=Math.max(240,r.height); R=dpr();
-    [cv,user,demo,comp,ringc].forEach(function(k){ k.width=W*R; k.height=H*R; });
-    [ctx,uc,dc,cc,rc].forEach(function(k){ k.setTransform(R,0,0,R,0,0); });
-    buildRing();
+  var TAU=Math.PI*2;
+  var HID="あそべるまち";
+  var STROKES=48;
+  var ALPHA=0.10;       /* 下地の淡い線（乗算で重ねる） */
+  var ALPHA_INK=0.24;   /* 文字の中に浮かぶ鮮やかな線 */
+  var GOAL=36;          /* これだけ歩いたらお手本の動きを止める */
+
+  /* ---------- 配色 ---------- */
+  var THEMES={
+    blue:  { bg:["#F7EDB0","#B6ECF2","#A9DDF7","#BCCBFA","#D2C6F6"],
+             ink:["#FFC93C","#1FC4D8","#1E9BF0","#3F6BFF","#6A5CF0","#9A5BE8"] },
+    green: { bg:["#F6EFA8","#CFEFA8","#B8EBC4","#A9E3DA","#B6DDF0"],
+             ink:["#F2C230","#9CCB3B","#3DB872","#1FA89A","#27A9C9","#3A8BD8"] }
+  };
+  function rgbList(hexes){
+    return hexes.map(function(h){ var n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; });
   }
-  function hidFont(){ return "700 "+Math.min(W*0.135,H*0.28,112)+"px 'Zen Maru Gothic', sans-serif"; }
-  function buildRing(){
-    rc.clearRect(0,0,W,H); rc.save();
-    rc.font=hidFont(); rc.textAlign="center"; rc.textBaseline="middle";
-    rc.filter="blur(7px)"; rc.lineWidth=22; rc.lineJoin="round"; rc.strokeStyle="#fff";
-    rc.strokeText(HID,W/2,H/2);
-    rc.filter="none"; rc.globalCompositeOperation="destination-out"; rc.fillText(HID,W/2,H/2);
-    rc.restore();
+  var themeKey="blue";
+  try{ var saved=localStorage.getItem("csw-theme"); if(saved && THEMES[saved]) themeKey=saved; }catch(err){}
+  var BG=rgbList(THEMES[themeKey].bg), INKB=rgbList(THEMES[themeKey].ink);
+
+  function pigmentOf(band,t){
+    var last=band.length-1, m=last*2, r=((t%m)+m)%m;
+    var u=r>last ? m-r : r, i=Math.floor(u), f=u-i;
+    if(i>=last){ i=last-1; f=1; }
+    var a=band[i], b=band[i+1];
+    return (a[0]+(b[0]-a[0])*f|0)+","+(a[1]+(b[1]-a[1])*f|0)+","+(a[2]+(b[2]-a[2])*f|0);
   }
-  function blob(c,x,y,r,t,mul){
-    c.save(); c.globalCompositeOperation="multiply"; c.lineCap="round"; c.lineWidth=0.9;
-    for(var i=0;i<48;i++){
-      var a=Math.random()*Math.PI*2, rad=Math.sqrt(Math.random())*r;
-      var px=x+Math.cos(a)*rad, py=y+Math.sin(a)*rad*0.88;
-      var dir=0.7+(Math.random()-0.5)*0.7, len=r*(0.30+Math.random()*0.45);
-      var edge=1-(rad/r)*0.85;
-      c.strokeStyle="rgba("+pigment(t+((rad/r)-0.5)*0.12)+","+(0.075*edge*mul).toFixed(4)+")";
+  /* 歩く向きと速さで色が移り変わる */
+  function bandFor(heading,pace){
+    return 0.50 + Math.sin(heading)*0.26 + Math.sin(heading*2+0.90)*0.13 + (pace-0.5)*0.20;
+  }
+  var vx=1, vy=0, pace=0.5;
+  function bandFromWalk(){ return bandFor(Math.atan2(vy,vx), pace); }
+
+  var ctx=cv.getContext("2d");
+  function mk(){ return document.createElement("canvas"); }
+  var user=mk(), demo=mk(), comp=mk(), glyph=mk(), cross=mk();
+  var uc=user.getContext("2d"), dc=demo.getContext("2d"), xc=cross.getContext("2d");
+  var cc=comp.getContext("2d"), gc=glyph.getContext("2d");
+
+  var W=0, H=0, PW=0, PH=0, dpr=1, fs=0;
+  var painted=0, drawing=false, lastX=0, lastY=0, carry=0;
+  var lastMove=0, dt=0, demoTrail=[], demoStopped=false, dirty=true;
+  var raf=0, prev=0;
+  var reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var canFilter=(function(){ var c=mk().getContext("2d"); c.filter="saturate(2)"; return c.filter!=="none"; })();
+
+  /* ---------- 紙の目：同じ場所に塗り重ねるほど色が乗りにくくなる ---------- */
+  var GW=96, GH=54, FILL_MAX=0.20, DENS_LO=0.05, DENS_HI=0.14;
+  var fillMap=new Float32Array(GW*GH), tick=0;
+  var grid=mk(); grid.width=GW; grid.height=GH;
+  var gg=grid.getContext("2d",{willReadFrequently:true});
+  var densC=mk(); densC.width=GW; densC.height=GH;
+  var dens=densC.getContext("2d"), densImg=dens.createImageData(GW,GH);
+
+  function sampleTooth(){
+    if(!PW) return;
+    gg.globalCompositeOperation="source-over";
+    gg.fillStyle="#fff"; gg.fillRect(0,0,GW,GH);
+    gg.drawImage(user,0,0,GW,GH);
+    var d=gg.getImageData(0,0,GW,GH).data, m=densImg.data;
+    for(var i=0,k=0;i<fillMap.length;i++,k+=4){
+      var f=1-(d[k]+d[k+1]+d[k+2])/765;
+      fillMap[i]=f;
+      var g=(f-DENS_LO)/(DENS_HI-DENS_LO);
+      g=g<0?0:(g>1?1:g);
+      m[k+3]=(g*g*255)|0;
+    }
+    dens.putImageData(densImg,0,0);
+  }
+  function cellOf(x,y){
+    var cx=x/(W||1)*GW|0, cy=y/(H||1)*GH|0;
+    if(cx<0)cx=0; if(cx>GW-1)cx=GW-1; if(cy<0)cy=0; if(cy>GH-1)cy=GH-1;
+    return cy*GW+cx;
+  }
+  function bite(x,y){
+    var m=(FILL_MAX-fillMap[cellOf(x,y)])/(FILL_MAX*0.5);
+    return m<0?0:(m>1?1:m);
+  }
+  function bumpTooth(x,y,r,mul){
+    var cw=(W||1)/GW, ch=(H||1)/GH;
+    var x0=((x-r)/cw)|0, x1=((x+r)/cw)|0, y0=((y-r)/ch)|0, y1=((y+r)/ch)|0;
+    for(var cy=Math.max(0,y0);cy<=Math.min(GH-1,y1);cy++){
+      for(var cx=Math.max(0,x0);cx<=Math.min(GW-1,x1);cx++){
+        var dx=(cx+0.5)*cw-x, dy=(cy+0.5)*ch-y, t=1-Math.hypot(dx,dy)/r;
+        if(t<=0) continue;
+        var i=cy*GW+cx, v=fillMap[i]+0.028*mul*t;
+        fillMap[i]=v>1?1:v;
+      }
+    }
+  }
+
+  /* ---------- 足あと1つ＝色鉛筆の線48本 ---------- */
+  var HATCH=-0.44, CROSS=1.05;
+  function hatchAt(x,y){ return HATCH+Math.sin(x/(W||1)*2.10+y/(H||1)*1.60)*0.28; }
+  function blob(c,x,y,r,base,dir,mul,band,vivid){
+    var at=base*(band.length-1), alpha=vivid?ALPHA_INK:ALPHA;
+    c.save();
+    c.globalCompositeOperation=vivid?"source-over":"multiply";
+    c.lineCap="round";
+    for(var i=0;i<STROKES;i++){
+      var ang=Math.random()*TAU, rad=Math.sqrt(Math.random())*r;
+      var px=x+Math.cos(ang)*rad, py=y+Math.sin(ang)*rad;
+      var a=alpha*(1-(rad/r)*0.70)*mul;
+      var q=Math.random(), off, s=Math.random()<0.5?-1:1, w=vivid?1.45:1;
+      if(q<(vivid?0.46:0.58))      off=(Math.random()-0.5)*0.70*w;
+      else if(q<(vivid?0.76:0.86)) off=s*(0.45+Math.random()*0.55)*w;
+      else if(q<(vivid?0.93:0.97)) off=s*(1.00+Math.random()*0.70)*w;
+      else                         off=s*(1.90+Math.random()*0.90)*w;
+      c.strokeStyle="rgba("+pigmentOf(band,at+off)+","+a.toFixed(4)+")";
+      c.lineWidth=vivid?0.8+Math.random()*1.3:0.6+Math.random()*1.1;
+      var len=r*(0.55+Math.random()*1.05), d=dir+(Math.random()-0.5)*0.42;
+      var ex=px+Math.cos(d)*len, ey=py+Math.sin(d)*len, bow=(Math.random()-0.5)*len*0.10;
       c.beginPath();
-      c.moveTo(px-Math.cos(dir)*len/2, py-Math.sin(dir)*len/2);
-      c.lineTo(px+Math.cos(dir)*len/2, py+Math.sin(dir)*len/2);
+      c.moveTo(px-Math.cos(d)*len*0.5, py-Math.sin(d)*len*0.5);
+      c.quadraticCurveTo((px+ex)/2+Math.cos(d+Math.PI/2)*bow, (py+ey)/2+Math.sin(d+Math.PI/2)*bow, ex, ey);
       c.stroke();
     }
     c.restore();
   }
+  function radius(){ return Math.min(W,H)*0.075; }
+  function step(x,y){
+    var base=bandFromWalk(), r=radius(), mul=bite(x,y);
+    if(mul>0.02){
+      blob(uc,x,y,r,base,hatchAt(x,y),mul,BG,false);
+      bumpTooth(x,y,r,mul);
+    }
+    blob(xc,x,y,r,base,hatchAt(x,y)+CROSS,1,INKB,true);
+    dirty=true; painted++;
+    if(painted>=GOAL) demoStopped=true;
+  }
 
-  var hue=0, painted=0, drawing=false, last=null, lastMove=0, demoStopped=false;
-  var A={x:0.30,y:0.64}, B={x:0.70,y:0.38}, dp=0, ddir=1, dtrail=[], dhue=0, dlastStep=0;
-
-  function paintUser(x,y){
-    blob(uc,x,y,Math.min(W,H)*0.075,hue,1);
-    hue+=0.04; painted++;
-    if(painted>=36) demoStopped=true;
-  }
-  function redrawDemo(){
-    dc.clearRect(0,0,W,H);
-    for(var i=0;i<dtrail.length;i++){
-      var s=dtrail[i], age=(i+1)/dtrail.length;
-      blob(dc,s.x,s.y,Math.min(W,H)*0.07,s.t,0.35+0.65*age);
+  /* ---------- ポインター ---------- */
+  function pos(e){ var r=cv.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
+  function walk(x,y,dtms){
+    var dx=x-lastX, dy=y-lastY, dist=Math.hypot(dx,dy), gap=radius()*0.45;
+    if(dist<0.0001) return;
+    var k=0.20;
+    vx+=(dx/dist-vx)*k; vy+=(dy/dist-vy)*k;
+    var n=Math.hypot(vx,vy)||1; vx/=n; vy/=n;
+    var v=dist/Math.max(dtms,8)/(radius()*0.055);
+    pace+=(Math.min(1,v)-pace)*0.14;
+    carry+=dist;
+    while(carry>=gap){
+      var back=dist-(carry-gap);
+      step(lastX+dx*(back/dist), lastY+dy*(back/dist));
+      carry-=gap;
     }
+    lastX=x; lastY=y;
   }
-  function frame(now){
-    var idle=(now-lastMove>1500) && !drawing && !demoStopped;
-    if(idle){
-      dp+=ddir*0.0075;
-      if(dp>1){dp=1;ddir=-1;} if(dp<0){dp=0;ddir=1;}
-      var x=(A.x+(B.x-A.x)*dp)*W, y=(A.y+(B.y-A.y)*dp)*H;
-      cur.style.opacity="1"; cur.style.left=x+"px"; cur.style.top=y+"px";
-      if(now-dlastStep>52){
-        dlastStep=now; dhue+=0.04;
-        dtrail.push({x:x,y:y,t:dhue});
-        if(dtrail.length>6) dtrail.shift();
-        redrawDemo();
-      }
-    }else{
-      cur.style.opacity="0";
-      if(dtrail.length){ dtrail=[]; dc.clearRect(0,0,W,H); }
-    }
-    if(drawing){
-      uc.save(); uc.globalCompositeOperation="destination-out";
-      uc.fillStyle="rgba(0,0,0,0.006)"; uc.fillRect(0,0,W,H); uc.restore();
-    }
-    ctx.clearRect(0,0,W,H);
-    try{ ctx.filter="saturate(1.7)"; }catch(e){}
-    ctx.drawImage(user,0,0,W,H);
-    ctx.filter="none";
-    if(painted>0){
-      ctx.save(); ctx.globalAlpha=0.55; ctx.globalCompositeOperation="destination-out";
-      ctx.drawImage(ringc,0,0,W,H); ctx.restore();
-      cc.clearRect(0,0,W,H); cc.drawImage(user,0,0,W,H);
-      cc.save(); cc.globalCompositeOperation="source-in";
-      cc.fillStyle="rgba(22,20,16,0.9)"; cc.font=hidFont();
-      cc.textAlign="center"; cc.textBaseline="middle"; cc.fillText(HID,W/2,H/2); cc.restore();
-      ctx.save(); ctx.globalCompositeOperation="multiply"; ctx.drawImage(comp,0,0,W,H); ctx.restore();
-    }
-    ctx.drawImage(demo,0,0,W,H);
-  }
-  function pos(e){ var r=cv.getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }
-  function step(p){
-    if(!last){ last=p; paintUser(p.x,p.y); return; }
-    var d=Math.hypot(p.x-last.x,p.y-last.y);
-    if(d<13) return;
-    var n=Math.min(6,Math.floor(d/13));
-    for(var i=1;i<=n;i++){ var f=i/n; paintUser(last.x+(p.x-last.x)*f, last.y+(p.y-last.y)*f); }
-    last=p;
-  }
-  cv.addEventListener("pointerdown",function(e){
-    drawing=true; lastMove=performance.now();
+  var touchDown=false;
+  function begin(p){
+    drawing=true; lastX=p.x; lastY=p.y; carry=0;
+    var a=Math.random()*TAU; vx=Math.cos(a); vy=Math.sin(a);
+    lastMove=performance.now();
     board.classList.remove("hint"); board.classList.add("touched");
-    dtrail=[]; dc.clearRect(0,0,W,H); cur.style.opacity="0";
-    var p=pos(e); last=p; paintUser(p.x,p.y);
-    if(e.pointerId!==undefined && cv.setPointerCapture){ try{cv.setPointerCapture(e.pointerId);}catch(err){} }
+    demoTrail.length=0; clearDemo();
+    step(p.x,p.y);
+  }
+  stage.addEventListener("pointerdown",function(e){
+    lastMove=performance.now();
+    if(e.pointerType!=="touch"){ if(!drawing) begin(pos(e)); return; }
+    touchDown=true;
+    begin(pos(e));
+    if(stage.setPointerCapture) try{ stage.setPointerCapture(e.pointerId); }catch(err){}
     e.preventDefault();
   });
-  cv.addEventListener("pointermove",function(e){
-    lastMove=performance.now();
+  stage.addEventListener("pointermove",function(e){
+    var now=performance.now(), dtms=now-lastMove;
+    lastMove=now;
+    if(e.pointerType==="touch" && !touchDown) return;
     var p=pos(e);
-    if(!drawing){
-      if(e.pointerType==="mouse"){
-        board.classList.remove("hint"); board.classList.add("touched");
-        if(!last) last=p;
-        step(p);
-      }
-      return;
-    }
-    step(p); e.preventDefault();
+    if(!drawing){ begin(p); return; }
+    walk(p.x,p.y,dtms);
   });
-  window.addEventListener("pointerup",function(){ drawing=false; last=null; });
-  cv.addEventListener("pointerleave",function(){ drawing=false; last=null; });
+  function endTouch(e){
+    if(e.pointerType==="touch"){ touchDown=false; drawing=false; }
+    lastMove=performance.now();
+  }
+  stage.addEventListener("pointerup",endTouch);
+  stage.addEventListener("pointercancel",endTouch);
+  stage.addEventListener("pointerleave",function(e){
+    if(e.pointerType!=="touch") drawing=false;
+    lastMove=performance.now();
+  });
 
-  sizeAll();
-  var lastW=window.innerWidth;
-  window.addEventListener("resize",function(){
-    if(Math.abs(window.innerWidth-lastW)<40) return;
-    lastW=window.innerWidth;
-    sizeAll(); uc.clearRect(0,0,W,H); dc.clearRect(0,0,W,H); painted=0; dtrail=[];
+  function clearBoard(){
+    uc.save(); uc.setTransform(1,0,0,1,0,0); uc.clearRect(0,0,PW,PH); uc.restore();
+    xc.save(); xc.setTransform(1,0,0,1,0,0); xc.clearRect(0,0,PW,PH); xc.restore();
+    painted=0; demoStopped=false; dirty=true;
+    fillMap.fill(0);
+    demoTrail.length=0; clearDemo();
+  }
+
+  /* ---------- 配色の切り替え ---------- */
+  var pills=board.querySelectorAll("[data-theme-pick]"), dots=board.querySelectorAll(".board-bar .dot");
+  function paintThemeUI(){
+    var t=THEMES[themeKey];
+    [].forEach.call(pills,function(b){ b.setAttribute("aria-pressed", b.getAttribute("data-theme-pick")===themeKey ? "true" : "false"); });
+    [t.ink[1],t.ink[3],t.ink[5]].forEach(function(c,i){ if(dots[i]) dots[i].style.background=c; });
+  }
+  [].forEach.call(pills,function(b){
+    b.addEventListener("click",function(){
+      var k=b.getAttribute("data-theme-pick");
+      if(!THEMES[k] || k===themeKey) return;
+      themeKey=k; BG=rgbList(THEMES[k].bg); INKB=rgbList(THEMES[k].ink);
+      try{ localStorage.setItem("csw-theme",k); }catch(err){}
+      paintThemeUI(); clearBoard();
+    });
   });
-  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(buildRing); }
-  /* 画面に入っているときだけ描画する */
-  var visible=false, running=false;
-  function loop(now){ if(!visible){ running=false; return; } frame(now); requestAnimationFrame(loop); }
-  function start(){ if(!running){ running=true; requestAnimationFrame(loop); } }
+  paintThemeUI();
+
+  /* ---------- 触る前のお手本 ---------- */
+  function clearDemo(){ dc.save(); dc.setTransform(1,0,0,1,0,0); dc.clearRect(0,0,PW,PH); dc.restore(); dirty=true; }
+  function demoPos(t){ return { x:(0.5+0.36*Math.sin(t*0.55))*W, y:(0.5+0.26*Math.sin(t*0.83+1.1))*H }; }
+  function redrawDemo(){
+    dc.save(); dc.setTransform(1,0,0,1,0,0); dc.clearRect(0,0,PW,PH); dc.restore();
+    for(var i=0;i<demoTrail.length;i++){
+      var p=demoTrail[i], age=(i+1)/demoTrail.length;
+      blob(dc,p.x,p.y,radius()*0.9,p.t,hatchAt(p.x,p.y),0.5*age,BG,false);
+    }
+    dirty=true;
+  }
+
+  /* ---------- 合成 ---------- */
+  function render(){
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.globalAlpha=1; ctx.globalCompositeOperation="source-over"; ctx.filter="none";
+    ctx.clearRect(0,0,PW,PH);
+    if(canFilter) ctx.filter="saturate(1.15)";
+    ctx.drawImage(user,0,0);
+    ctx.filter="none";
+    if(painted>0 && fs>0){
+      cc.setTransform(1,0,0,1,0,0);
+      cc.globalAlpha=1; cc.globalCompositeOperation="source-over";
+      cc.clearRect(0,0,PW,PH);
+      cc.drawImage(cross,0,0);
+      cc.globalCompositeOperation="destination-in";
+      cc.drawImage(glyph,0,0);
+      cc.drawImage(densC,0,0,PW,PH);
+      if(canFilter) ctx.filter="saturate(1.25)";
+      ctx.drawImage(comp,0,0);
+      ctx.globalAlpha=0.55;
+      ctx.drawImage(comp,0,0);
+      ctx.filter="none"; ctx.globalAlpha=1;
+    }
+    ctx.drawImage(demo,0,0);
+  }
+  function buildText(){
+    if(!W || !H) return;
+    fs=Math.min(H*0.40, W*0.84/HID.length);
+    gc.setTransform(1,0,0,1,0,0);
+    gc.clearRect(0,0,PW,PH);
+    gc.font='900 '+(fs*dpr)+'px "Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif';
+    gc.textAlign="center"; gc.textBaseline="middle"; gc.fillStyle="#000";
+    gc.fillText(HID,PW/2,PH/2);
+    dirty=true;
+  }
+
+  /* ---------- サイズ（描いた絵は保ったまま） ---------- */
+  function resize(){
+    var r=stage.getBoundingClientRect();
+    var w=Math.max(1,Math.round(r.width)), h=Math.max(1,Math.round(r.height));
+    dpr=Math.min(window.devicePixelRatio||1,2);
+    if(w===W && h===H) return;
+    function snap(src){ var k=mk(); k.width=PW; k.height=PH; k.getContext("2d").drawImage(src,0,0); return k; }
+    function restore(c,k){ c.save(); c.setTransform(1,0,0,1,0,0); c.drawImage(k,0,0,k.width,k.height,0,0,PW,PH); c.restore(); }
+    var keepU=null, keepX=null;
+    if(PW && painted>0){ keepU=snap(user); keepX=snap(cross); }
+    W=w; H=h; PW=Math.round(w*dpr); PH=Math.round(h*dpr);
+    [cv,user,cross,demo,comp,glyph].forEach(function(c){ c.width=PW; c.height=PH; });
+    uc.setTransform(dpr,0,0,dpr,0,0); xc.setTransform(dpr,0,0,dpr,0,0); dc.setTransform(dpr,0,0,dpr,0,0);
+    if(keepU){ restore(uc,keepU); restore(xc,keepX); }
+    buildText(); sampleTooth();
+    demoTrail.length=0; dirty=true;
+  }
+
+  /* ---------- ループ（画面に入っているときだけ） ---------- */
+  cursor.style.opacity="0";
+  function frame(now){
+    raf=requestAnimationFrame(frame);
+    var dtms=prev ? Math.min(now-prev,100) : 16;
+    prev=now;
+    var idle=!touchDown && !demoStopped && !reduced && (now-lastMove > (drawing ? 4000 : 1500));
+    if(idle){
+      dt+=dtms/1000;
+      var p=demoPos(dt), last=demoTrail[demoTrail.length-1];
+      if(!last || Math.hypot(p.x-last.x,p.y-last.y)>=radius()*0.55){
+        var d=last ? Math.atan2(p.y-last.y,p.x-last.x) : 0;
+        demoTrail.push({x:p.x,y:p.y,t:bandFor(d,0.5)});
+        if(demoTrail.length>6) demoTrail.shift();
+        redrawDemo();
+      }
+      cursor.style.left=p.x+"px"; cursor.style.top=p.y+"px"; cursor.style.opacity="1";
+    }else{
+      cursor.style.opacity="0";
+      if(demoTrail.length){ demoTrail.length=0; clearDemo(); }
+    }
+    tick++;
+    if((dirty || drawing) && tick%5===0) sampleTooth();
+    if(dirty){ render(); dirty=false; }
+  }
+  function start(){ if(!raf){ prev=0; raf=requestAnimationFrame(frame); } }
+  function stop(){ if(raf){ cancelAnimationFrame(raf); raf=0; } }
+
+  if("ResizeObserver" in window){ new ResizeObserver(function(){ resize(); }).observe(stage); }
+  else{ window.addEventListener("resize",resize); }
   if("IntersectionObserver" in window){
     new IntersectionObserver(function(es){
-      visible=es[0].isIntersecting;
-      if(visible) start();
+      if(es[0].isIntersecting){ lastMove=performance.now(); start(); } else stop();
     },{threshold:0.02}).observe(stage);
-  } else { visible=true; start(); }
-}
+  }else{ start(); }
+  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(buildText); }
+
+  resize();
+  lastMove=performance.now();
+})();
 })();
 </script>
 </body>
