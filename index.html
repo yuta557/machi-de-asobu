@@ -352,6 +352,9 @@ a.mark{text-decoration:none}
 .tip-sp{display:none}
 @media(max-width:900px){.tip-pc{display:none}.tip-sp{display:inline}}
 @media(hover:none) and (pointer:coarse){.tip-pc{display:none}.tip-sp{display:inline}}
+/* スマホはボードが狭いので、なぞり始めてしばらくしたら案内を消す */
+@media(max-width:900px){.board.tip-done .tip{opacity:0;transform:translateX(-50%) translateY(8px);transition:opacity .5s ease,transform .5s ease}}
+@media(hover:none) and (pointer:coarse){.board.tip-done .tip{opacity:0;transform:translateX(-50%) translateY(8px);transition:opacity .5s ease,transform .5s ease}}
 /* ---------- セクション共通（復元） ---------- */
 .wrap{max-width:1140px;margin:0 auto;padding:0 24px}
 .sec{padding:64px 0}
@@ -1282,12 +1285,13 @@ if(navEl){
     }
     lastX=x; lastY=y;
   }
-  var touchDown=false;
+  var touchDown=false, tipTimer=0;
   function begin(p){
     drawing=true; lastX=p.x; lastY=p.y; carry=0;
     var a=Math.random()*TAU; vx=Math.cos(a); vy=Math.sin(a);
     lastMove=performance.now();
     board.classList.remove("hint"); board.classList.add("touched");
+    if(!tipTimer) tipTimer=setTimeout(function(){ board.classList.add("tip-done"); },2500);
     demoTrail.length=0; clearDemo();
     step(p.x,p.y);
   }
