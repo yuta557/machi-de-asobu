@@ -418,15 +418,6 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
 /* アイデアシート */
 .sheet-example{max-width:960px;margin:36px auto 0}
 .sheet-example img{display:block;width:100%;height:auto;border-radius:16px}
-.sheets{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:44px}
-.sheet{border-radius:6px;padding:20px 18px;background:var(--card);border:1px solid var(--line);box-shadow:1px 3px 0 rgba(27,26,22,.06)}
-.sheet h3{margin:0 0 8px;font-size:18.5px}
-.sheet p{margin:0;font-size:13.5px;color:var(--ink-soft);line-height:1.75}
-.sheet:nth-child(1){transform:rotate(-2.2deg);background:var(--wash-yellow)}
-.sheet:nth-child(2){transform:rotate(1.6deg) translateY(6px)}
-.sheet:nth-child(3){transform:rotate(-1deg);background:var(--wash-teal)}
-.sheet:nth-child(4){transform:rotate(2.4deg) translateY(5px)}
-@media(max-width:900px){.sheets{grid-template-columns:repeat(2,1fr)}}
 
 /* 開催概要（実用情報） */
 .info{background:var(--teal-panel);border-radius:var(--r-lg);padding:32px 30px}
@@ -507,17 +498,12 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
 /* 出現（控えめに） */
 .rv{opacity:0;transform:translateY(14px);transition:opacity .7s cubic-bezier(.2,.7,.3,1),transform .7s cubic-bezier(.2,.7,.3,1)}
 .rv.in{opacity:1;transform:none}
-.slip.rv,.sheet.rv{transition:opacity .6s cubic-bezier(.2,.7,.3,1),transform .6s cubic-bezier(.2,1.4,.4,1)}
+.slip.rv{transition:opacity .6s cubic-bezier(.2,.7,.3,1),transform .6s cubic-bezier(.2,1.4,.4,1)}
 .slip.rv{transform:translateY(14px) rotate(0)}
 .slip.rv.in:nth-child(1){transform:rotate(-1.1deg)}
 .slip.rv.in:nth-child(2){transform:rotate(.7deg) translateY(7px)}
 .slip.rv.in:nth-child(3){transform:rotate(-.6deg) translateY(-4px)}
 .slip.rv.in:nth-child(4){transform:rotate(1.3deg) translateY(5px)}
-.sheet.rv{transform:translateY(14px) rotate(0)}
-.sheet.rv.in:nth-child(1){transform:rotate(-2.2deg)}
-.sheet.rv.in:nth-child(2){transform:rotate(1.6deg) translateY(6px)}
-.sheet.rv.in:nth-child(3){transform:rotate(-1deg)}
-.sheet.rv.in:nth-child(4){transform:rotate(2.4deg) translateY(5px)}
 .note,.ready .ready .ready .ready @keyframes fadeIn{to{opacity:1}}
 .hero .rv1,.hero .rv2,.hero .rv3,.board-shell{opacity:0}
 .ready .fd{animation:fadeIn .8s forwards}
@@ -564,10 +550,6 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
   .slip.rv:nth-child(2){transform:rotate(.7deg) translateY(7px)}
   .slip.rv:nth-child(3){transform:rotate(-.6deg) translateY(-4px)}
   .slip.rv:nth-child(4){transform:rotate(1.3deg) translateY(5px)}
-  .sheet.rv:nth-child(1){transform:rotate(-2.2deg)}
-  .sheet.rv:nth-child(2){transform:rotate(1.6deg) translateY(6px)}
-  .sheet.rv:nth-child(3){transform:rotate(-1deg)}
-  .sheet.rv:nth-child(4){transform:rotate(2.4deg) translateY(5px)}
   .note,  .hero .rv1,.hero .rv2,.hero .rv3,.board-shell{opacity:1;transform:none;animation:none!important}
   .hero-photo>img{opacity:1;transform:none;animation:none!important}
   .mk1 .mk,  .board.hint .tip,.board.hint .ring,.board.hint .tip .pip::after{animation:none!important}
@@ -878,12 +860,6 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
       <img src="assets/sheet-example.webp?v=2" width="1600" height="900" loading="lazy" decoding="async"
         alt="アイデアシートの記入例。① どこで？駅の階段、② だれと？友だちと！、③ どんな仕組みで？音が鳴る、④ 名前は？リズムステップ。右側には、色とりどりの丸が描かれた階段を子どもたちがかけ上がり、音符が鳴っている絵が描かれている。">
     </figure>
-    <div class="sheets">
-      <div class="sheet rv"><h3>どこで？</h3><p>宇治のあの道、あの階段、あの川べり。知っている場所を選びます。</p></div>
-      <div class="sheet rv"><h3>だれと？</h3><p>友だち、家族、知らない誰か。ひとりで遊ぶ仕掛けでも構いません。</p></div>
-      <div class="sheet rv"><h3>どんな仕組みで？</h3><p>光る、音が鳴る、跡が残る。動く仕組みを絵で描いてみます。</p></div>
-      <div class="sheet rv"><h3>名前は？</h3><p>その遊びに名前をつけると、誰かに伝えられるものになります。</p></div>
-    </div>
   </div>
 </section>
 
