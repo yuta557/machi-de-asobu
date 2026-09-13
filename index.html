@@ -83,6 +83,9 @@ a{color:inherit}
 html{scroll-padding-top:var(--nav-h)}
 body{padding-top:var(--nav-h)}
 .nav{position:fixed;top:0;left:0;right:0;z-index:60;background:#fff;border-bottom:1px solid rgba(30,96,143,.10)}
+/* iOS Safari ではアドレスバーの表示状態によってヘッダーが下にずれ、その上に本文が透けて見える。
+   透明のままにせず、ヘッダーと同じ背景を上へ延長して隙間を埋める */
+.nav::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:100vh;background:inherit;pointer-events:none}
 .nav-in{position:relative;z-index:1;max-width:none;margin:0;padding:0 3.4vw 0 4.7vw;height:5.2vw;min-height:58px;max-height:92px;
   display:flex;align-items:center;gap:0}
 .mark{display:flex;align-items:center;text-decoration:none;
