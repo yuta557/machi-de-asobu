@@ -109,6 +109,12 @@ html{scroll-padding-top:var(--nav-h)}
 .pill-line:hover{background:rgba(27,26,22,.06)}
 .pill[aria-disabled="true"]{opacity:.6;cursor:default}
 .pill[aria-disabled="true"]:hover{transform:none}
+/* PC：参加するボタンと装飾を、現在の位置と画面の右端のちょうど中間へ。
+   ナビの余白（右パディングを含む）を nav-links と末尾の空き要素で半分ずつ分け合う */
+@media(min-width:901px){
+  .nav-links{flex-grow:1}
+  .nav-in::after{content:"";flex-grow:1;margin-right:-3.4vw}
+}
 .nav .pill-key{margin-left:2.6vw;height:3.32vw;min-height:38px;max-height:58px;min-width:12vw;padding:0 2vw;
   font-size:clamp(14px,1.42vw,25px);color:var(--navy-ink)}
 .arw-i{font-family:"Outfit",sans-serif;font-weight:500}
@@ -699,7 +705,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
   <div class="credits-in">
     <p class="credit"><span><ruby>主催<rt>しゅさい</rt></ruby></span><b>宇治NEXT（宇治市・宇治商工会議所）</b></p>
     <p class="credit"><span><ruby>運営<rt>うんえい</rt></ruby>協力</span><b><ruby>株式会社<rt>かぶしきがいしゃ</rt></ruby>taliki</b></p>
-    <p class="credit"><span><ruby>企画<rt>きかく</rt></ruby>・開発</span><b>野寺悠太（<ruby>灘<rt>なだ</rt></ruby>高校）</b></p>
+    <p class="credit"><span><ruby>企画<rt>きかく</rt></ruby>・開発</span><b>野寺悠太（灘高校）</b></p>
   </div>
 </div>
 
@@ -924,7 +930,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
       <span class="av"><svg width="26" height="26" viewBox="0 0 20 20" aria-hidden="true"><ellipse cx="9" cy="7.4" rx="5" ry="6" fill="#1B1A16"/><ellipse cx="10.4" cy="16" rx="3" ry="2.6" fill="#1B1A16"/></svg></span>
       <div>
         <p class="label" style="margin:0"><ruby>企画<rt>きかく</rt></ruby>・開発</p>
-        <h3>野寺悠太（<ruby>灘<rt>なだ</rt></ruby>高校）</h3>
+        <h3>野寺悠太（灘高校）</h3>
         <p>宇治市未来キャンパス<ruby>受講生<rt>じゅこうせい</rt></ruby>。いつもの道をもっと面白くしたいと思い、歩くと光の足あとが<ruby>現<rt>あらわ</rt></ruby>れる<ruby>装置<rt>そうち</rt></ruby>「Color Shift Walk」をつくっています。このワークショップでは、<ruby>企画<rt>きかく</rt></ruby>・当日の<ruby>運営<rt>うんえい</rt></ruby>・<ruby>装置<rt>そうち</rt></ruby>の開発を<ruby>担当<rt>たんとう</rt></ruby>します。</p>
       </div>
     </div>
