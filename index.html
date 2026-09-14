@@ -71,6 +71,9 @@ body::after{
   background-size:900px 900px;mix-blend-mode:multiply;opacity:.07;
 }
 a{color:inherit}
+/* 小学4年生までに習わない漢字のふりがな */
+ruby{ruby-position:over}
+rt{font-size:.5em;letter-spacing:0;line-height:1;font-weight:500}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
 .label{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.03em;color:var(--ink-soft)}
 .latin{font-family:"Outfit",system-ui,sans-serif;font-weight:600;letter-spacing:.02em}
@@ -329,7 +332,7 @@ a.mark{text-decoration:none}
 .board{position:relative;border-radius:20px;border:1px solid var(--line);background:var(--card);overflow:hidden}
 .board-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--bg)}
 .dot{width:9px;height:9px;border-radius:50%;background:var(--line);flex:none;transition:background .2s}
-.board-title{font-size:13px;color:var(--ink-soft);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.board-title{font-size:13px;line-height:2.1;color:var(--ink-soft);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* 足あとの配色切り替え */
 .board-themes{margin-left:auto;display:flex;gap:6px;flex:none}
 .theme-pill{font:inherit;font-size:12px;font-weight:500;line-height:1;padding:7px 12px;border-radius:999px;cursor:pointer;
@@ -603,9 +606,9 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
 <div id="opening" aria-hidden="true">
   <canvas id="opencv"></canvas>
   <div class="op-in">
-    <p class="op-eyebrow">宇治NEXT ｜ Playable City 入門ワークショップ</p>
+    <p class="op-eyebrow"><ruby>宇治<rt>うじ</rt></ruby>NEXT ｜ Playable City 入門ワークショップ</p>
     <p class="op-title"><span class="a">まちで</span><span class="b">あそぶ<svg viewBox="0 0 520 40" preserveAspectRatio="none"><path class="mk" d="M14,24 C150,10 370,34 506,18"/></svg></span><span class="c">、をつくる</span></p>
-    <p class="op-sub">歩くと、まちが反応する。</p>
+    <p class="op-sub">歩くと、まちが<ruby>反応<rt>はんのう</rt></ruby>する。</p>
   </div>
 </div>
 <button id="skip" type="button">スキップ</button>
@@ -620,7 +623,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
       <a href="#flow">当日の進め方</a>
       <a href="#change">Playable City</a>
       <a href="#colorshift">Color Shift Walk</a>
-      <a href="#info">実施概要</a>
+      <a href="#info"><ruby>実施概要<rt>じっしがいよう</rt></ruby></a>
       <a href="#faq">FAQ</a>
     </div>
     <button class="burger" type="button" aria-label="メニュー" aria-expanded="false" id="burger"><span></span><span></span><span></span></button>
@@ -632,7 +635,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
       <a href="#flow">当日の進め方</a>
     <a href="#change">Playable City</a>
     <a href="#colorshift">Color Shift Walk</a>
-    <a href="#info">実施概要</a>
+    <a href="#info"><ruby>実施概要<rt>じっしがいよう</rt></ruby></a>
     <a href="#faq">FAQ</a>
     <a class="pill menu-cta" href="https://docs.google.com/forms/d/e/1FAIpQLSe6rLWtzkLh0r8n9YfXnDI3aGaVXqjveMzL0JJP8LgcYHRtpQ/viewform?usp=header" target="_blank" rel="noopener noreferrer">参加する <span class="arw-i">→</span></a>
   </div>
@@ -659,20 +662,20 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
         <div class="kf">
           <span class="ic"><svg class="blob" viewBox="0 0 76 66" aria-hidden="true"><path d="M40 6 C58 2 76 16 72 32 C69 48 56 66 36 63 C16 60 0 48 4 30 C7 14 22 9 40 6 Z" fill="rgba(255,212,59,.42)" opacity=".5" transform="rotate(16 38 33) scale(1.06) translate(-2 -2)"/><path d="M38 3 C55 1 74 12 73 28 C72 45 60 63 39 64 C19 65 3 51 3 32 C3 15 18 5 38 3 Z" fill="rgba(255,212,59,.42)"/></svg><svg class="glyph" viewBox="0 0 34 34"><rect x="5" y="8" width="24" height="21" rx="3"/><path d="M5 14 H29 M11 4 V9 M23 4 V9 M17 18 V25 M13.5 21.5 H20.5"/></svg></span>
           <p class="k">DATE</p>
-          <p class="v">2026年9月下旬</p>
+          <p class="v">2026年9月<ruby>下旬<rt>げじゅん</rt></ruby></p>
           <p class="vs">の週末</p>
         </div>
         <div class="kf">
           <span class="ic"><svg class="blob" viewBox="0 0 76 66" aria-hidden="true"><path d="M40 6 C58 2 76 16 72 32 C69 48 56 66 36 63 C16 60 0 48 4 30 C7 14 22 9 40 6 Z" fill="rgba(240,107,98,.30)" opacity=".5" transform="rotate(16 38 33) scale(1.06) translate(-2 -2)"/><path d="M38 3 C55 1 74 12 73 28 C72 45 60 63 39 64 C19 65 3 51 3 32 C3 15 18 5 38 3 Z" fill="rgba(240,107,98,.30)"/></svg><svg class="glyph" viewBox="0 0 34 34"><path d="M17 30 C17 30 27 21 27 14 A10 10 0 0 0 7 14 C7 21 17 30 17 30 Z"/><circle cx="17" cy="14" r="3.6"/></svg></span>
           <p class="k">PLACE</p>
-          <p class="v v-fit">宇治市産業会館</p>
+          <p class="v v-fit"><ruby>宇治<rt>うじ</rt></ruby>市産業会館</p>
           <p class="vs">多目的ホール</p>
         </div>
         <div class="kf">
           <span class="ic"><svg class="blob" viewBox="0 0 76 66" aria-hidden="true"><path d="M40 6 C58 2 76 16 72 32 C69 48 56 66 36 63 C16 60 0 48 4 30 C7 14 22 9 40 6 Z" fill="rgba(56,169,155,.34)" opacity=".5" transform="rotate(16 38 33) scale(1.06) translate(-2 -2)"/><path d="M38 3 C55 1 74 12 73 28 C72 45 60 63 39 64 C19 65 3 51 3 32 C3 15 18 5 38 3 Z" fill="rgba(56,169,155,.34)"/></svg><svg class="glyph" viewBox="0 0 34 34"><circle cx="14" cy="12" r="4.4"/><path d="M6 27 C6 21 10 18.5 14 18.5 C18 18.5 22 21 22 27"/><circle cx="24" cy="13.5" r="3.4"/><path d="M22.5 19 C26 19 29 21.5 29 27"/></svg></span>
           <p class="k">WHO</p>
           <p class="v v-fit">小学4年生〜中学生</p>
-          <p class="vs">保護者の同伴は任意</p>
+          <p class="vs"><ruby>保護者<rt>ほごしゃ</rt></ruby>の<ruby>同伴<rt>どうはん</rt></ruby>は<ruby>任意<rt>にんい</rt></ruby></p>
         </div>
         <div class="kf">
           <span class="ic"><svg class="blob" viewBox="0 0 76 66" aria-hidden="true"><path d="M40 6 C58 2 76 16 72 32 C69 48 56 66 36 63 C16 60 0 48 4 30 C7 14 22 9 40 6 Z" fill="rgba(79,99,232,.24)" opacity=".5" transform="rotate(16 38 33) scale(1.06) translate(-2 -2)"/><path d="M38 3 C55 1 74 12 73 28 C72 45 60 63 39 64 C19 65 3 51 3 32 C3 15 18 5 38 3 Z" fill="rgba(79,99,232,.24)"/></svg><svg class="glyph" viewBox="0 0 34 34"><circle cx="17" cy="17" r="10.5"/><path d="M12 11 L17 17.5 L22 11 M12.5 19 H21.5 M12.5 22.5 H21.5 M17 17.5 V25"/></svg></span>
@@ -686,7 +689,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
           <p class="v">120分</p>
         </div>
         </div>
-        <p class="kf-note">* 学年が対象外のかたもご相談ください。学年や人数に応じて参加いただけるか検討します。</p>
+        <p class="kf-note">* 学年が<ruby>対象<rt>たいしょう</rt></ruby>外のかたもご相談ください。学年や人数に<ruby>応<rt>おう</rt></ruby>じて参加いただけるか<ruby>検討<rt>けんとう</rt></ruby>します。</p>
       </div>
     </div>
 </header>
@@ -694,9 +697,9 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
 
 <div class="credits" style="margin-top:0">
   <div class="credits-in">
-    <p class="credit"><span>主催</span><b>宇治NEXT（宇治市・宇治商工会議所）</b></p>
-    <p class="credit"><span>運営協力</span><b>株式会社taliki</b></p>
-    <p class="credit"><span>企画・開発</span><b>野寺悠太（灘高校）</b></p>
+    <p class="credit"><span><ruby>主催<rt>しゅさい</rt></ruby></span><b><ruby>宇治<rt>うじ</rt></ruby>NEXT（<ruby>宇治<rt>うじ</rt></ruby>市・<ruby>宇治<rt>うじ</rt></ruby>商工会議所）</b></p>
+    <p class="credit"><span><ruby>運営<rt>うんえい</rt></ruby>協力</span><b><ruby>株式会社<rt>かぶしきがいしゃ</rt></ruby>taliki</b></p>
+    <p class="credit"><span><ruby>企画<rt>きかく</rt></ruby>・開発</span><b>野寺<ruby>悠太<rt>ゆうた</rt></ruby>（<ruby>灘<rt>なだ</rt></ruby>高校）</b></p>
   </div>
 </div>
 
@@ -705,13 +708,13 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
   <div class="wrap">
     <div class="sec-head rv">
       <h2>Playable City 入門ワークショップとは</h2>
-      <p class="sub-title">「通り過ぎるまち」を、<br>「関わりたくなるまち」へ。</p>
+      <p class="sub-title">「通り<ruby>過<rt>す</rt></ruby>ぎるまち」を、<br>「関わりたくなるまち」へ。</p>
     </div>
     <div class="lead rv">
-      <p>私たちは毎日、まちの中を歩いています。けれど、道や広場を「目的地へ向かうための場所」として、ただ通り過ぎてしまうことも少なくありません。</p>
-      <p>Playable City は、そんなまちを「遊び」という視点から捉え直し、人が立ち止まったり、誰かと関わったりするきっかけをつくる考え方です。</p>
-      <p>このワークショップでは、そんな Playable City の考え方に触れながら、<b>「宇治のまちに、こんな遊びがあったら面白そう」</b>を一緒に考えます。</p>
-      <p>いつものまちを、ただ通り過ぎる場所から、少し関わってみたくなる場所へ。そんな新しいまちの見方を、一緒につくってみませんか？</p>
+      <p><ruby>私<rt>わたし</rt></ruby>たちは毎日、まちの中を歩いています。けれど、道や広場を「目的地へ向かうための場所」として、ただ通り<ruby>過<rt>す</rt></ruby>ぎてしまうことも少なくありません。</p>
+      <p>Playable City は、そんなまちを「遊び」という<ruby>視点<rt>してん</rt></ruby>から<ruby>捉<rt>とら</rt></ruby>え直し、人が立ち止まったり、<ruby>誰<rt>だれ</rt></ruby>かと関わったりするきっかけをつくる考え方です。</p>
+      <p>このワークショップでは、そんな Playable City の考え方に<ruby>触<rt>ふ</rt></ruby>れながら、<b>「<ruby>宇治<rt>うじ</rt></ruby>のまちに、こんな遊びがあったら面白そう」</b>を<ruby>一緒<rt>いっしょ</rt></ruby>に考えます。</p>
+      <p>いつものまちを、ただ通り<ruby>過<rt>す</rt></ruby>ぎる場所から、少し関わってみたくなる場所へ。そんな新しいまちの見方を、<ruby>一緒<rt>いっしょ</rt></ruby>につくってみませんか？</p>
     </div>
   </div>
 </section>
@@ -751,7 +754,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
         <a class="fband fband-link" href="#change">
           <div class="ftext">
             <h3>知る</h3>
-            <p>宇治のまちの話を聞く<br>Playable City の事例を知る</p>
+            <p><ruby>宇治<rt>うじ</rt></ruby>のまちの話を聞く<br>Playable City の事例を知る</p>
           </div>
           <span class="ftime">0:00 – 0:30</span>
         </a>
@@ -761,7 +764,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
         <a class="fband fband-link" href="#colorshift">
           <div class="ftext">
             <h3>体験する</h3>
-            <p>歩くと光の足あとが現れる装置（Color Shift Walk）を体験する</p>
+            <p>歩くと光の足あとが<ruby>現<rt>あらわ</rt></ruby>れる<ruby>装置<rt>そうち</rt></ruby>（Color Shift Walk）を体験する</p>
           </div>
           <span class="ftime">0:30 – 0:50</span>
         </a>
@@ -802,7 +805,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
   <div class="wrap">
     <div class="sec-head rv">
       <div class="head-row"><span class="step-chip chip-know"><span class="n">1</span><span>知る</span></span><h2>Playable City について</h2></div>
-      <p>Playable City は、イギリス・ブリストルで始まった、遊びやテクノロジーを通して、人とまちとの新しい関わり方をつくる取り組みです。人の好奇心や想像力を生かし、まちに小さな仕掛けを加えることで、立ち止まる・気づく・楽しむといった新しいまちの体験を生み出します。</p>
+      <p>Playable City は、イギリス・ブリストルで始まった、遊びやテクノロジーを通して、人とまちとの新しい関わり方をつくる取り組みです。人の<ruby>好奇心<rt>こうきしん</rt></ruby>や<ruby>想像<rt>そうぞう</rt></ruby>力を生かし、まちに小さな<ruby>仕掛<rt>しか</rt></ruby>けを加えることで、立ち止まる・気づく・楽しむといった新しいまちの体験を生み出します。</p>
     </div>
     <div class="slips">
       <div class="slip rv">
@@ -810,32 +813,32 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
         <p class="was">ただの道</p>
         <svg class="arw" width="26" height="16" viewBox="0 0 26 16" aria-hidden="true"><path d="M3 4 V12 M3 12 H22 M17 7 L23 12 L17 16"/></svg>
         <p class="now">少し遊びたくなる道</p>
-        <p class="sub">通り道が、寄り道したくなる場所に変わる。</p>
+        <p class="sub">通り道が、<ruby>寄<rt>よ</rt></ruby>り道したくなる場所に変わる。</p>
       </div>
       <div class="slip rv">
         <span class="tick t-coral"></span>
         <p class="was">待つだけの場所</p>
         <svg class="arw" width="26" height="16" viewBox="0 0 26 16" aria-hidden="true"><path d="M3 4 V12 M3 12 H22 M17 7 L23 12 L17 16"/></svg>
-        <p class="now">誰かと遊べる場所</p>
-        <p class="sub">バス停や信号待ちの数分が、待ち時間ではなくなる。</p>
+        <p class="now"><ruby>誰<rt>だれ</rt></ruby>かと遊べる場所</p>
+        <p class="sub">バス<ruby>停<rt>てい</rt></ruby>や信号待ちの数分が、待ち時間ではなくなる。</p>
       </div>
       <div class="slip rv">
         <span class="tick t-teal"></span>
-        <p class="was">ただの階段</p>
+        <p class="was">ただの<ruby>階段<rt>かいだん</rt></ruby></p>
         <svg class="arw" width="26" height="16" viewBox="0 0 26 16" aria-hidden="true"><path d="M3 4 V12 M3 12 H22 M17 7 L23 12 L17 16"/></svg>
-        <p class="now">挑戦が生まれる場所</p>
-        <p class="sub">上るだけだった段差が、遊びの装置になる。</p>
+        <p class="now"><ruby>挑戦<rt>ちょうせん</rt></ruby>が生まれる場所</p>
+        <p class="sub">上るだけだった<ruby>段差<rt>だんさ</rt></ruby>が、遊びの<ruby>装置<rt>そうち</rt></ruby>になる。</p>
       </div>
       <div class="slip rv">
         <span class="tick t-yellow"></span>
-        <p class="was">すれ違うだけの場所</p>
+        <p class="was">すれ<ruby>違<rt>ちが</rt></ruby>うだけの場所</p>
         <svg class="arw" width="26" height="16" viewBox="0 0 26 16" aria-hidden="true"><path d="M3 4 V12 M3 12 H22 M17 7 L23 12 L17 16"/></svg>
         <p class="now">気配を感じる場所</p>
         <p class="sub">さっき歩いた人の足あとが、次の人の体験を変える。</p>
       </div>
     </div>
     </div>
-    <p class="after-note rv">今回のワークショップでは、Playable City の例から宇治のまちを考えます。</p>
+    <p class="after-note rv">今回のワークショップでは、Playable City の例から<ruby>宇治<rt>うじ</rt></ruby>のまちを考えます。</p>
   </div>
 </section>
 
@@ -845,16 +848,16 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
   <div class="wrap">
     <div class="cs-name rv">
       <div class="head-row"><span class="step-chip chip-try"><span class="n">2</span><span>体験する</span></span><span class="latin">COLOR SHIFT WALK</span></div>
-      <span class="jp">歩くと、まちが反応する。当日は、体験版を体験します。</span>
+      <span class="jp">歩くと、まちが<ruby>反応<rt>はんのう</rt></ruby>する。当日は、体験<ruby>版<rt>ばん</rt></ruby>を体験します。</span>
     </div>
     <img class="kv rv" src="assets/colorshift-kv.webp" alt="床に投影された色とりどりの光の足あとの上を人々が歩いているようす" width="980" height="957" loading="lazy" decoding="async">
-    <p class="kv-cap">床に投影された光の足あとを、歩いてつくる装置です。ひとりでは点にしかなりませんが、通り過ぎた人の足あとが積み重なると、一枚の絵になります。<br>※ 完成イメージです。当日は体験版を体験していただきます。</p>
+    <p class="kv-cap"><ruby>床<rt>ゆか</rt></ruby>に<ruby>投影<rt>とうえい</rt></ruby>された光の足あとを、歩いてつくる<ruby>装置<rt>そうち</rt></ruby>です。ひとりでは点にしかなりませんが、通り<ruby>過<rt>す</rt></ruby>ぎた人の足あとが積み重なると、<ruby>一枚<rt>いちまい</rt></ruby>の絵になります。<br>※ 完成イメージです。当日は体験<ruby>版<rt>ばん</rt></ruby>を体験していただきます。</p>
     <div class="seq">
-      <figure class="rv"><img src="assets/step-01.webp" alt="" width="560" height="310" loading="lazy" decoding="async"><p class="n">01</p><h3>はじまり</h3><p>何も見えない、暗い床から始まります。</p></figure>
-      <figure class="rv"><img src="assets/step-02.webp" alt="" width="560" height="310" loading="lazy" decoding="async"><p class="n">02</p><h3>歩くと色が現れる</h3><p>踏んだところに、光の足あとが残ります。</p></figure>
-      <figure class="rv"><img src="assets/step-03.webp" alt="" width="560" height="310" loading="lazy" decoding="async"><p class="n">03</p><h3>少しずつつながる</h3><p>足あとが重なると、模様が見え始めます。</p></figure>
-      <figure class="rv"><img src="assets/step-04.webp" alt="" width="560" height="310" loading="lazy" decoding="async"><p class="n">04</p><h3>模様が浮かび上がる</h3><p>歩いた人が増えるほど、模様が広がります。</p></figure>
-      <figure class="rv"><img src="assets/step-05.webp" alt="" width="560" height="310" loading="lazy" decoding="async"><p class="n">05</p><h3>完成へ</h3><p>みんなの一歩で、一枚の絵ができあがります。</p></figure>
+      <figure class="rv"><img src="assets/step-01.webp" alt="" width="560" height="310" loading="lazy" decoding="async"><p class="n">01</p><h3>はじまり</h3><p>何も見えない、暗い<ruby>床<rt>ゆか</rt></ruby>から始まります。</p></figure>
+      <figure class="rv"><img src="assets/step-02.webp" alt="" width="560" height="310" loading="lazy" decoding="async"><p class="n">02</p><h3>歩くと色が<ruby>現<rt>あらわ</rt></ruby>れる</h3><p><ruby>踏<rt>ふ</rt></ruby>んだところに、光の足あとが残ります。</p></figure>
+      <figure class="rv"><img src="assets/step-03.webp" alt="" width="560" height="310" loading="lazy" decoding="async"><p class="n">03</p><h3>少しずつつながる</h3><p>足あとが重なると、<ruby>模様<rt>もよう</rt></ruby>が見え始めます。</p></figure>
+      <figure class="rv"><img src="assets/step-04.webp" alt="" width="560" height="310" loading="lazy" decoding="async"><p class="n">04</p><h3><ruby>模様<rt>もよう</rt></ruby>が<ruby>浮<rt>う</rt></ruby>かび上がる</h3><p>歩いた人が<ruby>増<rt>ふ</rt></ruby>えるほど、<ruby>模様<rt>もよう</rt></ruby>が広がります。</p></figure>
+      <figure class="rv"><img src="assets/step-05.webp" alt="" width="560" height="310" loading="lazy" decoding="async"><p class="n">05</p><h3>完成へ</h3><p>みんなの一歩で、<ruby>一枚<rt>いちまい</rt></ruby>の絵ができあがります。</p></figure>
     </div>
   </div>
 </section>
@@ -864,7 +867,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
   <div class="board hint" id="board">
     <div class="board-bar">
       <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-      <span class="board-title">まちであそぶボード — Color Shift Walk 体験版</span>
+      <span class="board-title">まちであそぶボード — Color Shift Walk 体験<ruby>版<rt>ばん</rt></ruby></span>
       <span class="board-themes" role="group" aria-label="足あとの配色">
         <button type="button" class="theme-pill" data-theme-pick="blue" aria-pressed="true">ブルー</button>
         <button type="button" class="theme-pill" data-theme-pick="green" aria-pressed="false">グリーン</button>
@@ -879,7 +882,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
       <div class="tip"><span class="pip"></span><span class="tip-pc">マウスでこの上をなぞってみてください</span><span class="tip-sp">指でこの上をなぞってみてください</span></div>
     </div>
   </div>
-  <p class="board-foot"><span>当日は、同様の体験の体験版を体験していただける予定です。</span></p>
+  <p class="board-foot"><span>当日は、同様の体験の体験<ruby>版<rt>ばん</rt></ruby>を体験していただける予定です。</span></p>
 </div>
 
 <!-- アイデアシート -->
@@ -887,7 +890,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
   <div class="wrap">
     <div class="sec-head rv" >
       <div class="head-row"><span class="step-chip chip-make"><span class="n">3</span><span>つくる</span></span><h2>アイデアシートをつくる</h2></div>
-      <p>文章より絵が中心。実現できるかどうかは、いったん置いておいて大丈夫です。</p>
+      <p>文章より絵が中心。<ruby>実現<rt>じつげん</rt></ruby>できるかどうかは、いったん置いておいて<ruby>大丈夫<rt>だいじょうぶ</rt></ruby>です。</p>
     </div>
     <figure class="sheet-example rv">
       <img src="assets/sheet-example.webp?v=2" width="1600" height="900" loading="lazy" decoding="async"
@@ -901,28 +904,28 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
 <!-- 開催概要 -->
 <section class="sec" id="info">
   <div class="wrap">
-    <div class="sec-head rv"><h2>実施概要</h2><p>日程は決まりしだい、このページでお知らせします。</p></div>
+    <div class="sec-head rv"><h2><ruby>実施概要<rt>じっしがいよう</rt></ruby></h2><p><ruby>日程<rt>にってい</rt></ruby>は決まりしだい、このページでお知らせします。</p></div>
     <div class="info rv">
       <dl>
-        <dt>名称</dt><dd>まちであそぶ、をつくる：Playable City 入門ワークショップ</dd>
-        <dt>日程</dt><dd>2026年9月下旬の週末<span class="badge">調整中</span></dd>
-        <dt>会場</dt><dd>宇治市産業会館 多目的ホール（京都府宇治市）</dd>
-        <dt>対象</dt><dd>小学4年生〜中学生（保護者の同伴は任意）<br><span style="font-size:13px;color:#2C5E7E">* 学年が対象外のかたもご相談ください。学年や人数に応じて参加いただけるか検討します。</span></dd>
+        <dt><ruby>名称<rt>めいしょう</rt></ruby></dt><dd>まちであそぶ、をつくる：Playable City 入門ワークショップ</dd>
+        <dt><ruby>日程<rt>にってい</rt></ruby></dt><dd>2026年9月<ruby>下旬<rt>げじゅん</rt></ruby>の週末<span class="badge">調整中</span></dd>
+        <dt>会場</dt><dd><ruby>宇治<rt>うじ</rt></ruby>市産業会館 多目的ホール（京都府<ruby>宇治<rt>うじ</rt></ruby>市）</dd>
+        <dt><ruby>対象<rt>たいしょう</rt></ruby></dt><dd>小学4年生〜中学生（<ruby>保護者<rt>ほごしゃ</rt></ruby>の<ruby>同伴<rt>どうはん</rt></ruby>は<ruby>任意<rt>にんい</rt></ruby>）<br><span style="font-size:13px;color:#2C5E7E">* 学年が<ruby>対象<rt>たいしょう</rt></ruby>外のかたもご相談ください。学年や人数に<ruby>応<rt>おう</rt></ruby>じて参加いただけるか<ruby>検討<rt>けんとう</rt></ruby>します。</span></dd>
         <dt>定員</dt><dd>約20名</dd>
         <dt>所要時間</dt><dd>120分</dd>
-        <dt>参加費</dt><dd>無料</dd>
+        <dt>参加<ruby>費<rt>ひ</rt></ruby></dt><dd>無料</dd>
         <dt>持ち物</dt><dd>筆記用具（アイデアシートはこちらで用意します）</dd>
-        <dt>申込方法</dt><dd>下記の申込フォームからお申し込みください。<br><a href="https://docs.google.com/forms/d/e/1FAIpQLSe6rLWtzkLh0r8n9YfXnDI3aGaVXqjveMzL0JJP8LgcYHRtpQ/viewform?usp=header" target="_blank" rel="noopener noreferrer">参加申し込みフォーム</a></dd>
-        <dt>お問い合わせ</dt><dd>株式会社taliki 中西／<a href="mailto:incubation@taliki.co.jp">incubation@taliki.co.jp</a></dd>
+        <dt><ruby>申込<rt>もうしこみ</rt></ruby>方法</dt><dd>下記の<ruby>申込<rt>もうしこみ</rt></ruby>フォームからお申し<ruby>込<rt>こ</rt></ruby>みください。<br><a href="https://docs.google.com/forms/d/e/1FAIpQLSe6rLWtzkLh0r8n9YfXnDI3aGaVXqjveMzL0JJP8LgcYHRtpQ/viewform?usp=header" target="_blank" rel="noopener noreferrer">参加申し<ruby>込<rt>こ</rt></ruby>みフォーム</a></dd>
+        <dt>お問い合わせ</dt><dd><ruby>株式会社<rt>かぶしきがいしゃ</rt></ruby>taliki 中西／<a href="mailto:incubation@taliki.co.jp">incubation@taliki.co.jp</a></dd>
       </dl>
     </div>
 
     <div class="by rv" style="margin-top:52px">
       <span class="av"><svg width="26" height="26" viewBox="0 0 20 20" aria-hidden="true"><ellipse cx="9" cy="7.4" rx="5" ry="6" fill="#1B1A16"/><ellipse cx="10.4" cy="16" rx="3" ry="2.6" fill="#1B1A16"/></svg></span>
       <div>
-        <p class="label" style="margin:0">企画・開発</p>
-        <h3>野寺悠太（灘高校）</h3>
-        <p>宇治市未来キャンパス受講生。いつもの道をもっと面白くしたいと思い、歩くと光の足あとが現れる装置「Color Shift Walk」をつくっています。このワークショップでは、企画・当日の運営・装置の開発を担当します。</p>
+        <p class="label" style="margin:0"><ruby>企画<rt>きかく</rt></ruby>・開発</p>
+        <h3>野寺<ruby>悠太<rt>ゆうた</rt></ruby>（<ruby>灘<rt>なだ</rt></ruby>高校）</h3>
+        <p><ruby>宇治<rt>うじ</rt></ruby>市未来キャンパス<ruby>受講生<rt>じゅこうせい</rt></ruby>。いつもの道をもっと面白くしたいと思い、歩くと光の足あとが<ruby>現<rt>あらわ</rt></ruby>れる<ruby>装置<rt>そうち</rt></ruby>「Color Shift Walk」をつくっています。このワークショップでは、<ruby>企画<rt>きかく</rt></ruby>・当日の<ruby>運営<rt>うんえい</rt></ruby>・<ruby>装置<rt>そうち</rt></ruby>の開発を<ruby>担当<rt>たんとう</rt></ruby>します。</p>
       </div>
     </div>
   </div>
@@ -930,14 +933,14 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
 
 <section class="sec-linked" id="faq">
   <div class="wrap">
-    <div class="sec-head rv"><h2>よくある質問</h2><p>ほかに気になることがあれば、下の連絡先までお気軽にどうぞ。</p></div>
+    <div class="sec-head rv"><h2>よくある<ruby>質問<rt>しつもん</rt></ruby></h2><p>ほかに気になることがあれば、下の<ruby>連絡<rt>れんらく</rt></ruby>先までお気軽にどうぞ。</p></div>
     <div class="faq rv">
-      <details><summary>持ち物は必要ですか？</summary><p class="a">筆記用具をお持ちください。アイデアシート（A3の紙）はこちらで用意します。動きやすい靴で来ていただけると、体験パートが楽しめます。</p></details>
-      <details><summary>保護者の同伴は必要ですか？</summary><p class="a">必須ではありません。お子さんだけでも参加できます。保護者のかたがご一緒の場合は、お子さんと一緒にアイデアを考えていただいても、後ろで見ていていただいても構いません。一緒に手を動かす場合、親子で同じグループになることも、お子さん同士のグループになることもあります。グループ分けは申込フォームでのご希望と当日の参加者の構成を見て、決定します。</p></details>
-      <details><summary>対象の学年ではないのですが、参加できますか？</summary><p class="a">主な対象は小学4年生〜中学生ですが、それ以外のかたもご相談ください。学年や人数に応じて、参加いただけるか検討します。</p></details>
-      <details><summary>絵が苦手でも大丈夫ですか？</summary><p class="a">大丈夫です。大切なのは、きれいに描くことではなく「こんな遊びがあったら楽しそう！」というアイデアを形にすること。簡単な図や言葉だけでもOKです。</p></details>
-      <details><summary>雨の日はどうなりますか？</summary><p class="a">屋内で実施するため、雨天でも予定どおり開催します。中止する場合は、申込時の連絡先へご連絡します。</p></details>
-      <details><summary>写真撮影はありますか？</summary><p class="a">記録と広報のために撮影する予定です。写りたくない場合は当日スタッフにお伝えください。その旨に配慮して撮影します。</p></details>
+      <details><summary>持ち物は必要ですか？</summary><p class="a">筆記用具をお持ちください。アイデアシート（A3の紙）はこちらで用意します。動きやすい<ruby>靴<rt>くつ</rt></ruby>で来ていただけると、体験パートが楽しめます。</p></details>
+      <details><summary><ruby>保護者<rt>ほごしゃ</rt></ruby>の<ruby>同伴<rt>どうはん</rt></ruby>は必要ですか？</summary><p class="a"><ruby>必須<rt>ひっす</rt></ruby>ではありません。お子さんだけでも参加できます。<ruby>保護者<rt>ほごしゃ</rt></ruby>のかたがご<ruby>一緒<rt>いっしょ</rt></ruby>の場合は、お子さんと<ruby>一緒<rt>いっしょ</rt></ruby>にアイデアを考えていただいても、後ろで見ていていただいても<ruby>構<rt>かま</rt></ruby>いません。<ruby>一緒<rt>いっしょ</rt></ruby>に手を動かす場合、親子で同じグループになることも、お子さん<ruby>同士<rt>どうし</rt></ruby>のグループになることもあります。グループ分けは<ruby>申込<rt>もうしこみ</rt></ruby>フォームでのご希望と当日の参加者の<ruby>構成<rt>こうせい</rt></ruby>を見て、決定します。</p></details>
+      <details><summary><ruby>対象<rt>たいしょう</rt></ruby>の学年ではないのですが、参加できますか？</summary><p class="a">主な<ruby>対象<rt>たいしょう</rt></ruby>は小学4年生〜中学生ですが、それ以外のかたもご相談ください。学年や人数に<ruby>応<rt>おう</rt></ruby>じて、参加いただけるか<ruby>検討<rt>けんとう</rt></ruby>します。</p></details>
+      <details><summary>絵が苦手でも<ruby>大丈夫<rt>だいじょうぶ</rt></ruby>ですか？</summary><p class="a"><ruby>大丈夫<rt>だいじょうぶ</rt></ruby>です。大切なのは、きれいに<ruby>描<rt>か</rt></ruby>くことではなく「こんな遊びがあったら楽しそう！」というアイデアを形にすること。<ruby>簡単<rt>かんたん</rt></ruby>な図や言葉だけでもOKです。</p></details>
+      <details><summary>雨の日はどうなりますか？</summary><p class="a">屋内で<ruby>実施<rt>じっし</rt></ruby>するため、雨天でも予定どおり<ruby>開催<rt>かいさい</rt></ruby>します。中止する場合は、<ruby>申込<rt>もうしこみ</rt></ruby>時の<ruby>連絡<rt>れんらく</rt></ruby>先へご<ruby>連絡<rt>れんらく</rt></ruby>します。</p></details>
+      <details><summary>写真<ruby>撮影<rt>さつえい</rt></ruby>はありますか？</summary><p class="a">記録と<ruby>広報<rt>こうほう</rt></ruby>のために<ruby>撮影<rt>さつえい</rt></ruby>する予定です。写りたくない場合は当日スタッフにお伝えください。その<ruby>旨<rt>むね</rt></ruby>に<ruby>配慮<rt>はいりょ</rt></ruby>して<ruby>撮影<rt>さつえい</rt></ruby>します。</p></details>
     </div>
   </div>
 </section>
@@ -955,9 +958,9 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
   <div class="cta-inner">
     <div class="cta-copy">
       <h2><svg class="spark spark-l" viewBox="0 0 40 54" aria-hidden="true"><path d="M10 18 L34 4 M6 29 L36 27 M12 40 L34 50"/></svg><span class="cta-ttl">まちで、<br class="brsp">あそんでみる</span><svg class="spark spark-r" viewBox="0 0 40 54" aria-hidden="true"><path d="M10 18 L34 4 M6 29 L36 27 M12 40 L34 50"/></svg></h2>
-      <p>宇治のまちを、いつもとは少し違う目で見てみませんか？<br>参加をご希望の方は、下のフォームからお申し込みください。</p>
+      <p><ruby>宇治<rt>うじ</rt></ruby>のまちを、いつもとは少し<ruby>違<rt>ちが</rt></ruby>う目で見てみませんか？<br>参加をご希望の方は、下のフォームからお申し<ruby>込<rt>こ</rt></ruby>みください。</p>
       <div class="cta-actions">
-        <a class="pill pill-key" href="https://docs.google.com/forms/d/e/1FAIpQLSe6rLWtzkLh0r8n9YfXnDI3aGaVXqjveMzL0JJP8LgcYHRtpQ/viewform?usp=header" target="_blank" rel="noopener noreferrer">参加申し込みフォーム <span class="arw-i">→</span></a>
+        <a class="pill pill-key" href="https://docs.google.com/forms/d/e/1FAIpQLSe6rLWtzkLh0r8n9YfXnDI3aGaVXqjveMzL0JJP8LgcYHRtpQ/viewform?usp=header" target="_blank" rel="noopener noreferrer">参加申し<ruby>込<rt>こ</rt></ruby>みフォーム <span class="arw-i">→</span></a>
         <a class="pill pill-line" href="#top">もう一度ながめる</a>
       </div>
     </div>
@@ -971,20 +974,20 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
   <div class="f-grid">
     <div>
       <h4>まちであそぶ、をつくる</h4>
-      <p style="margin:0">Playable City 入門ワークショップ<br>2026年9月下旬・宇治市産業会館 多目的ホールで開催予定</p>
+      <p style="margin:0">Playable City 入門ワークショップ<br>2026年9月<ruby>下旬<rt>げじゅん</rt></ruby>・<ruby>宇治<rt>うじ</rt></ruby>市産業会館 多目的ホールで<ruby>開催<rt>かいさい</rt></ruby>予定</p>
     </div>
     <div>
-      <h4>主催・運営</h4>
+      <h4><ruby>主催<rt>しゅさい</rt></ruby>・<ruby>運営<rt>うんえい</rt></ruby></h4>
       <ul>
-        <li>主催：宇治NEXT（宇治市・宇治商工会議所）</li>
-        <li>運営協力：株式会社taliki</li>
-        <li>企画・開発：野寺悠太（灘高校）</li>
+        <li><ruby>主催<rt>しゅさい</rt></ruby>：<ruby>宇治<rt>うじ</rt></ruby>NEXT（<ruby>宇治<rt>うじ</rt></ruby>市・<ruby>宇治<rt>うじ</rt></ruby>商工会議所）</li>
+        <li><ruby>運営<rt>うんえい</rt></ruby>協力：<ruby>株式会社<rt>かぶしきがいしゃ</rt></ruby>taliki</li>
+        <li><ruby>企画<rt>きかく</rt></ruby>・開発：野寺<ruby>悠太<rt>ゆうた</rt></ruby>（<ruby>灘<rt>なだ</rt></ruby>高校）</li>
       </ul>
     </div>
     <div>
       <h4>お問い合わせ</h4>
       <ul>
-        <li>株式会社taliki　中西</li>
+        <li><ruby>株式会社<rt>かぶしきがいしゃ</rt></ruby>taliki　中西</li>
         <li><a href="mailto:incubation@taliki.co.jp">incubation@taliki.co.jp</a></li>
       </ul>
     </div>
