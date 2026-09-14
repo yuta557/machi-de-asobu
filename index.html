@@ -109,11 +109,11 @@ html{scroll-padding-top:var(--nav-h)}
 .pill-line:hover{background:rgba(27,26,22,.06)}
 .pill[aria-disabled="true"]{opacity:.6;cursor:default}
 .pill[aria-disabled="true"]:hover{transform:none}
-/* PC：参加するボタンと装飾を、現在の位置と画面の右端のちょうど中間へ。
-   ナビの余白（右パディングを含む）を nav-links と末尾の空き要素で半分ずつ分け合う */
+/* PC：参加するボタンと装飾を、元の位置から画面の右端までの 1/4 だけ右へ。
+   ナビの余白（右パディングを含む）を nav-links と末尾の空き要素で 1:3 に分け合う */
 @media(min-width:901px){
   .nav-links{flex-grow:1}
-  .nav-in::after{content:"";flex-grow:1;margin-right:-3.4vw}
+  .nav-in::after{content:"";flex-grow:3;margin-right:-3.4vw}
 }
 .nav .pill-key{margin-left:2.6vw;height:3.32vw;min-height:38px;max-height:58px;min-width:12vw;padding:0 2vw;
   font-size:clamp(14px,1.42vw,25px);color:var(--navy-ink)}
