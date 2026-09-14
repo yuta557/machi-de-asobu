@@ -150,14 +150,16 @@ html{scroll-padding-top:var(--nav-h)}
   --hero-h:clamp(38vw,calc(100svh - clamp(58px,5.2vw,92px) - 1px),56.22vw);
   height:var(--hero-h);container-type:inline-size}
 /* イラストの上が切れた量＋余白。タイトルと付箋はこれより上に来ないようにする */
-.hero-art{--hero-safe-top:calc(56.22cqw - var(--hero-h) + 2vw)}
+.hero-art{--hero-safe-top:calc(56.22cqw - var(--hero-h) + 1.2vw)}
 .hero-photo>img{position:absolute;left:0;right:0;bottom:0;top:auto;width:100%;height:auto;aspect-ratio:1672/940;object-fit:cover;object-position:center bottom}
 .veil,.wave,.spark.hs{display:none}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .hero-art{position:absolute;left:0;right:0;bottom:0;top:auto;aspect-ratio:1672/940;z-index:2;color:var(--ink-navy)}
 .hero-art>*{position:absolute;margin:0}
-/* 上が大きく切れる横長の画面では、下の情報帯（上端 43.46cqw）に届かないよう幅も縮める */
-.title-img{left:5.26cqw;top:max(4.6cqw,var(--hero-safe-top));width:min(46.7cqw,calc(1.7077 * (41.96cqw - max(4.6cqw,var(--hero-safe-top)))));height:auto;display:block}
+/* タイトルの下端は、イラストに対して本来の位置（4.6 + 27.34 = 31.94cqw）より下げない。
+   横長の画面でイラストの上が切れて上端を押し下げたときは、そのぶん幅を縮めて
+   「Playable City 入門ワークショップ」が地図の絵や付箋にかぶらないようにする（縦横比 1.7077） */
+.title-img{left:5.26cqw;top:max(4.6cqw,var(--hero-safe-top));width:min(46.7cqw,calc(1.7077 * (31.94cqw - max(4.6cqw,var(--hero-safe-top)))));height:auto;display:block}
 .facts-bg{left:0;top:40.2cqw;width:60cqw;height:18cqw;background:rgba(255,255,255,.93);border-radius:3cqw;filter:blur(16px);z-index:0}
 .facts-img{left:7.7cqw;top:43.46cqw;width:43.2cqw;height:auto;display:block;z-index:1}
 .hnote,.hnote p{font-family:"Yomogi","Zen Maru Gothic",cursive,sans-serif}
