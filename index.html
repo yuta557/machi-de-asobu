@@ -151,7 +151,9 @@ html{scroll-padding-top:var(--nav-h)}
 
 /* ---------- ヒーロー（イラスト背景＋文字はHTML。計測値：1672x940 を 100cqw 基準） ---------- */
 :root{--ink-navy:#12629E;--ink-navy-d:#0E5590}
-.hero{padding:0;position:relative}
+/* ヒーローは背景の一部として見せたいので、文字の選択も画像のドラッグ・長押し保存もさせない */
+.hero{padding:0;position:relative;-webkit-user-select:none;user-select:none}
+.hero img{-webkit-user-drag:none;user-drag:none;-webkit-touch-callout:none;pointer-events:none}
 .hero-photo{position:relative;width:100%;overflow:hidden;background:#F6FBFB;
   /* ヒーローは「画面の高さ − ヘッダーの高さ」に収め、スクロールなしで
      下の情報帯まで見えるようにする（上限はイラスト本来の高さ 56.22vw）。
