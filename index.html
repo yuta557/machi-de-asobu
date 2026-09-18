@@ -162,7 +162,7 @@ html{scroll-padding-top:var(--nav-h)}
   height:var(--hero-h);container-type:inline-size}
 /* イラストの上が切れた量＋余白。タイトルと付箋はこれより上に来ないようにする */
 .hero-art{--hero-safe-top:calc(56.22cqw - var(--hero-h) + 1.2vw)}
-.hero-photo>img{position:absolute;left:0;right:0;bottom:0;top:auto;width:100%;height:auto;aspect-ratio:1672/940;object-fit:cover;object-position:center bottom}
+.hero-bg{position:absolute;left:0;right:0;bottom:0;top:auto;width:100%;height:auto;aspect-ratio:1672/940;object-fit:cover;object-position:center bottom}
 .veil,.wave,.spark.hs{display:none}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .hero-art{position:absolute;left:0;right:0;bottom:0;top:auto;aspect-ratio:1672/940;z-index:2;color:var(--ink-navy)}
@@ -202,15 +202,22 @@ html{scroll-padding-top:var(--nav-h)}
 .kf .v-fit{font-size:1.32cqw;white-space:nowrap}
 .kf-note{font-size:.78cqw;line-height:1.7;color:rgba(18,98,158,.85);margin:1.1cqw 0 0 1.4cqw;max-width:60cqw}
 
-@media(max-width:900px){
-  /* モバイル：イラストを寄せて、タイトルと情報帯は画面幅に合わせて配置 */
-  .hero-photo{aspect-ratio:auto;height:max(128cqw,470px);container-type:inline-size}
-  .hero-art{position:absolute;inset:0;aspect-ratio:auto;bottom:0;top:0}
-  .hero-photo>img{width:210%;height:100%;left:-16%;top:0;bottom:auto;aspect-ratio:auto;object-fit:cover;object-position:14% 40%}
-  .title-img{left:4cqw;top:5cqw;width:81.9cqw}
-  .facts-img{left:11.6cqw;top:auto;bottom:4cqw;width:76.8cqw}
-  .facts-bg{left:0;top:auto;bottom:2cqw;width:100cqw;height:32cqw;border-radius:4cqw;filter:blur(12px)}
-  .hnote-demo-img,.hnote-map,.below{display:none}
+@media(max-width:560px){
+  /* モバイル：縦長のイラスト（940x1672）を下ぞろえで敷き、
+     その上にタイトルと情報帯を重ねる。高さは「画面の高さ − ヘッダー」に収め、
+     情報帯までスクロールなしで見えるようにする（上限はイラスト本来の高さ 177.87vw） */
+  .hero-photo{aspect-ratio:auto;
+    --hero-h:min(177.87vw,calc(100svh - var(--nav-h)));
+    height:var(--hero-h);container-type:inline-size}
+  .hero-art{position:absolute;left:0;right:0;bottom:0;top:auto;inset-inline:0;aspect-ratio:940/1672;
+    --hero-safe-top:calc(177.87cqw - var(--hero-h) + 3cqw)}
+  .hero-bg{width:100%;height:100%;left:0;right:0;bottom:0;top:auto;aspect-ratio:auto;object-fit:cover;object-position:center bottom}
+  /* 画面が低くてイラストの上が大きく切れたときは、タイトルを下げたぶんだけ幅を縮め、
+     地図の絵（上から68cqwあたりから始まる）にかぶらないようにする（縦横比 1.7077） */
+  .title-img{left:8cqw;top:max(9.5cqw,var(--hero-safe-top));
+    width:min(84cqw,calc(1.7077 * (66cqw - max(9.5cqw,var(--hero-safe-top)))))}
+  .facts-img{left:3.6cqw;top:auto;bottom:12.9cqw;width:92.8cqw}
+  .facts-bg,.hnote-demo-img,.hnote-map,.below{display:none}
 }
 
 
@@ -552,8 +559,8 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
 .ready .fd{animation:fadeIn .8s forwards}
 .ready .fd2{animation-delay:.3s}
 .ready .fd3{animation-delay:.5s}
-.hero-photo>img{opacity:0}
-.ready .hero-photo>img{animation:kenburns 1.6s cubic-bezier(.2,.7,.3,1) forwards}
+.hero-bg{opacity:0}
+.ready .hero-bg{animation:kenburns 1.6s cubic-bezier(.2,.7,.3,1) forwards}
 @keyframes kenburns{to{opacity:1}}
 .ready .hero .rv1,.ready .hero .rv2,.ready .hero .rv3,.ready .board-shell{animation:up .8s cubic-bezier(.2,.7,.3,1) forwards}
 .ready .hero .rv1{animation-delay:.06s}
@@ -594,7 +601,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
   .slip.rv:nth-child(3){transform:rotate(-.6deg) translateY(-4px)}
   .slip.rv:nth-child(4){transform:rotate(1.3deg) translateY(5px)}
   .note,  .hero .rv1,.hero .rv2,.hero .rv3,.board-shell{opacity:1;transform:none;animation:none!important}
-  .hero-photo>img{opacity:1;transform:none;animation:none!important}
+  .hero-bg{opacity:1;transform:none;animation:none!important}
   .mk1 .mk,  .board.hint .tip,.board.hint .ring,.board.hint .tip .pip::after{animation:none!important}
 }
 :focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:4px}
@@ -654,7 +661,10 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
 
 <header class="hero" id="top">
   <div class="hero-photo">
-    <img width="1672" height="940" fetchpriority="high" src="assets/hero-illustration.webp" alt="宇治のまちの地図を広げて、みんなで遊び方を描き込んでいるようすのイラスト。まちであそぶ、をつくる — Playable City 入門ワークショップ（宇治NEXT）" decoding="async">
+    <picture>
+      <source media="(max-width:560px)" srcset="assets/hero-illustration-sp.webp" width="940" height="1672">
+      <img class="hero-bg" width="1672" height="940" fetchpriority="high" src="assets/hero-illustration.webp" alt="宇治のまちの地図を広げて、みんなで遊び方を描き込んでいるようすのイラスト。まちであそぶ、をつくる — Playable City 入門ワークショップ（宇治NEXT）" decoding="async">
+    </picture>
     <div class="hero-art">
       <img class="title-img" width="625" height="366" src="assets/hero-title.webp?v=3" alt="まちで遊ぶことは まちを好きになること／まちであそぶ、をつくる — Playable City 入門ワークショップ" decoding="async">
       <span class="facts-bg" aria-hidden="true"></span>
