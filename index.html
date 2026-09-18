@@ -172,6 +172,7 @@ html{scroll-padding-top:var(--nav-h)}
    横長の画面でイラストの上が切れて上端を押し下げたときは、そのぶん幅を縮めて
    「Playable City 入門ワークショップ」が地図の絵や付箋にかぶらないようにする（縦横比 1.7077） */
 .title-img{position:absolute;left:5.26cqw;top:max(4.6cqw,var(--hero-safe-top));width:min(46.7cqw,calc(1.7077 * (31.94cqw - max(4.6cqw,var(--hero-safe-top)))));height:auto;display:block}
+.facts-tap{display:none}
 .facts-bg{left:0;top:40.2cqw;width:60cqw;height:18cqw;background:rgba(255,255,255,.93);border-radius:3cqw;filter:blur(16px);z-index:0}
 .facts-img{left:7.7cqw;top:43.55cqw;width:43.2cqw;height:auto;display:block;z-index:1}
 .hnote,.hnote p{font-family:"Yomogi","Zen Maru Gothic",cursive,sans-serif}
@@ -216,6 +217,9 @@ html{scroll-padding-top:var(--nav-h)}
   /* スマホは縦に組んだタイトル画像を使い、お手本と同じ位置・大きさに置く */
   .title-img{left:7.66%;top:8.55%;width:77.7%;height:auto}
   .facts-img{left:3.6%;top:auto;bottom:7.25%;width:92.8%}
+  /* 情報帯をタップしたら実施概要まで移動する（スマホのみ） */
+  .facts-tap{display:block;left:2%;right:2%;top:auto;bottom:4.5%;width:auto;height:20%;z-index:3;
+    -webkit-tap-highlight-color:rgba(30,96,143,.08)}
   .facts-bg,.hnote-demo-img,.hnote-map,.below{display:none}
 }
 
@@ -671,6 +675,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
       </picture>
       <span class="facts-bg" aria-hidden="true"></span>
       <img class="facts-img" width="1200" height="328" src="assets/hero-facts.webp?v=5" alt="DATE 2026年10月3日（土）10時〜12時／PLACE 宇治市産業会館 多目的ホール／WHO 小学4年生〜中学生（保護者の同伴は任意）／FEE 無料／TIME 120分" decoding="async">
+      <a class="facts-tap" href="#info"><span class="sr-only">実施概要へ移動</span></a>
       <img class="hnote-demo-img" src="assets/hero-note-demo.webp" width="560" height="493" alt="" aria-hidden="true" decoding="async">
       <p class="hnote hnote-map" aria-hidden="true">こんな<br>まちに<br>したい！</p>
     </div>
