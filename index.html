@@ -518,8 +518,10 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
 .cta .pill-key{background:#FFE658}
 .cta .pill-line{background:transparent;border-color:rgba(255,255,255,.55);color:#fff}
 .cta .pill-line:hover{background:rgba(255,255,255,.12)}
-.cta-art{justify-self:end;width:100%;max-width:470px}
-.cta-art img,.cta-art svg{width:100%;height:auto;display:block}
+/* 宇治の風景も背景の一部なので、選択・ドラッグ・長押し保存をさせない */
+.cta-art{justify-self:end;width:100%;max-width:470px;-webkit-user-select:none;user-select:none}
+.cta-art img,.cta-art svg{width:100%;height:auto;display:block;
+  -webkit-user-drag:none;user-drag:none;-webkit-touch-callout:none;pointer-events:none}
 .brsp{display:none}
 @media(max-width:860px){
   .cta{margin:52px 16px 0}
