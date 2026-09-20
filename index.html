@@ -72,7 +72,9 @@ body::after{
 }
 a{color:inherit}
 /* 小学4年生までに習わない漢字のふりがな */
-ruby{ruby-position:over}
+/* iOS Safari はふりがなを「行の高さ」の上に置くため、本文の行間が広いほど
+   漢字から離れてしまう。ruby 自身の行間を1にして、その余白をなくす */
+ruby{ruby-position:over;line-height:1}
 rt{font-size:.5em;letter-spacing:0;line-height:1;font-weight:500;
   /* ふりがなを漢字寄りに下げる。文字が小さいスマホではもう少し詰める */
   position:relative;top:.12em}
