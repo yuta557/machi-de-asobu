@@ -619,6 +619,20 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
   .hero-bg{opacity:1;transform:none;animation:none!important}
   .mk1 .mk,  .board.hint .tip,.board.hint .ring,.board.hint .tip .pip::after{animation:none!important}
 }
+/* スマホは本文の行間を3px広げる（em は各要素の文字サイズ基準なので、
+   もとの行間の比率を保ったまま3pxだけ足せる） */
+@media(max-width:700px){
+  .sec p,.sec li,.sec dt,.sec dd,.credit,.kv-cap,.after-note,.faq-note,.board-foot,
+  footer p,footer li{line-height:calc(1.9em + 3px)}
+  .lead,.lead p{line-height:calc(1.95em + 3px)}
+  .ftext p{line-height:calc(1.6em + 3px)}
+  .seq p{line-height:calc(1.7em + 3px)}
+  .slip .sub{line-height:calc(1.75em + 3px)}
+  .by p{line-height:calc(1.8em + 3px)}
+  .faq .a{line-height:calc(1.85em + 3px)}
+  .faq summary .q{line-height:calc(2.05em + 3px)}
+  .cta p{line-height:calc(2em + 3px)}
+}
 :focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:4px}
 </style>
 </head>
