@@ -78,11 +78,11 @@ a{color:inherit}
    <ruby> はブラウザごとに位置の扱いが違い、Safari では行間ぶん漢字から離れてしまう。
    ふりがなの箱には位置指定も効かないため、span で組んで位置を直接指定している。
    読み（.rt）は読み上げの対象から外してある。
-   距離は実測で決定：パソコン +.09em / スマホ -.09em（.rt の文字サイズ基準） */
+   距離は実測で決定：パソコン +.09em（隙間7px）/ スマホ -.04em（隙間5px） */
 .rb{position:relative;display:inline-block;line-height:1;vertical-align:baseline}
 .rb>.rt{position:absolute;left:-1em;right:-1em;bottom:calc(100% + .09em);
   font-size:.5em;font-weight:500;line-height:1;letter-spacing:0;text-align:center;white-space:nowrap}
-@media(max-width:700px){.rb>.rt{bottom:calc(100% - .09em)}}
+@media(max-width:700px){.rb>.rt{bottom:calc(100% - .04em)}}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
 .label{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.03em;color:var(--ink-soft)}
 .latin{font-family:"Outfit",system-ui,sans-serif;font-weight:600;letter-spacing:.02em}
