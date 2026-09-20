@@ -79,14 +79,15 @@ rt{font-size:.5em;letter-spacing:0;line-height:1;font-weight:500;
   /* ふりがなの位置。パソコンは既定のまま、文字が小さいスマホだけ漢字寄りに詰める */
   position:relative;top:0}
 @media(max-width:700px){rt{top:.24em}}
-/* Safari はふりがなを「行の高さ」の上に置くため、行間ぶん漢字から離れてしまう。
-   Safari のときだけ、ふりがなを絶対配置にして漢字の真上に直接置く。
-   数値は Chrome での見え方と同じになるよう実測して決めた（PC .46em / スマホ .70em） */
+/* Safari はふりがなを「行の高さ」の上端に置くため、行間ぶん漢字から離れてしまう。
+   しかも ruby-text の箱には位置指定が効かないので、Safari のときだけ
+   ruby を inline-block、ふりがなを通常のブロックにしてから絶対配置で置き直す。
+   距離は Chrome での見え方に合わせて実測で決めた（PC +.09em / スマホ -.26em） */
 @supports (-webkit-hyphens:none){
-  ruby{position:relative}
-  rt{position:absolute;top:auto;bottom:calc(100% - .46em);left:-1em;right:-1em;
-    text-align:center;white-space:nowrap}
-  @media(max-width:700px){ rt{bottom:calc(100% - .7em)} }
+  ruby{display:inline-block;position:relative;line-height:1;vertical-align:baseline}
+  rt{display:block;position:absolute;top:auto;bottom:calc(100% + .09em);
+    left:-1em;right:-1em;text-align:center;white-space:nowrap}
+  @media(max-width:700px){ rt{bottom:calc(100% - .26em)} }
 }
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
 .label{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.03em;color:var(--ink-soft)}
