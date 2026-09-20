@@ -500,6 +500,9 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
 .faq details{background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);padding:0 20px;margin-bottom:10px}
 .faq summary{list-style:none;cursor:pointer;padding:16px 0;font-family:"Zen Maru Gothic",sans-serif;font-size:16.5px;
   display:flex;align-items:flex-start;gap:12px}
+/* 質問文はひとつの塊として扱う。囲まないと <ruby> ごとに flex の項目が分かれ、
+   ふりがな付きの語の前後に隙間ができて行が崩れる */
+.faq summary .q{flex:1 1 auto;min-width:0;line-height:2.05}  /* ふりがなの高さぶんを行間に含め、行の高さをそろえる */
 .faq summary::-webkit-details-marker{display:none}
 .faq summary::before{content:"Q";font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink-soft);margin-top:3px}
 .faq summary::after{content:"+";margin-left:auto;font-family:"IBM Plex Mono",monospace;color:var(--ink-soft);transition:transform .2s}
@@ -963,12 +966,12 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
   <div class="wrap">
     <div class="sec-head rv"><h2>よくある質問</h2></div>
     <div class="faq rv">
-      <details><summary>持ち物は必要ですか？</summary><p class="a">筆記用具をお持ちください。アイデアシート（A3の紙）はこちらで用意します。動きやすい靴で来ていただけると、体験パートが楽しめます。</p></details>
-      <details><summary><ruby>保護者<rt>ほごしゃ</rt></ruby>の<ruby>同伴<rt>どうはん</rt></ruby>は必要ですか？</summary><p class="a">必須ではありません。お子さんだけでも参加できます。保護者のかたがご一緒の場合は、お子さんと一緒にアイデアを考えていただいても、後ろで見ていていただいても構いません。</p></details>
-      <details><summary><ruby>対象<rt>たいしょう</rt></ruby>の学年ではないのですが、参加できますか？</summary><p class="a">主な対象は小学4年生〜中学生ですが、それ以外のかたもご相談ください。学年や人数に応じて、参加いただけるか検討します。</p></details>
-      <details><summary>絵が苦手でも<ruby>大丈夫<rt>だいじょうぶ</rt></ruby>ですか？</summary><p class="a">大丈夫です。大切なのは、きれいに描くことではなく「こんな遊びがあったら楽しそう！」というアイデアを形にすること。簡単な図や言葉だけでもOKです。</p></details>
-      <details><summary>雨の日はどうなりますか？</summary><p class="a">屋内で実施するため、雨天でも予定どおり開催します。中止する場合は、申込時の連絡先へご連絡します。</p></details>
-      <details><summary>写真<ruby>撮影<rt>さつえい</rt></ruby>はありますか？</summary><p class="a">記録と広報のために撮影する予定です。写りたくない場合は当日スタッフにお伝えください。その旨に配慮して撮影します。</p></details>
+      <details><summary><span class="q">持ち物は必要ですか？</span></summary><p class="a">筆記用具をお持ちください。アイデアシート（A3の紙）はこちらで用意します。動きやすい靴で来ていただけると、体験パートが楽しめます。</p></details>
+      <details><summary><span class="q"><ruby>保護者<rt>ほごしゃ</rt></ruby>の<ruby>同伴<rt>どうはん</rt></ruby>は必要ですか？</span></summary><p class="a">必須ではありません。お子さんだけでも参加できます。保護者のかたがご一緒の場合は、お子さんと一緒にアイデアを考えていただいても、後ろで見ていていただいても構いません。</p></details>
+      <details><summary><span class="q"><ruby>対象<rt>たいしょう</rt></ruby>の学年ではないのですが、参加できますか？</span></summary><p class="a">主な対象は小学4年生〜中学生ですが、それ以外のかたもご相談ください。学年や人数に応じて、参加いただけるか検討します。</p></details>
+      <details><summary><span class="q">絵が苦手でも<ruby>大丈夫<rt>だいじょうぶ</rt></ruby>ですか？</span></summary><p class="a">大丈夫です。大切なのは、きれいに描くことではなく「こんな遊びがあったら楽しそう！」というアイデアを形にすること。簡単な図や言葉だけでもOKです。</p></details>
+      <details><summary><span class="q">雨の日はどうなりますか？</span></summary><p class="a">屋内で実施するため、雨天でも予定どおり開催します。中止する場合は、申込時の連絡先へご連絡します。</p></details>
+      <details><summary><span class="q">写真<ruby>撮影<rt>さつえい</rt></ruby>はありますか？</span></summary><p class="a">記録と広報のために撮影する予定です。写りたくない場合は当日スタッフにお伝えください。その旨に配慮して撮影します。</p></details>
     </div>
     <p class="faq-note rv">ほかに気になることがあれば、下の<ruby>連絡<rt>れんらく</rt></ruby>先までお気軽にどうぞ。</p>
   </div>
