@@ -80,7 +80,7 @@ a{color:inherit}
    読み（.rt）は読み上げの対象から外してある。
    距離は実測で決定：パソコン +.09em（隙間7px）/ スマホ -.04em（隙間5px） */
 .rb{position:relative;display:inline-block;line-height:1;vertical-align:baseline}
-.rb>.rt{position:absolute;left:-1em;right:-1em;bottom:calc(100% + .09em);
+.rb>.rt{position:absolute;left:50%;transform:translateX(-50%);width:-webkit-max-content;width:max-content;bottom:calc(100% + .09em);
   font-size:.5em;font-weight:500;line-height:1;letter-spacing:0;text-align:center;white-space:nowrap}
 @media(max-width:700px){.rb>.rt{bottom:calc(100% - .04em)}}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
