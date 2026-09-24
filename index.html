@@ -371,6 +371,13 @@ a.mark{text-decoration:none}
 .theme-pill[data-theme-pick="blue"][aria-pressed="true"]{background:#1E9BF0}
 .theme-pill[data-theme-pick="green"][aria-pressed="true"]{background:#2E9E6A}
 @media(hover:none) and (pointer:coarse){.theme-pill{padding:10px 14px}}
+/* まっさらにするボタン */
+.board-reset{flex:none;display:grid;place-items:center;width:32px;height:32px;padding:0;border-radius:999px;
+  border:1px solid var(--line);background:#fff;color:var(--ink-soft);cursor:pointer;
+  transition:color .15s,border-color .15s}
+.board-reset:hover{color:var(--ink);border-color:var(--ink-soft)}
+.board-reset:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+@media(hover:none) and (pointer:coarse){.board-reset{width:38px;height:38px}}
 .board-stage{position:relative;height:min(56vw,440px);min-height:300px;touch-action:none;background:#FDFCF7}
 #cscanvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:crosshair}
 .ring{position:absolute;inset:0;pointer-events:none}
@@ -924,6 +931,12 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
       <span class="board-themes" role="group" aria-label="足あとの配色">
         <button type="button" class="theme-pill" data-theme-pick="blue" aria-pressed="true">ブルー</button>
         <button type="button" class="theme-pill" data-theme-pick="green" aria-pressed="false">グリーン</button>
+        <button type="button" class="board-reset" id="boardreset" title="まっさらにする" aria-label="ボードをまっさらにする">
+          <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" focusable="false">
+            <path d="M3.4 12a8.6 8.6 0 1 0 2.9-6.4L3.4 8" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>
+            <path d="M3.4 4.3V8h3.7" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
       </span>
     </div>
     <div class="board-stage" id="stage" role="img" aria-label="なぞると色鉛筆の足あとが描かれ、重なったところに「あそべるまち」の文字や、木・ベンチ・信号・階段・建物・足あとのマークが浮かぶ体験ボード">
@@ -1441,6 +1454,17 @@ if(navEl){
     });
   });
   paintThemeUI();
+
+  /* まっさらにする */
+  var resetBtn=document.getElementById("boardreset");
+  if(resetBtn) resetBtn.addEventListener("click",function(){
+    clearBoard();
+    drawing=false; touchDown=false;
+    if(tipTimer){ clearTimeout(tipTimer); tipTimer=0; }
+    board.classList.remove("touched","tip-done");
+    board.classList.add("hint");
+    lastMove=performance.now();
+  });
 
   /* ---------- 触る前のお手本 ---------- */
   function clearDemo(){ dc.save(); dc.setTransform(1,0,0,1,0,0); dc.clearRect(0,0,PW,PH); dc.restore(); dirty=true; }
