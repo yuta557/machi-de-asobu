@@ -240,6 +240,9 @@ html{scroll-padding-top:var(--nav-h)}
 .lead b{font-weight:500;background:linear-gradient(transparent 62%,rgba(255,212,59,.55) 62%)}
 #about .sec-head{max-width:900px}
 @media(max-width:700px){.mb-br{display:inline}}
+/* パソコン版だけで改行する（スマホは自然に折り返す） */
+.pc-br{display:none}
+@media(min-width:701px){.pc-br{display:inline}}
 .after-note{text-align:center;font-family:"Zen Maru Gothic",sans-serif;font-size:clamp(16px,1.6vw,20px);line-height:1.9;margin:40px auto 0;max-width:760px}
 .after-note-wide{max-width:820px}
 .lead{max-width:760px;margin:0 auto;font-size:16.5px;line-height:2.05}
@@ -424,7 +427,7 @@ h2{font-size:clamp(26px,3.7vw,38px);line-height:1.4;margin:0 0 12px}
 .cs-name .jp{font-family:"Zen Maru Gothic",sans-serif;font-size:clamp(17px,2.4vw,23px);margin:10px 0 0;display:block}
 .kv{max-width:720px;margin:0 auto;display:block;width:100%;height:auto}
 #play .kv{margin-top:30px;border-radius:18px}
-@media(min-width:701px){#play .kv{max-width:900px}}
+@media(min-width:701px){#play .kv{max-width:900px}#play .sec-head{max-width:980px}}
 /* スマホ・タブレットでは、イラストとボードの説明文のあいだを詰める */
 @media(max-width:900px){#play{padding-bottom:22px}#play + .board-shell{margin-top:18px}}
 .kv-cap{text-align:left;font-size:13px;color:var(--ink-soft);margin:14px auto 0;max-width:720px}
@@ -911,7 +914,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
   <div class="wrap">
     <div class="sec-head rv">
       <div class="head-row"><span class="step-chip chip-try"><span class="n">2</span><span>体験する</span></span><h2>いつものまちを、あそびの目で見る。</h2></div>
-      <p>まちを「遊び」の<span class="rb">視点<span class="rt" aria-hidden="true">してん</span></span>からとらえ直した、オリジナルゲームで遊びます。見<span class="rb">慣<span class="rt" aria-hidden="true">な</span></span>れた宇治の建物や道も、ゲームを通して見ると、いつもとは少し<span class="rb">違<span class="rt" aria-hidden="true">ちが</span></span>って見えるかもしれません。どんなゲームなのかは、当日のお楽しみ。ぜひ、遊びながら宇治のまちを見つめ直してみてください。</p>
+      <p>まちを「遊び」の<span class="rb">視点<span class="rt" aria-hidden="true">してん</span></span>からとらえ直した、オリジナルゲームで遊びます。<br class="pc-br">見<span class="rb">慣<span class="rt" aria-hidden="true">な</span></span>れた宇治の建物や道も、ゲームを通して見ると、いつもとは少し<span class="rb">違<span class="rt" aria-hidden="true">ちが</span></span>って見えるかもしれません。<br class="pc-br">どんなゲームなのかは、当日のお楽しみ。ぜひ、遊びながら宇治のまちを見つめ直してみてください。</p>
     </div>
     <picture>
       <source media="(min-width:701px)" srcset="assets/play-kv-wide.webp" width="1774" height="887">
@@ -923,7 +926,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
 
 <!-- ボード -->
 <div class="board-shell">
-  <p class="board-lead">画面の上をなぞってみてください。なぞったあとが重なって、少しずつ何かが見えてきます。<br>（更新するたびに何かが変わります）</p>
+  <p class="board-lead">画面の上をなぞってみてください。なぞったあとが重なって、少しずつ何かが見えてきます。<br>（更新するたびに何かが変わります。何が変わったのか、見つけてみてください。）</p>
   <div class="board hint" id="board">
     <div class="board-bar">
       <span class="dot"></span><span class="dot"></span><span class="dot"></span>
