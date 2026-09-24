@@ -418,6 +418,8 @@ h2{font-size:clamp(26px,3.7vw,38px);line-height:1.4;margin:0 0 12px}
 .kv{max-width:720px;margin:0 auto;display:block;width:100%;height:auto}
 #play .kv{margin-top:30px;border-radius:18px}
 @media(min-width:701px){#play .kv{max-width:900px}}
+/* スマホ・タブレットでは、イラストとボードの説明文のあいだを詰める */
+@media(max-width:900px){#play{padding-bottom:22px}#play + .board-shell{margin-top:18px}}
 .kv-cap{text-align:left;font-size:13px;color:var(--ink-soft);margin:14px auto 0;max-width:720px}
 .seq{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:52px}
 .seq figure{margin:0}
@@ -703,7 +705,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
       <span class="facts-bg" aria-hidden="true"></span>
       <img class="facts-img" width="1200" height="328" src="assets/hero-facts.webp?v=5" alt="DATE 2026年10月3日（土）10時〜12時／PLACE 宇治市産業会館 多目的ホール／WHO 小学4年生〜中学生（保護者の同伴は任意）／FEE 無料／TIME 120分" decoding="async">
       <a class="facts-tap" href="#info"><span class="sr-only">実施概要へ移動</span></a>
-      <img class="hnote-demo-img" src="assets/hero-note-demo.webp" width="560" height="493" alt="" aria-hidden="true" decoding="async">
+      <img class="hnote-demo-img" src="assets/hero-note-hs.webp" width="800" height="704" alt="" aria-hidden="true" decoding="async">
       <p class="hnote hnote-map" aria-hidden="true">こんな<br>まちに<br>したい！</p>
     </div>
     <div class="hero-copy sr-only">
@@ -918,7 +920,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
   <div class="board hint" id="board">
     <div class="board-bar">
       <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-      <span class="board-title">たとえば、こんなあそび</span>
+      <span class="board-title">まちであそぶボード</span>
       <span class="board-themes" role="group" aria-label="足あとの配色">
         <button type="button" class="theme-pill" data-theme-pick="blue" aria-pressed="true">ブルー</button>
         <button type="button" class="theme-pill" data-theme-pick="green" aria-pressed="false">グリーン</button>
@@ -933,7 +935,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
       <div class="tip"><span class="pip"></span><span class="tip-pc">マウスでこの上をなぞってみてください</span><span class="tip-sp">指でこの上をなぞってみてください</span></div>
     </div>
   </div>
-  <p class="board-foot"><span>当日は、ここにはないゲームも登場します。遊んでみて「ちがって見えた」ことが、次の「つくる」のヒントになります。</span></p>
+  <p class="board-foot"><span>当日は、ここにはないゲームも登場します。</span></p>
 </div>
 
 <!-- アイデアシート -->
@@ -976,7 +978,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
       <div>
         <p class="label" style="margin:0">企画・開発</p>
         <h3>野寺悠太（灘高校）</h3>
-        <p>宇治市未来キャンパス<span class="rb">受講生<span class="rt" aria-hidden="true">じゅこうせい</span></span>。いつもの道をもっと面白くしたいと思い、まちで遊べる<span class="rb">仕掛<span class="rt" aria-hidden="true">しか</span></span>けをつくっています。このワークショップでは、<span class="rb">企画<span class="rt" aria-hidden="true">きかく</span></span>・当日の<span class="rb">運営<span class="rt" aria-hidden="true">うんえい</span></span>・ゲームの開発を<span class="rb">担当<span class="rt" aria-hidden="true">たんとう</span></span>します。</p>
+        <p>宇治市未来キャンパス<span class="rb">受講生<span class="rt" aria-hidden="true">じゅこうせい</span></span>。いつもの道をもっと面白くしたいと思い、まちで遊べる<span class="rb">仕掛<span class="rt" aria-hidden="true">しか</span></span>けやゲームをつくっています。このワークショップでは、<span class="rb">企画<span class="rt" aria-hidden="true">きかく</span></span>・当日の<span class="rb">運営<span class="rt" aria-hidden="true">うんえい</span></span>・ゲームの開発を<span class="rb">担当<span class="rt" aria-hidden="true">たんとう</span></span>します。</p>
       </div>
     </div>
   </div>
@@ -1260,9 +1262,10 @@ if(navEl){
 
   var ctx=cv.getContext("2d");
   function mk(){ return document.createElement("canvas"); }
-  var user=mk(), demo=mk(), comp=mk(), glyph=mk(), cross=mk();
+  var user=mk(), demo=mk(), comp=mk(), glyph=mk(), cross=mk(), art=mk(), artM=mk();
   var uc=user.getContext("2d"), dc=demo.getContext("2d"), xc=cross.getContext("2d");
   var cc=comp.getContext("2d"), gc=glyph.getContext("2d");
+  var ac=art.getContext("2d"), amc=artM.getContext("2d");
 
   var W=0, H=0, PW=0, PH=0, dpr=1, fs=0;
   var painted=0, drawing=false, lastX=0, lastY=0, carry=0;
@@ -1471,151 +1474,52 @@ if(navEl){
       ctx.drawImage(comp,0,0);
       ctx.filter="none"; ctx.globalAlpha=1;
     }
+    if(painted>0 && artImg.complete && artImg.naturalWidth){
+      amc.setTransform(1,0,0,1,0,0);
+      amc.globalAlpha=1; amc.globalCompositeOperation="source-over";
+      amc.clearRect(0,0,PW,PH);
+      amc.drawImage(art,0,0);
+      amc.globalCompositeOperation="destination-in";
+      amc.drawImage(densC,0,0,PW,PH);
+      ctx.drawImage(artM,0,0);
+    }
     ctx.drawImage(demo,0,0);
   }
-  /* ---------- なぞると出てくる形：文字＋まちのアイコン＋足あと ---------- */
+  /* ---------- なぞると出てくるまちのアイコン（水彩の絵をスプライトで持つ） ---------- */
+  var artImg=new Image(); artImg.decoding="async"; artImg.src="assets/board-icons.webp";
+  var CELL=320, ACOLS=6;
+  /* i はスプライトの何番目か。0:木 1:足あと 2:鳥居 3:ブランコ 4:ビル 5:家
+     6:自転車 7:星 8:すべり台 9:あじさい 10:橋 11:きらめき */
   var ICONS=[
-    {k:"tree",   x:.085,y:.155,s:.26},
-    {k:"feet",   x:.245,y:.150,s:.26},
-    {k:"torii",  x:.405,y:.150,s:.26},
-    {k:"tree2",  x:.565,y:.150,s:.24},
-    {k:"town",   x:.725,y:.155,s:.27},
-    {k:"house",  x:.900,y:.155,s:.26},
-    {k:"house",  x:.085,y:.845,s:.26},
-    {k:"star",   x:.245,y:.850,s:.22},
-    {k:"foot",   x:.405,y:.850,s:.24},
-    {k:"park",   x:.565,y:.850,s:.27},
-    {k:"bridge", x:.725,y:.850,s:.27},
-    {k:"spark",  x:.900,y:.850,s:.22}
+    {i:0, x:.085,y:.165,s:.29},
+    {i:1, x:.245,y:.160,s:.29},
+    {i:2, x:.405,y:.160,s:.29},
+    {i:3, x:.565,y:.160,s:.29},
+    {i:4, x:.725,y:.165,s:.29},
+    {i:5, x:.900,y:.165,s:.29},
+    {i:6, x:.085,y:.840,s:.29},
+    {i:7, x:.245,y:.840,s:.29},
+    {i:8, x:.405,y:.840,s:.29},
+    {i:9, x:.565,y:.840,s:.29},
+    {i:10, x:.725,y:.840,s:.29},
+    {i:11, x:.900,y:.840,s:.29}
   ];
-  function disc(c,x,y,r){ c.beginPath(); c.arc(x,y,r,0,TAU); c.fill(); }
-  function leaf(c,x,y,r,a){ c.save(); c.translate(x,y); c.rotate(a); c.beginPath(); c.ellipse(0,0,r,r*0.42,0,0,TAU); c.fill(); c.restore(); }
-  function starFill(c,x,y,R,r,n,a0){
-    c.save(); c.translate(x,y); c.beginPath();
-    for(var i=0;i<n*2;i++){
-      var a=(a0||-Math.PI/2)+i*Math.PI/n, rad=i%2?r:R;
-      var px=Math.cos(a)*rad, py=Math.sin(a)*rad;
-      if(i) c.lineTo(px,py); else c.moveTo(px,py);
+  function buildArt(){
+    if(!W || !H || !PW) return;
+    ac.setTransform(1,0,0,1,0,0);
+    ac.clearRect(0,0,PW,PH);
+    if(!artImg.complete || !artImg.naturalWidth) return;
+    ac.save(); ac.scale(dpr,dpr);
+    var u=Math.min(W,H);
+    for(var n=0;n<ICONS.length;n++){
+      var ic=ICONS[n], w=u*ic.s;
+      var sx=(ic.i%ACOLS)*CELL, sy=((ic.i/ACOLS)|0)*CELL;
+      ac.drawImage(artImg,sx,sy,CELL,CELL, ic.x*W-w/2, ic.y*H-w/2, w, w);
     }
-    c.closePath(); c.fill(); c.restore();
+    ac.restore();
+    dirty=true;
   }
-  /* 足あと1つ（土ふまずのくびれ＋指4本） */
-  function footShape(c,x,y,s,a){
-    c.save(); c.translate(x,y); c.rotate(a||0);
-    c.beginPath();
-    c.moveTo(0,-.30*s);
-    c.bezierCurveTo(.21*s,-.30*s,.28*s,-.12*s,.25*s,.03*s);
-    c.bezierCurveTo(.22*s,.16*s,.11*s,.18*s,.10*s,.27*s);
-    c.bezierCurveTo(.09*s,.38*s,.06*s,.46*s,0,.46*s);
-    c.bezierCurveTo(-.06*s,.46*s,-.09*s,.38*s,-.10*s,.27*s);
-    c.bezierCurveTo(-.11*s,.18*s,-.22*s,.16*s,-.25*s,.03*s);
-    c.bezierCurveTo(-.28*s,-.12*s,-.21*s,-.30*s,0,-.30*s);
-    c.closePath(); c.fill();
-    var toes=[[-.19,-.40,.070],[-.04,-.46,.062],[.10,-.44,.055],[.21,-.37,.046]];
-    for(var t=0;t<toes.length;t++){
-      c.beginPath(); c.ellipse(toes[t][0]*s,toes[t][1]*s,toes[t][2]*s,toes[t][2]*s*.85,0,0,TAU); c.fill();
-    }
-    c.restore();
-  }
-  /* 木（幹＋こんもりした葉＋根もとの草） */
-  function treeShape(c,s,slim){
-    c.beginPath();
-    c.moveTo(-.055*s,.50*s); c.lineTo(-.025*s,-.02*s); c.lineTo(.025*s,-.02*s); c.lineTo(.055*s,.50*s);
-    c.closePath(); c.fill();
-    if(slim){
-      disc(c,0,-.20*s,.20*s); disc(c,-.10*s,-.02*s,.15*s); disc(c,.10*s,-.02*s,.15*s);
-      disc(c,-.04*s,-.36*s,.14*s); disc(c,.07*s,-.33*s,.12*s);
-    }else{
-      disc(c,0,-.18*s,.26*s); disc(c,-.20*s,-.02*s,.19*s); disc(c,.20*s,-.02*s,.19*s);
-      disc(c,-.11*s,-.33*s,.17*s); disc(c,.13*s,-.30*s,.15*s);
-    }
-    c.beginPath(); c.moveTo(-.22*s,.50*s); c.quadraticCurveTo(-.17*s,.36*s,-.11*s,.50*s); c.closePath(); c.fill();
-    c.beginPath(); c.moveTo(.11*s,.50*s); c.quadraticCurveTo(.17*s,.34*s,.23*s,.50*s); c.closePath(); c.fill();
-  }
-  /* 窓や板のすき間は、いったん塗ってから抜く */
-  function punch(c,fn){
-    c.save(); c.globalCompositeOperation="destination-out"; c.fillStyle="#000"; fn(); c.restore();
-  }
-  function icon(c,k,x,y,s,rot){
-    c.save(); c.translate(x,y); if(rot) c.rotate(rot); c.fillStyle="#000";
-    if(k==="tree" || k==="tree2"){
-      treeShape(c,s,k==="tree2");
-      leaf(c,.36*s,-.12*s,.09*s,-.5); leaf(c,-.36*s,.06*s,.08*s,.4);
-    }else if(k==="feet"){
-      footShape(c,-.16*s,.10*s,.62*s,-.22);
-      footShape(c, .16*s,-.10*s,.52*s,-.16);
-      leaf(c,.34*s,.26*s,.07*s,.9); leaf(c,-.34*s,-.20*s,.06*s,.5);
-    }else if(k==="foot"){
-      footShape(c,0,0,.86*s,-.12);
-      leaf(c,.30*s,.28*s,.075*s,.8); leaf(c,-.30*s,-.02*s,.065*s,-.6);
-    }else if(k==="torii"){
-      c.beginPath(); c.moveTo(-.34*s,.46*s); c.lineTo(-.27*s,-.28*s); c.lineTo(-.19*s,-.28*s); c.lineTo(-.24*s,.46*s); c.closePath(); c.fill();
-      c.beginPath(); c.moveTo(.34*s,.46*s); c.lineTo(.27*s,-.28*s); c.lineTo(.19*s,-.28*s); c.lineTo(.24*s,.46*s); c.closePath(); c.fill();
-      c.beginPath();
-      c.moveTo(-.50*s,-.34*s); c.quadraticCurveTo(0,-.48*s,.50*s,-.34*s);
-      c.lineTo(.50*s,-.26*s); c.quadraticCurveTo(0,-.40*s,-.50*s,-.26*s); c.closePath(); c.fill();
-      c.beginPath(); c.rect(-.40*s,-.14*s,.80*s,.07*s); c.fill();
-      disc(c,-.40*s,.44*s,.09*s); disc(c,.40*s,.44*s,.09*s);
-    }else if(k==="town"){
-      c.beginPath(); c.rect(-.44*s,-.06*s,.26*s,.46*s); c.fill();
-      c.beginPath(); c.rect(-.14*s,-.26*s,.28*s,.66*s); c.fill();
-      c.beginPath(); c.rect(.18*s,-.40*s,.24*s,.80*s); c.fill();
-      punch(c,function(){
-        var w=.06*s, g=.10*s, i, j;
-        for(i=0;i<2;i++) for(j=0;j<2;j++){ c.beginPath(); c.rect(-.38*s+i*g,.04*s+j*g,w,w); c.fill(); }
-        for(i=0;i<2;i++) for(j=0;j<3;j++){ c.beginPath(); c.rect(-.08*s+i*g,-.16*s+j*g,w,w); c.fill(); }
-        for(j=0;j<4;j++){ c.beginPath(); c.rect(.24*s,-.30*s+j*g,w,w); c.fill(); }
-      });
-      disc(c,-.44*s,.38*s,.10*s); disc(c,.44*s,.38*s,.09*s);
-    }else if(k==="house"){
-      c.beginPath(); c.moveTo(0,-.42*s); c.lineTo(.46*s,-.02*s); c.lineTo(-.46*s,-.02*s); c.closePath(); c.fill();
-      c.beginPath(); c.rect(-.34*s,-.02*s,.68*s,.42*s); c.fill();
-      punch(c,function(){
-        c.beginPath(); c.rect(-.12*s,.06*s,.24*s,.20*s); c.fill();
-      });
-      c.beginPath(); c.rect(-.015*s,.06*s,.03*s,.20*s); c.fill();
-      c.beginPath(); c.rect(-.12*s,.145*s,.24*s,.03*s); c.fill();
-      disc(c,-.42*s,.36*s,.10*s); disc(c,.42*s,.36*s,.09*s);
-    }else if(k==="star"){
-      starFill(c,0,0,.46*s,.20*s,5);
-      leaf(c,.40*s,-.22*s,.075*s,-.7); leaf(c,-.40*s,.18*s,.07*s,.6);
-    }else if(k==="spark"){
-      starFill(c,0,0,.50*s,.11*s,4);
-      leaf(c,.36*s,.28*s,.07*s,.8); leaf(c,-.34*s,-.24*s,.06*s,-.5);
-    }else if(k==="park"){
-      c.save(); c.translate(-.24*s,-.02*s); treeShape(c,.62*s,false); c.restore();
-      c.save(); c.translate(.20*s,.04*s); treeShape(c,.52*s,true); c.restore();
-      c.beginPath(); c.rect(-.06*s,.30*s,.34*s,.05*s); c.fill();
-      c.beginPath(); c.rect(-.06*s,.20*s,.34*s,.04*s); c.fill();
-      c.beginPath(); c.rect(-.04*s,.20*s,.035*s,.22*s); c.fill();
-      c.beginPath(); c.rect(.23*s,.20*s,.035*s,.22*s); c.fill();
-      c.beginPath(); c.ellipse(0,.46*s,.42*s,.05*s,0,0,TAU); c.fill();
-    }else{ /* bridge：宇治橋のような反り橋 */
-      c.beginPath();
-      c.moveTo(-.48*s,.22*s);
-      c.quadraticCurveTo(0,-.40*s,.48*s,.22*s);
-      c.lineTo(.48*s,.32*s);
-      c.quadraticCurveTo(0,-.26*s,-.48*s,.32*s);
-      c.closePath(); c.fill();
-      /* 欄干の柱：上の手すりと橋板のあいだに立てる */
-      function qbez(a,b,cc,t){ var u=1-t; return u*u*a + 2*u*t*b + t*t*cc; }
-      for(var i=1;i<=3;i++){
-        var t=i/4;
-        var bx=qbez(-.44,0,.44,t)*s;
-        var top=qbez(.05,-.51,.05,t)*s, bot=qbez(.22,-.37,.22,t)*s;
-        c.beginPath(); c.rect(bx-.018*s,top,.036*s,bot-top); c.fill();
-      }
-      c.beginPath();
-      c.moveTo(-.44*s,.02*s);
-      c.quadraticCurveTo(0,-.54*s,.44*s,.02*s);
-      c.lineTo(.44*s,.08*s);
-      c.quadraticCurveTo(0,-.46*s,-.44*s,.08*s);
-      c.closePath(); c.fill();
-      c.beginPath(); c.ellipse(-.22*s,.46*s,.16*s,.035*s,0,0,TAU); c.fill();
-      c.beginPath(); c.ellipse(.18*s,.50*s,.20*s,.035*s,0,0,TAU); c.fill();
-    }
-    c.restore();
-  }
+  artImg.onload=function(){ buildArt(); };
   function buildText(){
     if(!W || !H) return;
     fs=Math.min(H*0.34, W*0.80/HID.length);
@@ -1625,11 +1529,6 @@ if(navEl){
     gc.font='900 '+fs+'px "Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif';
     gc.textAlign="center"; gc.textBaseline="middle"; gc.fillStyle="#000";
     gc.fillText(HID,W/2,H/2);
-    var u=Math.min(W,H);
-    for(var i=0;i<ICONS.length;i++){
-      var ic=ICONS[i];
-      icon(gc,ic.k,ic.x*W,ic.y*H,u*ic.s,ic.r||0);
-    }
     gc.restore();
     dirty=true;
   }
@@ -1645,10 +1544,10 @@ if(navEl){
     var keepU=null, keepX=null;
     if(PW && painted>0){ keepU=snap(user); keepX=snap(cross); }
     W=w; H=h; PW=Math.round(w*dpr); PH=Math.round(h*dpr);
-    [cv,user,cross,demo,comp,glyph].forEach(function(c){ c.width=PW; c.height=PH; });
+    [cv,user,cross,demo,comp,glyph,art,artM].forEach(function(c){ c.width=PW; c.height=PH; });
     uc.setTransform(dpr,0,0,dpr,0,0); xc.setTransform(dpr,0,0,dpr,0,0); dc.setTransform(dpr,0,0,dpr,0,0);
     if(keepU){ restore(uc,keepU); restore(xc,keepX); }
-    buildText(); sampleTooth();
+    buildText(); buildArt(); sampleTooth();
     demoTrail.length=0; dirty=true;
   }
 
