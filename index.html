@@ -1385,6 +1385,7 @@ if(navEl){
     board.classList.remove("hint"); board.classList.add("touched");
     if(!tipTimer) tipTimer=setTimeout(function(){ board.classList.add("tip-done"); },2500);
     demoTrail.length=0; clearDemo();
+    if(painted===0) pickIcons();
     step(p.x,p.y);
   }
   stage.addEventListener("pointerdown",function(e){
@@ -1419,6 +1420,7 @@ if(navEl){
     xc.save(); xc.setTransform(1,0,0,1,0,0); xc.clearRect(0,0,PW,PH); xc.restore();
     painted=0; demoStopped=false; dirty=true;
     fillMap.fill(0);
+    pickIcons();
     demoTrail.length=0; clearDemo();
   }
 
@@ -1485,41 +1487,49 @@ if(navEl){
     }
     ctx.drawImage(demo,0,0);
   }
-  /* ---------- なぞると出てくるまちのアイコン（水彩の絵をスプライトで持つ） ---------- */
-  var artImg=new Image(); artImg.decoding="async"; artImg.src="assets/board-icons.webp";
+  /* ---------- なぞると出てくるまちのアイコン（水彩の絵をスプライトで持つ） ----------
+     24種類の中から12個を選んで並べる。選ぶ絵も置き場所も毎回変わり、
+     同じ種類（木・家・足あとなど）は1回の配置で1つまでにしている */
+  var artImg=new Image(); artImg.decoding="async";
+  /* 画像はボードが画面に入ってから読み込む */
+  function loadArt(){ if(!artImg.src) artImg.src="assets/board-icons.webp"; }
   var CELL=320, ACOLS=6;
-  /* i はスプライトの何番目か。0:木 1:足あと 2:鳥居 3:ブランコ 4:ビル 5:家
-     6:自転車 7:星 8:すべり台 9:あじさい 10:橋 11:きらめき */
-  var ICONS=[
-    {i:0, x:.085,y:.165,s:.29},
-    {i:1, x:.245,y:.160,s:.29},
-    {i:2, x:.405,y:.160,s:.29},
-    {i:3, x:.565,y:.160,s:.29},
-    {i:4, x:.725,y:.165,s:.29},
-    {i:5, x:.900,y:.165,s:.29},
-    {i:6, x:.085,y:.840,s:.29},
-    {i:7, x:.245,y:.840,s:.29},
-    {i:8, x:.405,y:.840,s:.29},
-    {i:9, x:.565,y:.840,s:.29},
-    {i:10, x:.725,y:.840,s:.29},
-    {i:11, x:.900,y:.840,s:.29}
+  var ART=[{i:0,c:"tree"},{i:1,c:"feet"},{i:2,c:"torii"},{i:3,c:"tree"},{i:4,c:"town"},{i:5,c:"house"},
+           {i:6,c:"star"},{i:7,c:"feet"},{i:8,c:"bridge"},{i:9,c:"spark"},{i:10,c:"park"},{i:11,c:"house"},
+           {i:12,c:"shop"},{i:13,c:"slide"},{i:14,c:"swing"},{i:15,c:"bike"},{i:16,c:"park"},{i:17,c:"fountain"},
+           {i:18,c:"lantern"},{i:19,c:"shop"},{i:20,c:"kite"},{i:21,c:"ball"},{i:22,c:"flower"},{i:23,c:"bridge"}];
+  var SLOTS=[
+    {x:.085,y:.165},{x:.245,y:.160},{x:.405,y:.160},{x:.565,y:.160},{x:.725,y:.165},{x:.900,y:.165},
+    {x:.085,y:.840},{x:.245,y:.840},{x:.405,y:.840},{x:.565,y:.840},{x:.725,y:.840},{x:.900,y:.840}
   ];
+  var ICON_SIZE=.29, picked=[];
+  function pickIcons(){
+    var pool=ART.slice();
+    for(var i=pool.length-1;i>0;i--){ var j=Math.random()*(i+1)|0, t=pool[i]; pool[i]=pool[j]; pool[j]=t; }
+    var used={}, out=[];
+    for(var k=0;k<pool.length && out.length<SLOTS.length;k++){
+      if(used[pool[k].c]) continue;
+      used[pool[k].c]=1; out.push(pool[k].i);
+    }
+    picked=out;
+    buildArt();
+  }
   function buildArt(){
     if(!W || !H || !PW) return;
     ac.setTransform(1,0,0,1,0,0);
     ac.clearRect(0,0,PW,PH);
-    if(!artImg.complete || !artImg.naturalWidth) return;
+    if(!artImg.complete || !artImg.naturalWidth || !picked.length) return;
     ac.save(); ac.scale(dpr,dpr);
-    var u=Math.min(W,H);
-    for(var n=0;n<ICONS.length;n++){
-      var ic=ICONS[n], w=u*ic.s;
-      var sx=(ic.i%ACOLS)*CELL, sy=((ic.i/ACOLS)|0)*CELL;
-      ac.drawImage(artImg,sx,sy,CELL,CELL, ic.x*W-w/2, ic.y*H-w/2, w, w);
+    var u=Math.min(W,H), w=u*ICON_SIZE;
+    for(var n=0;n<picked.length && n<SLOTS.length;n++){
+      var sx=(picked[n]%ACOLS)*CELL, sy=((picked[n]/ACOLS)|0)*CELL, sl=SLOTS[n];
+      ac.drawImage(artImg,sx,sy,CELL,CELL, sl.x*W-w/2, sl.y*H-w/2, w, w);
     }
     ac.restore();
     dirty=true;
   }
   artImg.onload=function(){ buildArt(); };
+  pickIcons();
   function buildText(){
     if(!W || !H) return;
     fs=Math.min(H*0.34, W*0.80/HID.length);
@@ -1583,9 +1593,9 @@ if(navEl){
   else{ window.addEventListener("resize",resize); }
   if("IntersectionObserver" in window){
     new IntersectionObserver(function(es){
-      if(es[0].isIntersecting){ lastMove=performance.now(); start(); } else stop();
+      if(es[0].isIntersecting){ loadArt(); lastMove=performance.now(); start(); } else stop();
     },{threshold:0.02}).observe(stage);
-  }else{ start(); }
+  }else{ loadArt(); start(); }
   if(document.fonts && document.fonts.ready){ document.fonts.ready.then(buildText); }
 
   resize();
