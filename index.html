@@ -416,6 +416,8 @@ h2{font-size:clamp(26px,3.7vw,38px);line-height:1.4;margin:0 0 12px}
 .cs-name .latin{display:block;font-family:"Outfit",sans-serif;font-weight:600;font-size:clamp(28px,5.6vw,58px);line-height:1.05}
 .cs-name .jp{font-family:"Zen Maru Gothic",sans-serif;font-size:clamp(17px,2.4vw,23px);margin:10px 0 0;display:block}
 .kv{max-width:720px;margin:0 auto;display:block;width:100%;height:auto}
+#play .kv{margin-top:30px;border-radius:18px}
+@media(min-width:701px){#play .kv{max-width:900px}}
 .kv-cap{text-align:left;font-size:13px;color:var(--ink-soft);margin:14px auto 0;max-width:720px}
 .seq{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:52px}
 .seq figure{margin:0}
@@ -902,6 +904,11 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
       <div class="head-row"><span class="step-chip chip-try"><span class="n">2</span><span>体験する</span></span><h2>いつものまちを、あそびの目で見る。</h2></div>
       <p>当日は、まちを「遊び」の<span class="rb">視点<span class="rt" aria-hidden="true">してん</span></span>からとらえ直したオリジナルゲームで遊びます。見なれた宇治の建物や道が、ゲームの中では少しちがう<span class="rb">姿<span class="rt" aria-hidden="true">すがた</span></span>を見せるかもしれません。どんなゲームかは、当日のおたのしみです。</p>
     </div>
+    <picture>
+      <source media="(min-width:701px)" srcset="assets/play-kv-wide.webp" width="1774" height="887">
+      <img class="kv rv" src="assets/play-kv.webp" width="1214" height="832" loading="lazy" decoding="async"
+        alt="スマホやタブレットを持った子どもたちのまわりに、木・ベンチ・信号・階段・建物・足あとなどのアイコンが浮かんでいるイラスト">
+    </picture>
   </div>
 </section>
 
@@ -917,7 +924,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
         <button type="button" class="theme-pill" data-theme-pick="green" aria-pressed="false">グリーン</button>
       </span>
     </div>
-    <div class="board-stage" id="stage" role="img" aria-label="なぞると色鉛筆の足あとが描かれ、重なったところに「あそべるまち」の文字が浮かぶ体験ボード">
+    <div class="board-stage" id="stage" role="img" aria-label="なぞると色鉛筆の足あとが描かれ、重なったところに「あそべるまち」の文字や、木・ベンチ・信号・階段・建物・足あとのマークが浮かぶ体験ボード">
       <canvas id="cscanvas"></canvas>
       <div class="ring"></div>
       <div class="demo-cursor" id="democursor" aria-hidden="true">
@@ -958,7 +965,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
         <dt>定員</dt><dd>約20名</dd>
         <dt>所要時間</dt><dd>120分</dd>
         <dt>参加<span class="rb">費<span class="rt" aria-hidden="true">ひ</span></span></dt><dd>無料</dd>
-        <dt>持ち物</dt><dd>筆記用具（お持ちのかたは、スマホやタブレットもあるとうれしいです）</dd>
+        <dt>持ち物</dt><dd>筆記用具（お持ちのかたは、スマホやタブレットもご持参ください）</dd>
         <dt><span class="rb">申込<span class="rt" aria-hidden="true">もうしこみ</span></span>方法</dt><dd>下記の申込フォームからお申し込みください。<br><a href="https://docs.google.com/forms/d/e/1FAIpQLSe6rLWtzkLh0r8n9YfXnDI3aGaVXqjveMzL0JJP8LgcYHRtpQ/viewform?usp=header" target="_blank" rel="noopener noreferrer">参加申し込みフォーム</a></dd>
         <dt>お問い合わせ</dt><dd>株式会社taliki 中西／<a href="mailto:incubation@taliki.co.jp">incubation@taliki.co.jp</a></dd>
       </dl>
@@ -979,7 +986,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
   <div class="wrap">
     <div class="sec-head rv"><h2>よくある質問</h2></div>
     <div class="faq rv">
-      <details><summary><span class="q">持ち物は必要ですか？</span></summary><p class="a">筆記用具をお持ちください。お持ちのかたは、スマホやタブレットもあるとうれしいです。動きやすい靴で来ていただけると、体験パートが楽しめます。</p></details>
+      <details><summary><span class="q">持ち物は必要ですか？</span></summary><p class="a">筆記用具をお持ちください。お持ちのかたは、スマホやタブレットもご持参ください。動きやすい靴で来ていただけると、体験パートが楽しめます。</p></details>
       <details><summary><span class="q"><span class="rb">保護者<span class="rt" aria-hidden="true">ほごしゃ</span></span>の<span class="rb">同伴<span class="rt" aria-hidden="true">どうはん</span></span>は必要ですか？</span></summary><p class="a">必須ではありません。お子さんだけでも参加できます。保護者のかたがご一緒の場合は、お子さんと一緒にアイデアを考えていただいても、後ろで見ていていただいても構いません。</p></details>
       <details><summary><span class="q"><span class="rb">対象<span class="rt" aria-hidden="true">たいしょう</span></span>の学年ではないのですが、参加できますか？</span></summary><p class="a">主な対象は小学4年生〜中学生ですが、それ以外のかたもご相談ください。学年や人数に応じて、参加いただけるか検討します。</p></details>
       <details><summary><span class="q">絵が苦手でも<span class="rb">大丈夫<span class="rt" aria-hidden="true">だいじょうぶ</span></span>ですか？</span></summary><p class="a">大丈夫です。大切なのは、きれいに描くことではなく「こんな遊びがあったら楽しそう！」というアイデアを形にすること。簡単な図や言葉だけでもOKです。</p></details>
@@ -1466,14 +1473,92 @@ if(navEl){
     }
     ctx.drawImage(demo,0,0);
   }
+  /* ---------- なぞると出てくる形：文字＋まちのアイコン＋足あと ---------- */
+  var ICONS=[
+    {k:"tree",  x:.09, y:.17, s:.115},
+    {k:"foot",  x:.225,y:.14, s:.085,r:-.45},
+    {k:"bench", x:.39, y:.16, s:.125},
+    {k:"light", x:.55, y:.15, s:.105},
+    {k:"stairs",x:.72, y:.17, s:.125},
+    {k:"house", x:.90, y:.16, s:.125},
+    {k:"house", x:.09, y:.84, s:.115},
+    {k:"star",  x:.25, y:.86, s:.095},
+    {k:"foot",  x:.39, y:.87, s:.085,r:.35},
+    {k:"tree",  x:.56, y:.84, s:.115},
+    {k:"bench", x:.73, y:.86, s:.12},
+    {k:"star",  x:.90, y:.85, s:.09}
+  ];
+  function rrect(c,x,y,w,h,r){
+    c.moveTo(x+r,y); c.lineTo(x+w-r,y); c.quadraticCurveTo(x+w,y,x+w,y+r);
+    c.lineTo(x+w,y+h-r); c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    c.lineTo(x+r,y+h); c.quadraticCurveTo(x,y+h,x,y+h-r);
+    c.lineTo(x,y+r); c.quadraticCurveTo(x,y,x+r,y); c.closePath();
+  }
+  function starPath(c,R,r){
+    for(var i=0;i<10;i++){
+      var a=-Math.PI/2+i*Math.PI/5, rad=i%2?r:R;
+      var px=Math.cos(a)*rad, py=Math.sin(a)*rad;
+      if(i) c.lineTo(px,py); else c.moveTo(px,py);
+    }
+    c.closePath();
+  }
+  function icon(c,k,x,y,s,rot){
+    c.save(); c.translate(x,y); if(rot) c.rotate(rot); c.fillStyle="#000";
+    if(k==="tree"){
+      c.beginPath(); c.rect(-.07*s,.06*s,.14*s,.44*s); c.fill();
+      c.beginPath(); c.arc(0,-.18*s,.34*s,0,TAU); c.fill();
+      c.beginPath(); c.arc(-.23*s,.02*s,.23*s,0,TAU); c.fill();
+      c.beginPath(); c.arc(.23*s,.02*s,.23*s,0,TAU); c.fill();
+    }else if(k==="bench"){
+      c.beginPath(); c.rect(-.50*s,-.08*s,1.00*s,.14*s); c.fill();
+      c.beginPath(); c.rect(-.50*s,-.36*s,1.00*s,.11*s); c.fill();
+      c.beginPath(); c.rect(-.41*s,-.36*s,.10*s,.66*s); c.fill();
+      c.beginPath(); c.rect(.31*s,-.36*s,.10*s,.66*s); c.fill();
+    }else if(k==="light"){
+      c.beginPath(); c.rect(-.05*s,.02*s,.10*s,.48*s); c.fill();
+      c.beginPath(); rrect(c,-.21*s,-.52*s,.42*s,.58*s,.13*s); c.fill();
+    }else if(k==="stairs"){
+      c.beginPath();
+      c.moveTo(-.50*s,.44*s); c.lineTo(-.50*s,.10*s); c.lineTo(-.17*s,.10*s);
+      c.lineTo(-.17*s,-.16*s); c.lineTo(.16*s,-.16*s); c.lineTo(.16*s,-.44*s);
+      c.lineTo(.50*s,-.44*s); c.lineTo(.50*s,.44*s); c.closePath(); c.fill();
+    }else if(k==="house"){
+      c.beginPath(); c.moveTo(0,-.52*s); c.lineTo(.52*s,-.08*s); c.lineTo(-.52*s,-.08*s); c.closePath(); c.fill();
+      c.beginPath(); c.rect(-.38*s,-.08*s,.76*s,.50*s); c.fill();
+    }else if(k==="star"){
+      c.beginPath(); starPath(c,.52*s,.23*s); c.fill();
+    }else{ /* 足あと（土ふまずでくびれた足裏＋指） */
+      c.beginPath();
+      c.moveTo(0,-.34*s);
+      c.bezierCurveTo(.22*s,-.34*s,.30*s,-.14*s,.27*s,.02*s);
+      c.bezierCurveTo(.24*s,.16*s,.12*s,.18*s,.11*s,.28*s);
+      c.bezierCurveTo(.10*s,.40*s,.06*s,.48*s,0,.48*s);
+      c.bezierCurveTo(-.06*s,.48*s,-.10*s,.40*s,-.11*s,.28*s);
+      c.bezierCurveTo(-.12*s,.18*s,-.24*s,.16*s,-.27*s,.02*s);
+      c.bezierCurveTo(-.30*s,-.14*s,-.22*s,-.34*s,0,-.34*s);
+      c.closePath(); c.fill();
+      var toes=[[-.20,-.44,.070],[-.04,-.50,.062],[.10,-.48,.055],[.21,-.42,.048]];
+      for(var t=0;t<toes.length;t++){
+        c.beginPath(); c.ellipse(toes[t][0]*s,toes[t][1]*s,toes[t][2]*s,toes[t][2]*s*0.85,0,0,TAU); c.fill();
+      }
+    }
+    c.restore();
+  }
   function buildText(){
     if(!W || !H) return;
-    fs=Math.min(H*0.40, W*0.84/HID.length);
+    fs=Math.min(H*0.34, W*0.80/HID.length);
     gc.setTransform(1,0,0,1,0,0);
     gc.clearRect(0,0,PW,PH);
-    gc.font='900 '+(fs*dpr)+'px "Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif';
+    gc.save(); gc.scale(dpr,dpr);
+    gc.font='900 '+fs+'px "Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif';
     gc.textAlign="center"; gc.textBaseline="middle"; gc.fillStyle="#000";
-    gc.fillText(HID,PW/2,PH/2);
+    gc.fillText(HID,W/2,H/2);
+    var u=Math.min(W,H);
+    for(var i=0;i<ICONS.length;i++){
+      var ic=ICONS[i];
+      icon(gc,ic.k,ic.x*W,ic.y*H,u*ic.s*2,ic.r||0);
+    }
+    gc.restore();
     dirty=true;
   }
 
