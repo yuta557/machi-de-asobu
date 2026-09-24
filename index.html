@@ -911,7 +911,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
   <div class="wrap">
     <div class="sec-head rv">
       <div class="head-row"><span class="step-chip chip-try"><span class="n">2</span><span>体験する</span></span><h2>いつものまちを、あそびの目で見る。</h2></div>
-      <p>当日は、まちを「遊び」の<span class="rb">視点<span class="rt" aria-hidden="true">してん</span></span>からとらえ直したオリジナルゲームで遊びます。見なれた宇治の建物や道が、ゲームの中では少しちがう<span class="rb">姿<span class="rt" aria-hidden="true">すがた</span></span>を見せるかもしれません。どんなゲームかは、当日のおたのしみです。</p>
+      <p>まちを「遊び」の<span class="rb">視点<span class="rt" aria-hidden="true">してん</span></span>からとらえ直した、オリジナルゲームで遊びます。見<span class="rb">慣<span class="rt" aria-hidden="true">な</span></span>れた宇治の建物や道も、ゲームを通して見ると、いつもとは少し<span class="rb">違<span class="rt" aria-hidden="true">ちが</span></span>って見えるかもしれません。どんなゲームなのかは、当日のお楽しみ。ぜひ、遊びながら宇治のまちを見つめ直してみてください。</p>
     </div>
     <picture>
       <source media="(min-width:701px)" srcset="assets/play-kv-wide.webp" width="1774" height="887">
@@ -923,7 +923,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
 
 <!-- ボード -->
 <div class="board-shell">
-  <p class="board-lead">画面の上をなぞってみてください。なぞったあとが重なって、少しずつ何かが見えてきます。</p>
+  <p class="board-lead">画面の上をなぞってみてください。なぞったあとが重なって、少しずつ何かが見えてきます。<br>（更新するたびに何かが変わります）</p>
   <div class="board hint" id="board">
     <div class="board-bar">
       <span class="dot"></span><span class="dot"></span><span class="dot"></span>
@@ -948,7 +948,7 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
       <div class="tip"><span class="pip"></span><span class="tip-pc">マウスでこの上をなぞってみてください</span><span class="tip-sp">指でこの上をなぞってみてください</span></div>
     </div>
   </div>
-  <p class="board-foot"><span>当日は、ここにはないゲームも登場します。</span></p>
+  <p class="board-foot"><span>ゲームの例です。当日はこれ以外のゲームも登場します。</span></p>
 </div>
 
 <!-- アイデアシート -->
@@ -1517,11 +1517,14 @@ if(navEl){
   var artImg=new Image(); artImg.decoding="async";
   /* 画像はボードが画面に入ってから読み込む */
   function loadArt(){ if(!artImg.src) artImg.src="assets/board-icons.webp"; }
-  var CELL=320, ACOLS=6;
+  var CELL=256, ACOLS=6;
   var ART=[{i:0,c:"tree"},{i:1,c:"feet"},{i:2,c:"torii"},{i:3,c:"tree"},{i:4,c:"town"},{i:5,c:"house"},
            {i:6,c:"star"},{i:7,c:"feet"},{i:8,c:"bridge"},{i:9,c:"spark"},{i:10,c:"park"},{i:11,c:"house"},
            {i:12,c:"shop"},{i:13,c:"slide"},{i:14,c:"swing"},{i:15,c:"bike"},{i:16,c:"park"},{i:17,c:"fountain"},
-           {i:18,c:"lantern"},{i:19,c:"shop"},{i:20,c:"kite"},{i:21,c:"ball"},{i:22,c:"flower"},{i:23,c:"bridge"}];
+           {i:18,c:"lantern"},{i:19,c:"shop"},{i:20,c:"kite"},{i:21,c:"ball"},{i:22,c:"flower"},{i:23,c:"bridge"},
+           {i:24,c:"town"},{i:25,c:"slide"},{i:26,c:"swing"},{i:27,c:"bike"},{i:28,c:"sign"},{i:29,c:"map"},
+           {i:30,c:"tent"},{i:31,c:"binocular"},{i:32,c:"plane"},{i:33,c:"shop"},{i:34,c:"people"},{i:35,c:"fountain"},
+           {i:36,c:"kids"},{i:37,c:"search"},{i:38,c:"treehouse"},{i:39,c:"watergun"}];
   var SLOTS=[
     {x:.085,y:.165},{x:.245,y:.160},{x:.405,y:.160},{x:.565,y:.160},{x:.725,y:.165},{x:.900,y:.165},
     {x:.085,y:.840},{x:.245,y:.840},{x:.405,y:.840},{x:.565,y:.840},{x:.725,y:.840},{x:.900,y:.840}
