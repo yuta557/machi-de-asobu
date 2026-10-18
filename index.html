@@ -1572,16 +1572,29 @@ if(navEl){
            {i:24,c:"town"},{i:25,c:"slide"},{i:26,c:"swing"},{i:27,c:"bike"},{i:28,c:"sign"},{i:29,c:"map"},
            {i:30,c:"tent"},{i:31,c:"binocular"},{i:32,c:"plane"},{i:33,c:"shop"},{i:34,c:"people"},{i:35,c:"fountain"},
            {i:36,c:"kids"},{i:37,c:"search"},{i:38,c:"treehouse"},{i:39,c:"watergun"}];
-  var SLOTS=[
-    {x:.085,y:.165},{x:.245,y:.160},{x:.405,y:.160},{x:.565,y:.160},{x:.725,y:.165},{x:.900,y:.165},
-    {x:.085,y:.840},{x:.245,y:.840},{x:.405,y:.840},{x:.565,y:.840},{x:.725,y:.840},{x:.900,y:.840}
-  ];
-  var ICON_SIZE=.29, picked=[];
+  var ICON_SIZE=.29, MAX_SLOTS=12, slots=[], picked=[];
+  /* 板の幅に対してアイコンが何個並ぶかを決める。
+     1つぶんの幅に少し余裕（1.3倍）を持たせ、重ならない数にする */
+  /* 置くアイコン1つぶんの大きさ。板が細いときは小さくして数を確保する */
+  function iconW(){ return Math.min(Math.min(W,H)*ICON_SIZE, W*0.17); }
+  function layoutSlots(){
+    if(!W || !H){ slots=[]; return; }
+    var w=iconW();
+    var cols=Math.floor(W/(w*1.30));
+    if(cols<2) cols=2;
+    if(cols>MAX_SLOTS/2) cols=MAX_SLOTS/2;
+    slots=[];
+    for(var r=0;r<2;r++){
+      for(var c=0;c<cols;c++){
+        slots.push({x:(c+0.5)/cols, y:r===0?.165:.840});
+      }
+    }
+  }
   function pickIcons(){
     var pool=ART.slice();
     for(var i=pool.length-1;i>0;i--){ var j=Math.random()*(i+1)|0, t=pool[i]; pool[i]=pool[j]; pool[j]=t; }
     var used={}, out=[];
-    for(var k=0;k<pool.length && out.length<SLOTS.length;k++){
+    for(var k=0;k<pool.length && out.length<MAX_SLOTS;k++){
       if(used[pool[k].c]) continue;
       used[pool[k].c]=1; out.push(pool[k].i);
     }
@@ -1594,9 +1607,9 @@ if(navEl){
     ac.clearRect(0,0,PW,PH);
     if(!artImg.complete || !artImg.naturalWidth || !picked.length) return;
     ac.save(); ac.scale(dpr,dpr);
-    var u=Math.min(W,H), w=u*ICON_SIZE;
-    for(var n=0;n<picked.length && n<SLOTS.length;n++){
-      var sx=(picked[n]%ACOLS)*CELL, sy=((picked[n]/ACOLS)|0)*CELL, sl=SLOTS[n];
+    var w=iconW();
+    for(var n=0;n<picked.length && n<slots.length;n++){
+      var sx=(picked[n]%ACOLS)*CELL, sy=((picked[n]/ACOLS)|0)*CELL, sl=slots[n];
       ac.drawImage(artImg,sx,sy,CELL,CELL, sl.x*W-w/2, sl.y*H-w/2, w, w);
     }
     ac.restore();
@@ -1631,7 +1644,7 @@ if(navEl){
     [cv,user,cross,demo,comp,glyph,art,artM].forEach(function(c){ c.width=PW; c.height=PH; });
     uc.setTransform(dpr,0,0,dpr,0,0); xc.setTransform(dpr,0,0,dpr,0,0); dc.setTransform(dpr,0,0,dpr,0,0);
     if(keepU){ restore(uc,keepU); restore(xc,keepX); }
-    buildText(); buildArt(); sampleTooth();
+    buildText(); layoutSlots(); buildArt(); sampleTooth();
     demoTrail.length=0; dirty=true;
   }
 
