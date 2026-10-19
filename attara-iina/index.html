@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>あったらいいなの宇治｜まちであそぶ、をつくる</title>
+<meta name="description" content="Playable City 入門ワークショップ（2026年10月3日・宇治市産業会館）で生まれた9つのアイデアを、ひとつのまちのイラストに置いた想像マップ。">
+<link rel="canonical" href="https://machi-play.com/attara-iina/">
+<meta property="og:url" content="https://machi-play.com/attara-iina/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="あったらいいなの宇治｜まちであそぶ、をつくる">
+<meta property="og:description" content="ワークショップで生まれた9つのアイデアを、ひとつのまちに置いてみました。">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="宇治NEXT">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/icon-32.png?v=2">
+<link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png?v=2">
+<link rel="apple-touch-icon" href="../assets/icon-180.png?v=2">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font-size:14px}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Klee+One:wght@400;600&display=swap">
+<style>
+/* Layout: 白いヘッダー → ミニチュアのまち（アイソメ図）に色ちがいの吹き出し → 赤い帯。単一のあかるい見た目 */
+:root{
+  color-scheme:light;
+  --bg:#ffffff; --ink:#3a3330; --muted:#7a716c; --line:#ece6e1;
+  --red:#e4362b; --red-dark:#b8241b; --cream:#fbf6f0;
+  --round:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",sans-serif;
+  --hand:"Klee One","Zen Maru Gothic",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--round);font-size:15px;line-height:1.7;font-weight:500}
+button{font:inherit;cursor:pointer;color:inherit}
+:focus-visible{outline:3px solid #2e7fd0;outline-offset:3px}
+
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;padding-inline:max(16px,4vw);
+  border-bottom:1px solid var(--line);flex-wrap:wrap;position:relative;z-index:3;background:var(--bg)}
+.mark{display:flex;flex-direction:column;line-height:1.1}
+.mark small{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.08em}
+.mark b{font-size:clamp(24px,3.4vw,34px);font-weight:900;color:var(--red);letter-spacing:.02em}
+.mark b span{color:var(--ink);font-size:.62em;margin-left:.2em}
+.top-r{display:flex;align-items:center;gap:12px}
+.hint{position:relative;border:2px solid #d9b98f;background:#fff;border-radius:6px;padding:4px 12px;font-size:13px;font-weight:700}
+.hint::after{content:"";position:absolute;right:-9px;top:50%;margin-top:-6px;border:6px solid transparent;border-left-color:#d9b98f;border-right:0}
+@media (max-width:560px){.hint{display:none}}
+
+/* diorama */
+.scroller{overflow-x:auto;overflow-y:hidden;background:#f3efe9;-webkit-overflow-scrolling:touch}
+.scene{position:relative;min-width:1040px;max-width:1536px;margin:0 auto;aspect-ratio:1536/1024}
+#map,#mapNight{position:absolute;inset:0;width:100%;height:100%;display:block;max-width:none}
+#mapNight{opacity:0;transition:opacity 1.2s ease}
+body.night #mapNight{opacity:1}
+#mapOverlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.spot{position:absolute;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:var(--c);border:3px solid #fff;
+  box-shadow:0 0 0 0 var(--c);animation:ping 2s ease-out infinite;pointer-events:none}
+@keyframes ping{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--c) 60%,transparent)}100%{box-shadow:0 0 0 16px transparent}}
+.bub.below{transform:translate(-50%,16px)}
+.bub.below:hover,.bub.below:focus-visible{transform:translate(-50%,20px)}
+.bub.below::after{bottom:auto;top:-10px;border-top:0;border-bottom:9px solid var(--c)}
+.bub.below::before{bottom:auto;top:-5px;border-top:0;border-bottom:6px solid #fff}
+.scene-g{transition:filter 1s ease}
+body.night .scene-g{filter:brightness(.42) saturate(.75) hue-rotate(12deg)}
+.lights-g{opacity:0;transition:opacity 1s ease;pointer-events:none}
+body.night .lights-g{opacity:1}
+.critter-g{opacity:0;transition:opacity .5s ease}
+.q-g{transition:opacity .5s ease} body.glasses .q-g{opacity:0}
+body.glasses .critter-g{opacity:1}
+body.glasses .critter-g g{animation:bob 1.4s ease-in-out infinite alternate}
+@keyframes bob{to{transform:translateY(-6px)}}
+.kid{transform-box:fill-box;transform-origin:50% 100%}
+body.dancing .kid{animation:hop .45s ease-in-out infinite alternate}
+body.dancing .kid:nth-of-type(2n){animation-delay:.22s}
+@keyframes hop{to{transform:translateY(-7px)}}
+
+/* idea cards on the map: round picture + handwritten "…があったらいいな", tied to the spot by a thin line */
+.scene{container-type:inline-size}
+.idea{position:absolute;transform:translate(-50%,-50%);display:flex;white-space:nowrap;align-items:center;gap:.7cqw;
+  background:rgba(255,255,255,.94);border:.2cqw solid var(--c);border-radius:2.2cqw;padding:.6cqw 1cqw .6cqw .6cqw;
+  box-shadow:0 .3cqw .9cqw rgba(60,50,30,.14);cursor:pointer;text-align:left;color:var(--c);transition:transform .2s ease,box-shadow .2s ease}
+.idea:hover,.idea:focus-visible{transform:translate(-50%,calc(-50% - .3cqw));box-shadow:0 .6cqw 1.4cqw rgba(60,50,30,.2);z-index:2}
+.idea .pic{flex:none;width:5.6cqw;aspect-ratio:1;border-radius:50%;border:.16cqw solid var(--c);background-image:var(--img);
+  background-size:900% auto;background-repeat:no-repeat}
+body.night .idea .pic{background-image:var(--imgN)}
+.idea .w{font-family:var(--hand);font-weight:600;font-size:1.04cqw;line-height:1.55;letter-spacing:.02em;min-width:0}
+.bub{position:absolute;transform:translate(-50%,calc(-100% - 10px));background:#fff;border:2.5px solid var(--c);white-space:nowrap;
+  border-radius:999px;padding:4px 14px;text-align:center;box-shadow:0 4px 10px rgba(60,40,30,.16);cursor:pointer;
+  transition:transform .2s ease,box-shadow .2s ease}
+.bub::after{content:"";position:absolute;left:50%;bottom:-10px;margin-left:-8px;border:8px solid transparent;border-top:9px solid var(--c);border-bottom:0}
+.bub::before{content:"";position:absolute;left:50%;bottom:-5px;margin-left:-5px;border:5px solid transparent;border-top:6px solid #fff;border-bottom:0;z-index:1}
+.bub:hover,.bub:focus-visible{transform:translate(-50%,calc(-100% - 14px));box-shadow:0 8px 16px rgba(60,40,30,.2);z-index:2}
+.bub .t{display:block;color:var(--c);font-weight:900;font-size:14px;line-height:1.4}
+.bub .t::after{content:" ›";font-weight:900}
+.bub .badge{position:absolute;top:-13px;right:-12px;min-width:26px;height:26px;padding:0 5px;border-radius:13px;background:var(--red);color:#fff;
+  border:2px solid #fff;font-size:10px;font-weight:900;display:grid;place-items:center;line-height:1;box-shadow:0 2px 6px rgba(0,0,0,.18)}
+
+/* floating controls */
+.today{position:fixed;z-index:5;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:230px;background:var(--red);color:#fff;border-radius:10px;padding:12px 14px 14px;
+  box-shadow:0 6px 0 var(--red-dark),0 10px 20px rgba(150,30,20,.25)}
+.today[hidden]{display:none}
+.today h2{margin:0 0 2px;font-size:17px;font-weight:900}
+.today p{margin:0 0 10px;font-size:12px;opacity:.95}
+.today .go{width:100%;border:0;border-radius:999px;background:#fff;color:var(--red);font-weight:900;padding:8px 10px;box-shadow:0 3px 0 rgba(0,0,0,.18)}
+.today .x{position:absolute;top:6px;right:8px;background:none;border:0;color:#fff;font-size:22px;line-height:1}
+.fabs{position:fixed;z-index:5;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;gap:10px}
+.fab{width:74px;height:74px;border-radius:50%;border:0;background:var(--red);color:#fff;font-weight:900;font-size:13px;line-height:1.2;
+  box-shadow:0 5px 0 var(--red-dark),0 10px 18px rgba(150,30,20,.25)}
+.fab[aria-pressed="true"]{background:#2b2f5a;box-shadow:0 5px 0 #171a3a,0 10px 18px rgba(20,20,60,.3)}
+.fab svg{display:block;margin:0 auto 2px}
+
+footer{background:var(--red);color:#fff;padding-inline:max(16px,4vw);padding-block:18px;font-size:12px;display:flex;flex-wrap:wrap;gap:6px 20px;justify-content:space-between}
+
+/* modal sheet */
+.overlay{position:fixed;inset:0;background:rgba(50,30,25,.45);display:grid;place-items:center;padding:16px;z-index:10}
+.overlay[hidden]{display:none}
+.sheet{width:min(560px,100%);max-height:calc(100% - 16px);overflow:auto;background:#fff;border-radius:16px;border:4px solid var(--c);
+  box-shadow:0 20px 40px rgba(40,20,10,.3);position:relative}
+.sheet header{background:var(--c);color:#fff;padding:14px 56px 14px 20px}
+.sheet header small{font-size:12px;font-weight:700;opacity:.9}
+.sheet header h3{margin:2px 0 0;font-size:22px;font-weight:900;line-height:1.35;text-wrap:balance}
+.sheet .close{position:absolute;top:10px;right:10px;width:38px;height:38px;border-radius:50%;border:2px solid #fff;background:transparent;color:#fff;font-size:20px;line-height:1}
+.sheet .body{padding:16px 20px 20px;display:flex;flex-direction:column;gap:12px}
+.meta{display:flex;flex-wrap:wrap;gap:8px}
+.pill{background:var(--cream);border-radius:999px;padding:3px 12px;font-size:13px;font-weight:700}
+.pill b{color:var(--c)}
+.q .k{display:block;font-size:12px;font-weight:900;color:var(--c)}
+.q .v{font-family:var(--hand);font-size:17px;line-height:1.6;border-bottom:2px dotted var(--line);padding-bottom:4px}
+.v.blank{color:var(--muted);font-size:14px}
+.tmp{font-size:12px;color:var(--muted);margin:-4px 0 0}
+.play{background:var(--cream);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.play h4{margin:0;font-size:15px;font-weight:900;color:var(--c)}
+.play p{margin:0;font-size:13px;color:var(--muted)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{border:0;border-radius:999px;background:#fff;color:var(--ink);font-weight:900;padding:7px 16px;box-shadow:0 3px 0 rgba(0,0,0,.14);border:2px solid var(--c)}
+.btn.primary{background:var(--c);color:#fff}
+.btn:disabled{opacity:.45;cursor:default}
+.bubble{background:#fff;border:2px solid var(--c);border-radius:12px;padding:8px 12px;font-family:var(--hand);font-size:16px;min-height:44px}
+canvas.wb{width:100%;height:210px;background:#fff;border:2px solid #cfc8c2;border-radius:8px;touch-action:none;display:block}
+.sw{width:30px;height:30px;border-radius:50%;border:3px solid #fff;padding:0;box-shadow:0 0 0 1px #cfc8c2}
+.sw[aria-pressed="true"]{box-shadow:0 0 0 3px var(--ink)}
+.steps{display:flex;align-items:flex-end;gap:4px}
+.steps button{flex:1;border:0;border-radius:6px 6px 0 0;font-weight:900;color:#fff;font-size:15px;padding:0;box-shadow:inset 0 -6px 0 rgba(0,0,0,.15)}
+.steps button.hit{filter:brightness(1.25);transform:translateY(3px)}
+.choice{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.res{font-weight:900;min-height:1.6em}
+.posts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.posts li{font-size:13px;background:#fff;border-radius:8px;padding:6px 10px}
+.meter{height:14px;background:#fff;border-radius:7px;overflow:hidden;box-shadow:inset 0 0 0 2px #d6e6c4}
+.meter i{display:block;height:100%;background:#6aa84f;width:0;transition:width .4s}
+.glasswin{width:100%;height:auto;border-radius:8px;display:block}
+.car{animation:drive 2.6s linear infinite}
+.car.c2{animation-duration:3.4s;animation-delay:-1.4s}
+@keyframes drive{from{transform:translateY(-70px)}to{transform:translateY(200px)}}
+.court{position:relative;height:120px;border-radius:10px;overflow:hidden;background:
+  radial-gradient(circle at 18% 78%,#fff 0 22px,transparent 23px),radial-gradient(circle at 30% 84%,#fff 0 18px,transparent 19px),
+  radial-gradient(circle at 78% 30%,#fff 0 24px,transparent 25px),radial-gradient(circle at 88% 36%,#fff 0 16px,transparent 17px),#bfe0f5}
+.court .net{position:absolute;left:50%;top:44px;bottom:0;width:4px;margin-left:-2px;background:repeating-linear-gradient(#3a3330 0 4px,transparent 4px 8px)}
+.shuttle{position:absolute;left:12%;top:70px;width:14px;height:14px;border-radius:50% 50% 2px 2px;background:#fff;border:2px solid #3a3330;transition:left .7s ease-in-out,top .35s ease-out}
+.court b{position:absolute;font-size:12px;bottom:4px}
+.hall{position:relative;height:250px;border-radius:8px;overflow:hidden;box-shadow:0 0 0 2px #cfc8c2}
+.hall canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hall canvas.wb{height:100%;border:0;border-radius:0;background:transparent}
+/* narrow: each idea is its own small island, stacked along a dotted path */
+.sp{display:none;background:#f3efe9;padding-block:14px 120px;padding-inline:16px;position:relative;overflow-x:clip}
+.sp-lead{margin:0 auto 10px;text-align:center;font-size:13px;font-weight:900;color:var(--muted);letter-spacing:.08em}
+.sp-lead::after{content:"";display:block;width:2px;height:22px;margin:6px auto 0;background:var(--muted);animation:drip 1.6s ease-in-out infinite}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+#spAreas{display:flex;flex-direction:column;gap:0;max-width:520px;margin:0 auto}
+.area{position:relative;display:flex;flex-direction:column;align-items:center}
+.area + .area::before{content:"";width:0;height:34px;border-left:6px dotted #d9c9b6}
+.area svg{display:block;width:100%;height:auto;aspect-ratio:420/330;overflow:visible}
+.bub-sp{position:relative;margin-top:-26px;width:min(300px,92%);background:#fff;border:3px solid var(--c);border-radius:10px;
+  padding:10px 14px 12px;text-align:center;box-shadow:0 6px 14px rgba(60,40,30,.16)}
+.bub-sp::before{content:"";position:absolute;left:50%;top:-14px;margin-left:-11px;border:11px solid transparent;border-bottom:12px solid var(--c);border-top:0}
+.bub-sp::after{content:"";position:absolute;left:50%;top:-8px;margin-left:-7px;border:7px solid transparent;border-bottom:8px solid #fff;border-top:0}
+.bub-sp .t{display:block;color:var(--c);font-weight:900;font-size:17px;line-height:1.4;text-wrap:balance}
+.bub-sp .t::after{content:" ›"}
+.bub-sp .d{display:block;font-size:12.5px;margin-top:3px}
+.bub-sp .n{display:block;font-size:11px;color:var(--muted);margin-top:4px}
+.bub-sp .badge{position:absolute;top:-18px;right:-10px;width:46px;height:46px;border-radius:50%;background:var(--red);color:#fff;
+  border:3px solid #fff;font-size:11px;font-weight:900;display:grid;place-items:center;line-height:1.1;box-shadow:0 2px 6px rgba(0,0,0,.18)}
+@media (max-width:760px){
+  .scroller{display:none}
+  /* 狭い幅の島は、時間帯にかかわらずずっと昼 */
+  body.night .scene-g{filter:none}
+  body.night .lights-g{opacity:0}
+  .sp{display:block}
+  .top{padding-block:8px}
+  .today{width:auto;max-width:calc(100% - 32px - 134px);padding:8px 30px 8px 12px;border-radius:999px;display:flex;align-items:center}
+  .today h2,.today p{display:none}
+  .today .go{background:none;box-shadow:none;color:#fff;padding:4px 2px;font-size:0;text-align:left;white-space:nowrap}
+  .today .go::before{content:"今日のアイデア ›";font-size:13px}
+  .today .x{top:50%;transform:translateY(-50%);right:10px;font-size:18px}
+  .fab{width:56px;height:56px;font-size:11px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="mark"><small>宇治のまちに、こんなことがあったらいいな</small><b>あったらいいな<span>のまち</span></b></div>
+  <div class="top-r">
+    <span class="hint">ふきだしをおして、のぞいてみよう！</span>
+  </div>
+</header>
+<svg class="defs" width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
+      <defs>
+        <radialGradient id="gTree" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#9ed77a"/><stop offset=".6" stop-color="#55a845"/><stop offset="1" stop-color="#2f7a35"/></radialGradient>
+        <radialGradient id="gTree2" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#c6e88a"/><stop offset=".6" stop-color="#86c35a"/><stop offset="1" stop-color="#4f8f3a"/></radialGradient>
+        <radialGradient id="gCloud" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#ffffff"/><stop offset=".7" stop-color="#f3f6fb"/><stop offset="1" stop-color="#d6dfec"/></radialGradient>
+        <radialGradient id="gHead" cx="35%" cy="30%" r="70%"><stop offset="0" stop-color="#ffe3cc"/><stop offset="1" stop-color="#e9b48f"/></radialGradient>
+        <radialGradient id="gLamp" r="50%"><stop offset="0" stop-color="#fff3b0"/><stop offset=".4" stop-color="#ffd84a" stop-opacity=".8"/><stop offset="1" stop-color="#ffd84a" stop-opacity="0"/></radialGradient>
+        <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="4"/></filter>
+        <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><line x1="0" y1="0" x2="0" y2="7" stroke="#ffffff" stroke-width="1.6" opacity=".7"/></pattern>
+      </defs>
+</svg>
+
+<div class="scroller" id="scroller">
+  <div class="scene" id="sceneWrap">
+    <img id="map" src="town.webp" width="1536" height="1024" alt="山と川と海にかこまれた、宇治をイメージしたまちのイラスト。9つのアイデアが置かれている">
+    <img id="mapNight" src="town-night.webp" width="1536" height="1024" alt="" aria-hidden="true" loading="lazy">
+    <svg id="mapOverlay" viewBox="0 0 1536 1024" aria-hidden="true">
+      <g id="leaders"></g>
+      <g id="lights" class="lights-g"></g>
+      <g id="critter" class="critter-g"></g>
+    </svg>
+    <div id="bubbles"></div>
+  </div>
+</div>
+
+<div class="sp" id="sp">
+  <p class="sp-lead">スクロールして、まちを歩いてみよう</p>
+  <div id="spAreas"></div>
+</div>
+
+<div class="floats">
+    <aside class="today" id="today">
+      <button class="x" id="todayX" aria-label="とじる">×</button>
+      <h2>今日のアイデア</h2>
+      <p id="todayName"></p>
+      <button class="go" id="todayGo">のぞいてみる ›</button>
+    </aside>
+    <div class="fabs">
+      <button class="fab" id="glassBtn" aria-pressed="false"><svg width="30" height="16" viewBox="0 0 30 16" aria-hidden="true"><circle cx="8" cy="9" r="6" fill="none" stroke="#fff" stroke-width="2.5"/><circle cx="22" cy="9" r="6" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M14 8h2" stroke="#fff" stroke-width="2.5"/></svg>メガネ</button>
+    </div>
+</div>
+
+
+<footer>
+  <span>まちであそぶ、をつくる ― Playable City 入門ワークショップ（2026.10.3 宇治市産業会館）</span>
+  <span>シートの文はなるべく書かれたままにしています。空らんは、絵で伝えてくれたアイデアです。</span>
+</footer>
+
+<div class="overlay" id="overlay" hidden>
+  <article class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"></article>
+</div>
+
+<script>
+/* ---------------- data ---------------- */
+const IDEAS = [
+  {id:'wall', pos:[470,232], card:[640,108], wish:'学校のかべが<br>ぜんぶホワイトボードに<br>なったらいいな', label:'ホワイトボードの学校', c:'#2f9a48', a:[3.4,2.4,5.6], name:'学校のかべが全面ホワイトボード', short:'学校のかべに、どこでも絵がかける！', place:'学校',
+   what:'絵をどこでもかける。', how:'学校に行く。', who:'自分・絵が大好きな人', nick:'まっちゃん'},
+  {id:'glass', pos:[690,516], card:[660,700], wish:'ゆかがガラスで<br>下の道路が見える<br>歩道橋があったらいいな', label:'ガラスの歩道橋', c:'#6c9a12', a:[6,6.1,2.3], name:'ガラスの歩道橋', tmpName:true, short:'足の下に道路が見える歩道橋。', place:'通学路',
+   what:'横断歩道を歩道橋にして、ゆかにガラスをはる。', how:'下の道路が見える。', who:'わたる人が楽しい、おもしろい', nick:'りさ'},
+  {id:'game', pos:[262,482], card:[180,372], wish:'バス停のQRコードで<br>宇治茶を育てるゲームが<br>できたらいいな', label:'まちゲーム', c:'#2e7fd0', a:[15.2,3.4,3.4], name:'まちゲーム', short:'バスや電車を待つあいだに、宇治茶を育てよう。', place:'駅やバス停', badge:'また来て',
+   what:'待っている間も楽しめるように、その地域で有名なものを使ったゲームのQRコードをはる。',
+   how:'宇治茶の場合は、お茶を使った育成ゲームをして、また来たときに読み取るとスペシャルアイテムをゲットできる。',
+   who:'観光で来た人がそのゲームをしてくれると、その地域について知ってもらえて、地域の方々も嬉しくなる。', nick:'りっちゃん'},
+  {id:'ar', pos:[752,330], card:[1000,190], wish:'メガネをかけると<br>小動物が手つづきを<br>教えてくれたらいいな', label:'AR市役所City', c:'#e4362b', a:[13.4,7.6,3.6], name:'AR市役所City', short:'メガネをかけると、小動物が手つづきを教えてくれる。', place:'市役所の前', badge:'メガネ',
+   what:'メガネ的なものをつけると、かわいい小動物が表れ、手つづき等のやり方を教えてくれるもの。（ミニゲームも）',
+   how:'メガネをつけることで、会うことができる。', who:'子供、市役所になれていない人', nick:'Periodic table 大スキな人'},
+  {id:'night', pos:[470,563], card:[230,650], wish:'夜の歩道に<br>光る石がうまっていたら<br>いいな', label:'光る石の夜道', c:'#7d55c7', a:[6.2,15.2,1], name:'夜の暗い道も楽しく!!', short:'夜になると、歩道にうめた石が光る。', place:'夜の歩道、街道の下', badge:'夜',
+   what:'夜の暗い道でも怖くないような道にするために、道の中に夜になったら光る石を埋めこむ。',
+   how:'上を歩いてみたり、写真を撮ったりすると、とても楽しい。', who:'仕事帰りでヘトヘトの人や部活帰りの人、遊んで帰ってくる人', nick:'ゆうな'},
+  {id:'stairs', pos:[1255,252], card:[1360,112], wish:'ふむと音がなる<br>かいだんが<br>あったらいいな', label:'音のかいだん', c:'#ee7a1c', a:[12.6,14.8,2.6], name:'かいだんをふんだらおとがなる', short:'ふむと、ドレミの曲ができるかいだん。', place:'かいだん', badge:'音',
+   what:'ふんだら曲ができる。', how:'ふんであそぶ。', who:'みんな', nick:'はるの'},
+  {id:'river', pos:[905,712], card:[1080,885], wish:'堤防で見つけた生き物を<br>みんなで見せあえたら<br>いいな', label:'生き物交流', c:'#14958a', a:[16.6,13.3,1.8], name:'植物、生き物交流', short:'堤防で見つけた生き物を、みんなでシェア。', place:'茶づなの近くの堤防',
+   what:'堤防で見つけた様々なものを交流し合う。',
+   how:'スマホでQRコードを読みこんで、サイトに写真をのせたり、クイズを出したりする。', who:'植物や生き物が好きな人', nick:'しおり'},
+  {id:'badminton', pos:[1420,578], card:[1385,705], wish:'雲みたいな部屋で<br>バドミントンが<br>できたらいいな', label:'雲でバドミントン', c:'#2a9fd3', a:[-0.5,6.4,7.4], name:'雲の上でバドミントン', short:'雲みたいな部屋で、ふわふわ試合。', place:'雲みたいにした部屋',
+   what:'部屋に入ったらバドミントンの試合ができる。', how:'', who:'みんな', nick:'さくらこ'},
+  {id:'cloud', pos:[1496,292], card:[1360,410], wish:'くもの上で<br>音楽にあわせて<br>おにごっこできたらいいな', label:'くもの上おにごっこ', c:'#d4417f', a:[13.6,-0.6,8.4], name:'くもの上でおにごっこしながら音楽がながれる', short:'くもの上で、音楽にあわせておにごっこ。', place:'くもの上', badge:'音',
+   what:'', how:'', who:'', nick:'ひなの'},
+];
+
+const $ = s => document.querySelector(s);
+const NS = 'http://www.w3.org/2000/svg';
+const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent && parent.appendChild(e); return e; };
+const map = $('#map');
+// drawing target: the big map first, then each small island on narrow screens
+let scene = $('#scene'), lights = $('#lights'), OX = 600, OY = 230;
+
+/* ---------------- isometric helpers ---------------- */
+const P = (x, y, z = 0) => [OX + (x - y) * 29, OY + (x + y) * 14.5 - z * 20];
+const pts = arr => arr.map(p => P(...p).map(n => n.toFixed(1)).join(',')).join(' ');
+function shade(hex, f){
+  const n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+  const m = v => Math.max(0, Math.min(255, Math.round(v * f)));
+  return '#' + ((1 << 24) + (m(r) << 16) + (m(g) << 8) + m(b)).toString(16).slice(1);
+}
+const poly = (arr, fill, parent = scene, extra = {}) => el('polygon', {points: pts(arr), fill, ...extra}, parent);
+
+let items = [];   // depth-sorted drawables
+const add = (depth, fn) => items.push({depth, fn});
+const flush = () => { items.sort((a, b) => a.depth - b.depth).forEach(it => it.fn()); items = []; };
+
+function box(x, y, w, d, h, col, z0 = 0, g = scene){
+  const t = z0 + h;
+  poly([[x,y+d,z0],[x+w,y+d,z0],[x+w,y+d,t],[x,y+d,t]], shade(col,.86), g, {stroke:shade(col,.7), 'stroke-width':.6});
+  poly([[x+w,y,z0],[x+w,y+d,z0],[x+w,y+d,t],[x+w,y,t]], shade(col,.72), g, {stroke:shade(col,.6), 'stroke-width':.6});
+  poly([[x,y,t],[x+w,y,t],[x+w,y+d,t],[x,y+d,t]], col, g, {stroke:shade(col,.82), 'stroke-width':.6});
+}
+// windows on the front-left face (y = y+d) or front-right face (x = x+w)
+function winsL(x, y, w, d, z0, cols, rows, h, col = '#9fd0ea', lit = true){
+  const fy = y + d + 0.02, cw = w / cols, rh = h / rows;
+  for (let i = 0; i < cols; i++) for (let j = 0; j < rows; j++){
+    const u0 = x + i*cw + cw*.22, u1 = x + (i+1)*cw - cw*.22, v0 = z0 + j*rh + rh*.28, v1 = z0 + (j+1)*rh - rh*.2;
+    const q = [[u0,fy,v0],[u1,fy,v0],[u1,fy,v1],[u0,fy,v1]];
+    poly(q, col, scene, {stroke:'#6f8fa8','stroke-width':.6});
+    if (lit) poly(q, '#ffd96a', lights);
+  }
+}
+function winsR(x, y, w, d, z0, cols, rows, h, col = '#9fd0ea', lit = true){
+  const fx = x + w + 0.02, cw = d / cols, rh = h / rows;
+  for (let i = 0; i < cols; i++) for (let j = 0; j < rows; j++){
+    const u0 = y + i*cw + cw*.22, u1 = y + (i+1)*cw - cw*.22, v0 = z0 + j*rh + rh*.28, v1 = z0 + (j+1)*rh - rh*.2;
+    const q = [[fx,u0,v0],[fx,u1,v0],[fx,u1,v1],[fx,u0,v1]];
+    poly(q, shade(col,.85), scene, {stroke:'#6f8fa8','stroke-width':.6});
+    if (lit) poly(q, '#f2c24f', lights);
+  }
+}
+function shadow(x, y, rx = 16, ry = 7){ const [sx, sy] = P(x, y); el('ellipse', {cx:sx, cy:sy, rx, ry, fill:'#5a4a3a', opacity:.16}, scene); }
+function roundTree(x, y, r = 15, grad = 'gTree'){
+  add(x + y, () => {
+    shadow(x + .3, y + .3, r*1.1, r*.45);
+    const [sx, sy] = P(x, y);
+    el('rect', {x:sx-2.5, y:sy-16, width:5, height:16, fill:'#8a5a3a', rx:2}, scene);
+    el('circle', {cx:sx-r*.45, cy:sy-16-r*.6, r:r*.75, fill:`url(#${grad})`}, scene);
+    el('circle', {cx:sx+r*.4, cy:sy-16-r*.55, r:r*.7, fill:`url(#${grad})`}, scene);
+    el('circle', {cx:sx, cy:sy-16-r*1.15, r:r*.85, fill:`url(#${grad})`}, scene);
+  });
+}
+function coneTree(x, y, s = 1){
+  add(x + y, () => {
+    shadow(x + .2, y + .2, 12*s, 5*s);
+    const [sx, sy] = P(x, y);
+    el('rect', {x:sx-2, y:sy-10*s, width:4, height:10*s, fill:'#7a4e30'}, scene);
+    [[0,22,14],[12,18,11],[22,13,8]].forEach(([o, hw, hh], i) => {
+      const top = sy - 10*s - (o + hh + 14)*s, base = sy - 10*s - o*s;
+      el('path', {d:`M${sx-hw*s} ${base} Q${sx} ${base+5*s} ${sx+hw*s} ${base} L${sx} ${top} Z`, fill: i % 2 ? '#3f9b4a' : '#2f8a40'}, scene);
+      el('path', {d:`M${sx} ${top} L${sx+hw*s} ${base} Q${sx+hw*.5*s} ${base+3*s} ${sx} ${base+2*s} Z`, fill:'#256f34', opacity:.6}, scene);
+    });
+  });
+}
+const SHIRTS = ['#e4362b','#2e7fd0','#f2b630','#7d55c7','#2f9a48','#ee7a1c','#e85b8f','#ffffff'];
+// opt.z: standing height, opt.depth: draw order override, opt.kid: wrap in a group that hops with the music
+function person(x, y, i = 0, opt = {}){
+  add(opt.depth ?? x + y + .01, () => {
+    const [sx, sy] = P(x, y, opt.z || 0), parent = opt.kid ? el('g', {class:'kid'}, scene) : scene;
+    el('ellipse', {cx:sx, cy:sy, rx:5, ry:2.2, fill:'#5a4a3a', opacity:.2}, parent);
+    el('rect', {x:sx-2.6, y:sy-7, width:2, height:7, fill:'#3d4a6a', rx:1}, parent);
+    el('rect', {x:sx+.6, y:sy-7, width:2, height:7, fill:'#3d4a6a', rx:1}, parent);
+    el('rect', {x:sx-4, y:sy-16, width:8, height:10, rx:3.5, fill:SHIRTS[i % SHIRTS.length], stroke:'rgba(0,0,0,.12)','stroke-width':.6}, parent);
+    el('circle', {cx:sx, cy:sy-20, r:4.2, fill:'url(#gHead)'}, parent);
+    el('path', {d:`M${sx-4.3} ${sy-20.5} a4.3 4.3 0 0 1 8.6 0 q-4 -1.6 -8.6 0z`, fill: i % 3 ? '#3a2a22' : '#6a4630'}, parent);
+  });
+}
+function lamp(x, y){
+  add(x + y, () => {
+    const [sx, sy] = P(x, y);
+    el('rect', {x:sx-1.2, y:sy-34, width:2.4, height:34, fill:'#7f7a70'}, scene);
+    el('circle', {cx:sx, cy:sy-36, r:4, fill:'#fff8dc', stroke:'#c9bfa8', 'stroke-width':1}, scene);
+    el('circle', {cx:sx, cy:sy-36, r:22, fill:'url(#gLamp)'}, lights);
+  });
+}
+function cloud(cx, cy, s = 1){
+  const g = el('g', {}, scene);
+  [[-60,8,30],[-30,-6,36],[8,-14,40],[46,-4,34],[72,10,24],[-20,16,30],[24,16,32]].forEach(([dx, dy, r]) =>
+    el('circle', {cx:cx+dx*s, cy:cy+dy*s, r:r*s, fill:'url(#gCloud)'}, g));
+  el('ellipse', {cx:cx+6*s, cy:cy+30*s, rx:84*s, ry:12*s, fill:'#e3e9f2'}, g);
+  return g;
+}
+
+// AR の小動物
+function drawCritter(sx, sy, parent){
+  const g = el('g', {}, parent);
+  el('ellipse', {cx:sx, cy:sy, rx:14, ry:5, fill:'#2e7fd0', opacity:.25}, g);
+  el('path', {d:`M${sx-14} ${sy-38} l-8 -20 l18 12z M${sx+14} ${sy-38} l8 -20 l-18 12z`, fill:'#bfe0f7', stroke:'#2e7fd0','stroke-width':2}, g);
+  el('ellipse', {cx:sx, cy:sy-14, rx:13, ry:12, fill:'#bfe0f7', stroke:'#2e7fd0','stroke-width':2}, g);
+  el('ellipse', {cx:sx, cy:sy-34, rx:19, ry:16, fill:'#bfe0f7', stroke:'#2e7fd0','stroke-width':2}, g);
+  [-7,7].forEach(d => { el('circle', {cx:sx+d, cy:sy-36, r:6, fill:'#fff', stroke:'#2e7fd0','stroke-width':1.8}, g); el('circle', {cx:sx+d, cy:sy-36, r:2.2, fill:'#2e7fd0'}, g); });
+  el('path', {d:`M${sx-4} ${sy-26} q4 4 8 0`, fill:'none', stroke:'#2e7fd0','stroke-width':1.8}, g);
+  el('rect', {x:sx-90, y:sy-80, width:80, height:28, rx:14, fill:'#fff', stroke:'#2e7fd0','stroke-width':2}, g);
+  const t = el('text', {x:sx-50, y:sy-61, 'text-anchor':'middle','font-family':'Zen Maru Gothic, sans-serif','font-weight':900,'font-size':13, fill:'#2e7fd0'}, g); t.textContent = 'こっちだよ！';
+}
+/* ---------------- the illustrated town: night lights + glasses creature ---------------- */
+drawCritter(706, 392, $('#critter'));
+// 光る石：駅前から歩道橋へつづく大通りの歩道
+for (let k = 0; k <= 22; k++){
+  const x = 300 + k * 19, y = 500 + (x - 390) * .53 + 20 + (k % 2 ? 3 : -3);
+  el('circle', {cx:x, cy:y, r:14, fill:'#ffe680', opacity:.6, filter:'url(#soft)'}, lights);
+  el('circle', {cx:x, cy:y, r:3.4, fill:'#fff7c2'}, lights);
+}
+
+/* ---------------- spots on the map ---------------- */
+const bubbles = $('#bubbles');
+IDEAS.forEach(i => {
+  const [sx, sy] = i.pos;
+  const spot = document.createElement('span'); spot.className = 'spot'; spot.style.setProperty('--c', i.c);
+  spot.style.left = (sx / 1536 * 100) + '%'; spot.style.top = (sy / 1024 * 100) + '%'; bubbles.appendChild(spot);
+  const [cx, cy] = i.card;
+  el('line', {x1:cx, y1:cy, x2:sx, y2:sy, stroke:i.c, 'stroke-width':2.4, 'stroke-linecap':'round'}, $('#leaders'));
+  const b = document.createElement('button'); b.className = 'idea'; b.style.setProperty('--c', i.c);
+  b.style.left = (cx / 1536 * 100) + '%'; b.style.top = (cy / 1024 * 100) + '%';
+  // 丸い絵は、そのアイデアの場所をイラストから切り抜いて見せる
+  b.style.setProperty('--img', 'url(town.webp)'); b.style.setProperty('--imgN', 'url(town-night.webp)');
+  b.setAttribute('aria-label', `${i.name}（${i.place}）をひらく`);
+  b.innerHTML = `<span class="pic" style="background-position:${((9 * sx / 1536 - .5) / 8 * 100).toFixed(1)}% ${((6 * sy / 1024 - .5) / 5 * 100).toFixed(1)}%"></span><span class="w">${i.wish}</span>`;
+  b.onclick = () => open(i.id); bubbles.appendChild(b);
+});
+
+/* ---------------- narrow: one small island per idea ---------------- */
+const ISLE_R = 4.6;
+function island(id, fill, s){
+  const [cx, cy] = P(5, 5), rx = ISLE_R * 41, ry = ISLE_R * 20.5;
+  el('ellipse', {cx, cy:cy+30, rx:rx*.9, ry:ry*.55, fill:'#5a4a3a', opacity:.14, filter:'url(#soft)'}, scene);
+  el('ellipse', {cx, cy:cy+14, rx, ry, fill:shade(fill,.78)}, scene);
+  el('rect', {x:cx-rx, y:cy, width:rx*2, height:14, fill:shade(fill,.78)}, scene);
+  el('ellipse', {cx, cy, rx, ry, fill, stroke:'#ffffff', 'stroke-width':4}, scene);
+  const cp = el('clipPath', {id:'clip-' + id}, el('defs', {}, s));
+  el('ellipse', {cx, cy, rx:rx-3, ry:ry-3}, cp);
+  return el('g', {'clip-path':`url(#clip-${id})`}, scene);
+}
+const inIsle = (x, y, r = ISLE_R - .5) => Math.hypot(x - 5, y - 5) < r;
+const label = (x, y, z, text, size = 12, fill = '#3a3330') => { const [sx, sy] = P(x, y, z);
+  const t = el('text', {x:sx, y:sy, 'text-anchor':'middle', 'font-family':'Zen Maru Gothic, sans-serif', 'font-weight':900, 'font-size':size, fill}, scene); t.textContent = text; return t; };
+// a quad on a front-left face (y fixed) or front-right face (x fixed), in face coords (u along the wall, v height)
+const quadL = (fy, u0, u1, v0, v1, fill, g = scene) => poly([[u0,fy,v0],[u1,fy,v0],[u1,fy,v1],[u0,fy,v1]], fill, g);
+const quadR = (fx, u0, u1, v0, v1, fill, g = scene) => poly([[fx,u0,v0],[fx,u1,v0],[fx,u1,v1],[fx,u0,v1]], fill, g);
+function qr(face, fixed, u0, v0, size){
+  const q = face === 'L' ? quadL : quadR, n = 5, c = size / n, bits = '1110110101011101010111011';
+  q(fixed, u0 - c*.4, u0 + size + c*.4, v0 - c*.4, v0 + size + c*.4, '#ffffff');
+  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) if (bits[i*n + j] === '1') q(fixed, u0 + i*c, u0 + (i+1)*c, v0 + size - (j+1)*c, v0 + size - j*c, '#2b2a30');
+}
+function kingfisher(x, y){
+  const [sx, sy] = P(x, y);
+  el('rect', {x:sx-1.5, y:sy-30, width:3, height:30, fill:'#7a4e30'}, scene);
+  el('path', {d:`M${sx} ${sy-30} q12 -4 22 -2`, stroke:'#7a4e30','stroke-width':3, fill:'none'}, scene);
+  el('ellipse', {cx:sx+14, cy:sy-38, rx:8, ry:6, fill:'#2e86d8'}, scene);
+  el('ellipse', {cx:sx+14, cy:sy-35, rx:6, ry:3.4, fill:'#f08a3a'}, scene);
+  el('circle', {cx:sx+8, cy:sy-42, r:4.4, fill:'#2e86d8'}, scene);
+  el('path', {d:`M${sx+4} ${sy-42} l-8 1 8 2z`, fill:'#333'}, scene);
+  el('path', {d:`M${sx+20} ${sy-38} l8 4 -8 0z`, fill:'#2269b0'}, scene);
+}
+const note = (sx, sy, ch = '♪', fill = '#d4417f', size = 20) => { const t = el('text', {x:sx, y:sy, 'font-size':size, fill, 'font-family':'sans-serif'}, scene); t.textContent = ch; };
+const STEP_COL = ['#e4362b','#ee7a1c','#f2b630','#2f9a48','#2e7fd0'];
+
+const MINI = {
+  badminton(s){
+    el('circle', {cx:210, cy:170, r:160, fill:'#e3f1fb'}, scene);
+    cloud(70, 70, .35); cloud(360, 52, .3);
+    island('badminton', '#e8f4ff', s);
+    // 雲みたいにした部屋：奥のかべにも雲
+    add(1, () => { box(2, 1.75, 6, .25, 2.2, '#f4f9ff'); box(1.75, 2, .25, 6, 2.2, '#eef5fd');
+      [[3,1.2],[4.8,1.6],[6.8,1.1]].forEach(([u, v]) => { const [x, y] = P(u, 2.02, v); el('circle', {cx:x, cy:y, r:15, fill:'url(#gCloud)'}, scene); el('circle', {cx:x+14, cy:y+4, r:11, fill:'url(#gCloud)'}, scene); });
+      [[3.4,1.3],[5.6,1.6]].forEach(([u, v]) => { const [x, y] = P(2.02, u, v); el('circle', {cx:x, cy:y, r:14, fill:'url(#gCloud)'}, scene); el('circle', {cx:x-12, cy:y+4, r:10, fill:'url(#gCloud)'}, scene); });
+    });
+    add(4, () => { const [a, b] = P(3.2, 7.6); cloud(a, b, .32); const [c, d] = P(7.8, 3.4); cloud(c, d, .3); });
+    person(3.8, 3.6, 1); person(6.6, 6.7, 0);
+    add(10, () => { // ネット（x+y=10 の線上なので画面では水平）
+      const L = P(3, 7, 0), R = P(7, 3, 0), lt = P(3, 7, 1.5), rt = P(7, 3, 1.5);
+      el('path', {d:`M${L[0]} ${L[1]} V${lt[1]} M${R[0]} ${R[1]} V${rt[1]}`, stroke:'#3a3330', 'stroke-width':3}, scene);
+      for (let k = 0; k <= 12; k++){ const x = lt[0] + (rt[0] - lt[0]) * k / 12; el('line', {x1:x, y1:lt[1], x2:x, y2:lt[1]+14, stroke:'#3a3330', 'stroke-width':1}, scene); }
+      el('path', {d:`M${lt[0]} ${lt[1]} H${rt[0]} M${lt[0]} ${lt[1]+14} H${rt[0]}`, stroke:'#3a3330', 'stroke-width':1.6}, scene);
+      const [sx, sy] = P(5.6, 4.6, 3); el('path', {d:`M${sx} ${sy} l4 -7 4 7z`, fill:'#fff', stroke:'#3a3330', 'stroke-width':1.2}, scene);
+      const a = P(3.8, 3.6, 1.3), b = P(6.6, 6.7, 1.3);
+      el('path', {d:`M${a[0]+6} ${a[1]-6} Q${(a[0]+b[0])/2} ${a[1]-70} ${b[0]-6} ${b[1]-6}`, fill:'none', stroke:'#2a9fd3', 'stroke-width':1.6, 'stroke-dasharray':'4 5'}, scene);
+    });
+  },
+  wall(s){
+    const G = island('wall', '#cfe7b4', s);
+    poly([[1,4.6,0],[9,4.6,0],[9,9,0],[1,9,0]], '#efe4d2', G);
+    add(5, () => { box(2, 1.6, 5.4, 2.4, 3, '#fbfaf6'); winsL(2, 1.6, 5.4, 2.4, 0, 6, 2, 3); winsR(2, 1.6, 5.4, 2.4, 0, 2, 2, 3);
+      const [sx, sy] = P(4.7, 4.02, 2.55); el('circle', {cx:sx, cy:sy, r:8, fill:'#fff', stroke:'#4a4a4a', 'stroke-width':1.5}, scene);
+      el('path', {d:`M${sx} ${sy} V${sy-5} M${sx} ${sy} l4 2`, stroke:'#333', 'stroke-width':1.5, fill:'none'}, scene);
+      label(4.7, 4, 3.25, '学校', 13); });
+    // ホワイトボードのかべ（2まい）と、かかれた絵
+    const lines = (pts, c) => el('polyline', {points:pts.map(p => P(...p).join(',')).join(' '), fill:'none', stroke:c, 'stroke-width':2.4, 'stroke-linecap':'round', 'stroke-linejoin':'round'}, scene);
+    add(10.4, () => { box(2.2, 5, 4.6, .3, 1.7, '#ffffff'); const fy = 5.32;
+      lines([[2.6,fy,.6],[2.9,fy,1.3],[3.2,fy,.6],[3.5,fy,1.3]], '#2e7fd0');
+      lines([[4,fy,.5],[4.4,fy,1.4],[4.8,fy,.5],[4,fy,1.1],[4.8,fy,1.1],[4,fy,.5]], '#e4362b');
+      lines([[5.4,fy,.6],[5.7,fy,1.2],[6.1,fy,1.3],[6.4,fy,.7]], '#2f9a48');
+      quadL(fy, 2.3, 6.7, .02, .14, '#c9c3bb'); });
+    add(13.2, () => { box(7, 5, .3, 3.2, 1.7, '#ffffff'); const fx = 7.32;
+      lines([[fx,5.5,.6],[fx,5.9,1.3],[fx,6.3,.6]], '#ee7a1c');
+      const [sx, sy] = P(fx, 7.2, 1); el('circle', {cx:sx, cy:sy, r:9, fill:'none', stroke:'#7d55c7', 'stroke-width':2.4}, scene);
+      quadR(fx, 5.1, 8.1, .02, .14, '#c9c3bb'); });
+    person(3.4, 6, 0); person(5, 6.1, 2); person(6.4, 6.9, 4);
+    coneTree(1.4, 6.6); roundTree(8.4, 6.4, 14); roundTree(5, 8.6, 13, 'gTree2');
+  },
+  glass(s){
+    const G = island('glass', '#cfe7b4', s);
+    poly([[0,4.3,0],[10,4.3,0],[10,5.9,0],[0,5.9,0]], '#a9a6ae', G);
+    for (let x = 0; x < 10; x += 1.2) poly([[x,5.05,0],[x+.6,5.05,0],[x+.6,5.15,0],[x,5.15,0]], '#ffffff', G);
+    add(7.3, () => box(1.6, 4.5, 1.3, .75, .6, '#e85b8f'));
+    add(9.4, () => box(4.4, 5, 1.3, .75, .6, '#f2b630'));
+    add(10, () => {
+      poly([[4,1.9,0],[6,1.9,0],[6,3.6,1.9],[4,3.6,1.9]], '#c3e23a', scene, {stroke:'#8aa52a', 'stroke-width':.8});
+      poly([[6,1.9,0],[6,3.6,0],[6,3.6,1.9]], '#9bb82a');
+      box(4, 3.6, 2, 3, .28, '#c3e23a', 1.62);
+      const g = [[4.45,4.3,1.91],[5.55,4.3,1.91],[5.55,5.9,1.91],[4.45,5.9,1.91]];
+      poly(g, '#5aa9e0', scene, {opacity:.55}); poly(g, 'url(#hatch)');
+      box(4.1, 3.7, .2, .2, 1.62, '#d6d0c8'); box(5.7, 6.3, .2, .2, 1.62, '#d6d0c8');
+      label(5, 6.6, 2.2, 'ガラス', 11, '#2e6fa8');
+    });
+    add(12.6, () => { poly([[4,6.6,1.9],[6,6.6,1.9],[6,8.3,0],[4,8.3,0]], '#c3e23a', scene, {stroke:'#8aa52a', 'stroke-width':.8}); poly([[6,6.6,0],[6,8.3,0],[6,6.6,1.9]], '#9bb82a'); });
+    person(4.9, 4.4, 1, {z:1.9, depth:11}); person(5.3, 5.4, 2, {z:1.9, depth:11.1}); person(4.6, 8.9, 5);
+    roundTree(7.8, 2.6, 15); coneTree(2.2, 2.4); roundTree(7.8, 7.6, 13, 'gTree2'); coneTree(1.8, 7.4, .9);
+  },
+  game(s){
+    const G = island('game', '#cfe3f3', s);
+    poly([[0,6.3,0],[10,6.3,0],[10,7.7,0],[0,7.7,0]], '#a9a6ae', G);
+    add(5, () => { box(2.2, 1.8, 4.2, 2, 2.4, '#ffffff'); winsL(2.2, 1.8, 4.2, 2, 0, 4, 1, 2.4); box(2, 1.6, 4.6, 2.4, .3, '#2e7fd0', 2.4); label(4.3, 3.9, 2.95, 'えき', 13, '#ffffff'); });
+    add(9.2, () => { // バス停：うしろのかべに QR コードのポスター
+      box(6.2, 4.2, 2, .15, 1.6, '#dfe7ef'); qr('L', 4.37, 6.9, .45, .7);
+      box(6.1, 4.05, 2.2, .9, .14, '#2e7fd0', 1.6); box(6.4, 4.45, 1.6, .3, .38, '#b98457');
+      label(7.2, 4.9, 2.05, 'バス停', 11); });
+    person(6.8, 4.9, 1, {depth:11.8}); person(7.6, 5, 3, {depth:12.7}); person(3, 4.7, 5);
+    add(14, () => { box(1.8, 6.5, 3.4, 1.1, 1.3, '#f2b630'); winsL(1.8, 6.5, 3.4, 1.1, .2, 4, 1, 1.1, '#e8f4fb'); });
+    roundTree(8.6, 6.6, 13); coneTree(7.8, 2.4); roundTree(1.4, 5, 12, 'gTree2');
+  },
+  ar(s){
+    const G = island('ar', '#f6e3d6', s);
+    poly([[1.6,5,0],[8.8,5,0],[8.8,9,0],[1.6,9,0]], '#efe2d2', G);
+    for (let k = 2; k < 9; k += .9) poly([[k,5,0],[k+.04,5,0],[k+.04,9,0],[k,9,0]], '#e4d4c0', G);
+    add(5, () => { box(2.1, 1.8, 5.8, 2.6, 3, '#f4ece0'); winsL(2.1, 1.8, 5.8, 2.6, 0, 6, 2, 3); winsR(2.1, 1.8, 5.8, 2.6, 0, 3, 2, 3);
+      quadL(4.42, 4.4, 5.6, 0, 1.1, '#9fd0ea'); box(4.2, 4.4, 1.6, .6, .15, '#e4362b', 1.1);
+      label(5, 4.42, 2.75, '市役所', 13);
+      const [fx, fy] = P(8.3, 4.6); el('rect', {x:fx-1, y:fy-70, width:2, height:70, fill:'#8a857c'}, scene);
+      el('path', {d:`M${fx+1} ${fy-70} h20 l-5 7 5 7 h-20z`, fill:'#e4362b'}, scene); });
+    [[3.4,5.9,0],[6.6,6.2,6],[5.6,7.6,2]].forEach(([x, y, i]) => person(x, y, i));
+    add(30, () => { const g = el('g', {class:'q-g'}, scene);
+      [[3.4,5.9],[6.6,6.2],[5.6,7.6]].forEach(([x, y], k) => { const [sx, sy] = P(x, y);
+        const t = el('text', {x:sx+6, y:sy-28, 'font-family':'Zen Maru Gothic, sans-serif', 'font-weight':900, 'font-size':18, fill:'#c23b98'}, g); t.textContent = '?'; }); });
+    roundTree(8.4, 7, 14); coneTree(1.6, 6.6);
+    return () => drawCritter(...P(4.6, 6.6), el('g', {class:'critter-g'}, s));
+  },
+  night(s){
+    const G = island('night', '#f6d3dc', s);
+    poly([[2.4,0,0],[4,0,0],[4,10,0],[2.4,10,0]], '#a9a6ae', G);
+    for (let y = .4; y < 10; y += 1.2) poly([[3.15,y,0],[3.25,y,0],[3.25,y+.6,0],[3.15,y+.6,0]], '#ffffff', G);
+    poly([[4,0,0],[5.8,0,0],[5.8,10,0],[4,10,0]], '#e8d9cf', G);
+    for (let y = .6, k = 0; y < 10; y += .62, k++){ const x = 4.9 + (k % 2 ? .3 : -.3); if (!inIsle(x, y, ISLE_R - .3)) continue;
+      add(x + y, () => { const [sx, sy] = P(x, y);
+        el('ellipse', {cx:sx, cy:sy, rx:5, ry:2.6, fill:'#d8cfc6', stroke:'#b9aea4', 'stroke-width':.8}, scene);
+        el('ellipse', {cx:sx, cy:sy, rx:14, ry:7, fill:'#ffe680', opacity:.75, filter:'url(#soft)'}, lights);
+        el('ellipse', {cx:sx, cy:sy, rx:5, ry:2.6, fill:'#fff7c2'}, lights); }); }
+    [[6.3,2.3,'#f7e1c9','#c7563f'],[6.3,5.3,'#e9f1fb','#2e7fd0']].forEach(([x, y, c, r]) => add(x + y + 2, () => {
+      box(x, y, 2, 1.8, 1.7, c); winsL(x, y, 2, 1.8, 0, 2, 1, 1.7); winsR(x, y, 2, 1.8, 0, 2, 1, 1.7); box(x - .1, y - .1, 2.2, 2, .3, r, 1.7); }));
+    add(7, () => { box(.9, 4.2, 1.2, 1.6, 1.5, '#fde9ee'); box(.8, 4.1, 1.4, 1.8, .3, '#7d55c7', 1.5); });
+    lamp(5.9, 2); lamp(5.9, 5.6); lamp(5.9, 8.4);
+    person(4.6, 4.3, 7); person(5.1, 6.6, 1); coneTree(8.4, 7.8, .9);
+  },
+  stairs(s){
+    const G = island('stairs', '#fde3c8', s);
+    poly([[1,6.4,0],[9,6.4,0],[9,9,0],[1,9,0]], '#f3e3cf', G);
+    for (let i = 0; i < 5; i++) add(6 + i * .01, () => { box(1.9 + i * 1.1, 3.4, 1.1, 2.8, .5 * (i + 1), STEP_COL[i]);
+      label(2.45 + i * 1.1, 4.95, .5 * (i + 1), ['ド','レ','ミ','ファ','ソ'][i], 14, '#ffffff'); });
+    add(6.1, () => box(7.4, 3.4, 1.3, 2.8, 2.5, '#e9e2d8'));
+    person(3.6, 4.6, 0, {z:1, depth:9}); person(5.4, 7.2, 3); person(2.4, 7.4, 6);
+    add(20, () => { [[150,70],[205,52],[262,78],[118,98]].forEach(([x, y], k) => note(x, y, k % 2 ? '♫' : '♪', STEP_COL[k + 1], 22)); });
+    roundTree(8.2, 7.4, 13); coneTree(1.6, 2.6, .9);
+  },
+  river(s){
+    const G = island('river', '#c9eadf', s);
+    poly([[5.6,0,0],[6.7,0,0],[6.7,10,0],[5.6,10,0]], '#ead8b4', G);
+    poly([[6.7,0,0],[10,0,0],[10,10,0],[6.7,10,0]], '#7fbde6', G);
+    for (let y = 1.5; y < 10; y += 1.7) poly([[7.4,y,0],[8.6,y+.3,0],[8.6,y+.42,0],[7.4,y+.12,0]], '#c8e6f7', G);
+    add(4.5, () => { box(1.5, 2, 2.6, 1.8, 1.5, '#fffaf2'); winsL(1.5, 2, 2.6, 1.8, 0, 3, 1, 1.5); box(1.3, 1.8, 3, 2.2, .35, '#6aa84f', 1.5); label(2.8, 3.8, 2.05, '茶づな', 12, '#2f5a22'); });
+    add(10.3, () => kingfisher(6, 4.3));
+    person(4.2, 5.6, 4);
+    add(9.85, () => { const [sx, sy] = P(4.2, 5.6); el('rect', {x:sx+4, y:sy-25, width:6, height:10, rx:1.5, fill:'#2b2a30'}, scene); el('rect', {x:sx+5, y:sy-24, width:4, height:7, fill:'#9fd0ea'}, scene); });
+    add(9.5, () => { box(3, 6.6, .15, .9, 1.2, '#14958a'); qr('R', 3.17, 6.75, .3, .6); });
+    [[2,7.2],[3.6,8.2],[4.8,8.4]].forEach(([x, y]) => add(x + y, () => { const [sx, sy] = P(x, y);
+      el('path', {d:`M${sx} ${sy} v-8`, stroke:'#3f8a3a', 'stroke-width':1.6}, scene); el('circle', {cx:sx, cy:sy-9, r:3.2, fill:'#5b7fe0'}, scene); }));
+    roundTree(1.8, 5.6, 13, 'gTree2');
+  },
+  cloud(s){
+    el('circle', {cx:210, cy:170, r:160, fill:'#f8e6ef'}, scene);
+    cloud(62, 64, .3); cloud(368, 86, .26);
+    island('cloud', '#ffffff', s);
+    const [cx, cy] = P(5, 5);
+    [[-170,0,30],[-120,40,36],[-40,64,40],[50,64,40],[130,42,36],[176,4,28],[-150,-30,26],[150,-34,26]].forEach(([dx, dy, r]) =>
+      el('circle', {cx:cx+dx, cy:cy+dy, r, fill:'url(#gCloud)'}, scene));
+    el('ellipse', {cx, cy:cy-4, rx:150, ry:70, fill:'#ffffff'}, scene);
+    [[3.4,4,1],[5,3.2,2],[6.4,4.6,3],[4.2,6,4],[5.8,6.4,5],[3,6.8,6]].forEach(([x, y, i]) => person(x, y, i, {kid:true}));
+    add(20, () => { [[120,92],[180,64],[248,82],[300,108],[95,150],[330,160]].forEach(([x, y], k) => note(x, y, k % 2 ? '♫' : '♪', '#d4417f', 22)); });
+  },
+};
+
+['badminton','wall','glass','game','ar','night','stairs','river','cloud'].forEach(id => {
+  const i = IDEAS.find(x => x.id === id);
+  const area = document.createElement('div'); area.className = 'area'; area.style.setProperty('--c', i.c);
+  const s = el('svg', {viewBox:'0 0 420 330', role:'img', 'aria-label':`${i.place}のようす`});
+  scene = el('g', {class:'scene-g'}, s); lights = el('g', {class:'lights-g'}, s); OX = 210; OY = 45;
+  const after = MINI[id](s); flush(); s.appendChild(lights); after && after();
+  area.appendChild(s);
+  const b = document.createElement('button'); b.className = 'bub-sp';
+  b.innerHTML = `<span class="t">${i.name}</span><span class="d">${i.short}</span><span class="n">${i.place}　／　${i.nick}</span>`;
+  b.onclick = () => open(i.id); area.appendChild(b);
+  $('#spAreas').appendChild(area);
+});
+
+/* ---------------- sound ---------------- */
+let ac;
+function tone(freq, when = 0, dur = .35, type = 'triangle', vol = .22){
+  ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+  const t = ac.currentTime + when, o = ac.createOscillator(), g = ac.createGain();
+  o.type = type; o.frequency.value = freq; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .02);
+  g.gain.exponentialRampToValueAtTime(.001, t + dur); o.connect(g).connect(ac.destination); o.start(t); o.stop(t + dur + .05);
+}
+const FREQ = [261.63, 293.66, 329.63, 349.23, 392.0, 440.0, 493.88, 523.25];
+
+/* ---------------- toggles ---------------- */
+const glassBtn = $('#glassBtn');
+const isNight = () => document.body.classList.contains('night'), hasGlasses = () => document.body.classList.contains('glasses');
+function setNight(on){ document.body.classList.toggle('night', on); map.classList.toggle('night', on); syncPlay(); }
+function setGlasses(on){ document.body.classList.toggle('glasses', on); glassBtn.setAttribute('aria-pressed', on); glassBtn.lastChild.textContent = on ? 'はずす' : 'メガネ'; syncPlay(); }
+// 昼か夜かは、見ている人の時計だけで決まる（18時〜朝6時は夜）
+// 見本を見せるとき用：リンクの最後に #day / #night をつけると、時間に関係なくそちらになる
+const forced = () => location.hash === '#day' ? false : location.hash === '#night' ? true : null;
+const nightByClock = () => { const f = forced(); if (f !== null) return f; const h = new Date().getHours(); return h >= 18 || h < 6; };
+let clockNight = nightByClock();
+addEventListener('hashchange', () => { clockNight = nightByClock(); setNight(clockNight); });
+setInterval(() => { const n = nightByClock(); if (n !== clockNight){ clockNight = n; setNight(n); } }, 60000);
+glassBtn.onclick = () => { setGlasses(!hasGlasses()); if (hasGlasses()){ tone(784,0,.15); tone(1046,.12,.25); } };
+
+/* ---------------- mini experiences ---------------- */
+let teaLevel = 0; try { teaLevel = +localStorage.getItem('uji-tea') || 0; } catch(e){}
+let musicTimer = null, rally = 0, arStep = 0, penColor = '#3a3330', wbSnapshot = null;
+const AR_STEPS = ['ようこそ！ まず、入口で番号札をとってね。', 'この紙は、ここに名前と住所を書くよ。', '番号がよばれたら、3番の窓口へどうぞ。', 'おつかれさま！ Nice!'];
+const NOTES = ['ド','レ','ミ','ファ','ソ'], STEPC = ['#e4362b','#ee7a1c','#f2b630','#2f9a48','#2e7fd0'];
+const teaMsg = () => teaLevel >= 5 ? 'スペシャルアイテム「金の茶せん」をゲット！' : teaLevel ? 'お茶の葉が育ってきた。' : 'また来たときに、続きから遊べます。';
+
+const PLAY = {
+  ar: () => `<h4>メガネをかけてみる</h4><p>まちの市役所の前に、メガネの小動物があらわれます。</p>
+    <div class="row"><button class="btn primary" data-act="glasses">${hasGlasses() ? 'メガネをはずす' : 'メガネをかける'}</button>
+    <button class="btn" data-act="arNext" ${hasGlasses() ? '' : 'disabled'}>つぎを聞く</button></div>
+    <div class="bubble" id="arBubble">${hasGlasses() ? AR_STEPS[arStep] : 'ムズカシイ… タイヘン… コワイ…？'}</div>`,
+  game: () => `<h4>バス停で、バスを待つあいだに</h4><p>バス停のポスターのQRコードを読みこむと、宇治茶の育成ゲームがはじまります。また来て読みこむと、続きから。レベル5でスペシャルアイテム。</p>
+    <div class="row"><b>レベル：<span id="teaLv">${teaLevel}</span></b><div class="meter" style="flex:1"><i id="teaBar" style="width:${Math.min(teaLevel,5)*20}%"></i></div></div>
+    <div class="row"><button class="btn primary" data-act="tea">お茶の葉をそだてる</button><button class="btn" data-act="teaReset">はじめから</button></div>
+    <div class="res" id="teaMsg">${teaMsg()}</div>`,
+  wall: () => `<h4>休み時間の、学校のろうか</h4>
+    <p>左のかべも、右のかべも、つきあたりのかべも、ぜんぶホワイトボード。だれかの絵のとなりに、かきたしてみよう。</p>
+    <div class="hall"><canvas id="hallBg" aria-hidden="true"></canvas><canvas class="wb" id="wb" aria-label="ろうかのホワイトボードのかべ"></canvas></div>
+    <div class="row" role="group" aria-label="ペンの色">${[['#3a3330','黒'],['#2e7fd0','青'],['#e4362b','赤'],['#2f9a48','緑']].map(([c,n]) =>
+      `<button class="sw" data-color="${c}" aria-label="${n}のペン" aria-pressed="${c === penColor}" style="background:${c}"></button>`).join('')}
+      <button class="btn" data-act="wipe" style="margin-left:auto">かべを消す</button></div>`,
+  glass: () => `<h4>ガラスのゆかから見おろす</h4>
+    <svg class="glasswin" viewBox="0 0 300 140" aria-label="歩道橋のガラスの下を車が走る">
+      <rect width="300" height="140" fill="#a9a6ae"/><path d="M150 0V140" stroke="#fff" stroke-width="4" stroke-dasharray="16 14"/>
+      <g class="car"><rect x="95" y="0" width="34" height="58" rx="8" fill="#e85b8f"/><rect x="100" y="10" width="24" height="14" fill="#e8f4fb"/></g>
+      <g class="car c2"><rect x="172" y="0" width="34" height="58" rx="8" fill="#f2b630"/><rect x="177" y="34" width="24" height="14" fill="#e8f4fb"/></g>
+      <rect width="300" height="140" fill="#5aa9e0" opacity=".25"/><rect width="300" height="140" fill="url(#hatch)"/>
+      <rect x="4" y="4" width="292" height="132" fill="none" stroke="#c3e23a" stroke-width="8"/></svg>
+    <p>足の下を車がとおっていく。こわいけど、おもしろい。</p>`,
+  river: () => `<h4>Q. この鳥なに!?</h4><p>堤防で見つけた青い鳥。みんなのクイズに答えてみよう。</p>
+    <div class="choice"><button class="btn" data-quiz="0">スズメ</button><button class="btn" data-quiz="1">カワセミ</button><button class="btn" data-quiz="0">メジロ</button></div>
+    <div class="res" id="quizRes"></div>
+    <ul class="posts" aria-label="投稿のれい"><li>れい：ヨシのあいだにカニがいた</li><li>れい：ツユクサがさいてたよ</li></ul>`,
+  night: () => `<h4>夜になると</h4><p>${isNight() && !matchMedia('(max-width:760px)').matches
+    ? 'いまは夜の時間。街道の下の歩道で、うめこんだ石がひかっています。とじて、まちを見てみてね。'
+    : '夕方6時をすぎると、街道の下の歩道にうめこんだ石が、足もとをてらすようにひかりだします。'}</p>`,
+  stairs: () => `<h4>駅前のかいだんをのぼる</h4><p>1だんふむごとに、ド・レ・ミ…と音がなります。おしてみよう。</p>
+    <div class="steps">${NOTES.map((n, i) => `<button data-step="${i}" style="height:${40+i*18}px;background:${STEPC[i]}">${n}</button>`).join('')}</div>
+    <div class="row"><button class="btn" data-act="song">のぼっておりる</button></div>`,
+  badminton: () => `<h4>雲の部屋でラリー</h4><p>かべもゆかも雲みたいな部屋。入ったら、だれとでもすぐ試合ができます。</p>
+    <div class="court"><div class="net"></div><div class="shuttle" id="shuttle"></div><b style="left:10px">あなた</b><b style="right:10px">あいて</b></div>
+    <div class="row"><button class="btn primary" data-act="hit">打つ！</button><span class="res">ラリー <span id="rally">${rally}</span> 回</span></div>`,
+  cloud: () => `<h4>くもの上で音楽をながす</h4><p>まちのくもの上で、みんながはねながらおにごっこします。</p>
+    <div class="row"><button class="btn primary" data-act="music">${musicTimer ? '音楽をとめる' : '音楽をながす'}</button></div>`,
+};
+
+let current = null, lastFocus = null;
+const blank = v => v ? `<div class="v">${v}</div>` : `<div class="v blank">（空らん ― 絵で伝えてくれました）</div>`;
+function open(id){
+  current = id; lastFocus = document.activeElement;
+  const i = IDEAS.find(x => x.id === id), s = $('#sheet');
+  s.style.setProperty('--c', i.c);
+  s.innerHTML = `<header><small>宇治のまちに、こんなことがあったらいいな</small><h3 id="sheetTitle">${i.name}</h3></header>
+    <button class="close" id="closeBtn" aria-label="とじる">×</button>
+    <div class="body">
+      ${i.tmpName ? '<p class="tmp">シートでは名前が空らん。ここでは仮の名前をつけています。</p>' : ''}
+      <div class="meta"><span class="pill"><b>場所</b>　${i.place}</span><span class="pill"><b>ニックネーム</b>　${i.nick}</span></div>
+      <div class="q"><span class="k">どんなアイデア？</span>${blank(i.what)}</div>
+      <div class="q"><span class="k">どうやってあそぶ？・参加する？</span>${blank(i.how)}</div>
+      <div class="q"><span class="k">だれがうれしくなる？</span>${blank(i.who)}</div>
+      <div class="play" id="play">${PLAY[id]()}</div>
+    </div>`;
+  $('#overlay').hidden = false;
+  $('#closeBtn').onclick = close; $('#closeBtn').focus();
+  if (id === 'wall') setupWall();
+}
+function close(){ $('#overlay').hidden = true; current = null; lastFocus && lastFocus.focus && lastFocus.focus(); }
+$('#overlay').addEventListener('click', e => { if (e.target.id === 'overlay') close(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && current) close(); });
+function syncPlay(){ if (current === 'ar' || current === 'night') $('#play').innerHTML = PLAY[current](); }
+
+// 一点透視のろうか。かべ3面（左・右・つきあたり）だけに絵がかける
+function hallGeom(w, h){
+  const bx0 = w * .36, bx1 = w * .64, by0 = h * .26, by1 = h * .64;
+  return { bx0, bx1, by0, by1,
+    left:  [[0, 0], [bx0, by0], [bx0, by1], [0, h]],
+    right: [[w, 0], [bx1, by0], [bx1, by1], [w, h]],
+    back:  [[bx0, by0], [bx1, by0], [bx1, by1], [bx0, by1]],
+    floor: [[0, h], [bx0, by1], [bx1, by1], [w, h]],
+    ceil:  [[0, 0], [w, 0], [bx1, by0], [bx0, by0]] };
+}
+function path(ctx, pts){ ctx.moveTo(...pts[0]); pts.slice(1).forEach(p => ctx.lineTo(...p)); ctx.closePath(); }
+function fillPoly(ctx, pts, fill){ ctx.beginPath(); path(ctx, pts); ctx.fillStyle = fill; ctx.fill(); }
+function drawHall(ctx, w, h){
+  const g = hallGeom(w, h);
+  fillPoly(ctx, g.ceil, '#f1ede7');
+  fillPoly(ctx, g.floor, '#d9b48a');
+  ctx.strokeStyle = 'rgba(120,80,40,.25)'; ctx.lineWidth = 1;
+  for (let k = 1; k < 8; k++){ const x = w * k / 8; ctx.beginPath(); ctx.moveTo(x, h); ctx.lineTo(g.bx0 + (g.bx1 - g.bx0) * k / 8, g.by1); ctx.stroke(); }
+  [g.left, g.right, g.back].forEach(p => { fillPoly(ctx, p, '#ffffff'); ctx.beginPath(); path(ctx, p); ctx.strokeStyle = '#c9c3bb'; ctx.lineWidth = 1.5; ctx.stroke(); });
+  // かべの下のペン置き
+  ctx.strokeStyle = '#a9a39b'; ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(0, h * .9); ctx.lineTo(g.bx0, g.by1 - 6); ctx.moveTo(w, h * .9); ctx.lineTo(g.bx1, g.by1 - 6); ctx.moveTo(g.bx0, g.by1 - 6); ctx.lineTo(g.bx1, g.by1 - 6); ctx.stroke();
+  // 天井のあかり
+  ctx.fillStyle = '#fffbe8';
+  [.15, .5].forEach(t => { const y = g.by0 * (1 - t) * .7; ctx.fillRect(w / 2 - (w * .18) * (1 - t * .6), y, (w * .36) * (1 - t * .6), 5); });
+  // つきあたりの非常口サイン
+  ctx.fillStyle = '#2f9a48'; ctx.fillRect(w / 2 - 14, g.by0 + 6, 28, 10);
+}
+function onLeft(g, h, t, v){ const top = g.by0 * t, bot = h + (g.by1 - h) * t; return [g.bx0 * t, top + (bot - top) * v]; }
+function onRight(g, w, h, t, v){ const top = g.by0 * t, bot = h + (g.by1 - h) * t; return [w - (w - g.bx1) * t, top + (bot - top) * v]; }
+function seedDoodles(ctx, w, h){
+  const g = hallGeom(w, h); ctx.lineWidth = 3;
+  const line = (pts, c) => { ctx.strokeStyle = c; ctx.beginPath(); ctx.moveTo(...pts[0]); pts.slice(1).forEach(p => ctx.lineTo(...p)); ctx.stroke(); };
+  // 左のかべ：たいよう
+  const [sx, sy] = onLeft(g, h, .35, .32); ctx.strokeStyle = '#ee7a1c'; ctx.beginPath(); ctx.arc(sx, sy, 14, 0, Math.PI * 2); ctx.stroke();
+  for (let a = 0; a < 8; a++){ const r = a * Math.PI / 4; line([[sx + Math.cos(r) * 19, sy + Math.sin(r) * 19], [sx + Math.cos(r) * 26, sy + Math.sin(r) * 26]], '#ee7a1c'); }
+  // 右のかべ：花
+  const [fx, fy] = onRight(g, w, h, .4, .45);
+  ctx.strokeStyle = '#e4362b'; for (let a = 0; a < 5; a++){ const r = a * Math.PI * 2 / 5; ctx.beginPath(); ctx.arc(fx + Math.cos(r) * 8, fy + Math.sin(r) * 8, 6, 0, Math.PI * 2); ctx.stroke(); }
+  line([[fx, fy + 14], [fx - 2, fy + 40]], '#2f9a48');
+  // つきあたり：ねこ
+  const cx = w / 2, cy = (g.by0 + g.by1) / 2;
+  line([[cx - 14, cy - 2], [cx - 10, cy - 14], [cx - 4, cy - 6], [cx + 4, cy - 6], [cx + 10, cy - 14], [cx + 14, cy - 2], [cx + 10, cy + 10], [cx - 10, cy + 10], [cx - 14, cy - 2]], '#2e7fd0');
+  ctx.font = '13px "Klee One", sans-serif'; ctx.fillStyle = '#b0a8a2'; ctx.fillText('ここにもかけるよ →', 10, h * .7);
+}
+function setupWall(){
+  const bg = $('#hallBg'), c = $('#wb'), r = c.getBoundingClientRect(), dpr = window.devicePixelRatio || 1, w = r.width, h = r.height;
+  [bg, c].forEach(cv => { cv.width = w * dpr; cv.height = h * dpr; });
+  const b = bg.getContext('2d'); b.scale(dpr, dpr); drawHall(b, w, h);
+  const ctx = c.getContext('2d'); ctx.scale(dpr, dpr); ctx.lineCap = ctx.lineJoin = 'round';
+  const g = hallGeom(w, h); ctx.beginPath(); [g.left, g.right, g.back].forEach(p => path(ctx, p)); ctx.clip();
+  if (wbSnapshot){ const img = new Image(); img.onload = () => ctx.drawImage(img, 0, 0, w, h); img.src = wbSnapshot; }
+  else seedDoodles(ctx, w, h);
+  ctx.lineWidth = 4;
+  let drawing = false, last = null;
+  const pos = e => { const b = c.getBoundingClientRect(); return [e.clientX - b.left, e.clientY - b.top]; };
+  c.onpointerdown = e => { drawing = true; last = pos(e); c.setPointerCapture(e.pointerId); };
+  c.onpointermove = e => { if (!drawing) return; const p = pos(e); ctx.strokeStyle = penColor; ctx.beginPath(); ctx.moveTo(...last); ctx.lineTo(...p); ctx.stroke(); last = p; };
+  c.onpointerup = c.onpointercancel = () => { if (drawing){ drawing = false; wbSnapshot = c.toDataURL(); } };
+}
+
+$('#sheet').addEventListener('click', e => {
+  const t = e.target.closest('button'); if (!t) return;
+  const act = t.dataset.act;
+  if (act === 'glasses'){ setGlasses(!hasGlasses()); if (hasGlasses()){ tone(784,0,.15); tone(1046,.12,.25); } }
+  if (act === 'arNext'){ arStep = (arStep + 1) % AR_STEPS.length; $('#arBubble').textContent = AR_STEPS[arStep]; tone(660,0,.12,'sine'); }
+  if (act === 'tea' || act === 'teaReset'){
+    teaLevel = act === 'tea' ? teaLevel + 1 : 0; try { localStorage.setItem('uji-tea', teaLevel); } catch(e){}
+    $('#teaLv').textContent = teaLevel; $('#teaBar').style.width = Math.min(teaLevel,5)*20 + '%'; $('#teaMsg').textContent = teaMsg();
+    if (act === 'tea') tone(teaLevel >= 5 ? 1046 : 523 + teaLevel*60, 0, .2, 'sine');
+  }
+  if (t.dataset.color){ penColor = t.dataset.color; t.parentElement.querySelectorAll('.sw').forEach(s => s.setAttribute('aria-pressed', s === t)); }
+  if (act === 'wipe'){ wbSnapshot = null; const c = $('#wb'); c.getContext('2d').clearRect(0, 0, c.width, c.height); }
+  if (t.dataset.quiz){
+    const ok = t.dataset.quiz === '1';
+    $('#quizRes').textContent = ok ? 'せいかい！ A. 1位 カワセミ' : 'ざんねん。もういちど！';
+    if (ok){ tone(784,0,.15); tone(1046,.15,.3); } else tone(220,0,.25,'square',.08);
+  }
+  if (t.dataset.step){ const i = +t.dataset.step; tone(FREQ[i]); t.classList.add('hit'); setTimeout(() => t.classList.remove('hit'), 200); }
+  if (act === 'song'){
+    const seq = [0,1,2,3,4,3,2,1,0], btns = document.querySelectorAll('[data-step]');
+    seq.forEach((n, k) => { tone(FREQ[n], k*.28); setTimeout(() => { btns[n] && btns[n].classList.add('hit'); setTimeout(() => btns[n] && btns[n].classList.remove('hit'), 200); }, k*280); });
+  }
+  if (act === 'hit'){
+    rally++; $('#rally').textContent = rally; const s = $('#shuttle'), right = rally % 2 === 1;
+    s.style.top = '10px'; s.style.left = right ? '82%' : '12%'; setTimeout(() => s.style.top = '70px', 350);
+    tone(right ? 880 : 740, 0, .08, 'square', .06);
+  }
+  if (act === 'music'){
+    if (musicTimer){ clearInterval(musicTimer); musicTimer = null; document.body.classList.remove('dancing'); }
+    else {
+      const mel = [4,4,5,4,2,0,2,4,7,5,4,2,4,2,0,0]; let k = 0;
+      const step = () => { tone(FREQ[mel[k % mel.length]], 0, .25, 'triangle', .15); if (k % 4 === 0) tone(FREQ[0]/2, 0, .4, 'sine', .12); k++; };
+      step(); musicTimer = setInterval(step, 260); document.body.classList.add('dancing');
+    }
+    t.textContent = musicTimer ? '音楽をとめる' : '音楽をながす';
+  }
+});
+
+/* ---------------- today's idea & misc ---------------- */
+setNight(clockNight);
+const todayIdea = IDEAS[new Date().getDate() % IDEAS.length];
+$('#todayName').textContent = `「${todayIdea.name}」（${todayIdea.nick}）`;
+$('#todayGo').onclick = () => open(todayIdea.id);
+$('#todayX').onclick = () => { $('#today').hidden = true; };
+</script>
+</body>
+</html>
