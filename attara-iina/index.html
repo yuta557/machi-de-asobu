@@ -90,6 +90,9 @@ body.dancing .kid:nth-of-type(2n){animation-delay:.22s}
   background-size:900% auto;background-repeat:no-repeat}
 body.night .idea .pic{background-image:var(--imgN)}
 .idea .w{font-family:var(--hand);font-weight:600;font-size:1.04cqw;line-height:1.55;letter-spacing:.02em;min-width:0}
+.idea .plus{flex:none;align-self:flex-end;width:1.7cqw;height:1.7cqw;border-radius:50%;background:var(--c);margin-left:.3cqw;
+  background-image:linear-gradient(#fff,#fff),linear-gradient(#fff,#fff);background-repeat:no-repeat;background-position:center;
+  background-size:55% 16%,16% 55%}
 .bub{position:absolute;transform:translate(-50%,calc(-100% - 10px));background:#fff;border:2.5px solid var(--c);white-space:nowrap;
   border-radius:999px;padding:4px 14px;text-align:center;box-shadow:0 4px 10px rgba(60,40,30,.16);cursor:pointer;
   transition:transform .2s ease,box-shadow .2s ease}
@@ -266,28 +269,28 @@ canvas.wb{width:100%;height:210px;background:#fff;border:2px solid #cfc8c2;borde
 <script>
 /* ---------------- data ---------------- */
 const IDEAS = [
-  {id:'wall', pos:[470,232], card:[640,108], wish:'学校のかべが<br>ぜんぶホワイトボードに<br>なったらいいな', label:'ホワイトボードの学校', c:'#2f9a48', a:[3.4,2.4,5.6], name:'学校のかべが全面ホワイトボード', short:'学校のかべに、どこでも絵がかける！', place:'学校',
+  {id:'wall', pic:[470,225,190,'idea-pics2.jpg',1675,939], pos:[470,232], card:[640,108], wish:'学校のかべが<br>ぜんぶホワイトボードに<br>なったらいいな', label:'ホワイトボードの学校', c:'#2f9a48', a:[3.4,2.4,5.6], name:'学校のかべが全面ホワイトボード', short:'学校のかべに、どこでも絵がかける！', place:'学校',
    what:'絵をどこでもかける。', how:'学校に行く。', who:'自分・絵が大好きな人', nick:'まっちゃん'},
-  {id:'glass', pos:[690,516], card:[660,700], wish:'ゆかがガラスで<br>下の道路が見える<br>歩道橋があったらいいな', label:'ガラスの歩道橋', c:'#6c9a12', a:[6,6.1,2.3], name:'ガラスの歩道橋', tmpName:true, short:'足の下に道路が見える歩道橋。', place:'通学路',
+  {id:'glass', pic:[1028,267,140,'idea-pics4.webp',1675,939], pos:[690,516], card:[660,700], wish:'ゆかがガラスで<br>下の道路が見える<br>歩道橋があったらいいな', label:'ガラスの歩道橋', c:'#6c9a12', a:[6,6.1,2.3], name:'ガラスの歩道橋', tmpName:true, short:'足の下に道路が見える歩道橋。', place:'通学路',
    what:'横断歩道を歩道橋にして、ゆかにガラスをはる。', how:'下の道路が見える。', who:'わたる人が楽しい、おもしろい', nick:'りさ'},
-  {id:'game', pos:[262,482], card:[180,372], wish:'バス停のQRコードで<br>宇治茶を育てるゲームが<br>できたらいいな', label:'まちゲーム', c:'#2e7fd0', a:[15.2,3.4,3.4], name:'まちゲーム', short:'バスや電車を待つあいだに、宇治茶を育てよう。', place:'駅やバス停', badge:'また来て',
+  {id:'game', pic:[440,694,176,'idea-pics2.jpg',1675,939], pos:[262,482], card:[180,372], wish:'バス停のQRコードで<br>宇治茶を育てるゲームが<br>できたらいいな', label:'まちゲーム', c:'#2e7fd0', a:[15.2,3.4,3.4], name:'まちゲーム', short:'バスや電車を待つあいだに、宇治茶を育てよう。', place:'駅やバス停', badge:'また来て',
    what:'待っている間も楽しめるように、その地域で有名なものを使ったゲームのQRコードをはる。',
    how:'宇治茶の場合は、お茶を使った育成ゲームをして、また来たときに読み取るとスペシャルアイテムをゲットできる。',
    who:'観光で来た人がそのゲームをしてくれると、その地域について知ってもらえて、地域の方々も嬉しくなる。', nick:'りっちゃん'},
-  {id:'ar', pos:[752,330], card:[1000,190], wish:'メガネをかけると<br>小動物が手つづきを<br>教えてくれたらいいな', label:'AR市役所City', c:'#e4362b', a:[13.4,7.6,3.6], name:'AR市役所City', short:'メガネをかけると、小動物が手つづきを教えてくれる。', place:'市役所の前', badge:'メガネ',
+  {id:'ar', pic:[670,262,84], pos:[752,330], card:[1000,190], wish:'メガネをかけると<br>小動物が手つづきを<br>教えてくれたらいいな', label:'AR市役所City', c:'#e4362b', a:[13.4,7.6,3.6], name:'AR市役所City', short:'メガネをかけると、小動物が手つづきを教えてくれる。', place:'市役所の前', badge:'メガネ',
    what:'メガネ的なものをつけると、かわいい小動物が表れ、手つづき等のやり方を教えてくれるもの。（ミニゲームも）',
    how:'メガネをつけることで、会うことができる。', who:'子供、市役所になれていない人', nick:'Periodic table 大スキな人'},
-  {id:'night', pos:[470,563], card:[230,650], wish:'夜の歩道に<br>光る石がうまっていたら<br>いいな', label:'光る石の夜道', c:'#7d55c7', a:[6.2,15.2,1], name:'夜の暗い道も楽しく!!', short:'夜になると、歩道にうめた石が光る。', place:'夜の歩道、街道の下', badge:'夜',
+  {id:'night', pic:[1239,606,87], pos:[470,563], card:[230,650], wish:'夜の歩道に<br>光る石がうまっていたら<br>いいな', label:'光る石の夜道', c:'#7d55c7', a:[6.2,15.2,1], name:'夜の暗い道も楽しく!!', short:'夜になると、歩道にうめた石が光る。', place:'夜の歩道、街道の下', badge:'夜',
    what:'夜の暗い道でも怖くないような道にするために、道の中に夜になったら光る石を埋めこむ。',
    how:'上を歩いてみたり、写真を撮ったりすると、とても楽しい。', who:'仕事帰りでヘトヘトの人や部活帰りの人、遊んで帰ってくる人', nick:'ゆうな'},
-  {id:'stairs', pos:[1255,252], card:[1360,112], wish:'ふむと音がなる<br>かいだんが<br>あったらいいな', label:'音のかいだん', c:'#ee7a1c', a:[12.6,14.8,2.6], name:'かいだんをふんだらおとがなる', short:'ふむと、ドレミの曲ができるかいだん。', place:'かいだん', badge:'音',
+  {id:'stairs', pic:[1245,271,86], pos:[1255,252], card:[1360,112], wish:'ふむと音がなる<br>かいだんが<br>あったらいいな', label:'音のかいだん', c:'#ee7a1c', a:[12.6,14.8,2.6], name:'かいだんをふんだらおとがなる', short:'ふむと、ドレミの曲ができるかいだん。', place:'かいだん', badge:'音',
    what:'ふんだら曲ができる。', how:'ふんであそぶ。', who:'みんな', nick:'はるの'},
-  {id:'river', pos:[905,712], card:[1080,885], wish:'堤防で見つけた生き物を<br>みんなで見せあえたら<br>いいな', label:'生き物交流', c:'#14958a', a:[16.6,13.3,1.8], name:'植物、生き物交流', short:'堤防で見つけた生き物を、みんなでシェア。', place:'茶づなの近くの堤防',
+  {id:'river', pic:[352,430,262,'idea-pics3.webp',1675,939], pos:[905,712], card:[1080,885], wish:'堤防で見つけた生き物を<br>みんなで見せあえたら<br>いいな', label:'生き物交流', c:'#14958a', a:[16.6,13.3,1.8], name:'植物、生き物交流', short:'堤防で見つけた生き物を、みんなでシェア。', place:'茶づなの近くの堤防',
    what:'堤防で見つけた様々なものを交流し合う。',
    how:'スマホでQRコードを読みこんで、サイトに写真をのせたり、クイズを出したりする。', who:'植物や生き物が好きな人', nick:'しおり'},
-  {id:'badminton', pos:[1420,578], card:[1385,705], wish:'雲みたいな部屋で<br>バドミントンが<br>できたらいいな', label:'雲でバドミントン', c:'#2a9fd3', a:[-0.5,6.4,7.4], name:'雲の上でバドミントン', short:'雲みたいな部屋で、ふわふわ試合。', place:'雲みたいにした部屋',
+  {id:'badminton', pic:[698,601,96], pos:[1420,578], card:[1385,705], wish:'雲みたいな部屋で<br>バドミントンが<br>できたらいいな', label:'雲でバドミントン', c:'#2a9fd3', a:[-0.5,6.4,7.4], name:'雲の上でバドミントン', short:'雲みたいな部屋で、ふわふわ試合。', place:'雲みたいにした部屋',
    what:'部屋に入ったらバドミントンの試合ができる。', how:'', who:'みんな', nick:'さくらこ'},
-  {id:'cloud', pos:[1496,292], card:[1360,410], wish:'くもの上で<br>音楽にあわせて<br>おにごっこできたらいいな', label:'くもの上おにごっこ', c:'#d4417f', a:[13.6,-0.6,8.4], name:'くもの上でおにごっこしながら音楽がながれる', short:'くもの上で、音楽にあわせておにごっこ。', place:'くもの上', badge:'音',
+  {id:'cloud', pic:[200,264,136,'idea-pics4.webp',1675,939], pos:[1496,292], card:[1360,410], wish:'くもの上で<br>音楽にあわせて<br>おにごっこできたらいいな', label:'くもの上おにごっこ', c:'#d4417f', a:[13.6,-0.6,8.4], name:'くもの上でおにごっこしながら音楽がながれる', short:'くもの上で、音楽にあわせておにごっこ。', place:'くもの上', badge:'音',
    what:'', how:'', who:'', nick:'ひなの'},
 ];
 
@@ -420,10 +423,18 @@ IDEAS.forEach(i => {
   el('line', {x1:cx, y1:cy, x2:sx, y2:sy, stroke:i.c, 'stroke-width':2.4, 'stroke-linecap':'round'}, $('#leaders'));
   const b = document.createElement('button'); b.className = 'idea'; b.style.setProperty('--c', i.c);
   b.style.left = (cx / 1536 * 100) + '%'; b.style.top = (cy / 1024 * 100) + '%';
-  // 丸い絵は、そのアイデアの場所をイラストから切り抜いて見せる
-  b.style.setProperty('--img', 'url(town.webp)'); b.style.setProperty('--imgN', 'url(town-night.webp)');
+  // 丸い絵：描いてもらった絵（idea-pics.webp）があればその丸を、なければまちのイラストのその場所を切り抜いて見せる
+  let picStyle;
+  if (i.pic){
+    const [px, py, r, src = 'idea-pics.webp', W = 1676, H = 939] = i.pic, d = 2 * r;
+    b.style.setProperty('--img', `url(${src})`); b.style.setProperty('--imgN', `url(${src})`);
+    picStyle = `background-size:${(W / d * 100).toFixed(1)}% auto;background-position:${((px - r) / (W - d) * 100).toFixed(2)}% ${((py - r) / (H - d) * 100).toFixed(2)}%`;
+  } else {
+    b.style.setProperty('--img', 'url(town.webp)'); b.style.setProperty('--imgN', 'url(town-night.webp)');
+    picStyle = `background-position:${((9 * sx / 1536 - .5) / 8 * 100).toFixed(1)}% ${((6 * sy / 1024 - .5) / 5 * 100).toFixed(1)}%`;
+  }
   b.setAttribute('aria-label', `${i.name}（${i.place}）をひらく`);
-  b.innerHTML = `<span class="pic" style="background-position:${((9 * sx / 1536 - .5) / 8 * 100).toFixed(1)}% ${((6 * sy / 1024 - .5) / 5 * 100).toFixed(1)}%"></span><span class="w">${i.wish}</span>`;
+  b.innerHTML = `<span class="pic" style="${picStyle}"></span><span class="w">${i.wish}</span><span class="plus" aria-hidden="true"></span>`;
   b.onclick = () => open(i.id); bubbles.appendChild(b);
 });
 
