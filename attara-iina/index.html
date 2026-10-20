@@ -230,7 +230,9 @@ canvas.wb{width:100%;height:210px;background:#fff;border:2px solid #cfc8c2;borde
 #spAreas{display:flex;flex-direction:column;gap:0;max-width:520px;margin:0 auto}
 .area{position:relative;display:flex;flex-direction:column;align-items:center}
 .area + .area::before{content:"";width:0;height:34px;border-left:6px dotted #d9c9b6}
-.area svg{display:block;width:100%;height:auto;aspect-ratio:420/330;overflow:visible}
+.sppic{display:block;width:min(300px,82%);aspect-ratio:1;border-radius:50%;padding:0;border:6px solid #fff;cursor:pointer;
+  background-color:#fff;background-image:var(--img);background-repeat:no-repeat;box-shadow:0 0 0 3px var(--c),0 10px 24px rgba(60,50,30,.18)}
+.area:nth-child(even) .sppic{transform:translateX(7%)} .area:nth-child(odd) .sppic{transform:translateX(-7%)}
 .bub-sp{position:relative;margin-top:-26px;width:min(300px,92%);background:#fff;border:3px solid var(--c);border-radius:10px;
   padding:10px 14px 12px;text-align:center;box-shadow:0 6px 14px rgba(60,40,30,.16)}
 .bub-sp::before{content:"";position:absolute;left:50%;top:-14px;margin-left:-11px;border:11px solid transparent;border-bottom:12px solid var(--c);border-top:0}
@@ -318,9 +320,9 @@ canvas.wb{width:100%;height:210px;background:#fff;border:2px solid #cfc8c2;borde
 <script>
 /* ---------------- data ---------------- */
 const IDEAS = [
-  {id:'wall', pic:[470,225,190,'idea-pics2.jpg',1675,939], pos:[470,232], card:[640,108], wish:'学校のかべが<br>ぜんぶホワイトボードに<br>なったらいいな', label:'ホワイトボードの学校', c:'#2f9a48', a:[3.4,2.4,5.6], name:'学校のかべが全面ホワイトボード', short:'学校のかべに、どこでも絵がかける！', place:'学校',
+  {id:'wall', pic:[1255,255,218,'idea-pics5.webp',1536,1024], pos:[470,232], card:[640,108], wish:'学校のかべが<br>ぜんぶホワイトボードに<br>なったらいいな', label:'ホワイトボードの学校', c:'#2f9a48', a:[3.4,2.4,5.6], name:'学校のかべが全面ホワイトボード', short:'学校のかべに、どこでも絵がかける！', place:'学校',
    what:'絵をどこでもかける。', how:'学校に行く。', who:'自分・絵が大好きな人', nick:'まっちゃん'},
-  {id:'glass', pic:[1028,267,140,'idea-pics4.webp',1675,939], pos:[564,562], card:[660,700], wish:'ゆかがガラスで<br>下の道路が見える<br>歩道橋があったらいいな', label:'ガラスの歩道橋', c:'#6c9a12', a:[6,6.1,2.3], name:'ガラスの歩道橋', tmpName:true, short:'足の下に道路が見える歩道橋。', place:'通学路',
+  {id:'glass', pic:[288,255,218,'idea-pics5.webp',1536,1024], pos:[564,562], card:[660,700], wish:'ゆかがガラスで<br>下の道路が見える<br>歩道橋があったらいいな', label:'ガラスの歩道橋', c:'#6c9a12', a:[6,6.1,2.3], name:'ガラスの歩道橋', tmpName:true, short:'足の下に道路が見える歩道橋。', place:'通学路',
    what:'横断歩道を歩道橋にして、ゆかにガラスをはる。', how:'下の道路が見える。', who:'わたる人が楽しい、おもしろい', nick:'りさ'},
   {id:'game', pic:[440,694,176,'idea-pics2.jpg',1675,939], pos:[248,530], card:[180,372], wish:'バス停のQRコードで<br>宇治茶を育てるゲームが<br>できたらいいな', label:'まちゲーム', c:'#2e7fd0', a:[15.2,3.4,3.4], name:'まちゲーム', short:'バスや電車を待つあいだに、宇治茶を育てよう。', place:'駅やバス停', badge:'また来て',
    what:'待っている間も楽しめるように、その地域で有名なものを使ったゲームのQRコードをはる。',
@@ -329,15 +331,15 @@ const IDEAS = [
   {id:'ar', pic:[670,262,84], pos:[752,330], card:[1000,190], wish:'メガネをかけると<br>小動物が手つづきを<br>教えてくれたらいいな', label:'AR市役所City', c:'#e4362b', a:[13.4,7.6,3.6], name:'AR市役所City', short:'メガネをかけると、小動物が手つづきを教えてくれる。', place:'市役所の前', badge:'メガネ',
    what:'メガネ的なものをつけると、かわいい小動物が表れ、手つづき等のやり方を教えてくれるもの。（ミニゲームも）',
    how:'メガネをつけることで、会うことができる。', who:'子供、市役所になれていない人', nick:'Periodic table 大スキな人'},
-  {id:'night', pic:[1239,606,87], pos:[470,563], card:[230,650], wish:'夜の歩道に<br>光る石がうまっていたら<br>いいな', label:'光る石の夜道', c:'#7d55c7', a:[6.2,15.2,1], name:'夜の暗い道も楽しく!!', short:'夜になると、歩道にうめた石が光る。', place:'夜の歩道、街道の下', badge:'夜',
+  {id:'night', pic:[1252,740,218,'idea-pics5.webp',1536,1024], pos:[470,563], card:[230,650], wish:'夜の歩道に<br>光る石がうまっていたら<br>いいな', label:'光る石の夜道', c:'#7d55c7', a:[6.2,15.2,1], name:'夜の暗い道も楽しく!!', short:'夜になると、歩道にうめた石が光る。', place:'夜の歩道、街道の下', badge:'夜',
    what:'夜の暗い道でも怖くないような道にするために、道の中に夜になったら光る石を埋めこむ。',
    how:'上を歩いてみたり、写真を撮ったりすると、とても楽しい。', who:'仕事帰りでヘトヘトの人や部活帰りの人、遊んで帰ってくる人', nick:'ゆうな'},
-  {id:'stairs', pic:[1245,271,86], pos:[1270,263], card:[1360,112], wish:'ふむと音がなる<br>かいだんが<br>あったらいいな', label:'音のかいだん', c:'#ee7a1c', a:[12.6,14.8,2.6], name:'かいだんをふんだらおとがなる', short:'ふむと、ドレミの曲ができるかいだん。', place:'かいだん', badge:'音',
+  {id:'stairs', pic:[292,740,218,'idea-pics5.webp',1536,1024], pos:[1270,263], card:[1360,112], wish:'ふむと音がなる<br>かいだんが<br>あったらいいな', label:'音のかいだん', c:'#ee7a1c', a:[12.6,14.8,2.6], name:'かいだんをふんだらおとがなる', short:'ふむと、ドレミの曲ができるかいだん。', place:'かいだん', badge:'音',
    what:'ふんだら曲ができる。', how:'ふんであそぶ。', who:'みんな', nick:'はるの'},
-  {id:'river', pic:[352,430,262,'idea-pics3.webp',1675,939], pos:[905,712], card:[1080,885], wish:'堤防で見つけた生き物を<br>みんなで見せあえたら<br>いいな', label:'生き物交流', c:'#14958a', a:[16.6,13.3,1.8], name:'植物、生き物交流', short:'堤防で見つけた生き物を、みんなでシェア。', place:'茶づなの近くの堤防',
+  {id:'river', pic:[772,740,218,'idea-pics5.webp',1536,1024], pos:[905,712], card:[1080,885], wish:'堤防で見つけた生き物を<br>みんなで見せあえたら<br>いいな', label:'生き物交流', c:'#14958a', a:[16.6,13.3,1.8], name:'植物、生き物交流', short:'堤防で見つけた生き物を、みんなでシェア。', place:'茶づなの近くの堤防',
    what:'堤防で見つけた様々なものを交流し合う。',
    how:'スマホでQRコードを読みこんで、サイトに写真をのせたり、クイズを出したりする。', who:'植物や生き物が好きな人', nick:'しおり'},
-  {id:'badminton', pic:[698,601,96], pos:[1408,618], card:[1385,705], wish:'雲みたいな部屋で<br>バドミントンが<br>できたらいいな', label:'雲でバドミントン', c:'#2a9fd3', a:[-0.5,6.4,7.4], name:'雲の上でバドミントン', short:'雲みたいな部屋で、ふわふわ試合。', place:'雲みたいにした部屋',
+  {id:'badminton', pic:[772,250,218,'idea-pics5.webp',1536,1024], pos:[1408,618], card:[1385,705], wish:'雲みたいな部屋で<br>バドミントンが<br>できたらいいな', label:'雲でバドミントン', c:'#2a9fd3', a:[-0.5,6.4,7.4], name:'雲の上でバドミントン', short:'雲みたいな部屋で、ふわふわ試合。', place:'雲みたいにした部屋',
    what:'部屋に入ったらバドミントンの試合ができる。', how:'', who:'みんな', nick:'さくらこ'},
   {id:'cloud', pic:[200,264,136,'idea-pics4.webp',1675,939], pos:[1496,292], card:[1360,410], wish:'くもの上で<br>音楽にあわせて<br>おにごっこできたらいいな', label:'くもの上おにごっこ', c:'#d4417f', a:[13.6,-0.6,8.4], name:'くもの上でおにごっこしながら音楽がながれる', short:'くもの上で、音楽にあわせておにごっこ。', place:'くもの上', badge:'音',
    what:'', how:'', who:'', nick:'ひなの'},
@@ -462,6 +464,15 @@ for (let k = 0; k <= 22; k++){
   el('circle', {cx:x, cy:y, r:3.4, fill:'#fff7c2'}, lights);
 }
 
+/* ---------------- round pictures ---------------- */
+// 丸い絵：描いてもらった絵があればその丸を、なければまちのイラストのその場所を切り抜いて見せる
+function picOf(i){
+  if (i.pic){ const [px, py, r, src = 'idea-pics.webp', W = 1676, H = 939] = i.pic, d = 2 * r;
+    return { img: `url(${src})`, imgN: `url(${src})`, style: `background-size:${(W / d * 100).toFixed(1)}% auto;background-position:${((px - r) / (W - d) * 100).toFixed(2)}% ${((py - r) / (H - d) * 100).toFixed(2)}%` }; }
+  const [sx, sy] = i.pos;
+  return { img: 'url(town.webp)', imgN: 'url(town-night.webp)', style: `background-position:${((9 * sx / 1536 - .5) / 8 * 100).toFixed(1)}% ${((6 * sy / 1024 - .5) / 5 * 100).toFixed(1)}%` };
+}
+
 /* ---------------- spots on the map ---------------- */
 const bubbles = $('#bubbles');
 IDEAS.forEach(i => {
@@ -472,207 +483,18 @@ IDEAS.forEach(i => {
   el('line', {x1:cx, y1:cy, x2:sx, y2:sy, stroke:i.c, 'stroke-width':2.4, 'stroke-linecap':'round'}, $('#leaders'));
   const b = document.createElement('button'); b.className = 'idea'; b.style.setProperty('--c', i.c);
   b.style.left = (cx / 1536 * 100) + '%'; b.style.top = (cy / 1024 * 100) + '%';
-  // 丸い絵：描いてもらった絵（idea-pics.webp）があればその丸を、なければまちのイラストのその場所を切り抜いて見せる
-  let picStyle;
-  if (i.pic){
-    const [px, py, r, src = 'idea-pics.webp', W = 1676, H = 939] = i.pic, d = 2 * r;
-    b.style.setProperty('--img', `url(${src})`); b.style.setProperty('--imgN', `url(${src})`);
-    picStyle = `background-size:${(W / d * 100).toFixed(1)}% auto;background-position:${((px - r) / (W - d) * 100).toFixed(2)}% ${((py - r) / (H - d) * 100).toFixed(2)}%`;
-  } else {
-    b.style.setProperty('--img', 'url(town.webp)'); b.style.setProperty('--imgN', 'url(town-night.webp)');
-    picStyle = `background-position:${((9 * sx / 1536 - .5) / 8 * 100).toFixed(1)}% ${((6 * sy / 1024 - .5) / 5 * 100).toFixed(1)}%`;
-  }
+  const ps = picOf(i); b.style.setProperty('--img', ps.img); b.style.setProperty('--imgN', ps.imgN); const picStyle = ps.style;
   b.setAttribute('aria-label', `${i.name}（${i.place}）をひらく`);
   b.innerHTML = `<span class="pic" style="${picStyle}"></span><span class="w">${i.wish}</span><span class="plus" aria-hidden="true"></span>`;
   b.onclick = () => open(i.id); bubbles.appendChild(b);
 });
 
-/* ---------------- narrow: one small island per idea ---------------- */
-const ISLE_R = 4.6;
-function island(id, fill, s){
-  const [cx, cy] = P(5, 5), rx = ISLE_R * 41, ry = ISLE_R * 20.5;
-  el('ellipse', {cx, cy:cy+30, rx:rx*.9, ry:ry*.55, fill:'#5a4a3a', opacity:.14, filter:'url(#soft)'}, scene);
-  el('ellipse', {cx, cy:cy+14, rx, ry, fill:shade(fill,.78)}, scene);
-  el('rect', {x:cx-rx, y:cy, width:rx*2, height:14, fill:shade(fill,.78)}, scene);
-  el('ellipse', {cx, cy, rx, ry, fill, stroke:'#ffffff', 'stroke-width':4}, scene);
-  const cp = el('clipPath', {id:'clip-' + id}, el('defs', {}, s));
-  el('ellipse', {cx, cy, rx:rx-3, ry:ry-3}, cp);
-  return el('g', {'clip-path':`url(#clip-${id})`}, scene);
-}
-const inIsle = (x, y, r = ISLE_R - .5) => Math.hypot(x - 5, y - 5) < r;
-const label = (x, y, z, text, size = 12, fill = '#3a3330') => { const [sx, sy] = P(x, y, z);
-  const t = el('text', {x:sx, y:sy, 'text-anchor':'middle', 'font-family':'Zen Maru Gothic, sans-serif', 'font-weight':900, 'font-size':size, fill}, scene); t.textContent = text; return t; };
-// a quad on a front-left face (y fixed) or front-right face (x fixed), in face coords (u along the wall, v height)
-const quadL = (fy, u0, u1, v0, v1, fill, g = scene) => poly([[u0,fy,v0],[u1,fy,v0],[u1,fy,v1],[u0,fy,v1]], fill, g);
-const quadR = (fx, u0, u1, v0, v1, fill, g = scene) => poly([[fx,u0,v0],[fx,u1,v0],[fx,u1,v1],[fx,u0,v1]], fill, g);
-function qr(face, fixed, u0, v0, size){
-  const q = face === 'L' ? quadL : quadR, n = 5, c = size / n, bits = '1110110101011101010111011';
-  q(fixed, u0 - c*.4, u0 + size + c*.4, v0 - c*.4, v0 + size + c*.4, '#ffffff');
-  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) if (bits[i*n + j] === '1') q(fixed, u0 + i*c, u0 + (i+1)*c, v0 + size - (j+1)*c, v0 + size - j*c, '#2b2a30');
-}
-function kingfisher(x, y){
-  const [sx, sy] = P(x, y);
-  el('rect', {x:sx-1.5, y:sy-30, width:3, height:30, fill:'#7a4e30'}, scene);
-  el('path', {d:`M${sx} ${sy-30} q12 -4 22 -2`, stroke:'#7a4e30','stroke-width':3, fill:'none'}, scene);
-  el('ellipse', {cx:sx+14, cy:sy-38, rx:8, ry:6, fill:'#2e86d8'}, scene);
-  el('ellipse', {cx:sx+14, cy:sy-35, rx:6, ry:3.4, fill:'#f08a3a'}, scene);
-  el('circle', {cx:sx+8, cy:sy-42, r:4.4, fill:'#2e86d8'}, scene);
-  el('path', {d:`M${sx+4} ${sy-42} l-8 1 8 2z`, fill:'#333'}, scene);
-  el('path', {d:`M${sx+20} ${sy-38} l8 4 -8 0z`, fill:'#2269b0'}, scene);
-}
-const note = (sx, sy, ch = '♪', fill = '#d4417f', size = 20) => { const t = el('text', {x:sx, y:sy, 'font-size':size, fill, 'font-family':'sans-serif'}, scene); t.textContent = ch; };
-const STEP_COL = ['#e4362b','#ee7a1c','#f2b630','#2f9a48','#2e7fd0'];
-
-const MINI = {
-  badminton(s){
-    el('circle', {cx:210, cy:170, r:160, fill:'#e3f1fb'}, scene);
-    cloud(70, 70, .35); cloud(360, 52, .3);
-    island('badminton', '#e8f4ff', s);
-    // 雲みたいにした部屋：奥のかべにも雲
-    add(1, () => { box(2, 1.75, 6, .25, 2.2, '#f4f9ff'); box(1.75, 2, .25, 6, 2.2, '#eef5fd');
-      [[3,1.2],[4.8,1.6],[6.8,1.1]].forEach(([u, v]) => { const [x, y] = P(u, 2.02, v); el('circle', {cx:x, cy:y, r:15, fill:'url(#gCloud)'}, scene); el('circle', {cx:x+14, cy:y+4, r:11, fill:'url(#gCloud)'}, scene); });
-      [[3.4,1.3],[5.6,1.6]].forEach(([u, v]) => { const [x, y] = P(2.02, u, v); el('circle', {cx:x, cy:y, r:14, fill:'url(#gCloud)'}, scene); el('circle', {cx:x-12, cy:y+4, r:10, fill:'url(#gCloud)'}, scene); });
-    });
-    add(4, () => { const [a, b] = P(3.2, 7.6); cloud(a, b, .32); const [c, d] = P(7.8, 3.4); cloud(c, d, .3); });
-    person(3.8, 3.6, 1); person(6.6, 6.7, 0);
-    add(10, () => { // ネット（x+y=10 の線上なので画面では水平）
-      const L = P(3, 7, 0), R = P(7, 3, 0), lt = P(3, 7, 1.5), rt = P(7, 3, 1.5);
-      el('path', {d:`M${L[0]} ${L[1]} V${lt[1]} M${R[0]} ${R[1]} V${rt[1]}`, stroke:'#3a3330', 'stroke-width':3}, scene);
-      for (let k = 0; k <= 12; k++){ const x = lt[0] + (rt[0] - lt[0]) * k / 12; el('line', {x1:x, y1:lt[1], x2:x, y2:lt[1]+14, stroke:'#3a3330', 'stroke-width':1}, scene); }
-      el('path', {d:`M${lt[0]} ${lt[1]} H${rt[0]} M${lt[0]} ${lt[1]+14} H${rt[0]}`, stroke:'#3a3330', 'stroke-width':1.6}, scene);
-      const [sx, sy] = P(5.6, 4.6, 3); el('path', {d:`M${sx} ${sy} l4 -7 4 7z`, fill:'#fff', stroke:'#3a3330', 'stroke-width':1.2}, scene);
-      const a = P(3.8, 3.6, 1.3), b = P(6.6, 6.7, 1.3);
-      el('path', {d:`M${a[0]+6} ${a[1]-6} Q${(a[0]+b[0])/2} ${a[1]-70} ${b[0]-6} ${b[1]-6}`, fill:'none', stroke:'#2a9fd3', 'stroke-width':1.6, 'stroke-dasharray':'4 5'}, scene);
-    });
-  },
-  wall(s){
-    const G = island('wall', '#cfe7b4', s);
-    poly([[1,4.6,0],[9,4.6,0],[9,9,0],[1,9,0]], '#efe4d2', G);
-    add(5, () => { box(2, 1.6, 5.4, 2.4, 3, '#fbfaf6'); winsL(2, 1.6, 5.4, 2.4, 0, 6, 2, 3); winsR(2, 1.6, 5.4, 2.4, 0, 2, 2, 3);
-      const [sx, sy] = P(4.7, 4.02, 2.55); el('circle', {cx:sx, cy:sy, r:8, fill:'#fff', stroke:'#4a4a4a', 'stroke-width':1.5}, scene);
-      el('path', {d:`M${sx} ${sy} V${sy-5} M${sx} ${sy} l4 2`, stroke:'#333', 'stroke-width':1.5, fill:'none'}, scene);
-      label(4.7, 4, 3.25, '学校', 13); });
-    // ホワイトボードのかべ（2まい）と、かかれた絵
-    const lines = (pts, c) => el('polyline', {points:pts.map(p => P(...p).join(',')).join(' '), fill:'none', stroke:c, 'stroke-width':2.4, 'stroke-linecap':'round', 'stroke-linejoin':'round'}, scene);
-    add(10.4, () => { box(2.2, 5, 4.6, .3, 1.7, '#ffffff'); const fy = 5.32;
-      lines([[2.6,fy,.6],[2.9,fy,1.3],[3.2,fy,.6],[3.5,fy,1.3]], '#2e7fd0');
-      lines([[4,fy,.5],[4.4,fy,1.4],[4.8,fy,.5],[4,fy,1.1],[4.8,fy,1.1],[4,fy,.5]], '#e4362b');
-      lines([[5.4,fy,.6],[5.7,fy,1.2],[6.1,fy,1.3],[6.4,fy,.7]], '#2f9a48');
-      quadL(fy, 2.3, 6.7, .02, .14, '#c9c3bb'); });
-    add(13.2, () => { box(7, 5, .3, 3.2, 1.7, '#ffffff'); const fx = 7.32;
-      lines([[fx,5.5,.6],[fx,5.9,1.3],[fx,6.3,.6]], '#ee7a1c');
-      const [sx, sy] = P(fx, 7.2, 1); el('circle', {cx:sx, cy:sy, r:9, fill:'none', stroke:'#7d55c7', 'stroke-width':2.4}, scene);
-      quadR(fx, 5.1, 8.1, .02, .14, '#c9c3bb'); });
-    person(3.4, 6, 0); person(5, 6.1, 2); person(6.4, 6.9, 4);
-    coneTree(1.4, 6.6); roundTree(8.4, 6.4, 14); roundTree(5, 8.6, 13, 'gTree2');
-  },
-  glass(s){
-    const G = island('glass', '#cfe7b4', s);
-    poly([[0,4.3,0],[10,4.3,0],[10,5.9,0],[0,5.9,0]], '#a9a6ae', G);
-    for (let x = 0; x < 10; x += 1.2) poly([[x,5.05,0],[x+.6,5.05,0],[x+.6,5.15,0],[x,5.15,0]], '#ffffff', G);
-    add(7.3, () => box(1.6, 4.5, 1.3, .75, .6, '#e85b8f'));
-    add(9.4, () => box(4.4, 5, 1.3, .75, .6, '#f2b630'));
-    add(10, () => {
-      poly([[4,1.9,0],[6,1.9,0],[6,3.6,1.9],[4,3.6,1.9]], '#c3e23a', scene, {stroke:'#8aa52a', 'stroke-width':.8});
-      poly([[6,1.9,0],[6,3.6,0],[6,3.6,1.9]], '#9bb82a');
-      box(4, 3.6, 2, 3, .28, '#c3e23a', 1.62);
-      const g = [[4.45,4.3,1.91],[5.55,4.3,1.91],[5.55,5.9,1.91],[4.45,5.9,1.91]];
-      poly(g, '#5aa9e0', scene, {opacity:.55}); poly(g, 'url(#hatch)');
-      box(4.1, 3.7, .2, .2, 1.62, '#d6d0c8'); box(5.7, 6.3, .2, .2, 1.62, '#d6d0c8');
-      label(5, 6.6, 2.2, 'ガラス', 11, '#2e6fa8');
-    });
-    add(12.6, () => { poly([[4,6.6,1.9],[6,6.6,1.9],[6,8.3,0],[4,8.3,0]], '#c3e23a', scene, {stroke:'#8aa52a', 'stroke-width':.8}); poly([[6,6.6,0],[6,8.3,0],[6,6.6,1.9]], '#9bb82a'); });
-    person(4.9, 4.4, 1, {z:1.9, depth:11}); person(5.3, 5.4, 2, {z:1.9, depth:11.1}); person(4.6, 8.9, 5);
-    roundTree(7.8, 2.6, 15); coneTree(2.2, 2.4); roundTree(7.8, 7.6, 13, 'gTree2'); coneTree(1.8, 7.4, .9);
-  },
-  game(s){
-    const G = island('game', '#cfe3f3', s);
-    poly([[0,6.3,0],[10,6.3,0],[10,7.7,0],[0,7.7,0]], '#a9a6ae', G);
-    add(5, () => { box(2.2, 1.8, 4.2, 2, 2.4, '#ffffff'); winsL(2.2, 1.8, 4.2, 2, 0, 4, 1, 2.4); box(2, 1.6, 4.6, 2.4, .3, '#2e7fd0', 2.4); label(4.3, 3.9, 2.95, 'えき', 13, '#ffffff'); });
-    add(9.2, () => { // バス停：うしろのかべに QR コードのポスター
-      box(6.2, 4.2, 2, .15, 1.6, '#dfe7ef'); qr('L', 4.37, 6.9, .45, .7);
-      box(6.1, 4.05, 2.2, .9, .14, '#2e7fd0', 1.6); box(6.4, 4.45, 1.6, .3, .38, '#b98457');
-      label(7.2, 4.9, 2.05, 'バス停', 11); });
-    person(6.8, 4.9, 1, {depth:11.8}); person(7.6, 5, 3, {depth:12.7}); person(3, 4.7, 5);
-    add(14, () => { box(1.8, 6.5, 3.4, 1.1, 1.3, '#f2b630'); winsL(1.8, 6.5, 3.4, 1.1, .2, 4, 1, 1.1, '#e8f4fb'); });
-    roundTree(8.6, 6.6, 13); coneTree(7.8, 2.4); roundTree(1.4, 5, 12, 'gTree2');
-  },
-  ar(s){
-    const G = island('ar', '#f6e3d6', s);
-    poly([[1.6,5,0],[8.8,5,0],[8.8,9,0],[1.6,9,0]], '#efe2d2', G);
-    for (let k = 2; k < 9; k += .9) poly([[k,5,0],[k+.04,5,0],[k+.04,9,0],[k,9,0]], '#e4d4c0', G);
-    add(5, () => { box(2.1, 1.8, 5.8, 2.6, 3, '#f4ece0'); winsL(2.1, 1.8, 5.8, 2.6, 0, 6, 2, 3); winsR(2.1, 1.8, 5.8, 2.6, 0, 3, 2, 3);
-      quadL(4.42, 4.4, 5.6, 0, 1.1, '#9fd0ea'); box(4.2, 4.4, 1.6, .6, .15, '#e4362b', 1.1);
-      label(5, 4.42, 2.75, '市役所', 13);
-      const [fx, fy] = P(8.3, 4.6); el('rect', {x:fx-1, y:fy-70, width:2, height:70, fill:'#8a857c'}, scene);
-      el('path', {d:`M${fx+1} ${fy-70} h20 l-5 7 5 7 h-20z`, fill:'#e4362b'}, scene); });
-    [[3.4,5.9,0],[6.6,6.2,6],[5.6,7.6,2]].forEach(([x, y, i]) => person(x, y, i));
-    add(30, () => { const g = el('g', {class:'q-g'}, scene);
-      [[3.4,5.9],[6.6,6.2],[5.6,7.6]].forEach(([x, y], k) => { const [sx, sy] = P(x, y);
-        const t = el('text', {x:sx+6, y:sy-28, 'font-family':'Zen Maru Gothic, sans-serif', 'font-weight':900, 'font-size':18, fill:'#c23b98'}, g); t.textContent = '?'; }); });
-    roundTree(8.4, 7, 14); coneTree(1.6, 6.6);
-    return () => drawCritter(...P(4.6, 6.6), el('g', {class:'critter-g'}, s));
-  },
-  night(s){
-    const G = island('night', '#f6d3dc', s);
-    poly([[2.4,0,0],[4,0,0],[4,10,0],[2.4,10,0]], '#a9a6ae', G);
-    for (let y = .4; y < 10; y += 1.2) poly([[3.15,y,0],[3.25,y,0],[3.25,y+.6,0],[3.15,y+.6,0]], '#ffffff', G);
-    poly([[4,0,0],[5.8,0,0],[5.8,10,0],[4,10,0]], '#e8d9cf', G);
-    for (let y = .6, k = 0; y < 10; y += .62, k++){ const x = 4.9 + (k % 2 ? .3 : -.3); if (!inIsle(x, y, ISLE_R - .3)) continue;
-      add(x + y, () => { const [sx, sy] = P(x, y);
-        el('ellipse', {cx:sx, cy:sy, rx:5, ry:2.6, fill:'#d8cfc6', stroke:'#b9aea4', 'stroke-width':.8}, scene);
-        el('ellipse', {cx:sx, cy:sy, rx:14, ry:7, fill:'#ffe680', opacity:.75, filter:'url(#soft)'}, lights);
-        el('ellipse', {cx:sx, cy:sy, rx:5, ry:2.6, fill:'#fff7c2'}, lights); }); }
-    [[6.3,2.3,'#f7e1c9','#c7563f'],[6.3,5.3,'#e9f1fb','#2e7fd0']].forEach(([x, y, c, r]) => add(x + y + 2, () => {
-      box(x, y, 2, 1.8, 1.7, c); winsL(x, y, 2, 1.8, 0, 2, 1, 1.7); winsR(x, y, 2, 1.8, 0, 2, 1, 1.7); box(x - .1, y - .1, 2.2, 2, .3, r, 1.7); }));
-    add(7, () => { box(.9, 4.2, 1.2, 1.6, 1.5, '#fde9ee'); box(.8, 4.1, 1.4, 1.8, .3, '#7d55c7', 1.5); });
-    lamp(5.9, 2); lamp(5.9, 5.6); lamp(5.9, 8.4);
-    person(4.6, 4.3, 7); person(5.1, 6.6, 1); coneTree(8.4, 7.8, .9);
-  },
-  stairs(s){
-    const G = island('stairs', '#fde3c8', s);
-    poly([[1,6.4,0],[9,6.4,0],[9,9,0],[1,9,0]], '#f3e3cf', G);
-    for (let i = 0; i < 5; i++) add(6 + i * .01, () => { box(1.9 + i * 1.1, 3.4, 1.1, 2.8, .5 * (i + 1), STEP_COL[i]);
-      label(2.45 + i * 1.1, 4.95, .5 * (i + 1), ['ド','レ','ミ','ファ','ソ'][i], 14, '#ffffff'); });
-    add(6.1, () => box(7.4, 3.4, 1.3, 2.8, 2.5, '#e9e2d8'));
-    person(3.6, 4.6, 0, {z:1, depth:9}); person(5.4, 7.2, 3); person(2.4, 7.4, 6);
-    add(20, () => { [[150,70],[205,52],[262,78],[118,98]].forEach(([x, y], k) => note(x, y, k % 2 ? '♫' : '♪', STEP_COL[k + 1], 22)); });
-    roundTree(8.2, 7.4, 13); coneTree(1.6, 2.6, .9);
-  },
-  river(s){
-    const G = island('river', '#c9eadf', s);
-    poly([[5.6,0,0],[6.7,0,0],[6.7,10,0],[5.6,10,0]], '#ead8b4', G);
-    poly([[6.7,0,0],[10,0,0],[10,10,0],[6.7,10,0]], '#7fbde6', G);
-    for (let y = 1.5; y < 10; y += 1.7) poly([[7.4,y,0],[8.6,y+.3,0],[8.6,y+.42,0],[7.4,y+.12,0]], '#c8e6f7', G);
-    add(4.5, () => { box(1.5, 2, 2.6, 1.8, 1.5, '#fffaf2'); winsL(1.5, 2, 2.6, 1.8, 0, 3, 1, 1.5); box(1.3, 1.8, 3, 2.2, .35, '#6aa84f', 1.5); label(2.8, 3.8, 2.05, '茶づな', 12, '#2f5a22'); });
-    add(10.3, () => kingfisher(6, 4.3));
-    person(4.2, 5.6, 4);
-    add(9.85, () => { const [sx, sy] = P(4.2, 5.6); el('rect', {x:sx+4, y:sy-25, width:6, height:10, rx:1.5, fill:'#2b2a30'}, scene); el('rect', {x:sx+5, y:sy-24, width:4, height:7, fill:'#9fd0ea'}, scene); });
-    add(9.5, () => { box(3, 6.6, .15, .9, 1.2, '#14958a'); qr('R', 3.17, 6.75, .3, .6); });
-    [[2,7.2],[3.6,8.2],[4.8,8.4]].forEach(([x, y]) => add(x + y, () => { const [sx, sy] = P(x, y);
-      el('path', {d:`M${sx} ${sy} v-8`, stroke:'#3f8a3a', 'stroke-width':1.6}, scene); el('circle', {cx:sx, cy:sy-9, r:3.2, fill:'#5b7fe0'}, scene); }));
-    roundTree(1.8, 5.6, 13, 'gTree2');
-  },
-  cloud(s){
-    el('circle', {cx:210, cy:170, r:160, fill:'#f8e6ef'}, scene);
-    cloud(62, 64, .3); cloud(368, 86, .26);
-    island('cloud', '#ffffff', s);
-    const [cx, cy] = P(5, 5);
-    [[-170,0,30],[-120,40,36],[-40,64,40],[50,64,40],[130,42,36],[176,4,28],[-150,-30,26],[150,-34,26]].forEach(([dx, dy, r]) =>
-      el('circle', {cx:cx+dx, cy:cy+dy, r, fill:'url(#gCloud)'}, scene));
-    el('ellipse', {cx, cy:cy-4, rx:150, ry:70, fill:'#ffffff'}, scene);
-    [[3.4,4,1],[5,3.2,2],[6.4,4.6,3],[4.2,6,4],[5.8,6.4,5],[3,6.8,6]].forEach(([x, y, i]) => person(x, y, i, {kid:true}));
-    add(20, () => { [[120,92],[180,64],[248,82],[300,108],[95,150],[330,160]].forEach(([x, y], k) => note(x, y, k % 2 ? '♫' : '♪', '#d4417f', 22)); });
-  },
-};
-
+/* ---------------- narrow: one round picture per idea, stacked along a dotted path ---------------- */
 ['badminton','wall','glass','game','ar','night','stairs','river','cloud'].forEach(id => {
-  const i = IDEAS.find(x => x.id === id);
+  const i = IDEAS.find(x => x.id === id), ps = picOf(i);
   const area = document.createElement('div'); area.className = 'area'; area.style.setProperty('--c', i.c);
-  const s = el('svg', {viewBox:'0 0 420 330', role:'img', 'aria-label':`${i.place}のようす`});
-  scene = el('g', {class:'scene-g'}, s); lights = el('g', {class:'lights-g'}, s); OX = 210; OY = 45;
-  const after = MINI[id](s); flush(); s.appendChild(lights); after && after();
-  area.appendChild(s);
+  const pic = document.createElement('button'); pic.className = 'sppic'; pic.style.cssText = `--img:${ps.img};${ps.style}`;
+  pic.setAttribute('aria-label', `${i.name}（${i.place}）の絵。おすと体験がひらきます`); pic.onclick = () => open(i.id); area.appendChild(pic);
   const b = document.createElement('button'); b.className = 'bub-sp';
   b.innerHTML = `<span class="t">${i.name}</span><span class="d">${i.short}</span><span class="n">${i.place}　／　${i.nick}</span>`;
   b.onclick = () => open(i.id); area.appendChild(b);
@@ -846,128 +668,215 @@ const GAMES = {};
 
 /* --- 雲みたいな部屋でバドミントン --- */
 GAMES.badminton = root => {
-  const g = shell(root, '雲の部屋で、5点先取の試合', 'マウスや指を左右に動かすと、あなた（青）が動きます（← → キーでも）。シャトルの下に入ると自動で打ち返します。雲の部屋なので、おす（スペース・↑キー）とふわっと高くジャンプ。高いところで当てると<b>スマッシュ</b>！');
+  const g = shell(root, '雲の部屋で、5点先取の試合', 'マウスや指を左右に動かすと、あなた（青）が動きます（← → キーでも）。シャトルの下に入ると自動で打ち返します。おす（スペース・↑キー）とふわっと高くジャンプ。高いところで当てると<b>スマッシュ</b>！ 天井やかべの雲は、シャトルがぽよんとはね返ります。');
   const { ctx, W, H, cv, pt } = mkCanvas(g.stage, 640, 340);
-  const FLOOR = 296, NET = 320, NETTOP = 196, GR = 300, HITY = 222, JUMP_V = 430, JUMP_G = 560, SMASH_H = 45;
-  let me, cpu, sh, score, rally, best = 0, smashes = 0, state = 'ready', wait = 0, target = 160, pops = [], puffs = [];
+  const FLOOR = 296, NET = 320, NETTOP = 196, GR = 300, HITY = 222, JUMP_V = 430, JUMP_G = 560, SMASH_H = 45, CEIL = 22, WALL = 12;
+  const DOOR = { x: 266, y: 112, w: 108, h: 184 };
+  let me, cpu, sh, score, rally, best = 0, smashes = 0, state = 'intro', wait = 0, target = 160, pops = [], puffs = [], bits = [], dents = [], sink = null, introT = 0, clock = 0;
   const keys = {};
-  function reset(){ me = { x: 160, y: 0, vy: 0, swing: 0 }; cpu = { x: 480, y: 0, vy: 0, vx: 0, swing: 0 }; score = [0, 0]; smashes = 0; pops = []; puffs = []; serve(0); }
-  function serve(side){ sh = side ? { x: 470, y: 150, vx: -190, vy: -210 } : { x: 170, y: 150, vx: 190, vy: -210 }; sh.smash = false; sh.cpuMiss = false; sh.cpuSmash = false; sh.whiff = false; rally = 0; wait = .9; }
-  function jump(p){ if (p.y > 0 || state !== 'play') return; p.vy = JUMP_V; tone(523, 0, .12, 'sine', .08); tone(784, .06, .12, 'sine', .06);
-    puffs.push({ x: p.x, a: 1 }); }
+  const soft = (f, d = .14, v = .1) => tone(f, 0, d, 'sine', v);
+  function reset(){ me = { x: 160, y: 0, vy: 0, swing: 0, dj: false }; cpu = { x: 480, y: 0, vy: 0, vx: 0, swing: 0, dj: false }; score = [0, 0]; smashes = 0; pops = []; puffs = []; bits = []; sink = null; serve(0); }
+  function serve(side){ sh = side ? { x: 470, y: 150, vx: -190, vy: -210 } : { x: 170, y: 150, vx: 190, vy: -210 }; sh.smash = false; sh.cpuMiss = false; sh.cpuSmash = false; sh.whiff = false; sh.by = side ? -1 : 1; rally = 0; wait = .9; }
+  // ふわふわのゆか：へこみ（ばねのようにゆれてもどる）
+  const dent = (x, a) => dents.push({ x, a, t: 0 });
+  const floorAt = x => FLOOR + dents.reduce((s, d) => s + d.a * Math.exp(-4 * d.t) * Math.cos(11 * d.t) * Math.exp(-(((x - d.x) / 56) ** 2)) * 10, 0);
+  const burst = (x, y, n = 8, col = '#ffffff') => { for (let i = 0; i < n; i++){ const a = rnd(0, 6.28), v = rnd(40, 120); bits.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 30, r: rnd(5, 11), a: 1, col }); } };
+  function jump(p){
+    if (state !== 'play') return;
+    if (p.y === 0 && p.vy <= 0){ p.vy = JUMP_V; soft(523, .12, .08); soft(784, .12, .06); puffs.push({ x: p.x, a: 1 }); dent(p.x, -.6); return; }
+  }
   // ネットには近づきすぎない（タッチネットは反則）
   const MARGIN = 46;
   const aim = e => { target = clamp(pt(e)[0], 24, NET - MARGIN); };
   cv.onpointermove = aim;
-  cv.onpointerdown = e => { aim(e); jump(me); };
+  cv.onpointerdown = e => { if (state === 'intro'){ const [x, y] = pt(e); if (x > DOOR.x - 20 && x < DOOR.x + DOOR.w + 20 && y > DOOR.y - 60 && y < FLOOR) enter(); return; } aim(e); jump(me); };
   onKey((e, d) => {
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight'){ keys[e.key] = d; e.preventDefault(); }
-    if ((e.key === ' ' || e.key === 'ArrowUp') && d){ e.preventDefault(); jump(me); }
+    if ((e.key === ' ' || e.key === 'ArrowUp') && d && !e.repeat){ e.preventDefault(); jump(me); }
   });
   function hit(p, dir){
-    // スマッシュ：当てたところから、相手コートのおくへ一直線。ネットをこえる角度だけをえらぶ
-    let smash = p.y > SMASH_H, aimX = 0;
+    // スマッシュ：当てたところから、まっすぐ飛ぶ（とちゅうで向きは変わらない）。
+    // ネットをこえてまっすぐ届く着地点のはんいを出して、はばがあるときは、うける人がいないところをねらう
+    let smash = p.y > SMASH_H && sh.y < NETTOP - 20, land = 0;
     if (smash){
-      const dxn = Math.abs(NET - sh.x), dyn = NETTOP - 14 - sh.y, room = dir > 0 ? W - 34 - sh.x : sh.x - 34;
-      const minD = dyn > 4 ? (FLOOR - 4 - sh.y) * dxn / dyn : Infinity, lo = Math.max(minD + 16, dxn + 160);
-      if (lo > room) smash = false; else aimX = sh.x + dir * rnd(lo, room);
+      const dxn = Math.abs(NET - sh.x), dyn = NETTOP - 14 - sh.y, far = dir > 0 ? W - 36 - sh.x : sh.x - 36;
+      const lo = Math.max(dxn + 50, dyn > 4 ? (FLOOR - 4 - sh.y) * dxn / dyn + 10 : Infinity);
+      if (lo > far) smash = false; // まっすぐではネットをこえられない → ふつうの返球
+      else {
+        const rx = dir > 0 ? cpu.x : me.x;
+        let dist;
+        if (far - lo > 120){ // はばがある：うける人からいちばん遠いところ（少しだけばらつかせる）
+          dist = [0, 1, 2, 3, 4, 5, 6].map(k => lo + (far - lo) * k / 6).reduce((a, b) => Math.abs(sh.x + dir * b - rx) > Math.abs(sh.x + dir * a - rx) ? b : a) + rnd(-18, 18);
+        } else dist = rnd(lo, far);
+        land = sh.x + dir * clamp(dist, lo, far);
+      }
     }
-    // あいてがこの球をとれるかどうか、打った時点できめておく（スマッシュは6割ミス、ふつうの球もラリーが長いほどミスしやすい）
-    sh.whiff = false;
     // あいてがミスするのは、あなたのスマッシュを受けたときだけ（6割）。ふつうの球は必ず追いついて返す。スマッシュをねらったジャンプは、たまに（10%）空ぶり
+    sh.whiff = false;
     if (dir > 0){ sh.cpuMiss = smash && Math.random() < .6; sh.cpuSmash = !smash && Math.random() < .45; sh.cpuJumpMiss = sh.cpuSmash && Math.random() < .1; }
     else { sh.cpuMiss = false; sh.cpuSmash = false; sh.cpuJumpMiss = false; }
-    if (smash){ const sp = dir > 0 ? rnd(560, 640) : rnd(480, 540), dx = aimX - sh.x, dy = FLOOR - 4 - sh.y, d = Math.hypot(dx, dy);
-      sh.vx = dx / d * sp; sh.vy = dy / d * sp; sh.smash = true; smashes += dir > 0 ? 1 : 0;
+    if (smash){ const sp = dir > 0 ? rnd(560, 640) : rnd(480, 540), dx = land - sh.x, dy = FLOOR - 4 - sh.y, d = Math.hypot(dx, dy);
+      sh.vx = dx / d * sp; sh.vy = dy / d * sp; sh.smash = true; sh.land = land; smashes += dir > 0 ? 1 : 0;
       pops.push({ x: sh.x, y: sh.y - 20, a: 1, txt: dir > 0 ? 'スマッシュ！' : 'あいてのスマッシュ！' });
-      tone(1046, 0, .08, 'square', .07); tone(1568, .05, .12, 'square', .05); }
-    else { sh.vx = dir * (rnd(200, 280) + Math.min(rally * 5, 70)); sh.vy = -rnd(320, 380); sh.smash = false; tone(dir > 0 ? 880 : 690, 0, .07, 'square', .05); }
+      tone(1046, 0, .1, 'triangle', .08); tone(1568, .05, .14, 'sine', .06); }
+    else { sh.vx = dir * (rnd(200, 280) + Math.min(rally * 5, 70));
+      // あいての球は天井に当たらない高さにおさえる（天井ではね返ってネットをこえないミスをしない）
+      let up = rnd(290, 360); if (dir < 0) up = Math.min(up, Math.sqrt(2 * GR * Math.max(20, sh.y - CEIL - 16)));
+      sh.vy = -up; sh.smash = false; soft(dir > 0 ? 880 : 700, .09, .07); }
+    sh.by = dir; // 打った人は、あいてが打ち返すまでもう一度は当てない
     rally++; best = Math.max(best, rally); p.swing = .25;
   }
-  function landing(level = HITY){ let x = sh.x, y = sh.y, vx = sh.vx, vy = sh.vy;
-    for (let i = 0; i < 400; i++){ if (!sh.smash){ vy += GR / 60; vx *= 1 - .22 / 60; } x += vx / 60; y += vy / 60;
-      if (x < 8){ x = 8; vx = Math.abs(vx) * .4; } if (x > W - 8){ x = W - 8; vx = -Math.abs(vx) * .4; } if (vy > 0 && y > level) break; } return x; }
-  // ラケットの高さ：ジャンプしているぶん上になる。スマッシュを受けるときは、少しだけ当たりやすく
+  function landing(level = HITY){
+    if (sh.smash && sh.land){ // スマッシュはまっすぐなので、level の高さを通るところ
+      const x0 = sh.x, y0 = sh.y, y1 = FLOOR - 4;
+      return x0 + (sh.land - x0) * clamp((level - y0) / (y1 - y0), 0, 1); }
+    let x = sh.x, y = sh.y, vx = sh.vx, vy = sh.vy;
+    for (let i = 0; i < 400; i++){ vy += GR / 60; vx *= 1 - .22 / 60; x += vx / 60; y += vy / 60;
+      if (y < CEIL){ y = CEIL; vy = Math.abs(vy) * .45; }
+      if (x < WALL){ x = WALL; vx = Math.abs(vx) * .55; } if (x > W - WALL){ x = W - WALL; vx = -Math.abs(vx) * .55; } if (vy > 0 && y > level) break; } return x; }
+  // ラケットの高さ：ジャンプしているぶん上になる
   const racketY = p => HITY - p.y;
-  const near = p => Math.abs(sh.x - p.x - 8 * Math.sign(NET - p.x)) < (sh.smash ? 42 : 32) && Math.abs(sh.y - racketY(p)) < (p.y > 0 || sh.smash ? 30 : 22) && (sh.vy > 0 || p.y > SMASH_H);
+  // ジャンプ中は、うでをのばして少し上まで届く（高いところで打つほど、スマッシュの角度が急になる）
+  const near = p => Math.abs(sh.x - p.x - 8 * Math.sign(NET - p.x)) < (sh.smash ? 42 : 32) && (p.y > SMASH_H ? (sh.y > racketY(p) - 60 && sh.y < racketY(p) + 24) : Math.abs(sh.y - racketY(p)) < (p.y > 0 || sh.smash ? 30 : 22)) && (sh.vy > 0 || p.y > SMASH_H);
+  function point(side){ // side: シャトルが落ちたコート（0 = あなた）
+    score[1 - side]++; sink = { t: 0, x: sh.x, y: FLOOR - 4, side };
+    dent(sh.x, 1.1); burst(sh.x, FLOOR - 6, 12); pops.push({ x: sh.x, y: FLOOR - 30, a: 1, txt: 'ぽふっ', c: '#7a8aa0', size: 16 });
+    soft(196, .2, .12); soft(262, .16, .08);
+    later(() => { burst(W / 2, 70, 14, side ? '#fff6c8' : '#ffffff'); pops.push({ x: W / 2, y: 76, a: 1.2, txt: side ? 'あなたに1点！' : 'あいてに1点', c: side ? '#2e7fd0' : '#e4362b', size: 20, cloud: true }); if (side) chord([0, 4, 7]); }, 250);
+  }
   loop(dt => {
+    clock += dt;
+    dents.forEach(d => d.t += dt); dents = dents.filter(d => d.t < 1.6);
+    bits.forEach(b => { b.x += b.vx * dt; b.y += b.vy * dt; b.vy += 60 * dt; b.a -= dt * 1.4; }); bits = bits.filter(b => b.a > 0);
+    if (state === 'enter'){ introT += dt; if (introT >= 1.25){ state = 'play'; } }
     if (state === 'play'){
       if (keys.ArrowLeft) target = clamp(target - 320 * dt, 24, NET - MARGIN);
       if (keys.ArrowRight) target = clamp(target + 320 * dt, 24, NET - MARGIN);
       me.x = clamp(me.x + clamp(target - me.x, -380 * dt, 380 * dt), 24, NET - MARGIN);
-      [me, cpu].forEach(p => { if (p.y > 0 || p.vy > 0){ p.vy -= JUMP_G * dt; p.y += p.vy * dt; if (p.y <= 0){ p.y = 0; p.vy = 0; puffs.push({ x: p.x, a: .7 }); } } p.swing = Math.max(0, p.swing - dt); });
+      [me, cpu].forEach(p => {
+        if (p.y > 0 || p.vy > 0){ p.vy -= JUMP_G * dt; p.y = Math.min(p.y + p.vy * dt, 210);
+          if (p.y <= 0){ const hitV = -p.vy; p.y = 0; p.dj = false; dent(p.x, Math.min(1.2, hitV / 380)); puffs.push({ x: p.x, a: .8 });
+            p.vy = hitV > 200 ? hitV * .2 : 0; if (p.vy > 0) p.y = .1; } }
+        p.swing = Math.max(0, p.swing - dt); });
       // あいて：スマッシュをねらうときは、少し高いところで合わせにいく
       const aimHigh = sh.cpuSmash && (cpu.y > 0 || sh.y < 120);
       // あいて：打たれた瞬間に落ちるところへ歩きだす。ゆっくり加速・減速して、打ったあとは歩いて真ん中へもどる
-      const chasing = sh.vx > 0 || sh.x > NET;
+      const chasing = !sink && (sh.vx > 0 || sh.x > NET);
       const want = chasing ? clamp(landing(aimHigh ? 125 : HITY), NET + MARGIN, W - 24) : 470;
       const maxV = chasing ? 250 : 110, desired = clamp((want - cpu.x) * 4, -maxV, maxV);
       cpu.vx += clamp(desired - cpu.vx, -1100 * dt, 1100 * dt);
       cpu.x = clamp(cpu.x + cpu.vx * dt, NET + MARGIN, W - 24);
-      if (sh.cpuSmash && cpu.y === 0 && sh.vx > 0 && sh.vy > 0 && sh.x > NET && sh.y > 50 && sh.y < 120 && Math.abs(cpu.x - sh.x) < 140) jump(cpu);
-      if (wait > 0) wait -= dt;
+      if (!sink && sh.cpuSmash && cpu.y === 0 && sh.vx > 0 && sh.vy > 0 && sh.x > NET && sh.y > 50 && sh.y < 120 && Math.abs(cpu.x - sh.x) < 140) jump(cpu);
+      if (sink){ sink.t += dt; if (sink.t > 1){ const side = sink.side; sink = null; if (score[0] >= 5 || score[1] >= 5){ state = 'over'; end(); } else serve(side); } }
+      else if (wait > 0) wait -= dt;
       else {
         if (!sh.smash){ sh.vy += GR * dt; sh.vx *= 1 - .22 * dt; } sh.x += sh.vx * dt; sh.y += sh.vy * dt;
         if (Math.abs(sh.x - NET) < 5 && sh.y > NETTOP){ sh.x = NET + (sh.vx > 0 ? -6 : 6); sh.vx *= -.25; sh.smash = false; }
-        if (sh.x < 8){ sh.x = 8; sh.vx = Math.abs(sh.vx) * .4; } if (sh.x > W - 8){ sh.x = W - 8; sh.vx = -Math.abs(sh.vx) * .4; }
-        if (sh.x < NET && sh.vx < 80 && near(me)) hit(me, 1);
-        else if (sh.x > NET && (sh.vx > -80 || sh.x > W - 80) && !sh.whiff && (near(cpu) || (cpu.y > 0 && Math.abs(sh.x - cpu.x) < 60 && sh.y > racketY(cpu) - 50 && sh.y < racketY(cpu) + 40))){
-          if (sh.cpuMiss || (cpu.y > 0 && sh.cpuJumpMiss)){ sh.whiff = true; cpu.swing = .25; pops.push({ x: cpu.x, y: racketY(cpu) - 30, a: 1, txt: 'あっ、ミス！' }); tone(330, 0, .12, 'sine', .07); }
+        // 雲の天井・かべ：ぽよんとはね返る
+        if (sh.y < CEIL && !sh.smash){ sh.y = CEIL; sh.vy = Math.abs(sh.vy) * .45; burst(sh.x, CEIL - 4, 5); soft(740, .12, .07); pops.push({ x: sh.x, y: CEIL + 26, a: .9, txt: 'ぽよん', c: '#2e7fd0', size: 13 }); }
+        if (sh.x < WALL){ sh.x = WALL; sh.vx = Math.abs(sh.vx) * .55; if (Math.abs(sh.vx) > 40){ burst(WALL, sh.y, 4); soft(660, .1, .06); } }
+        if (sh.x > W - WALL){ sh.x = W - WALL; sh.vx = -Math.abs(sh.vx) * .55; if (Math.abs(sh.vx) > 40){ burst(W - WALL, sh.y, 4); soft(660, .1, .06); } }
+        if (sh.by !== 1 && sh.x < NET && sh.vx < 80 && near(me)) hit(me, 1);
+        else if (sh.by !== -1 && sh.x > NET && (sh.vx > -80 || sh.x > W - 80) && !sh.whiff && (near(cpu) || (cpu.y > 0 && Math.abs(sh.x - cpu.x) < 60 && sh.y > racketY(cpu) - 50 && sh.y < racketY(cpu) + 40))){
+          if (sh.cpuMiss || (cpu.y > 0 && sh.cpuJumpMiss)){ sh.whiff = true; cpu.swing = .25; pops.push({ x: cpu.x, y: racketY(cpu) - 30, a: 1, txt: 'あっ、ミス！' }); soft(330, .12, .07); }
           else hit(cpu, -1);
         }
-        if (sh.y >= FLOOR - 4){
-          const side = sh.x < NET ? 0 : 1; score[1 - side]++;
-          if (side) chord([0, 4, 7]); else tone(200, 0, .25, 'square', .06);
-          if (score[0] >= 5 || score[1] >= 5){ state = 'over'; end(); } else serve(side);
-        }
+        if (sh.y >= FLOOR - 4) point(sh.x < NET ? 0 : 1);
       }
       g.stat(`あなた <b>${score[0]}</b> − <b>${score[1]}</b> あいて　ラリー ${rally}　スマッシュ <b>${smashes}</b>`);
     }
-    pops.forEach(p => { p.y -= 26 * dt; p.a -= dt * .8; }); pops = pops.filter(p => p.a > 0);
+    pops.forEach(p => { p.y -= 22 * dt; p.a -= dt * .8; }); pops = pops.filter(p => p.a > 0);
     puffs.forEach(p => p.a -= dt * 1.6); puffs = puffs.filter(p => p.a > 0);
     draw();
   });
   function end(){ const win = score[0] > score[1]; if (win) chord([0, 2, 4, 7], 2, .12);
     g.over(`<h5>${win ? 'あなたの勝ち！' : 'あいての勝ち'}</h5><p>${score[0]} − ${score[1]}　いちばん長いラリー ${best}回　スマッシュ ${smashes}回</p><p>${smashes ? 'ジャンプスマッシュ、きまったね！' : 'シャトルが上がったら、ジャンプして高いところで当ててみよう。'}</p>`, 'もういちど', () => { reset(); state = 'play'; }); }
   function racketMan(p, col, dir){
-    const fy = FLOOR - p.y;
-    ctx.fillStyle = `rgba(0,0,0,${.12 - Math.min(p.y, 120) / 1500})`; ctx.beginPath(); ctx.ellipse(p.x, FLOOR, 14 - p.y / 20, 4, 0, 0, 7); ctx.fill();
+    const base = floorAt(p.x), fy = base - p.y;
+    ctx.fillStyle = `rgba(80,100,140,${.16 - Math.min(p.y, 120) / 1200})`; ctx.beginPath(); ctx.ellipse(p.x, base + 2, 14 - p.y / 20, 4, 0, 0, 7); ctx.fill();
     figure(ctx, p.x, fy, col, 2.1);
     const up = p.y > SMASH_H, sw = p.swing > 0 ? 1 : 0, hx = p.x + dir * 10, hy = fy - 40;
     const ax = p.x + dir * (up ? 16 : 24 - sw * 6), ay = racketY(p) + (up ? -10 : -2) + sw * 14;
     ctx.strokeStyle = '#6a625c'; ctx.lineWidth = 2.6; ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(ax, ay); ctx.stroke();
     ctx.beginPath(); ctx.ellipse(ax + dir * 3, ay - 10, 8, 11, dir * .3, 0, 7); ctx.stroke();
   }
-  function draw(){
-    const sky = ctx.createLinearGradient(0, 0, 0, H); sky.addColorStop(0, '#cbe6fb'); sky.addColorStop(1, '#f3f9ff'); ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
-    [[60, 70, 30], [210, 44, 24], [440, 62, 32], [590, 96, 26], [320, 120, 16]].forEach(([x, y, r]) => puff(ctx, x, y, r, 'rgba(255,255,255,.92)'));
-    ctx.fillStyle = 'rgba(46,127,208,.18)'; ctx.fillRect(24, HITY - SMASH_H - 2, NET - 48, 2);
+  function drawRoom(){
+    const sky = ctx.createLinearGradient(0, 0, 0, H); sky.addColorStop(0, '#d4ebfc'); sky.addColorStop(1, '#f5faff'); ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
+    // 遠くの雲
+    [[90, 96, 22], [250, 70, 18], [420, 88, 24], [560, 112, 18]].forEach(([x, y, r], k) => puff(ctx, x + Math.sin(clock * .2 + k) * 10, y, r, 'rgba(255,255,255,.7)'));
+    // 天井とかべの雲
+    for (let x = -10; x < W + 30; x += 34) puff(ctx, x, 4 + Math.sin(x * .05) * 3, 20, '#ffffff');
+    for (let y = 20; y < FLOOR; y += 36){ puff(ctx, -4, y, 16, '#ffffff'); puff(ctx, W + 4, y + 14, 16, '#ffffff'); }
+    ctx.fillStyle = 'rgba(46,127,208,.16)'; ctx.fillRect(24, HITY - SMASH_H - 2, NET - MARGIN - 24, 2);
     ctx.fillStyle = 'rgba(46,127,208,.45)'; ctx.font = '700 10px "Zen Maru Gothic", sans-serif'; ctx.fillText('ここより上でスマッシュ', 28, HITY - SMASH_H - 6);
-    ctx.fillStyle = '#fff'; for (let x = -20; x < W + 40; x += 44){ ctx.beginPath(); ctx.arc(x, FLOOR + 20, 32, 0, 7); ctx.fill(); }
-    ctx.fillStyle = '#e8f2fb'; ctx.fillRect(0, FLOOR + 34, W, H);
-    puffs.forEach(p => { ctx.globalAlpha = p.a; puff(ctx, p.x - 16, FLOOR + 2, 7); puff(ctx, p.x + 16, FLOOR + 2, 7); }); ctx.globalAlpha = 1;
-    ctx.strokeStyle = 'rgba(46,127,208,.3)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(24, FLOOR); ctx.lineTo(W - 24, FLOOR); ctx.stroke();
-    ctx.fillStyle = '#8a857c'; ctx.fillRect(NET - 2, NETTOP, 4, FLOOR - NETTOP);
-    ctx.strokeStyle = 'rgba(58,51,48,.45)'; ctx.lineWidth = 1;
+    // ふわふわのゆか（へこむ）
+    ctx.fillStyle = '#e6f0fa'; ctx.fillRect(0, FLOOR + 30, W, H);
+    ctx.fillStyle = '#ffffff'; for (let x = -20; x < W + 40; x += 30){ ctx.beginPath(); ctx.arc(x, floorAt(x) + 20, 26, 0, 7); ctx.fill(); }
+    puffs.forEach(p => { ctx.globalAlpha = p.a; puff(ctx, p.x - 16, floorAt(p.x) + 2, 7); puff(ctx, p.x + 16, floorAt(p.x) + 2, 7); }); ctx.globalAlpha = 1;
+    ctx.strokeStyle = 'rgba(46,127,208,.25)'; ctx.lineWidth = 2; ctx.beginPath(); for (let x = 24; x <= W - 24; x += 8) { const y = floorAt(x); x === 24 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); } ctx.stroke();
+    // 雲のネット
+    ctx.fillStyle = '#c9d8ea'; ctx.fillRect(NET - 2, NETTOP, 4, FLOOR - NETTOP);
+    ctx.strokeStyle = 'rgba(90,110,140,.4)'; ctx.lineWidth = 1;
     for (let y = NETTOP + 4; y < NETTOP + 46; y += 7){ ctx.beginPath(); ctx.moveTo(NET - 14, y); ctx.lineTo(NET + 14, y); ctx.stroke(); }
-    ctx.fillStyle = '#fff'; ctx.fillRect(NET - 15, NETTOP - 2, 30, 5);
+    puff(ctx, NET, NETTOP - 2, 7, '#ffffff');
     if (me){ racketMan(me, '#2e7fd0', 1); racketMan(cpu, '#e4362b', -1); }
-    if (sh){
-      ctx.fillStyle = 'rgba(0,0,0,.1)'; ctx.beginPath(); ctx.ellipse(sh.x, FLOOR + 2, 8, 2.5, 0, 0, 7); ctx.fill();
-      if (sh.smash){ ctx.strokeStyle = 'rgba(228,54,43,.35)'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(sh.x, sh.y); ctx.lineTo(sh.x - sh.vx * .06, sh.y - sh.vy * .06); ctx.stroke(); }
-      ctx.save(); ctx.translate(sh.x, sh.y); ctx.rotate(Math.atan2(sh.vy, sh.vx));
+    if (sh && state !== 'intro'){
+      const sk = sink ? Math.min(1, sink.t * 2) : 0;
+      if (!sink){ ctx.fillStyle = 'rgba(80,100,140,.12)'; ctx.beginPath(); ctx.ellipse(sh.x, floorAt(sh.x) + 2, 8, 2.5, 0, 0, 7); ctx.fill(); }
+      if (sh.smash && !sink){ ctx.strokeStyle = 'rgba(228,54,43,.35)'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(sh.x, sh.y); ctx.lineTo(sh.x - sh.vx * .06, sh.y - sh.vy * .06); ctx.stroke(); }
+      ctx.save(); ctx.globalAlpha = 1 - sk * .7; ctx.translate(sink ? sink.x : sh.x, (sink ? sink.y : sh.y) + sk * 12); ctx.rotate(sink ? Math.PI / 2 : Math.atan2(sh.vy, sh.vx));
       ctx.fillStyle = '#fff'; ctx.strokeStyle = '#3a3330'; ctx.lineWidth = 1.2;
       ctx.beginPath(); ctx.moveTo(6, 0); ctx.lineTo(-9, -6); ctx.lineTo(-9, 6); ctx.closePath(); ctx.fill(); ctx.stroke();
       ctx.fillStyle = '#e4362b'; ctx.beginPath(); ctx.arc(6, 0, 3, 0, 7); ctx.fill(); ctx.restore();
+      if (sink){ puff(ctx, sink.x - 10, floorAt(sink.x) + 4, 8, '#ffffff'); puff(ctx, sink.x + 10, floorAt(sink.x) + 4, 8, '#ffffff'); }
     }
+    bits.forEach(b => { ctx.globalAlpha = Math.max(0, b.a); ctx.fillStyle = b.col; ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, 7); ctx.fill(); }); ctx.globalAlpha = 1;
     ctx.textAlign = 'center';
-    pops.forEach(p => { ctx.globalAlpha = p.a; ctx.fillStyle = '#e4362b'; ctx.font = '900 20px "Zen Maru Gothic", sans-serif'; ctx.fillText(p.txt, p.x, p.y); }); ctx.globalAlpha = 1;
-    if (state === 'play' && wait > 0){ ctx.fillStyle = 'rgba(46,127,208,.8)'; ctx.font = '700 18px "Zen Maru Gothic", sans-serif'; ctx.fillText('サーブ！', W / 2, 80); }
+    pops.forEach(p => { ctx.globalAlpha = Math.min(1, p.a);
+      if (p.cloud){ puff(ctx, p.x, p.y - 6, 26, 'rgba(255,255,255,.95)'); }
+      ctx.fillStyle = p.c || '#e4362b'; ctx.font = `900 ${p.size || 20}px "Zen Maru Gothic", sans-serif`; ctx.fillText(p.txt, p.x, p.y); }); ctx.globalAlpha = 1;
+    if (state === 'play' && wait > 0 && !sink){ ctx.fillStyle = 'rgba(46,127,208,.8)'; ctx.font = '700 18px "Zen Maru Gothic", sans-serif'; ctx.fillText('サーブ！', W / 2, 120); }
     ctx.textAlign = 'left';
   }
-  g.button('ジャンプ！', () => jump(me), 'primary');
-  reset();
-  g.over('<h5>雲みたいな部屋で、バドミントン</h5><p>ゆかもかべも、ふわふわの雲。ふわっと高くジャンプできます。<br>シャトルが上がったらジャンプして、高いところで当てると<b>スマッシュ</b>！</p>', 'しあい開始', () => { state = 'play'; });
+  // 「部屋に入る」：ろうかのドアがひらいて、雲の部屋へ
+  function drawHall(){
+    ctx.fillStyle = '#efe8dd'; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#e2d7c6'; ctx.fillRect(0, FLOOR, W, H - FLOOR);
+    ctx.strokeStyle = 'rgba(120,100,80,.2)'; ctx.lineWidth = 1; for (let x = 0; x < W; x += 60){ ctx.beginPath(); ctx.moveTo(x, FLOOR); ctx.lineTo(x - 40, H); ctx.stroke(); }
+    ctx.fillStyle = '#d9cbb5'; ctx.fillRect(0, FLOOR - 14, W, 14);
+    ctx.fillStyle = '#c8a27a'; ctx.fillRect(DOOR.x - 10, DOOR.y - 10, DOOR.w + 20, DOOR.h + 10);
+    ctx.fillStyle = '#fff'; rr(ctx, DOOR.x + 4, DOOR.y - 50, DOOR.w - 8, 30, 15); ctx.fill();
+    ctx.fillStyle = '#2a9fd3'; ctx.font = '900 15px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.fillText('くもの部屋', DOOR.x + DOOR.w / 2, DOOR.y - 30); ctx.textAlign = 'left';
+    if (state === 'intro'){ const p = .5 + .5 * Math.sin(clock * 3); ctx.textAlign = 'center';
+      ctx.fillStyle = '#3a3330'; ctx.font = '700 14px "Zen Maru Gothic", sans-serif'; ctx.fillText('この部屋に入ると、すぐにバドミントンの試合ができます', W / 2, 30);
+      ctx.fillStyle = '#7a716c'; ctx.font = '700 12px "Zen Maru Gothic", sans-serif'; ctx.fillText('ゆかもかべも天井も、ふわふわの雲', W / 2, 50); ctx.textAlign = 'left'; }
+    puff(ctx, DOOR.x + 6, DOOR.y - 44, 10, '#ffffff'); puff(ctx, DOOR.x + DOOR.w - 6, DOOR.y - 28, 9, '#ffffff');
+  }
+  function drawDoorPanel(open){ // open: 0 しまっている → 1 ひらききる
+    const w = DOOR.w * (1 - open);
+    if (w < 1) return;
+    ctx.fillStyle = '#b98a58'; ctx.fillRect(DOOR.x, DOOR.y, w, DOOR.h); ctx.strokeStyle = '#8a6440'; ctx.lineWidth = 3; ctx.strokeRect(DOOR.x, DOOR.y, w, DOOR.h);
+    if (w > 30){ ctx.fillStyle = '#d9eef9'; ctx.fillRect(DOOR.x + w * .2, DOOR.y + 22, w * .6, 54); ctx.fillStyle = '#7a5a3a'; ctx.fillRect(DOOR.x + w - 16, DOOR.y + 96, 6, 22); }
+  }
+  function draw(){
+    if (state !== 'intro' && state !== 'enter'){ drawRoom(); return; }
+    const t = state === 'enter' ? introT : 0, open = clamp(t / .45, 0, 1), e = clamp((t - .45) / .8, 0, 1), z = e * e * (3 - 2 * e);
+    drawHall();
+    // ドアの中（ひろがっていく雲の部屋）
+    const cx0 = DOOR.x, cy0 = DOOR.y, cw = DOOR.w + (W - DOOR.w) * z, ch = DOOR.h + (H - DOOR.h) * z, cx = cx0 * (1 - z), cy = cy0 * (1 - z);
+    ctx.save(); ctx.beginPath(); ctx.rect(cx, cy, cw, ch); ctx.clip();
+    const s = .34 + .66 * z, ox = DOOR.x + DOOR.w / 2, oy = DOOR.y + DOOR.h * .6;
+    ctx.translate(ox * (1 - z) + (W / 2) * z, oy * (1 - z) + (H / 2) * z); ctx.scale(s, s); ctx.translate(-W / 2, -H / 2); drawRoom(); ctx.restore();
+    if (z < 1) drawDoorPanel(open);
+    if (state === 'intro'){ const p = .5 + .5 * Math.sin(clock * 3); ctx.textAlign = 'center'; ctx.fillStyle = '#fff'; rr(ctx, DOOR.x + 6, DOOR.y + DOOR.h / 2 - 16, DOOR.w - 12, 28, 14); ctx.fill();
+      ctx.fillStyle = `rgba(42,159,211,${.6 + p * .4})`; ctx.font = '900 13px "Zen Maru Gothic", sans-serif'; ctx.fillText('おして入る', DOOR.x + DOOR.w / 2, DOOR.y + DOOR.h / 2 + 3); ctx.textAlign = 'left'; }
+  }
+  const jumpBtn = g.button('ジャンプ！', () => jump(me), 'primary');
+  const enterBtn = g.button('ドアをあけて入る', () => enter(), 'primary');
+  jumpBtn.hidden = true;
+  function enter(){ if (state !== 'intro') return; state = 'enter'; introT = 0; enterBtn.hidden = true; jumpBtn.hidden = false;
+    soft(392, .2, .08); later(() => soft(523, .25, .08), 200); later(() => soft(659, .3, .08), 450); }
+  reset(); draw();
 };
 
 /* --- くもの上でおにごっこ（音楽つき） --- */
@@ -1002,10 +911,10 @@ GAMES.cloud = root => {
       kids.forEach(k => {
         const dx = k.x - me.x, dy = k.y - me.y, d = Math.hypot(dx, dy) || 1;
         k.wa += rnd(-2, 2) * dt; let fx = Math.cos(k.wa) * 45, fy = Math.sin(k.wa) * 45;
-        if (d < 160){ const f = 480 * (1 - d / 160); fx += dx / d * f; fy += dy / d * f; }
+        if (d < 140){ const f = 360 * (1 - d / 140); fx += dx / d * f; fy += dy / d * f; }
         const ex = (k.x - CX) / RX, ey = (k.y - CY) / RY, e2 = ex * ex + ey * ey; if (e2 > .6){ fx -= ex * 900 * (e2 - .6); fy -= ey * 900 * (e2 - .6); }
         k.vx += (fx - k.vx) * Math.min(1, 5 * dt); k.vy += (fy - k.vy) * Math.min(1, 5 * dt);
-        const s = Math.hypot(k.vx, k.vy), max = 150; if (s > max){ k.vx *= max / s; k.vy *= max / s; }
+        const s = Math.hypot(k.vx, k.vy), max = 115; if (s > max){ k.vx *= max / s; k.vy *= max / s; }
         k.x += k.vx * dt; k.y += k.vy * dt; if (!inside(k.x, k.y, .95)) toEdge(k, .97);
         k.safe = Math.max(0, k.safe - dt);
         if (d < 24 && k.safe === 0){ tags++; k.safe = 1.5; chord([2, 4, 7], 2, .04); pops.push({ x: k.x, y: k.y - 50, a: 1 });
