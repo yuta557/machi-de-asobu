@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>【案C】野寺悠太｜まちであそぶ、をつくる。</title>
+<meta name="description" content="構成案Cのたたき台です。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF;
+  --band:#FBF8EF;        /* 下の帯のクリーム */
+  --ink:#123E7C;         /* ネイビー */
+  --ink-2:#1E5FA8;
+  --ink-soft:#5B7CA6;
+  --line:#DCE7F2;
+  --sky:#EAF4FC;
+  --g:#46B07A; --o:#F0714A; --b:#3D7BD6;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Zen Kaku Gothic New",system-ui,sans-serif;font-size:16px;line-height:1.95;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit}
+.wrap{max-width:1280px;margin:0 auto;padding:0 40px}
+.draft{background:var(--ink);color:#fff;font-size:13px;padding:9px 20px;text-align:center}
+.draft b{color:#FFD64A}
+@media(max-width:700px){ .wrap{padding:0 22px} }
+
+/* ヘッダー */
+.nav{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.92);backdrop-filter:blur(8px)}
+.nav-in{max-width:1280px;margin:0 auto;padding:0 40px;height:78px;display:flex;align-items:center}
+.brand{font-weight:700;font-size:23px;letter-spacing:.22em;text-decoration:none}
+.nav-links{margin-left:auto;display:flex;gap:34px;font-size:14.5px}
+.nav-links a{text-decoration:none;color:var(--ink)}
+.nav-links a:hover{color:var(--ink-2)}
+@media(max-width:860px){ .nav-in{padding:0 22px;height:64px} .brand{font-size:19px;letter-spacing:.14em} .nav-links{gap:18px;font-size:13px} }
+@media(max-width:620px){ .nav-links a:nth-child(-n+2){display:none} }
+
+/* ヒーロー：右上にイラスト、左下にコピー */
+.hero{position:relative;background:linear-gradient(180deg,var(--sky) 0%,#F4FAFE 58%,#fff 100%);overflow:hidden}
+/* 左下のコピーが読みやすいよう、左半分をうっすら白く抜く */
+.hero::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(100deg,#fff 16%,rgba(255,255,255,.78) 32%,rgba(255,255,255,.25) 46%,rgba(255,255,255,0) 58%)}
+.hero-art{position:absolute;right:0;top:0;width:76%;max-width:1180px}
+.hero-art img{width:100%;height:auto}
+.hero-in{position:relative;z-index:2;max-width:1280px;margin:0 auto;padding:0 40px;
+  min-height:min(74vh,660px);display:flex;align-items:flex-end;padding-bottom:70px}
+.hero h1{font-weight:900;font-size:clamp(40px,6.6vw,86px);line-height:1.16;letter-spacing:.01em;margin:0}
+.hero .tag{font-weight:500;font-size:clamp(15px,1.7vw,21px);margin:20px 0 0;color:var(--ink)}
+.hero .go{display:inline-flex;align-items:center;gap:14px;margin-top:30px;padding-bottom:10px;
+  border-bottom:1.5px solid var(--ink);font-weight:500;text-decoration:none;font-size:15.5px}
+.hero .go span{font-family:"Outfit",sans-serif}
+@media(max-width:900px){
+  .hero-art{position:relative;width:100%;margin-left:6%}
+  .hero-in{min-height:0;padding:26px 22px 44px;align-items:flex-start}
+  .hero{display:flex;flex-direction:column-reverse}
+  .hero::before{display:none}
+}
+
+/* プロジェクトの帯 */
+.pbar{background:var(--band);border-top:1px solid #F0E9D8}
+.pbar-in{max-width:1280px;margin:0 auto;padding:26px 40px;display:flex;align-items:center;gap:26px;flex-wrap:wrap}
+.pbar .ttl{font-family:"Outfit",sans-serif;font-weight:700;letter-spacing:.18em;font-size:16px}
+.pbar .ja{font-size:14px;color:var(--ink-soft)}
+.pbar .chips{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
+.chip{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:10px;
+  padding:12px 16px;font-size:14px;text-decoration:none;min-width:230px}
+.chip .dot{width:9px;height:9px;border-radius:50%;flex:none}
+.chip .arw{margin-left:auto;font-family:"Outfit",sans-serif;color:var(--ink-soft)}
+.chip:hover{border-color:var(--ink-2)}
+@media(max-width:1100px){ .pbar .chips{margin-left:0;width:100%} .chip{flex:1 1 220px;min-width:0} }
+@media(max-width:700px){ .pbar-in{padding:20px 22px;gap:14px} }
+
+/* セクション共通 */
+.sec{padding:92px 0}
+.sec-head{margin-bottom:40px}
+.kick{font-family:"Outfit",sans-serif;font-weight:700;letter-spacing:.18em;font-size:13px;color:var(--ink-2)}
+h2{font-weight:900;font-size:clamp(26px,3.4vw,40px);line-height:1.45;margin:8px 0 0}
+.sec-head p{color:var(--ink-soft);max-width:44em;margin:16px 0 0}
+
+/* 活動 3つ */
+.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.act{border-top:2px solid var(--ink);padding-top:18px}
+.act .no{font-family:"Outfit",sans-serif;font-weight:700;color:var(--ink-2);font-size:14px}
+.act h3{font-weight:900;font-size:21px;margin:6px 0 10px}
+.act p{margin:0;color:var(--ink-soft);font-size:14.5px}
+@media(max-width:860px){ .acts{grid-template-columns:1fr;gap:22px} }
+
+/* プロジェクト */
+.pjs{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.pj{border:1px solid var(--line);border-radius:18px;overflow:hidden;text-decoration:none;background:#fff;display:flex;flex-direction:column}
+.pj img{aspect-ratio:16/9;object-fit:cover;width:100%}
+.pj .body{padding:22px 24px 26px}
+.pj .tags{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.pj .tag{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--ink-soft)}
+.pj h3{font-weight:900;font-size:20px;margin:0 0 8px}
+.pj p{margin:0;color:var(--ink-soft);font-size:14.5px}
+.pj .more{margin-top:14px;font-size:14px;color:var(--ink-2);font-weight:700}
+@media(max-width:860px){ .pjs{grid-template-columns:1fr} }
+
+/* 記録 */
+.rep{display:grid;grid-template-columns:1.3fr 1fr;gap:22px;align-items:start}
+.rep .main{border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.rep .main img{width:100%;aspect-ratio:3/2;object-fit:cover}
+.rep .main .cap{padding:20px 22px 24px}
+.rep .main h3{font-weight:900;font-size:19px;margin:0 0 8px}
+.rep .main p{margin:0;color:var(--ink-soft);font-size:14.5px}
+.rep .side{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rep .side img{width:100%;aspect-ratio:1;object-fit:cover;border:1px solid var(--line);border-radius:12px}
+@media(max-width:900px){ .rep{grid-template-columns:1fr} }
+
+/* プロフィール */
+.who{display:grid;grid-template-columns:240px 1fr;gap:34px;align-items:center}
+.who .ph{aspect-ratio:1;border-radius:18px;background:var(--sky);display:grid;place-items:center;color:var(--ink-soft);font-size:13px}
+.who h3{font-weight:900;font-size:24px;margin:6px 0 10px}
+.who p{color:var(--ink-soft);margin:0;font-size:15px}
+@media(max-width:800px){ .who{grid-template-columns:1fr} }
+
+footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;color:var(--ink-soft);font-size:13.5px}
+.foot-in{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<div class="draft">これは<b>構成案C</b>のたたき台です（ヒーローのイラストは仮。文章・数字も仮）</div>
+
+<header class="nav">
+  <div class="nav-in">
+    <a class="brand" href="#top">野寺悠太</a>
+    <nav class="nav-links">
+      <a href="#acts">活動</a>
+      <a href="#projects">プロジェクト</a>
+      <a href="#who">プロフィール</a>
+      <a href="mailto:incubation@taliki.co.jp">お問い合わせ</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div class="hero-art"><img src="../assets/hero-illustration.webp" width="1672" height="940" alt="まちの地図に遊び方を描き込んでいるイラスト（仮）"></div>
+  <div class="hero-in">
+    <div>
+      <h1>まちであそぶ、<br>をつくる。</h1>
+      <p class="tag">人とまちのあいだに、新しいきっかけを。</p>
+      <a class="go" href="#acts">活動を見る　<span>→</span></a>
+    </div>
+  </div>
+</section>
+
+<div class="pbar">
+  <div class="pbar-in">
+    <p class="ttl" style="margin:0">PROJECTS</p>
+    <p class="ja" style="margin:0">／　活動・プロジェクト</p>
+    <div class="chips">
+      <a class="chip" href="#projects"><span class="dot" style="background:var(--g)"></span>子ども向けワークショップ<span class="arw">→</span></a>
+      <a class="chip" href="#projects"><span class="dot" style="background:var(--o)"></span>まちの空間づくり<span class="arw">→</span></a>
+      <a class="chip" href="#projects"><span class="dot" style="background:var(--b)"></span>創作・デザインプロジェクト<span class="arw">→</span></a>
+    </div>
+  </div>
+</div>
+
+<section class="sec" id="acts">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kick">ABOUT</p>
+      <h2>いつものまちを、あそべる場所にする。</h2>
+      <p>通学路も、階段も、バス停も。少し見方を変えるだけで遊び場になります。まちで遊べる仕掛けとゲームをつくり、子どもたちと一緒に新しい遊び方を考えています。</p>
+    </div>
+    <div class="acts">
+      <article class="act"><p class="no">01</p><h3>つくる</h3><p>まちを舞台にしたゲームや、歩くと反応する仕掛けを企画・開発する。</p></article>
+      <article class="act"><p class="no">02</p><h3>ひらく</h3><p>子どもたちと一緒に遊び方を考えるワークショップをひらく。</p></article>
+      <article class="act"><p class="no">03</p><h3>つたえる</h3><p>出てきたアイデアを展示し、記録として残して次につなげる。</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="projects" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kick">PROJECTS</p>
+      <h2>プロジェクト</h2>
+    </div>
+    <div class="pjs">
+      <a class="pj" href="../">
+        <img src="../assets/ogp.jpg" alt="" loading="lazy">
+        <div class="body">
+          <div class="tags"><span class="tag">子ども向けワークショップ</span><span class="tag">2026.10.3</span></div>
+          <h3>まちであそぶ、をつくる</h3>
+          <p>宇治のまちを「遊び」の視点から考える120分。宇治NEXT主催、小学4年生〜中学生むけ。</p>
+          <p class="more">くわしく見る →</p>
+        </div>
+      </a>
+      <a class="pj" href="#report">
+        <img src="../assets/photos/exhibit-01.webp" alt="" loading="lazy">
+        <div class="body">
+          <div class="tags"><span class="tag">展示</span><span class="tag">2026.10〜</span></div>
+          <h3>子どもたちのアイデア展</h3>
+          <p>ワークショップで集まったアイデアを、市内の施設でパネル展示しています。</p>
+          <p class="more">記録を見る →</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="report" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kick">REPORT</p>
+      <h2>第1回、ひらきました。</h2>
+      <p>2026年10月3日、宇治市産業会館 多目的ホール。子どもたちが考えた「宇治のまちにあったらいいな」が9枚、会場に並びました。</p>
+    </div>
+    <div class="rep">
+      <div class="main">
+        <img src="../assets/photos/record-board.webp" alt="会場に展示されたアイデアシート" loading="lazy">
+        <div class="cap">
+          <h3>まちの遊び方が、9枚ぶん</h3>
+          <p>駅やバス停、通学路、茶畑、雲の上。身近な場所から思いもよらない場所まで、絵と短い言葉で描いてもらいました。</p>
+        </div>
+      </div>
+      <div class="side">
+        <img src="../assets/photos/idea-01.webp" alt="参加者が描いたアイデアシート" loading="lazy">
+        <img src="../assets/photos/idea-03.webp" alt="参加者が描いたアイデアシート" loading="lazy">
+        <img src="../assets/photos/idea-05.webp" alt="参加者が描いたアイデアシート" loading="lazy">
+        <img src="../assets/photos/exhibit-03.webp" alt="台紙に貼られたアイデアシート" loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec who-sec" id="who" style="padding-top:0">
+  <div class="wrap who">
+    <div class="ph">顔写真が入ります</div>
+    <div>
+      <p class="kick">PROFILE</p>
+      <h3>野寺 悠太（灘高校）</h3>
+      <p>宇治市未来キャンパス受講生。いつもの道をもっと面白くしたいと思い、まちで遊べる仕掛けやゲームをつくっています。2026年10月のワークショップでは、企画・当日の運営・ゲームの開発を担当しました。</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-in">
+    <div>© 2026 野寺悠太</div>
+    <div><a href="../">ワークショップサイト</a>　／　<a href="mailto:incubation@taliki.co.jp">お問い合わせ</a></div>
+  </div>
+</footer>
+
+</body>
+</html>
