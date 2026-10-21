@@ -129,6 +129,13 @@ h2{font-family:"Zen Maru Gothic",sans-serif;font-weight:700;font-size:clamp(25px
 .report dd{margin:0}
 .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
 .gallery figure{margin:0;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#fff}
+.exhibit{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:22px}
+.exhibit figure{margin:0;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#fff}
+.exhibit img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.exhibit figcaption{padding:12px 14px;font-size:13px;color:var(--ink-soft)}
+.subhead{margin:46px 0 0;font-family:"Zen Maru Gothic",sans-serif;font-size:20px}
+.subhead+p{margin:8px 0 0;color:var(--ink-soft);font-size:15px}
+@media(max-width:860px){ .exhibit{grid-template-columns:1fr} }
 .gallery img{width:100%;aspect-ratio:7/6;object-fit:cover}
 @media(max-width:860px){ .report{grid-template-columns:1fr} .gallery{grid-template-columns:repeat(2,1fr)} }
 
@@ -263,6 +270,8 @@ footer{padding:50px 0 60px;color:var(--ink-soft);font-size:13.5px}
         </dl>
       </div>
     </div>
+    <h3 class="subhead">集まったアイデア</h3>
+    <p>参加者が描いたシートの一部です。</p>
     <div class="gallery">
       <figure><img src="../assets/photos/idea-01.webp" alt="参加者が描いたアイデアシート" loading="lazy"></figure>
       <figure><img src="../assets/photos/idea-02.webp" alt="参加者が描いたアイデアシート" loading="lazy"></figure>
@@ -270,6 +279,14 @@ footer{padding:50px 0 60px;color:var(--ink-soft);font-size:13.5px}
       <figure><img src="../assets/photos/idea-04.webp" alt="参加者が描いたアイデアシート" loading="lazy"></figure>
       <figure><img src="../assets/photos/idea-05.webp" alt="参加者が描いたアイデアシート" loading="lazy"></figure>
       <figure><img src="../assets/photos/idea-06.webp" alt="参加者が描いたアイデアシート" loading="lazy"></figure>
+    </div>
+
+    <h3 class="subhead">まちで展示しています</h3>
+    <p>集まったアイデアは、市内の施設でパネル展示しています。小学生は黄色、中学生は青の台紙。気に入ったアイデアに感想を送れるQRコードも付けました。</p>
+    <div class="exhibit">
+      <figure><img src="../assets/photos/exhibit-01.webp" alt="パネルに展示された子どもたちのアイデア" loading="lazy"><figcaption>3枚のパネルで展示</figcaption></figure>
+      <figure><img src="../assets/photos/exhibit-02.webp" alt="施設のロビーに置かれた展示パネル" loading="lazy"><figcaption>施設のロビーに設置</figcaption></figure>
+      <figure><img src="../assets/photos/exhibit-03.webp" alt="台紙に貼られたアイデアシート" loading="lazy"><figcaption>黄＝小学生／青＝中学生</figcaption></figure>
     </div>
   </div>
 </section>
