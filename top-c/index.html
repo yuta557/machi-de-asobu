@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>【案C】野寺悠太｜まちであそぶ、をつくる。</title>
+<title>【案C】MACHI PLAY｜まちであそぶ、をつくる。</title>
 <meta name="description" content="構成案Cのたたき台です。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,11 +34,13 @@ a{color:inherit}
 /* ヘッダー */
 .nav{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.92);backdrop-filter:blur(8px)}
 .nav-in{max-width:1280px;margin:0 auto;padding:0 40px;height:78px;display:flex;align-items:center}
-.brand{font-weight:700;font-size:23px;letter-spacing:.22em;text-decoration:none}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none}
+.brand img{height:34px;width:auto}
+.brand b{font-family:"Outfit",sans-serif;font-weight:700;font-size:22px;letter-spacing:.1em}
 .nav-links{margin-left:auto;display:flex;gap:34px;font-size:14.5px}
 .nav-links a{text-decoration:none;color:var(--ink)}
 .nav-links a:hover{color:var(--ink-2)}
-@media(max-width:860px){ .nav-in{padding:0 22px;height:64px} .brand{font-size:19px;letter-spacing:.14em} .nav-links{gap:18px;font-size:13px} }
+@media(max-width:860px){ .nav-in{padding:0 22px;height:64px} .brand img{height:28px} .brand b{font-size:18px} .nav-links{gap:18px;font-size:13px} }
 @media(max-width:620px){ .nav-links a:nth-child(-n+2){display:none} }
 
 /* ヒーロー：右上にイラスト、左下にコピー */
@@ -127,11 +129,11 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 </head>
 <body>
 
-<div class="draft">これは<b>構成案C</b>のたたき台です（ヒーローのイラストは仮。文章・数字も仮）</div>
+<div class="draft">これは<b>構成案C</b>のたたき台です（文章・数字は仮。本番では差し替えます）</div>
 
 <header class="nav">
   <div class="nav-in">
-    <a class="brand" href="#top">野寺悠太</a>
+    <a class="brand" href="#top"><img src="../assets/logo.webp" alt=""><b>MACHI PLAY</b></a>
     <nav class="nav-links">
       <a href="#acts">活動</a>
       <a href="#projects">プロジェクト</a>
@@ -142,7 +144,7 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 </header>
 
 <section class="hero" id="top">
-  <div class="hero-art"><img src="../assets/hero-illustration.webp" width="1672" height="940" alt="まちの地図に遊び方を描き込んでいるイラスト（仮）"></div>
+  <div class="hero-art"><img src="../assets/hero-illustration.webp" width="1672" height="940" alt="まちの地図に遊び方を描き込んでいるイラスト"></div>
   <div class="hero-in">
     <div>
       <h1>まちであそぶ、<br>をつくる。</h1>
@@ -246,7 +248,7 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 
 <footer>
   <div class="wrap foot-in">
-    <div>© 2026 野寺悠太</div>
+    <div>© 2026 MACHI PLAY</div>
     <div><a href="../">ワークショップサイト</a>　／　<a href="mailto:incubation@taliki.co.jp">お問い合わせ</a></div>
   </div>
 </footer>
