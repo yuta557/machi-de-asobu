@@ -105,6 +105,22 @@ a{color:inherit}
 .who p{color:var(--ink-soft);margin:0;font-size:15px}
 @media(max-width:800px){ .who{grid-template-columns:1fr} }
 
+
+/* 活動の記録 */
+.report{padding:0 0 90px}
+.report-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:26px}
+.report-head h2{font-weight:900;font-size:clamp(23px,3vw,34px);margin:8px 0 0}
+.report-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:20px;align-items:stretch}
+.report-main{border-radius:20px;overflow:hidden;border:1px solid var(--line);background:var(--card)}
+.report-main img{width:100%;aspect-ratio:3/2;object-fit:cover}
+.report-main .cap{padding:20px 24px 24px}
+.report-main h3{font-weight:900;font-size:20px;margin:0 0 8px}
+.report-main p{margin:0;color:var(--ink-soft);font-size:15px}
+.report-side{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.report-side figure{margin:0;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--card)}
+.report-side img{width:100%;height:100%;aspect-ratio:1;object-fit:cover}
+@media(max-width:900px){ .report-grid{grid-template-columns:1fr} }
+
 footer{border-top:1px solid var(--line);padding:40px 0 60px;font-size:13.5px;color:var(--ink-soft)}
 .foot-in{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 </style>
@@ -120,6 +136,7 @@ footer{border-top:1px solid var(--line);padding:40px 0 60px;font-size:13.5px;col
       <a href="#statement">活動について</a>
       <a href="#cases">取り組み</a>
       <a href="#workshop">ワークショップ</a>
+      <a href="#report">活動の記録</a>
       <a href="#who">プロフィール</a>
       <a class="pill" href="mailto:incubation@taliki.co.jp">お問い合わせ</a>
     </nav>
@@ -148,9 +165,9 @@ footer{border-top:1px solid var(--line);padding:40px 0 60px;font-size:13.5px;col
     <p>まちを好きになるきっかけは、知識よりも先に「遊んだ記憶」なのかもしれません。だからわたしたちは、まずは遊べるものをつくって、まちに持ち出します。</p>
   </div>
   <div class="wrap figs">
-    <div class="fig"><p class="lbl">ワークショップ開催</p><p class="num">1<small>回（予定）</small></p></div>
-    <div class="fig"><p class="lbl">参加者（予定）</p><p class="num">20<small>名</small></p></div>
-    <div class="fig"><p class="lbl">開発中のゲーム</p><p class="num">—<small>件</small></p></div>
+    <div class="fig"><p class="lbl">ワークショップ開催</p><p class="num">1<small>回</small></p></div>
+    <div class="fig"><p class="lbl">集まったアイデア</p><p class="num">9<small>件</small></p></div>
+    <div class="fig"><p class="lbl">参加者</p><p class="num">—<small>名</small></p></div>
     <div class="fig"><p class="lbl">活動エリア</p><p class="num">宇治<small>市</small></p></div>
   </div>
 </section>
@@ -190,7 +207,7 @@ footer{border-top:1px solid var(--line);padding:40px 0 60px;font-size:13.5px;col
 <section class="wrap" id="workshop">
   <div class="feature">
     <div class="txt">
-      <p class="kick">PICK UP PROJECT</p>
+      <p class="kick">PROJECT ／ 2026.10.3 開催</p>
       <h2>まちであそぶ、をつくる<br>Playable City 入門ワークショップ</h2>
       <p>宇治のまちを「遊び」の視点からとらえ直す120分。オリジナルゲームで遊んでから、自分の「遊びたい」をアイデアシートにまとめます。</p>
       <div class="meta">
@@ -201,6 +218,34 @@ footer{border-top:1px solid var(--line);padding:40px 0 60px;font-size:13.5px;col
       <a class="pill" href="../">くわしく見る →</a>
     </div>
     <div class="vis"><img src="../assets/play-kv.webp" alt=""></div>
+  </div>
+</section>
+
+
+<section class="wrap report" id="report">
+  <div class="report-head">
+    <div>
+      <p class="kicker" style="color:var(--accent)">REPORT</p>
+      <h2>第1回、ひらきました。</h2>
+    </div>
+    <p style="color:var(--ink-soft);font-size:14.5px;max-width:34em;margin:0">2026年10月3日、宇治市産業会館 多目的ホール。子どもたちが考えた「宇治のまちにあったらいいな」が9枚、会場に並びました。</p>
+  </div>
+  <div class="report-grid">
+    <div class="report-main">
+      <img src="../assets/photos/record-board.webp" alt="会場に展示されたアイデアシート" loading="lazy">
+      <div class="cap">
+        <h3>まちの遊び方が、9枚ぶん</h3>
+        <p>駅やバス停、通学路、茶畑、雲の上。身近な場所から思いもよらない場所まで、絵と短い言葉で遊び方を描いてもらいました。</p>
+      </div>
+    </div>
+    <div class="report-side">
+      <figure><img src="../assets/photos/idea-01.webp" alt="参加者が描いたアイデアシート" loading="lazy"></figure>
+      <figure><img src="../assets/photos/idea-02.webp" alt="参加者が描いたアイデアシート" loading="lazy"></figure>
+      <figure><img src="../assets/photos/idea-03.webp" alt="参加者が描いたアイデアシート" loading="lazy"></figure>
+      <figure><img src="../assets/photos/idea-04.webp" alt="参加者が描いたアイデアシート" loading="lazy"></figure>
+      <figure><img src="../assets/photos/idea-05.webp" alt="参加者が描いたアイデアシート" loading="lazy"></figure>
+      <figure><img src="../assets/photos/idea-06.webp" alt="参加者が描いたアイデアシート" loading="lazy"></figure>
+    </div>
   </div>
 </section>
 
