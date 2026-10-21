@@ -116,6 +116,22 @@ h2{font-family:"Zen Maru Gothic",sans-serif;font-weight:700;font-size:clamp(25px
 .news .cat{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:2px 10px;color:var(--ink-soft);white-space:nowrap}
 .news span.ttl{font-size:15px}
 
+
+/* 活動の記録 */
+.report{display:grid;grid-template-columns:1.15fr 1fr;gap:22px;align-items:center}
+.report .photo{border-radius:var(--r);overflow:hidden;border:1px solid var(--line);background:#fff;
+  box-shadow:6px 6px 0 rgba(60,154,106,.12)}
+.report .photo img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.report .note{font-size:15px;color:var(--ink-soft)}
+.report .note h3{font-family:"Zen Maru Gothic",sans-serif;font-size:22px;color:var(--ink);margin:0 0 10px}
+.report dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:18px 0 0;font-size:14.5px}
+.report dt{color:var(--green-d);font-weight:700}
+.report dd{margin:0}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+.gallery figure{margin:0;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#fff}
+.gallery img{width:100%;aspect-ratio:7/6;object-fit:cover}
+@media(max-width:860px){ .report{grid-template-columns:1fr} .gallery{grid-template-columns:repeat(2,1fr)} }
+
 /* CTA */
 .cta{background:var(--green);color:#fff;border-radius:28px;padding:54px 30px;text-align:center;margin:0 24px}
 .cta h2{color:#fff}
@@ -138,6 +154,7 @@ footer{padding:50px 0 60px;color:var(--ink-soft);font-size:13.5px}
       <a href="#works">取り組み</a>
       <a href="#projects">プロジェクト</a>
       <a href="#profile">プロフィール</a>
+      <a href="#report">活動の記録</a>
       <a href="#news">お知らせ</a>
     </nav>
     <a class="btn btn-key" href="#contact">お問い合わせ</a>
@@ -213,14 +230,46 @@ footer{padding:50px 0 60px;color:var(--ink-soft);font-size:13.5px}
           <span class="more">くわしく見る →</span>
         </div>
       </a>
-      <div class="pj is-soon">
-        <div class="pj-img"><img src="../assets/play-kv.webp" alt=""></div>
+      <a class="pj" href="#report">
+        <div class="pj-img"><img src="../assets/photos/idea-01.webp" alt="" loading="lazy"></div>
         <div class="pj-body">
-          <div class="tags"><span class="tag soon">準備中</span></div>
-          <h3>（次の企画タイトル）</h3>
-          <p>ここに次の取り組みが入ります。写真・タイトル・説明は仮です。</p>
+          <div class="tags"><span class="tag">活動の記録</span><span class="tag">2026.10.3</span></div>
+          <h3>第1回の記録</h3>
+          <p>当日集まったアイデアと、会場のようす。</p>
+          <span class="more">記録を見る →</span>
         </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<section class="sec" id="report" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">REPORT</p>
+      <h2>活動の記録</h2>
+      <p class="lead">2026年10月3日、宇治市産業会館 多目的ホールで第1回のワークショップをひらきました。参加した子どもたちが考えた「宇治のまちにあったらいいな」が、会場いっぱいに並びました。</p>
+    </div>
+    <div class="report">
+      <div class="photo"><img src="../assets/photos/record-board.webp" alt="会場に展示されたアイデアシート" loading="lazy"></div>
+      <div class="note">
+        <h3>まちの遊び方が、9枚ぶん集まりました</h3>
+        <p>「駅やバス停」「通学路」「茶畑」「雲の上」。身近な場所から、思いもよらない場所まで。遊び方は、絵と短い言葉で書いてもらいました。</p>
+        <dl>
+          <dt>日時</dt><dd>2026年10月3日（土）10:00 – 12:00</dd>
+          <dt>会場</dt><dd>宇治市産業会館 多目的ホール</dd>
+          <dt>主催</dt><dd>宇治NEXT（宇治市・宇治商工会議所）</dd>
+        </dl>
       </div>
+    </div>
+    <div class="gallery">
+      <figure><img src="../assets/photos/idea-01.webp" alt="参加者が描いたアイデアシート" loading="lazy"></figure>
+      <figure><img src="../assets/photos/idea-02.webp" alt="参加者が描いたアイデアシート" loading="lazy"></figure>
+      <figure><img src="../assets/photos/idea-03.webp" alt="参加者が描いたアイデアシート" loading="lazy"></figure>
+      <figure><img src="../assets/photos/idea-04.webp" alt="参加者が描いたアイデアシート" loading="lazy"></figure>
+      <figure><img src="../assets/photos/idea-05.webp" alt="参加者が描いたアイデアシート" loading="lazy"></figure>
+      <figure><img src="../assets/photos/idea-06.webp" alt="参加者が描いたアイデアシート" loading="lazy"></figure>
     </div>
   </div>
 </section>
