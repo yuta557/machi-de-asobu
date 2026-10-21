@@ -714,18 +714,20 @@ GAMES.badminton = root => {
   const DOOR = { x: 266, y: 112, w: 108, h: 184 };
   // ステージ：勝つと、つぎへ（はやくなる・シャトルが2こになる）
   const STAGES = [
-    { name: 'ステージ1　ふわふわの雲', speed: 1, cpu: 1, balls: 1, miss: .6, sky: ['#d4ebfc', '#f5faff'] },
-    { name: 'ステージ2　はやい雲', speed: 1.3, cpu: 1.25, balls: 1, miss: .45, sky: ['#ffe3cc', '#fff6ec'] },
-    { name: 'ステージ3　シャトルが2こ', speed: 1.1, cpu: 1.3, balls: 2, miss: .5, sky: ['#e6dcfb', '#f8f4ff'] },
-    { name: 'ステージ4　2こで、はやい', speed: 1.3, cpu: 1.5, balls: 2, miss: .4, sky: ['#cfd6f2', '#eef1fb'] } ];
+    // miss：あなたのスマッシュを受けたときに、あいてがミスする割合／whiff：あいてのジャンプスマッシュの空ぶり／smash：あいてがスマッシュをねらう割合／chain：あいてがスマッシュしたあと、つづけてスマッシュをねらう割合（ステージ2は、かならずねらってくる）／guard：あいてのサーブをいきなりスマッシュされても、かならず返す。ステージが進むほど、あいてはミスしなくなる
+    { name: 'ステージ1　ふわふわの雲', speed: 1, cpu: 1, balls: 1, miss: .6, whiff: .1, smash: .45, chain: .5, guard: false, sky: ['#d4ebfc', '#f5faff'] },
+    { name: 'ステージ2　はやい雲', speed: 1.3, cpu: 1.25, balls: 1, miss: .4, whiff: .06, smash: .9, chain: 1, guard: true, sky: ['#ffe3cc', '#fff6ec'] },
+    { name: 'ステージ3　シャトルが2こ', speed: 1.1, cpu: 1.3, balls: 2, miss: .25, whiff: .03, smash: .9, chain: .9, guard: true, sky: ['#e6dcfb', '#f8f4ff'] } ];
   let stage = 0, shs = [], landSteps = 0;
   let me, cpu, sh, score, rally, best = 0, smashes = 0, state = 'intro', target = 160, pops = [], puffs = [], bits = [], dents = [], sink = null, introT = 0, clock = 0;
   const keys = {}; let stageT = 0;
+  // 気持ちいい演出：連続スマッシュ・ブロックの数、画面のゆれ、ひかり、ヒットストップ、クリアの紙ふぶき
+  let combo = 0, cpuCombo = 0, blocks = 0, hitStop = 0, shake = 0, shakeT = 0, flash = null, rings = [], clearT = 0, clearFX = null;
   const ST = () => STAGES[stage];
   const soft = (f, d = .14, v = .1) => tone(f, 0, d, 'sine', v);
-  function reset(){ stageT = 0; me = { x: 160, y: 0, vy: 0, swing: 0, dj: false }; cpu = { x: 480, y: 0, vy: 0, vx: 0, swing: 0, dj: false }; score = [0, 0]; smashes = 0; pops = []; puffs = []; bits = []; sink = null; serve(0); }
+  function reset(){ stageT = 0; combo = 0; cpuCombo = 0; blocks = 0; hitStop = 0; shakeT = 0; flash = null; rings = []; clearFX = null; me = { x: 160, y: 0, vy: 0, swing: 0, dj: false }; cpu = { x: 480, y: 0, vy: 0, vx: 0, swing: 0, dj: false }; score = [0, 0]; smashes = 0; pops = []; puffs = []; bits = []; sink = null; serve(0); }
   function mkShuttle(side, delay){ const s = side ? { x: 470, y: 150, vx: -190, vy: -210 } : { x: 170, y: 150, vx: 190, vy: -210 };
-    return Object.assign(s, { smash: false, cpuMiss: false, cpuSmash: false, whiff: false, by: side ? -1 : 1, wait: delay }); }
+    return Object.assign(s, { smash: false, cpuMiss: false, cpuSmash: false, whiff: false, by: side ? -1 : 1, wait: delay, serve: true }); }
   // シャトル2このステージでは、すこしおくれて、あいてからも1こ飛んでくる
   function serve(side){ shs = [mkShuttle(side, .9)]; if (ST().balls > 1) shs.push(mkShuttle(1 - side, 2)); sh = shs[0]; rally = 0; }
   // ふわふわのゆか：へこみ（ばねのようにゆれてもどる）
@@ -734,10 +736,13 @@ GAMES.badminton = root => {
   const burst = (x, y, n = 8, col = '#ffffff') => { for (let i = 0; i < n; i++){ const a = rnd(0, 6.28), v = rnd(40, 120); bits.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 30, r: rnd(5, 11), a: 1, col }); } };
   function jump(p){
     if (state !== 'play') return;
-    if (p.y === 0 && p.vy <= 0){ p.vy = JUMP_V; soft(523, .12, .08); soft(784, .12, .06); puffs.push({ x: p.x, a: 1 }); dent(p.x, -.6); return; }
+    if (p.y === 0 && p.vy <= 0){ p.vy = JUMP_V * ST().speed; // 速いステージでは、ジャンプも同じ高さのまま速くなる
+      soft(523, .12, .08); soft(784, .12, .06); puffs.push({ x: p.x, a: 1 }); dent(p.x, -.6); return; }
   }
   // ネットには近づきすぎない（タッチネットは反則）
   const MARGIN = 46;
+  // あいてがスマッシュを打つ高さ：高いほど角度が急になって、コートのうしろからでもネットをこえて入る
+  const SMASH_AT = 100;
   const aim = e => { target = clamp(pt(e)[0], 24, NET - MARGIN); };
   cv.onpointermove = aim;
   cv.onpointerdown = e => { if (state === 'intro'){ const [x, y] = pt(e); if (x > DOOR.x - 20 && x < DOOR.x + DOOR.w + 20 && y > DOOR.y - 60 && y < FLOOR) enter(); return; } aim(e); jump(me); };
@@ -746,6 +751,8 @@ GAMES.badminton = root => {
     if ((e.key === ' ' || e.key === 'ArrowUp') && d && !e.repeat){ e.preventDefault(); jump(me); }
   });
   function hit(p, dir){
+    const incoming = sh.smash && sh.by === -dir; // あいてのスマッシュを打ち返すところ
+    const offServe = dir > 0 && sh.serve && sh.by === -1; sh.serve = false; // あいてのサーブを、そのまま打ち返すところ
     // スマッシュ：当てたところから、まっすぐ飛ぶ（とちゅうで向きは変わらない）。
     // ネットをこえてまっすぐ届く着地点のはんいを出して、はばがあるときは、うける人がいないところをねらう
     let smash = p.y > SMASH_H && sh.y < NETTOP - 20, land = 0;
@@ -764,19 +771,44 @@ GAMES.badminton = root => {
     }
     // あいてがミスするのは、あなたのスマッシュを受けたときだけ（6割）。ふつうの球は必ず追いついて返す。スマッシュをねらったジャンプは、たまに（10%）空ぶり
     sh.whiff = false;
-    if (dir > 0){ sh.cpuMiss = smash && Math.random() < ST().miss; sh.cpuSmash = !smash && Math.random() < .45; sh.cpuJumpMiss = sh.cpuSmash && Math.random() < .1; }
-    else { sh.cpuMiss = false; sh.cpuSmash = false; sh.cpuJumpMiss = false; }
-    if (smash){ const sp = dir > 0 ? rnd(560, 640) : rnd(480, 540), dx = land - sh.x, dy = FLOOR - 4 - sh.y, d = Math.hypot(dx, dy);
+    if (dir > 0){ sh.cpuMiss = smash && !(offServe && ST().guard) && Math.random() < ST().miss; sh.read = smash && offServe && ST().guard; sh.cpuSmash = !smash && Math.random() < (cpuCombo > 0 ? ST().chain : ST().smash); sh.cpuJumpMiss = sh.cpuSmash && Math.random() < ST().whiff; }
+    else { sh.cpuMiss = false; sh.cpuSmash = false; sh.cpuJumpMiss = false; sh.read = false; }
+    if (smash){ const sp = (dir > 0 ? rnd(560, 640) : rnd(480, 540)) * (sh.read ? .62 : 1), dx = land - sh.x, dy = FLOOR - 4 - sh.y, d = Math.hypot(dx, dy);
       sh.vx = dx / d * sp; sh.vy = dy / d * sp; sh.smash = true; sh.land = land; smashes += dir > 0 ? 1 : 0;
-      pops.push({ x: sh.x, y: sh.y - 20, a: 1, txt: dir > 0 ? 'スマッシュ！' : 'あいてのスマッシュ！' });
+      if (dir > 0) celebrate(true, incoming, land);
+      else { cpuCombo++; // あいての連続スマッシュ
+        if (cpuCombo >= 2){ const lv = Math.min(3, cpuCombo - 1); fx(lv, '#e4362b', sh.x, sh.y); bigText(`あいての${cpuCombo}連続スマッシュ！`, '', '#e4362b', 18 + lv * 3, sh.x, sh.y - 26); }
+        else pops.push({ x: sh.x, y: sh.y - 20, a: 1, txt: 'あいてのスマッシュ！' }); }
       tone(1046, 0, .1, 'triangle', .08); tone(1568, .05, .14, 'sine', .06); }
     else { sh.vx = dir * (rnd(200, 280) + Math.min(rally * 5, 70));
       // あいての球は天井に当たらない高さにおさえる（天井ではね返ってネットをこえないミスをしない）
       let up = rnd(290, 360); if (dir < 0) up = Math.min(up, Math.sqrt(2 * GR * Math.max(20, sh.y - CEIL - 16)));
-      sh.vy = -up; sh.smash = false; soft(dir > 0 ? 880 : 700, .09, .07); }
+      sh.vy = -up; sh.smash = false; soft(dir > 0 ? 880 : 700, .09, .07); if (dir > 0) celebrate(false, incoming); else cpuCombo = 0; }
     sh.by = dir; // 打った人は、あいてが打ち返すまでもう一度は当てない
     rally++; best = Math.max(best, rally); p.swing = .25;
   }
+  // 技の名前と演出（lv が大きいほど、はでに）
+  function fx(lv, col, x, y){ shake = Math.max(shakeT > 0 ? shake : 0, 2 + lv * 2); shakeT = .22 + lv * .05; flash = { c: col, a: .1 + lv * .05 };
+    hitStop = lv >= 1 ? .035 + lv * .025 : 0; for (let i = 0; i < 8 + lv * 5; i++){ const an = rnd(0, 6.28), v = rnd(90, 160 + lv * 40); bits.push({ x, y, vx: Math.cos(an) * v, vy: Math.sin(an) * v, r: rnd(2, 4 + lv), a: 1, col }); }
+    rings.push({ x, y, r: 8, a: 1, c: col, w: 3 + lv }); }
+  function bigText(main, sub, col, size, x, y){ const cx = clamp(x, 130, W - 130), cy = clamp(y, 70, 200);
+    pops = pops.filter(p => !p.big); // 新しい技の名前が出たら、前のは消す（かさならないように）
+    pops.push({ x: cx, y: cy, a: 1.5, txt: main, c: col, size, t: 0, big: true });
+    if (sub) pops.push({ x: cx, y: cy + size * .95, a: 1.5, txt: sub, c: col, size: 15, t: 0, big: true }); }
+  function celebrate(isSmash, incoming, land = 0){
+    const x = sh.x, y = sh.y - 26;
+    if (isSmash){ combo++;
+      const sharp = land - NET < 130; // あいてのコートの、ネットのすぐ近くにつきささる
+      const lv = Math.min(5, combo - 1 + (sharp ? 1 : 0) + (incoming ? 2 : 0));
+      const COMBO = ['#e4362b', '#ff6a00', '#ff3d7f', '#e0a400', '#ff2d2d'], col = incoming ? '#f2a20c' : sharp ? '#7d55c7' : COMBO[Math.min(4, combo - 1)];
+      let main = incoming ? 'スマッシュ返し！' : sharp ? 'するどいスマッシュ！' : combo >= 2 ? `${combo}連続スマッシュ！` : 'スマッシュ！';
+      const sub = (incoming || sharp) && combo >= 2 ? `${combo}連続スマッシュ！` : '';
+      fx(lv, col, x, y); bigText(main, sub, col, 20 + lv * 3, x, y);
+      for (let k = 0; k <= Math.min(5, lv + 1); k++) tone([523, 659, 784, 1046, 1318, 1568][k], .04 + k * .045, .16, 'triangle', .07); }
+    else { combo = 0;
+      if (incoming){ blocks++; const lv = Math.min(4, blocks - 1); // あいてのスマッシュを、ふつうに打ち返した
+        fx(lv, '#2e7fd0', me.x + 16, racketY(me) - 8); bigText(blocks >= 2 ? `${blocks}連続ブロック！` : 'ブロック！', '', '#2e7fd0', 20 + lv * 3, x, y);
+        tone(523, 0, .1, 'square', .05); tone(784, .05, .16, 'triangle', .08); if (blocks >= 2) tone(1046, .1, .18, 'triangle', .07); } } }
   function landing(level = HITY){
     if (sh.smash && sh.land){ // スマッシュはまっすぐなので、level の高さを通るところ
       const x0 = sh.x, y0 = sh.y, y1 = FLOOR - 4; landSteps = Math.max(0, (level - y0) / Math.max(1, sh.vy) * 60);
@@ -792,6 +824,10 @@ GAMES.badminton = root => {
   function point(side){ // side: シャトルが落ちたコート（0 = あなた）
     score[1 - side]++; sink = { t: 0, x: sh.x, y: FLOOR - 4, side, s: sh };
     dent(sh.x, 1.1); burst(sh.x, FLOOR - 6, 12); pops.push({ x: sh.x, y: FLOOR - 30, a: 1, txt: 'ぽふっ', c: '#7a8aa0', size: 16 });
+    blocks = 0; combo = 0; cpuCombo = 0; // 点が入ったら、連続スマッシュ・連続ブロックは、また1から
+    // あいてのコートに落ちたとき：スマッシュなら「きまった！」、とどかなかったら「おいつけない！」（空ぶりしたときは、もう出ている）
+    if (side === 1 && sh.by === 1 && !sh.whiff){ if (sh.smash){ fx(1, '#e4362b', sh.x, FLOOR - 40); bigText('きまった！', '', '#e4362b', 24, sh.x, FLOOR - 70); }
+      else pops.push({ x: clamp(cpu.x, 380, W - 60), y: racketY(cpu) - 40, a: 1.2, txt: 'おいつけない！', c: '#7a8aa0', size: 16 }); }
     soft(196, .2, .12); soft(262, .16, .08);
     later(() => { burst(W / 2, 70, 14, side ? '#fff6c8' : '#ffffff'); pops.push({ x: W / 2, y: 76, a: 1.2, txt: side ? 'あなたに1点！' : 'あいてに1点', c: side ? '#2e7fd0' : '#e4362b', size: 20, cloud: true }); if (side) chord([0, 4, 7]); }, 250);
   }
@@ -800,13 +836,14 @@ GAMES.badminton = root => {
     dents.forEach(d => d.t += dt); dents = dents.filter(d => d.t < 1.6);
     bits.forEach(b => { b.x += b.vx * dt; b.y += b.vy * dt; b.vy += 60 * dt; b.a -= dt * 1.4; }); bits = bits.filter(b => b.a > 0);
     if (state === 'enter'){ introT += dt; if (introT >= 1.25){ state = 'play'; } }
-    if (state === 'play'){
+    if (state === 'play' && hitStop > 0) hitStop -= dt;
+    else if (state === 'play'){
       const spd = ST().speed, mv = 1 + (spd - 1) * .8; stageT += dt;
       if (keys.ArrowLeft) target = clamp(target - 320 * mv * dt, 24, NET - MARGIN);
       if (keys.ArrowRight) target = clamp(target + 320 * mv * dt, 24, NET - MARGIN);
       me.x = clamp(me.x + clamp(target - me.x, -380 * mv * dt, 380 * mv * dt), 24, NET - MARGIN);
       [me, cpu].forEach(p => {
-        if (p.y > 0 || p.vy > 0){ p.vy -= JUMP_G * dt; p.y = Math.min(p.y + p.vy * dt, 210);
+        if (p.y > 0 || p.vy > 0){ p.vy -= JUMP_G * spd * spd * dt; p.y = Math.min(p.y + p.vy * dt, 210);
           if (p.y <= 0){ const hitV = -p.vy; p.y = 0; p.dj = false; dent(p.x, Math.min(1.2, hitV / 380)); puffs.push({ x: p.x, a: .8 });
             p.vy = hitV > 200 ? hitV * .2 : 0; if (p.vy > 0) p.y = .1; } }
         p.swing = Math.max(0, p.swing - dt); });
@@ -815,12 +852,14 @@ GAMES.badminton = root => {
       // シャトルが2このときは、さきにとどくほうを追いかける
       let chase = null, want = 470, soon = Infinity;
       if (!sink) for (const s of shs){ if (s.wait > 0 || s.by === -1 || !(s.vx > 0 || s.x > NET)) continue; sh = s;
-        const lx = landing(s.cpuSmash && (cpu.y > 0 || s.y < 120) ? 125 : HITY); if (landSteps < soon){ soon = landSteps; chase = s; want = clamp(lx, NET + MARGIN, W - 24); } }
+        const lx = landing(s.cpuSmash && (cpu.y > 0 || s.y < 120) ? SMASH_AT : HITY); if (landSteps < soon){ soon = landSteps; chase = s; want = clamp(lx, NET + MARGIN, W - 24); } }
       const maxV = (chase ? 250 : 110) * ST().cpu, desired = clamp((want - cpu.x) * 4, -maxV, maxV);
       cpu.vx += clamp(desired - cpu.vx, -1100 * ST().cpu * dt, 1100 * ST().cpu * dt);
       cpu.x = clamp(cpu.x + cpu.vx * dt, NET + MARGIN, W - 24);
-      if (chase){ sh = chase; if (sh.cpuSmash && cpu.y === 0 && sh.vx > 0 && sh.vy > 0 && sh.x > NET && sh.y > 50 && sh.y < 120 && Math.abs(cpu.x - sh.x) < 140) jump(cpu); }
-      if (sink){ sink.t += dt; if (sink.t > 1){ const side = sink.side; sink = null; if (score[0] >= 5 || score[1] >= 5){ state = 'over'; end(); } else serve(side); } }
+      // スマッシュをねらうときは、高いところ（SMASH_AT）で当てられるように、シャトルがそこへとどく少し前にジャンプ（速いステージでも、時間で合わせる）
+      if (chase && chase.cpuSmash && cpu.y === 0 && chase.vy > -60 && chase.x > NET){ sh = chase; const lx = landing(SMASH_AT), tReal = landSteps / 60; // シャトルもジャンプも同じ割合で速くなるので、そのままの時間でくらべる
+        if (tReal > .2 && tReal < .45 && Math.abs(cpu.x - lx) < 90) jump(cpu); }
+      if (sink){ sink.t += dt; if (sink.t > 1){ const side = sink.side; sink = null; if (score[0] >= 5){ startClear(); } else if (score[1] >= 5){ state = 'over'; end(); } else serve(1 - side); } } // 点をとった人がつぎのサーブ（side は落ちたコートなので、その反対）
       else for (const s of shs){ sh = s;
         if (s.wait > 0){ s.wait -= dt; continue; }
         const dts = dt * spd; // ステージが進むと、シャトルが速く飛ぶ
@@ -833,17 +872,28 @@ GAMES.badminton = root => {
           if (sh.vy > 0) sh.vy *= .35; if (strong){ burst(sh.x, sh.y, 6); soft(660, .1, .06); pops.push({ x: sh.x + (L ? 34 : -34), y: sh.y - 10, a: .9, txt: 'ぽよん', c: '#2e7fd0', size: 13 }); } }
         if (sh.by !== 1 && sh.x < NET && (sh.vx < 80 || sh.x < 120) && near(me)) hit(me, 1);
         else if (sh.by !== -1 && sh.x > NET && (sh.vx > -80 || sh.x > W - 120) && !sh.whiff && (near(cpu) || (cpu.y > 0 && Math.abs(sh.x - cpu.x) < 60 && sh.y > racketY(cpu) - 50 && sh.y < racketY(cpu) + 40))){
-          if (sh.cpuMiss || (cpu.y > 0 && sh.cpuJumpMiss)){ sh.whiff = true; cpu.swing = .25; pops.push({ x: cpu.x, y: racketY(cpu) - 30, a: 1, txt: 'あっ、ミス！' }); soft(330, .12, .07); }
-          else hit(cpu, -1);
+          if (sh.cpuMiss || (cpu.y > 0 && sh.cpuJumpMiss)){ sh.whiff = true; cpu.swing = .25; pops.push({ x: cpu.x, y: racketY(cpu) - 30, a: 1, txt: sh.cpuMiss ? 'はやくて、とれない！' : 'ミス！', c: '#7a8aa0', size: 16 }); soft(330, .12, .07); }
+          else { if (sh.read) pops.push({ x: clamp(cpu.x, 380, W - 90), y: racketY(cpu) - 44, a: 1.3, txt: 'サーブからのスマッシュは、よまれてた！', c: '#e4362b', size: 14 }); hit(cpu, -1); }
         }
         if (sh.y >= FLOOR - 4){ point(sh.x < NET ? 0 : 1); break; }
       }
       g.stat(`ステージ${stage + 1}　あなた <b>${score[0]}</b> − <b>${score[1]}</b> あいて　ラリー ${rally}　スマッシュ <b>${smashes}</b>`);
     }
-    pops.forEach(p => { p.y -= 22 * dt; p.a -= dt * .8; }); pops = pops.filter(p => p.a > 0);
+    if (state === 'clear'){ clearT += dt; if (clearT > CLEAR_DUR){ state = 'over'; end(); } }
+    pops.forEach(p => { p.t = (p.t || 0) + dt; p.y -= (p.big ? 9 : 22) * dt; p.a -= dt * .8; }); pops = pops.filter(p => p.a > 0);
+    rings.forEach(r => { r.r += 260 * dt; r.a -= dt * 2.4; }); rings = rings.filter(r => r.a > 0);
+    shakeT = Math.max(0, shakeT - dt); if (flash){ flash.a -= dt * 1.6; if (flash.a <= 0) flash = null; }
     puffs.forEach(p => p.a -= dt * 1.6); puffs = puffs.filter(p => p.a > 0);
     draw();
   });
+  // クリアの演出（POCHÉ RUN と同じノリ）：白い光 → 光の輪が広がる → きらきらがはじける → 大きな「クリア！」
+  const CLEAR_DUR = 2.9;
+  function startClear(){ state = 'clear'; clearT = 0; const X = me.x, Y = floorAt(me.x) - me.y - 40, bits2 = [];
+    for (let i = 0; i < 46; i++){ const an = Math.PI * 2 * i / 46 + Math.random() * .5, sp = 32 * (1.6 + Math.random() * 2.6);
+      bits2.push({ a: an, vx: Math.cos(an) * sp, vy: Math.sin(an) * sp - 20, r: 32 * (.1 + Math.random() * .13), sp: Math.random() * .35, c: ['#FFC53D', '#7FD8FF', '#FFFFFF', '#F4795B'][i % 4], star: i % 3 === 0 }); }
+    clearFX = { x: X, y: Y, bits: bits2 };
+    [[0, 0], [2, 120], [4, 240], [7, 360]].forEach(([n, ms]) => later(() => tone(FREQ[n] * 2, 0, .3, 'triangle', .12), ms));
+    later(() => chord([0, 4, 7], 4, .03), 520); }
   function end(){ const win = score[0] > score[1], last = stage === STAGES.length - 1; if (win) chord([0, 2, 4, 7], 2, .12);
     const info = `<p>${score[0]} − ${score[1]}　いちばん長いラリー ${best}回　スマッシュ ${smashes}回</p>`;
     if (win && !last){ const nx = STAGES[stage + 1];
@@ -894,7 +944,10 @@ GAMES.badminton = root => {
     ctx.textAlign = 'center';
     pops.forEach(p => { ctx.globalAlpha = Math.min(1, p.a);
       if (p.cloud){ puff(ctx, p.x, p.y - 6, 26, 'rgba(255,255,255,.95)'); }
-      ctx.fillStyle = p.c || '#e4362b'; ctx.font = `900 ${p.size || 20}px "Zen Maru Gothic", sans-serif`; ctx.fillText(p.txt, p.x, p.y); }); ctx.globalAlpha = 1;
+      const sz = (p.size || 20) * (p.big && p.t < .18 ? 1 + (1 - p.t / .18) * .8 : 1);
+      ctx.fillStyle = p.c || '#e4362b'; ctx.font = `900 ${sz}px "Zen Maru Gothic", sans-serif`;
+      if (p.big){ ctx.lineJoin = 'round'; ctx.lineWidth = 6; ctx.strokeStyle = 'rgba(255,255,255,.95)'; ctx.strokeText(p.txt, p.x, p.y); }
+      ctx.fillText(p.txt, p.x, p.y); }); ctx.globalAlpha = 1;
     if (state === 'play' && shs[0] && shs[0].wait > 0 && !sink){ ctx.fillStyle = 'rgba(46,127,208,.8)'; ctx.font = '700 18px "Zen Maru Gothic", sans-serif'; ctx.fillText('サーブ！', W / 2, 120); }
     if (state === 'play' && shs.length > 1 && shs[1].wait > 0 && shs[0].wait <= 0 && !sink){ ctx.fillStyle = 'rgba(228,54,43,.8)'; ctx.font = '700 16px "Zen Maru Gothic", sans-serif'; ctx.fillText('もう1こ来るよ！', W / 2, 120); }
     // ステージのはじめに、ステージの名前
@@ -921,8 +974,33 @@ GAMES.badminton = root => {
     ctx.fillStyle = '#b98a58'; ctx.fillRect(DOOR.x, DOOR.y, w, DOOR.h); ctx.strokeStyle = '#8a6440'; ctx.lineWidth = 3; ctx.strokeRect(DOOR.x, DOOR.y, w, DOOR.h);
     if (w > 30){ ctx.fillStyle = '#d9eef9'; ctx.fillRect(DOOR.x + w * .2, DOOR.y + 22, w * .6, 54); ctx.fillStyle = '#7a5a3a'; ctx.fillRect(DOOR.x + w - 16, DOOR.y + 96, 6, 22); }
   }
+  function drawFx(){
+    rings.forEach(r => { ctx.globalAlpha = Math.max(0, r.a); ctx.strokeStyle = r.c; ctx.lineWidth = r.w; ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, 7); ctx.stroke(); }); ctx.globalAlpha = 1;
+    if (flash){ ctx.fillStyle = flash.c; ctx.globalAlpha = Math.min(.6, flash.a); ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1; }
+    if (state === 'clear' && clearFX){ const e = clearT, ez = x => { x = clamp(x, 0, 1); return 1 - Math.pow(1 - x, 3); };
+      ctx.save();
+      const fl = Math.max(0, 1 - e / .45); if (fl > 0){ ctx.globalAlpha = fl * .92; ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1; }
+      for (let i = 0; i < 4; i++){ const k = (e - i * .16) / 1.15; if (k <= 0 || k >= 1) continue;
+        ctx.globalAlpha = (1 - k) * .75; ctx.strokeStyle = ['#FFC53D', '#7FD8FF', '#FFFFFF', '#FFC53D'][i]; ctx.lineWidth = 32 * .3 * (1 - k * .7);
+        ctx.beginPath(); ctx.arc(clearFX.x, clearFX.y, ez(k) * W * .78, 0, 7); ctx.stroke(); }
+      for (const b of clearFX.bits){ const k0 = e - b.sp; if (k0 <= 0) continue; const k = 1 - Math.pow(1 - Math.min(1, k0 / 1.5), 2.2);
+        const x = clearFX.x + b.vx * k * 1.5, y = clearFX.y + b.vy * k * 1.5 + 32 * 2.6 * k * k, al = Math.max(0, 1 - k0 / 1.7); if (al <= 0) continue;
+        ctx.globalAlpha = al; ctx.fillStyle = b.c;
+        if (b.star){ const r = b.r * (1.9 - k * .6), r2 = r * .34, rot = k0 * 3 + b.a; ctx.beginPath();
+          for (let i = 0; i < 8; i++){ const ang = rot + Math.PI * i / 4, rad = i % 2 ? r2 : r, px = x + Math.cos(ang) * rad, py = y + Math.sin(ang) * rad; i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }
+          ctx.closePath(); ctx.fill(); }
+        else { ctx.beginPath(); ctx.arc(x, y, b.r * (1.25 - k * .45), 0, 7); ctx.fill(); } }
+      const s4 = (e - .28) / .5;
+      if (s4 > 0){ const pop = s4 < 1 ? 1.28 - .28 * ez(s4) + Math.sin(ez(s4) * Math.PI) * .18 : 1 + Math.sin((e - .78) * 5) * .022;
+        ctx.globalAlpha = Math.min(1, s4 * 2.4) * clamp((CLEAR_DUR - e) / .45, 0, 1);
+        ctx.translate(W / 2, H * .42); ctx.rotate(Math.sin(e * 2.1 + 1) * .028); ctx.scale(pop, pop);
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '800 48px "Zen Maru Gothic", sans-serif';
+        ctx.shadowColor = 'rgba(255,197,61,.55)'; ctx.shadowBlur = 22; ctx.fillStyle = '#E8A317';
+        ctx.fillText(stage === STAGES.length - 1 ? 'ぜんぶクリア！' : 'クリア！', 0, 0); }
+      ctx.restore(); ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic'; }
+  }
   function draw(){
-    if (state !== 'intro' && state !== 'enter'){ drawRoom(); return; }
+    if (state !== 'intro' && state !== 'enter'){ ctx.save(); if (shakeT > 0){ const k = shake * shakeT / .3; ctx.translate(rnd(-k, k), rnd(-k, k)); } drawRoom(); ctx.restore(); drawFx(); return; }
     const t = state === 'enter' ? introT : 0, open = clamp(t / .45, 0, 1), e = clamp((t - .45) / .8, 0, 1), z = e * e * (3 - 2 * e);
     drawHall();
     // ドアの中（ひろがっていく雲の部屋）
