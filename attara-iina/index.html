@@ -721,6 +721,8 @@ KID_IMG.onload = () => { try { const c = document.createElement('canvas'); c.wid
   x.putImageData(d, 0, 0); KID_RED = c; } catch(e){ KID_RED = KID_IMG; } };
 // バドミントンの背景の絵は、ページを開いたときに先に読みこんでおく
 const BAD_ROOM = new Image(); BAD_ROOM.src = 'badminton-room.webp';
+// 扉の前の廊下：もらったイラストをそのまま使う（文字・看板・「おして入る」も絵の中）
+const BAD_HALL = new Image(); BAD_HALL.src = 'badminton-hall.webp';
 // 上の表示（タイトル・点数・一時停止）も、もらったイラストをそのまま使う
 const HUD_IMG = { logo: new Image(), score: new Image(), pause: new Image() }; Object.keys(HUD_IMG).forEach(k => HUD_IMG[k].src = 'badminton-hud-' + k + '.png');
 const HUD_SCORE = {"w":346,"h":55,"blue":[126.0,27.5,20.5,[64,151,220]],"red":[224.5,27.0,20.5,[239,100,83]]};
@@ -729,7 +731,9 @@ GAMES.badminton = root => {
   const g = shell(root, '雲の部屋で、5点先取の試合', '指を左右に動かして移動。ジャンプは、上にスワイプ・2回タップ・ジャンプボタン（パソコンはクリックかスペース）。高いところで当てるとスマッシュ！ ネットの近くで打つとドロップショット。勝つと、つぎのステージへ。');
   const { ctx, W, H, cv, pt } = mkCanvas(g.stage, 640, 340);
   const FLOOR = 296, NET = 320, NETTOP = 196, GR = 300, HITY = 222, JUMP_V = 430, JUMP_G = 560, SMASH_H = 45, CEIL = 22, WALL = 12;
-  const DOOR = { x: 266, y: 112, w: 108, h: 184 };
+  const HALL_S = 640 / 1690, HALL_Y = -6; // 廊下の絵を、横はばいっぱいに表示（上下を少しだけ切る）
+  const DOOR = { x: 705 * HALL_S, y: 366 * HALL_S + HALL_Y, w: (980 - 705) * HALL_S, h: (812 - 366) * HALL_S };
+  const hallOk = () => BAD_HALL.complete && BAD_HALL.naturalWidth > 0;
   // ステージ：勝つと、つぎへ（はやくなる・シャトルが2こになる）
   const STAGES = [
     // miss：あなたのスマッシュを受けたときに、あいてがミスする割合／whiff：あいてのジャンプスマッシュの空ぶり／smash：あいてがスマッシュをねらう割合／chain：あいてがスマッシュしたあと、つづけてスマッシュをねらう割合（ステージ2は、かならずねらってくる）／guard：あいてのサーブをいきなりスマッシュされても、かならず返す／kaeshi：あなたのスマッシュを、あいてがスマッシュで返す割合。ステージが進むほど、あいてはミスしなくなる
@@ -940,8 +944,10 @@ GAMES.badminton = root => {
       let chase = null, want = 470, soon = Infinity;
       if (!sink) for (const s of shs){ if (s.wait > 0 || s.by === -1 || !(s.vx > 0 || s.x > NET)) continue; sh = s;
         const lx = landing(s.cpuSmash && (cpu.y > 0 || s.y < 120) ? SMASH_AT : HITY); if (landSteps < soon){ soon = landSteps; chase = s; want = clamp(lx, NET + MARGIN, W - 24); } }
-      const maxV = (chase ? 250 : 110) * ST().cpu, desired = clamp((want - cpu.x) * 4, -maxV, maxV);
-      cpu.vx += clamp(desired - cpu.vx, -1100 * ST().cpu * dt, 1100 * ST().cpu * dt);
+      // シャトルが2こ以上とんでいるときは、ふつうのラリーで追いつけるように、あいては速く動ける
+      const multi = shs.filter(x => x.wait <= 0).length > 1, boost = multi ? 1.45 : 1;
+      const maxV = (chase ? 250 : 110) * ST().cpu * boost, desired = clamp((want - cpu.x) * 4, -maxV, maxV);
+      cpu.vx += clamp(desired - cpu.vx, -1100 * ST().cpu * boost * dt, 1100 * ST().cpu * boost * dt);
       cpu.x = clamp(cpu.x + cpu.vx * dt, NET + MARGIN, W - 24);
       // スマッシュをねらうときは、高いところ（SMASH_AT）で当てられるように、シャトルがそこへとどく少し前にジャンプ（速いステージでも、時間で合わせる）
       if (chase && chase.cpuSmash && cpu.y === 0 && chase.vy > -60 && chase.x > NET){ sh = chase; const lx = landing(SMASH_AT), tReal = landSteps / 60; // シャトルもジャンプも同じ割合で速くなるので、そのままの時間でくらべる
@@ -961,7 +967,9 @@ GAMES.badminton = root => {
         if (sh.x < WALL || sh.x > W - WALL){ const L = sh.x < WALL, strong = Math.abs(sh.vx) > 60; sh.x = L ? WALL : W - WALL; sh.vx = (L ? 1 : -1) * Math.min(70, Math.abs(sh.vx) * .3); sh.smash = false;
           if (sh.vy > 0) sh.vy *= .35; if (strong){ burst(sh.x, sh.y, 6); soft(660, .1, .06); pops.push({ x: sh.x + (L ? 34 : -34), y: sh.y - 10, a: .9, txt: 'ぽよん', c: '#2e7fd0', size: 13 }); } }
         if (sh.by !== 1 && sh.x < NET && (sh.vx < 80 || sh.x < 120) && near(me)) hit(me, 1);
-        else if (sh.by !== -1 && sh.x > NET && (sh.vx > -80 || sh.x > W - 120) && !sh.whiff && (near(cpu) || (cpu.y > 0 && Math.abs(sh.x - cpu.x) < 60 && sh.y > racketY(cpu) - 50 && sh.y < racketY(cpu) + 40))){
+        else if (sh.by !== -1 && sh.x > NET && (sh.vx > -80 || sh.x > W - 120) && !sh.whiff && (near(cpu) || (cpu.y > 0 && Math.abs(sh.x - cpu.x) < 60 && sh.y > racketY(cpu) - 50 && sh.y < racketY(cpu) + 40)
+          // シャトルが2こ以上のステージでは、ふつうの球（スマッシュでない）は、少し遠くまでとどく
+          || (ST().balls > 1 && !sh.smash && !sh.fast && sh.vy > 0 && Math.abs(sh.x - cpu.x) < 62 && Math.abs(sh.y - racketY(cpu)) < 36))){
           if (sh.cpuMiss || (cpu.y > 0 && sh.cpuJumpMiss)){ sh.whiff = true; cpu.swing = .25; pops.push({ x: cpu.x, y: racketY(cpu) - 30, a: 1, txt: sh.cpuMiss ? 'はやくて、とれない！' : 'ミス！', c: '#7a8aa0', size: 16 }); soft(330, .12, .07); }
           else hit(cpu, -1);
         }
@@ -1208,6 +1216,7 @@ GAMES.badminton = root => {
   }
   // 「部屋に入る」：ろうかのドアがひらいて、雲の部屋へ
   function drawHall(){
+    if (hallOk()){ ctx.drawImage(BAD_HALL, 0, HALL_Y, 640, 931 * HALL_S); return; }
     ctx.fillStyle = '#efe8dd'; ctx.fillRect(0, 0, W, H);
     ctx.fillStyle = '#e2d7c6'; ctx.fillRect(0, FLOOR, W, H - FLOOR);
     ctx.strokeStyle = 'rgba(120,100,80,.2)'; ctx.lineWidth = 1; for (let x = 0; x < W; x += 60){ ctx.beginPath(); ctx.moveTo(x, FLOOR); ctx.lineTo(x - 40, H); ctx.stroke(); }
@@ -1224,6 +1233,8 @@ GAMES.badminton = root => {
     puff(ctx, DOOR.x + 6, DOOR.y - 44, 10, '#ffffff'); puff(ctx, DOOR.x + DOOR.w - 6, DOOR.y - 28, 9, '#ffffff');
   }
   function drawDoorPanel(open){ // open: 0 しまっている → 1 ひらききる
+    // 絵の扉を、そのまま切りとって、ひらいていくようにかく
+    if (hallOk()){ const w2 = DOOR.w * (1 - open); if (w2 >= 1) ctx.drawImage(BAD_HALL, 705, 366, 275, 446, DOOR.x, DOOR.y, w2, DOOR.h); return; }
     const w = DOOR.w * (1 - open);
     if (w < 1) return;
     ctx.fillStyle = '#b98a58'; ctx.fillRect(DOOR.x, DOOR.y, w, DOOR.h); ctx.strokeStyle = '#8a6440'; ctx.lineWidth = 3; ctx.strokeRect(DOOR.x, DOOR.y, w, DOOR.h);
@@ -1274,10 +1285,11 @@ GAMES.badminton = root => {
     // ドアの中（ひろがっていく雲の部屋）
     const cx0 = DOOR.x, cy0 = DOOR.y, cw = DOOR.w + (W - DOOR.w) * z, ch = DOOR.h + (H - DOOR.h) * z, cx = cx0 * (1 - z), cy = cy0 * (1 - z);
     ctx.save(); ctx.beginPath(); ctx.rect(cx, cy, cw, ch); ctx.clip();
+    ctx.fillStyle = '#c4e3fa'; ctx.fillRect(cx, cy, cw, ch); // 扉のむこうは、まず雲の部屋の空の色
     const s = .34 + .66 * z, ox = DOOR.x + DOOR.w / 2, oy = DOOR.y + DOOR.h * .6;
     ctx.translate(ox * (1 - z) + (W / 2) * z, oy * (1 - z) + (H / 2) * z); ctx.scale(s, s); ctx.translate(-W / 2, -H / 2); drawRoom(); ctx.restore();
     if (z < 1) drawDoorPanel(open);
-    if (state === 'intro'){ const p = .5 + .5 * Math.sin(clock * 3); ctx.textAlign = 'center'; ctx.fillStyle = '#fff'; rr(ctx, DOOR.x + 6, DOOR.y + DOOR.h / 2 - 16, DOOR.w - 12, 28, 14); ctx.fill();
+    if (state === 'intro' && !hallOk()){ const p = .5 + .5 * Math.sin(clock * 3); ctx.textAlign = 'center'; ctx.fillStyle = '#fff'; rr(ctx, DOOR.x + 6, DOOR.y + DOOR.h / 2 - 16, DOOR.w - 12, 28, 14); ctx.fill();
       ctx.fillStyle = `rgba(42,159,211,${.6 + p * .4})`; ctx.font = '900 13px "Zen Maru Gothic", sans-serif'; ctx.fillText('おして入る', DOOR.x + DOOR.w / 2, DOOR.y + DOOR.h / 2 + 3); ctx.textAlign = 'left'; }
   }
   const jumpBtn = g.button('ジャンプ！', () => jump(me), 'primary');
