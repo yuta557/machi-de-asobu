@@ -708,7 +708,7 @@ const GAMES = {};
 
 /* --- 雲みたいな部屋でバドミントン --- */
 GAMES.badminton = root => {
-  const g = shell(root, '雲の部屋で、5点先取の試合', '指を左右に動かして移動、おすとジャンプ。高いところで当てるとスマッシュ！ ネットの近くで打つとドロップショット。勝つと、つぎのステージへ。');
+  const g = shell(root, '雲の部屋で、5点先取の試合', '指を左右に動かして移動。ジャンプは、上にスワイプ・2回タップ・ジャンプボタン（パソコンはクリックかスペース）。高いところで当てるとスマッシュ！ ネットの近くで打つとドロップショット。勝つと、つぎのステージへ。');
   const { ctx, W, H, cv, pt } = mkCanvas(g.stage, 640, 340);
   const FLOOR = 296, NET = 320, NETTOP = 196, GR = 300, HITY = 222, JUMP_V = 430, JUMP_G = 560, SMASH_H = 45, CEIL = 22, WALL = 12;
   const DOOR = { x: 266, y: 112, w: 108, h: 184 };
@@ -773,8 +773,17 @@ GAMES.badminton = root => {
   // あいてがスマッシュを打つ高さ：高いほど角度が急になって、コートのうしろからでもネットをこえて入る
   const SMASH_AT = 100;
   const aim = e => { target = clamp(pt(e)[0], 24, NET - MARGIN); };
-  cv.onpointermove = aim;
-  cv.onpointerdown = e => { if (state === 'intro'){ const [x, y] = pt(e); if (x > DOOR.x - 20 && x < DOOR.x + DOOR.w + 20 && y > DOOR.y - 60 && y < FLOOR) enter(); return; } aim(e); jump(me); };
+  // スマホ：タップしただけでは跳ばない。上にスワイプ・2回タップ（とジャンプボタン）でジャンプ。マウスはクリックでジャンプ
+  let touch = null, lastTap = { t: 0, x: 0, y: 0 };
+  cv.onpointermove = e => { aim(e);
+    if (touch && e.pointerId === touch.id && !touch.jumped){ const [x, y] = pt(e), up = touch.y - y; // 上むきにスワイプしたときだけ（横や下、ななめの動きではジャンプしない）
+      if (up > 28 && up > Math.abs(x - touch.x) * 1.5){ touch.jumped = true; jump(me); } } };
+  cv.onpointerdown = e => { if (state === 'intro'){ const [x, y] = pt(e); if (x > DOOR.x - 20 && x < DOOR.x + DOOR.w + 20 && y > DOOR.y - 60 && y < FLOOR) enter(); return; } aim(e);
+    if (e.pointerType === 'mouse'){ jump(me); return; }
+    const [x, y] = pt(e), now = performance.now();
+    touch = { id: e.pointerId, x, y, jumped: false };
+    if (now - lastTap.t < 320 && Math.hypot(x - lastTap.x, y - lastTap.y) < 60){ touch.jumped = true; jump(me); lastTap.t = 0; } else lastTap = { t: now, x, y }; };
+  cv.onpointerup = cv.onpointercancel = e => { if (touch && e.pointerId === touch.id) touch = null; };
   onKey((e, d) => {
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight'){ keys[e.key] = d; e.preventDefault(); }
     if ((e.key === ' ' || e.key === 'ArrowUp') && d && !e.repeat){ e.preventDefault(); jump(me); }
