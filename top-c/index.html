@@ -50,7 +50,7 @@ a{color:inherit}
 /* 左下の無地にのせるタイトル */
 .hero-ttl{position:absolute;left:0;right:0;bottom:3.2%;z-index:2;
   max-width:1280px;margin:0 auto;padding:0 40px;line-height:1.18}
-.hero-ttl h1{font-weight:900;font-size:clamp(22px,3.1vw,46px);line-height:1.18;letter-spacing:.01em;margin:0}
+.hero-ttl h1{font-weight:900;font-size:clamp(24px,3.5vw,52px);line-height:1.2;letter-spacing:.01em;margin:0;white-space:nowrap}
 /* イラストの下、白地に置くメッセージ */
 .hero-msg{max-width:1280px;margin:0 auto;padding:34px 40px 58px}
 .hero-msg p{margin:0;font-size:clamp(15px,1.5vw,20px);font-weight:500}
@@ -62,7 +62,7 @@ a{color:inherit}
 @media(max-width:700px){
   /* スマホは絵の中に文字を置かず、絵の下にタイトル→メッセージの順で並べる */
   .hero-ttl{position:static;padding:22px 22px 0}
-  .hero-ttl h1{font-size:30px}
+  .hero-ttl h1{font-size:clamp(26px,7.6vw,32px);white-space:normal}
   .hero-msg{padding:16px 22px 44px}
 }
 
@@ -152,7 +152,7 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
       <img src="../assets/hero-map.webp" width="1672" height="941" fetchpriority="high"
         alt="学校・公園・川沿いのまちで、子どもたちが遊んだり集まったりしているようすを俯瞰で描いたイラスト">
     </picture>
-    <div class="hero-ttl"><h1>まちであそぶ、<br>をつくる。</h1></div>
+    <div class="hero-ttl"><h1>まちであそぶ、をつくる。</h1></div>
   </div>
   <div class="hero-msg">
     <p>人とまちのあいだに、新しいきっかけを。</p>
