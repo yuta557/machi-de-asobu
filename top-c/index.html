@@ -44,8 +44,11 @@ a{color:inherit}
 @media(max-width:620px){ .nav-links a:nth-child(-n+2){display:none} }
 
 /* ヒーロー：イラストは全体を見せ、左下の無地にタイトルだけを重ねる */
-.hero{background:#E1F9FE}   /* イラストの地色をそのまま下まで続ける */
-.hero-art{position:relative;background:#E1F9FE;line-height:0}
+.hero{background:#fff}
+.hero-art{position:relative;background:#fff;line-height:0}
+/* 絵の下のほうを白へなじませ、文字は白地の上に置く */
+.hero-art::after{content:"";position:absolute;left:0;right:0;bottom:0;height:24%;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.72) 42%,#fff 78%)}
 /* タイトルまでをファーストビューに入れる。はみ出すぶんは絵の上端を削る
    （--hero-cut はヘッダー＋試作の帯のぶん。本番では 78px にする） */
 .hero-art{--hero-cut:120px}
@@ -55,10 +58,11 @@ a{color:inherit}
 .hero-ttl{position:absolute;left:0;right:0;bottom:3.2%;z-index:2;
   max-width:1280px;margin:0 auto;padding:0 40px;line-height:1.18}
 .hero-ttl h1{font-weight:900;font-size:clamp(24px,3.5vw,52px);line-height:1.2;letter-spacing:.01em;margin:0;white-space:nowrap}
-/* イラストの下、同じ地色の上に続けて置くメッセージ */
+/* イラストの下、白地に続けて置くメッセージ */
 .hero-msg{max-width:1280px;margin:0 auto;padding:34px 40px 58px}
 .hero-msg p{margin:0;font-size:clamp(15px,1.5vw,20px);font-weight:500}
-.hero-msg .sub{margin:14px 0 0;font-size:15px;color:var(--ink-soft);font-weight:400;max-width:46em}
+.hero-msg .sub{margin:14px 0 0;font-size:15.5px;line-height:2.05;color:var(--ink-soft);font-weight:400;max-width:44em}
+.hero-msg .sub + .sub{margin-top:1.1em}
 .hero-msg .go{display:inline-flex;align-items:center;gap:14px;margin-top:26px;padding-bottom:10px;
   border-bottom:1.5px solid var(--ink);font-weight:700;text-decoration:none;font-size:15.5px}
 .hero-msg .go span{font-family:"Outfit",sans-serif;color:var(--o)}
@@ -187,7 +191,9 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
   </div>
   <div class="hero-msg">
     <p>人とまちのあいだに、新しいきっかけを。</p>
-    <p class="sub">通学路も、階段も、バス停も。少し見方を変えるだけで遊び場になります。まちで遊べる仕掛けとゲームをつくり、子どもたちと一緒に新しい遊び方を考えています。</p>
+    <p class="sub">通学路も、階段も、バス停も。毎日通り過ぎている場所でも、少し見方を変えるだけで遊び場になります。まちで遊べる仕掛けやゲームをつくり、子どもたちと一緒に「ここでどう遊ぶ？」を考えています。</p>
+    <p class="sub">2026年10月には、宇治のまちを舞台にした第1回のワークショップをひらきました。駅やバス停、通学路、茶畑、雲の上まで。集まった9枚のアイデアは、いま市内の施設で展示しています。</p>
+    <p class="sub">遊びは、まちを見る目を変えます。その小さなきっかけを、これからもまちの中につくっていきます。</p>
     <a class="go" href="#acts">活動を見る　<span>→</span></a>
   </div>
 </section>
