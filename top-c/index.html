@@ -44,8 +44,8 @@ a{color:inherit}
 @media(max-width:620px){ .nav-links a:nth-child(-n+2){display:none} }
 
 /* ヒーロー：イラストは全体を見せ、左下の無地にタイトルだけを重ねる */
-.hero{background:#fff}
-.hero-art{position:relative;background:#EAF6FD;line-height:0}
+.hero{background:#E1F9FE}   /* イラストの地色をそのまま下まで続ける */
+.hero-art{position:relative;background:#E1F9FE;line-height:0}
 /* タイトルまでをファーストビューに入れる。はみ出すぶんは絵の上端を削る
    （--hero-cut はヘッダー＋試作の帯のぶん。本番では 78px にする） */
 .hero-art{--hero-cut:120px}
@@ -55,7 +55,7 @@ a{color:inherit}
 .hero-ttl{position:absolute;left:0;right:0;bottom:3.2%;z-index:2;
   max-width:1280px;margin:0 auto;padding:0 40px;line-height:1.18}
 .hero-ttl h1{font-weight:900;font-size:clamp(24px,3.5vw,52px);line-height:1.2;letter-spacing:.01em;margin:0;white-space:nowrap}
-/* イラストの下、白地に置くメッセージ */
+/* イラストの下、同じ地色の上に続けて置くメッセージ */
 .hero-msg{max-width:1280px;margin:0 auto;padding:34px 40px 58px}
 .hero-msg p{margin:0;font-size:clamp(15px,1.5vw,20px);font-weight:500}
 .hero-msg .sub{margin:14px 0 0;font-size:15px;color:var(--ink-soft);font-weight:400;max-width:46em}
