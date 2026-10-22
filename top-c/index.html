@@ -129,6 +129,33 @@ h2{font-weight:900;font-size:clamp(26px,3.4vw,40px);line-height:1.45;margin:8px 
 .who p{color:var(--ink-soft);margin:0;font-size:15px}
 @media(max-width:800px){ .who{grid-template-columns:1fr} }
 
+
+/* お問い合わせフォーム */
+.contact{background:var(--band);border-top:1px solid #F0E9D8}
+.contact .wrap{max-width:860px}
+.form{display:grid;gap:18px;margin-top:30px}
+.field{display:grid;gap:7px}
+.field label{font-size:14px;font-weight:700}
+.field .req{color:var(--o);font-size:12px;margin-left:6px;font-weight:700}
+.field input,.field select,.field textarea{
+  font:inherit;font-size:15.5px;color:var(--ink);background:#fff;
+  border:1px solid var(--line);border-radius:10px;padding:13px 14px;width:100%}
+.field textarea{min-height:150px;resize:vertical;line-height:1.8}
+.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--ink-2);outline-offset:1px;border-color:transparent}
+.field .hint{font-size:12.5px;color:var(--ink-soft)}
+.form .row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.submit{display:inline-flex;align-items:center;gap:10px;background:var(--o);color:#fff;border:0;
+  border-radius:999px;padding:15px 30px;font:inherit;font-weight:700;font-size:15.5px;cursor:pointer;
+  box-shadow:0 6px 0 rgba(0,0,0,.08)}
+.submit:hover{transform:translateY(1px);box-shadow:0 5px 0 rgba(0,0,0,.08)}
+.submit[disabled]{opacity:.6;cursor:default;transform:none}
+.form-note{font-size:13.5px;color:var(--ink-soft);margin:16px 0 0}
+.form-msg{margin:18px 0 0;padding:16px 18px;border-radius:12px;font-size:15px;display:none}
+.form-msg.ok{display:block;background:#E8F6EE;color:#1F6B45}
+.form-msg.ng{display:block;background:#FCECE6;color:#9A3A14}
+@media(max-width:700px){ .form .row{grid-template-columns:1fr} }
+
 footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;color:var(--ink-soft);font-size:13.5px}
 .foot-in{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 </style>
@@ -144,7 +171,7 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
       <a href="#acts">活動</a>
       <a href="#projects">プロジェクト</a>
       <a href="#who">プロフィール</a>
-      <a href="mailto:incubation@taliki.co.jp">お問い合わせ</a>
+      <a href="#contact">お問い合わせ</a>
     </nav>
   </div>
 </header>
@@ -257,12 +284,88 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
   </div>
 </section>
 
+
+<section class="sec contact" id="contact">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kick">CONTACT</p>
+      <h2>お問い合わせ</h2>
+      <p>ワークショップの開催や取材のご相談、「うちのまちでもやってみたい」というお話も歓迎です。いただいた内容は、ご本人への返信にのみ使います。</p>
+    </div>
+
+    <form class="form" id="contactForm" novalidate>
+      <div class="row">
+        <div class="field">
+          <label for="cf-name">お名前<span class="req">必須</span></label>
+          <input id="cf-name" name="name" type="text" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="cf-email">メールアドレス<span class="req">必須</span></label>
+          <input id="cf-email" name="email" type="email" autocomplete="email" required>
+        </div>
+      </div>
+      <div class="field">
+        <label for="cf-topic">ご用件</label>
+        <select id="cf-topic" name="topic">
+          <option>ワークショップの開催について</option>
+          <option>取材・掲載について</option>
+          <option>展示について</option>
+          <option>その他</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="cf-body">内容<span class="req">必須</span></label>
+        <textarea id="cf-body" name="message" required></textarea>
+        <p class="hint">お返事は数日いただくことがあります。</p>
+      </div>
+      <div class="hp" aria-hidden="true">
+        <label>この欄は入力しないでください<input name="_gotcha" tabindex="-1" autocomplete="off"></label>
+      </div>
+      <div>
+        <button class="submit" type="submit">送信する　<span>→</span></button>
+      </div>
+      <p class="form-msg" id="cf-msg" role="status" aria-live="polite"></p>
+      <p class="form-note">うまく送れないときは <a href="mailto:yuta109010@gmail.com">yuta109010@gmail.com</a> まで直接お送りください。</p>
+    </form>
+  </div>
+</section>
+
 <footer>
   <div class="wrap foot-in">
     <div>© 2026 MACHI PLAY</div>
-    <div><a href="../">ワークショップサイト</a>　／　<a href="mailto:incubation@taliki.co.jp">お問い合わせ</a></div>
+    <div><a href="../">ワークショップサイト</a>　／　<a href="#contact">お問い合わせ</a></div>
   </div>
 </footer>
 
+
+<script>
+/* お問い合わせフォーム：ページを離れずに送信する。
+   ENDPOINT に送信先（Formspree か Google Apps Script のURL）を入れる。
+   空のままのあいだは送信せず、メールでの連絡をうながす。 */
+(function(){
+  var ENDPOINT = "";   /* 例: https://formspree.io/f/xxxxxxx */
+  var MAIL = "yuta109010@gmail.com";
+  var form = document.getElementById("contactForm");
+  if(!form) return;
+  var msg = document.getElementById("cf-msg");
+  var btn = form.querySelector(".submit");
+  function show(kind, text){ msg.className = "form-msg " + kind; msg.textContent = text; }
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    show("", "");
+    var name = form.name.value.trim(), email = form.email.value.trim(), body = form.message.value.trim();
+    if(!name || !email || !body){ show("ng","お名前・メールアドレス・内容を入力してください。"); return; }
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ show("ng","メールアドレスの形式をご確認ください。"); return; }
+    if(form._gotcha.value){ return; }
+    if(!ENDPOINT){ show("ng","ただいまフォームからの送信を準備中です。お手数ですが " + MAIL + " までお送りください。"); return; }
+    btn.disabled = true; btn.textContent = "送信中…";
+    fetch(ENDPOINT, { method:"POST", headers:{"Accept":"application/json"}, body:new FormData(form) })
+      .then(function(r){ if(!r.ok) throw new Error(r.status);
+        form.reset(); show("ok","送信しました。お返事までしばらくお待ちください。"); })
+      .catch(function(){ show("ng","送信できませんでした。お手数ですが " + MAIL + " までお送りください。"); })
+      .then(function(){ btn.disabled = false; btn.textContent = "送信する　→"; });
+  });
+})();
+</script>
 </body>
 </html>
