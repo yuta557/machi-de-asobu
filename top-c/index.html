@@ -43,23 +43,23 @@ a{color:inherit}
 @media(max-width:860px){ .nav-in{padding:0 22px;height:64px} .brand img{height:28px} .brand b{font-size:18px} .nav-links{gap:18px;font-size:13px} }
 @media(max-width:620px){ .nav-links a:nth-child(-n+2){display:none} }
 
-/* ヒーロー：右上にイラスト、左下にコピー */
-.hero{position:relative;background:linear-gradient(180deg,var(--sky) 0%,#F4FAFE 58%,#fff 100%);overflow:hidden}
-/* 左下のコピーが読みやすいよう、左半分をうっすら白く抜く */
-.hero::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:linear-gradient(100deg,rgba(255,255,255,.35) 10%,rgba(255,255,255,.12) 26%,rgba(255,255,255,0) 42%)}
-.hero-art{position:relative;width:100%}
-.hero-art img{width:100%;height:auto;display:block}
-.hero-in{position:absolute;left:0;right:0;bottom:9%;z-index:2;max-width:1280px;margin:0 auto;padding:0 40px}
-.hero h1{font-weight:900;font-size:clamp(34px,5vw,70px);line-height:1.18;letter-spacing:.01em;margin:0}
-.hero .tag{font-weight:500;font-size:clamp(14px,1.45vw,19px);margin:20px 0 0;color:var(--ink)}
-.hero .go{display:inline-flex;align-items:center;gap:14px;margin-top:30px;padding-bottom:10px;
-  border-bottom:1.5px solid var(--ink);font-weight:500;text-decoration:none;font-size:15.5px}
-.hero .go span{font-family:"Outfit",sans-serif}
+/* ヒーロー：イラストを上に置き、コピーは下の白地に（文字は絵に重ねない） */
+.hero{background:#fff}
+.hero-art{position:relative;background:#EAF6FD}
+.hero-art img{width:100%;height:auto;display:block;aspect-ratio:1672/555;object-fit:cover;object-position:50% 40%}
+/* 絵の下端を白へなじませる */
+.hero-art::after{content:"";position:absolute;left:0;right:0;bottom:0;height:16%;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,0),#fff)}
+.hero-in{max-width:1280px;margin:0 auto;padding:38px 40px 64px}
+.hero h1{font-weight:900;font-size:clamp(32px,4.6vw,64px);line-height:1.2;letter-spacing:.01em;margin:0}
+.hero .tag{font-weight:500;font-size:clamp(14px,1.4vw,19px);margin:18px 0 0;color:var(--ink-soft)}
+.hero .go{display:inline-flex;align-items:center;gap:14px;margin-top:28px;padding-bottom:10px;
+  border-bottom:1.5px solid var(--ink);font-weight:700;text-decoration:none;font-size:15.5px}
+.hero .go span{font-family:"Outfit",sans-serif;color:var(--o)}
+.hero .go:hover{border-color:var(--o);color:var(--o)}
 @media(max-width:900px){
-  .hero-in{position:static;padding:26px 22px 40px}
-  .hero{display:flex;flex-direction:column-reverse;background:#F2FAFE}
-  .hero::before{display:none}
+  .hero-art img{aspect-ratio:1672/860}
+  .hero-in{padding:26px 22px 44px}
 }
 
 /* プロジェクトの帯 */
@@ -146,11 +146,9 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
     <source media="(max-width:700px)" srcset="../assets/hero-map-sp.webp" width="1100" height="619">
     <img src="../assets/hero-map.webp" width="1672" height="941" fetchpriority="high" alt="学校・公園・川沿いのまちで、子どもたちが遊んだり集まったりしているようすを俯瞰で描いたイラスト"></picture></div>
   <div class="hero-in">
-    <div>
-      <h1>まちであそぶ、<br>をつくる。</h1>
-      <p class="tag">人とまちのあいだに、新しいきっかけを。</p>
-      <a class="go" href="#acts">活動を見る　<span>→</span></a>
-    </div>
+    <h1>まちであそぶ、をつくる。</h1>
+    <p class="tag">人とまちのあいだに、新しいきっかけを。</p>
+    <a class="go" href="#acts">活動を見る　<span>→</span></a>
   </div>
 </section>
 
