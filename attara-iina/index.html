@@ -707,6 +707,24 @@ const chord = (ns, oct = 2, gap = .1) => ns.forEach((n, k) => tone(FREQ[n] * oct
 const GAMES = {};
 
 /* --- 雲みたいな部屋でバドミントン --- */
+// 子どものキャラの絵（もらったイラストを切りぬいたもの）：[x, y, w, h, 体のまん中のx, 大きさの補正]
+// 見出しつきの表（赤い子と同じならび）から切りぬいた。パネルごとに子どもの大きさが少しちがうので、移動のコマと同じ大きさに補正している
+const KID_FRAMES = [[2,2,143,184,51.4,1.03],[147,2,154,179,67.0,1.03],[303,2,159,181,67.5,1.03],[464,2,153,181,66.9,1.03],[619,2,145,181,60.0,1.03],[303,2,159,181,67.5,1.03],[1299,2,129,241,69.8,1.051],[766,2,143,173,52.2,1.071],[911,2,144,156,61.0,1.071],[1057,2,101,222,47.8,1.154],[1057,2,101,222,47.8,1.154],[1430,2,133,242,54.2,1.051],[1057,2,101,222,47.8,1.154],[2,246,224,260,69.7,1.061],[1299,2,129,241,69.8,1.051],[1430,2,133,242,54.2,1.051],[1565,2,118,157,47.3,1.174],[1685,2,139,176,64.6,1.051],[228,246,138,161,64.0,1.092],[1826,2,148,162,61.9,1.092],[501,246,132,164,53.3,1.112],[635,246,122,178,57.6,1.112],[759,246,105,174,43.2,1.112],[1423,246,134,157,56.7,1.133],[1559,246,129,157,53.0,1.133]];
+const KID_IMG = new Image(); KID_IMG.src = 'badminton-kid.png';
+// あいて（赤い子）の絵：もらった赤い子の表を切りぬいたもの。右向きのコマは左右反転して、ぜんぶ左（ネットのほう）を向いている。番号の動きは青い子と同じ
+const RED_FRAMES = [[2,2,132,176,80.6,1.06],[136,2,142,176,83.6,1.06],[280,2,142,175,85.0,1.06],[424,2,145,175,86.0,1.06],[571,2,139,175,83.9,1.06],[712,2,111,174,73.0,1.06],[1361,2,126,242,58.9,1.081],[825,2,144,167,87.5,1.102],[971,2,144,158,81.2,1.102],[1117,2,98,216,54.0,1.187],[1117,2,98,216,54.0,1.187],[1489,2,136,246,79.3,1.081],[1117,2,98,216,54.0,1.187],[2,250,212,236,142.9,1.092],[1361,2,126,242,58.9,1.081],[1489,2,136,246,79.3,1.081],[1627,2,125,198,70.3,1.081],[1754,2,140,174,70.4,1.081],[216,250,141,162,73.8,1.124],[1896,2,148,162,82.1,1.124],[500,250,128,163,69.4,1.145],[630,250,123,176,64.6,1.145],[755,250,106,174,57.4,1.145],[1387,250,133,157,73.1,1.166],[1522,250,149,191,87.6,1.166]];
+const RED_IMG = new Image(); RED_IMG.src = 'badminton-kid-red.png'; // 赤い子も、パネルごとに大きさがちがうので、顔の大きさで補正
+let KID_RED = null; // あいて用：シャツとくつを赤にした絵（ショートパンツの紺はそのまま）
+KID_IMG.onload = () => { try { const c = document.createElement('canvas'); c.width = KID_IMG.naturalWidth; c.height = KID_IMG.naturalHeight; const x = c.getContext('2d'); x.drawImage(KID_IMG, 0, 0);
+  const d = x.getImageData(0, 0, c.width, c.height), p = d.data;
+  for (let i = 0; i < p.length; i += 4){ const r = p[i], g = p[i + 1], b = p[i + 2]; if (p[i + 3] && b > 185 && b - r > 80 && g < 190){ p[i] = b; p[i + 1] = g * .42; p[i + 2] = r * .7; } }
+  x.putImageData(d, 0, 0); KID_RED = c; } catch(e){ KID_RED = KID_IMG; } };
+// バドミントンの背景の絵は、ページを開いたときに先に読みこんでおく
+const BAD_ROOM = new Image(); BAD_ROOM.src = 'badminton-room.webp';
+// 上の表示（タイトル・点数・一時停止）も、もらったイラストをそのまま使う
+const HUD_IMG = { logo: new Image(), score: new Image(), pause: new Image() }; Object.keys(HUD_IMG).forEach(k => HUD_IMG[k].src = 'badminton-hud-' + k + '.png');
+const HUD_SCORE = {"w":346,"h":55,"blue":[126.0,27.5,20.5,[64,151,220]],"red":[224.5,27.0,20.5,[239,100,83]]};
+const hudOk = k => HUD_IMG[k].complete && HUD_IMG[k].naturalWidth > 0;
 GAMES.badminton = root => {
   const g = shell(root, '雲の部屋で、5点先取の試合', '指を左右に動かして移動。ジャンプは、上にスワイプ・2回タップ・ジャンプボタン（パソコンはクリックかスペース）。高いところで当てるとスマッシュ！ ネットの近くで打つとドロップショット。勝つと、つぎのステージへ。');
   const { ctx, W, H, cv, pt } = mkCanvas(g.stage, 640, 340);
@@ -764,7 +782,7 @@ GAMES.badminton = root => {
   const floorAt = x => FLOOR + dents.reduce((s, d) => s + d.a * Math.exp(-4 * d.t) * Math.cos(11 * d.t) * Math.exp(-(((x - d.x) / 56) ** 2)) * 10, 0);
   const burst = (x, y, n = 8, col = '#ffffff') => { for (let i = 0; i < n; i++){ const a = rnd(0, 6.28), v = rnd(40, 120); bits.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 30, r: rnd(5, 11), a: 1, col }); } };
   function jump(p){
-    if (state !== 'play') return;
+    if (state !== 'play' || paused) return;
     if (p.y === 0 && p.vy <= 0){ p.vy = JUMP_V * ST().speed; // 速いステージでは、ジャンプも同じ高さのまま速くなる
       soft(523, .12, .08); soft(784, .12, .06); puffs.push({ x: p.x, a: 1 }); dent(p.x, -.6); return; }
   }
@@ -775,18 +793,26 @@ GAMES.badminton = root => {
   const aim = e => { target = clamp(pt(e)[0], 24, NET - MARGIN); };
   // スマホ：タップしただけでは跳ばない。上にスワイプ・2回タップ（とジャンプボタン）でジャンプ。マウスはクリックでジャンプ
   let touch = null, lastTap = { t: 0, x: 0, y: 0 };
-  cv.onpointermove = e => { aim(e);
+  const btnPtr = {}; // ボタンをおしている指
+  cv.onpointermove = e => { if (btnPtr[e.pointerId]) return; aim(e);
     if (touch && e.pointerId === touch.id && !touch.jumped){ const [x, y] = pt(e), up = touch.y - y; // 上むきにスワイプしたときだけ（横や下、ななめの動きではジャンプしない）
       if (up > 28 && up > Math.abs(x - touch.x) * 1.5){ touch.jumped = true; jump(me); } } };
-  cv.onpointerdown = e => { if (state === 'intro'){ const [x, y] = pt(e); if (x > DOOR.x - 20 && x < DOOR.x + DOOR.w + 20 && y > DOOR.y - 60 && y < FLOOR) enter(); return; } aim(e);
+  cv.onpointerdown = e => { if (state === 'intro'){ const [x, y] = pt(e); if (x > DOOR.x - 20 && x < DOOR.x + DOOR.w + 20 && y > DOOR.y - 60 && y < FLOOR) enter(); return; }
+    { const [x, y] = pt(e);
+      if (onBtn('P', x, y) || paused){ if (state === 'play' || paused) paused = !paused; return; }
+      if (TOUCH && state === 'play'){ if (onBtn('L', x, y)){ btnPtr[e.pointerId] = 'ArrowLeft'; keys.ArrowLeft = true; target = me.x; return; }
+        if (onBtn('R', x, y)){ btnPtr[e.pointerId] = 'ArrowRight'; keys.ArrowRight = true; target = me.x; return; }
+        if (onBtn('J', x, y)){ jump(me); return; } } }
+    aim(e);
     if (e.pointerType === 'mouse'){ jump(me); return; }
     const [x, y] = pt(e), now = performance.now();
     touch = { id: e.pointerId, x, y, jumped: false };
     if (now - lastTap.t < 320 && Math.hypot(x - lastTap.x, y - lastTap.y) < 60){ touch.jumped = true; jump(me); lastTap.t = 0; } else lastTap = { t: now, x, y }; };
-  cv.onpointerup = cv.onpointercancel = e => { if (touch && e.pointerId === touch.id) touch = null; };
+  cv.onpointerup = cv.onpointercancel = e => { if (btnPtr[e.pointerId]){ keys[btnPtr[e.pointerId]] = false; delete btnPtr[e.pointerId]; } if (touch && e.pointerId === touch.id) touch = null; };
   onKey((e, d) => {
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight'){ keys[e.key] = d; e.preventDefault(); }
     if ((e.key === ' ' || e.key === 'ArrowUp') && d && !e.repeat){ e.preventDefault(); jump(me); }
+    if ((e.key === 'p' || e.key === 'P') && d && !e.repeat && state === 'play'){ paused = !paused; Object.keys(keys).forEach(k => keys[k] = false); }
   });
   function hit(p, dir){
     const incoming = (sh.smash || sh.fast) && sh.by === -dir; // あいてのスマッシュを打ち返すところ
@@ -798,7 +824,7 @@ GAMES.badminton = root => {
         smashes++; cpuCombo = 0; celebrate(true, true, d[2]); }
       else { sh.cpuMiss = sh.cpuSmash = sh.cpuJumpMiss = sh.cpuKaeshi = false; blocks = 0; combo = 0;
         cpuCombo++; fx(2, '#e4362b', sh.x, sh.y); bigText(cpuCombo >= 2 ? `あいての${cpuCombo}連続スマッシュ！` : 'あいてのスマッシュ返し！', cpuCombo >= 2 ? 'スマッシュ返し！' : '', '#e4362b', 22, sh.x, sh.y - 30); }
-      tone(1046, 0, .1, 'triangle', .08); tone(1568, .05, .14, 'sine', .06); rally++; best = Math.max(best, rally); p.swing = .25; return; } }
+      tone(1046, 0, .1, 'triangle', .08); tone(1568, .05, .14, 'sine', .06); rally++; best = Math.max(best, rally); p.swing = .25; p.act = { k: 'kaeshi', t: 0 }; return; } }
     const offServe = dir > 0 && sh.serve && sh.by === -1; sh.serve = false; // あいてのサーブを、そのまま打ち返すところ
     // スマッシュ：当てたところから、まっすぐ飛ぶ（とちゅうで向きは変わらない）。
     // ネットをこえてまっすぐ届く着地点のはんいを出して、はばがあるときは、うける人がいないところをねらう
@@ -832,10 +858,10 @@ GAMES.badminton = root => {
       // あいての球は天井に当たらない高さにおさえる（天井ではね返ってネットをこえないミスをしない）
       let up = rnd(290, 360); if (dir < 0) up = Math.min(up, Math.sqrt(2 * GR * Math.max(20, sh.y - CEIL - 16)));
       // ネットの近くで打つと、ふわっと短いドロップショット（ネットのすぐむこうに落ちる）
-      if (dir > 0 && p.y === 0 && p.x > NET - 100){ sh.vx = rnd(95, 125); up = rnd(205, 235); }
+      if (dir > 0 && p.y === 0 && p.x > NET - 100){ sh.vx = rnd(95, 125); up = rnd(205, 235); p.act = { k: 'drop', t: 0 }; }
       sh.vy = -up; sh.smash = false; sh.fast = false; soft(dir > 0 ? 880 : 700, .09, .07); if (dir > 0) celebrate(false, incoming); else cpuCombo = 0; }
     sh.by = dir; // 打った人は、あいてが打ち返すまでもう一度は当てない
-    rally++; best = Math.max(best, rally); p.swing = .25;
+    rally++; best = Math.max(best, rally); p.swing = .25; if (!(p.act && p.act.k === 'drop' && p.act.t === 0)) p.act = { k: smash ? 'smash' : incoming ? 'block' : 'hit', t: 0 };
   }
   // 技の名前と演出（lv が大きいほど、はでに）
   function fx(lv, col, x, y){ shake = Math.max(shakeT > 0 ? shake : 0, 2 + lv * 2); shakeT = .22 + lv * .05; flash = { c: col, a: .1 + lv * .05 };
@@ -892,6 +918,7 @@ GAMES.badminton = root => {
     later(() => { burst(W / 2, 70, 14, side ? '#fff6c8' : '#ffffff'); pops.push({ x: W / 2, y: 76, a: 1.2, txt: side ? 'あなたに1点！' : 'あいてに1点', c: side ? '#2e7fd0' : '#e4362b', size: 20, cloud: true }); if (side) chord([0, 4, 7]); }, 250);
   }
   loop(dt => {
+    if (paused){ draw(); return; }
     clock += dt;
     dents.forEach(d => d.t += dt); dents = dents.filter(d => d.t < 1.6);
     bits.forEach(b => { b.x += b.vx * dt; b.y += b.vy * dt; b.vy += 60 * dt; b.a -= dt * 1.4; }); bits = bits.filter(b => b.a > 0);
@@ -906,7 +933,7 @@ GAMES.badminton = root => {
         if (p.y > 0 || p.vy > 0){ p.vy -= JUMP_G * spd * spd * dt; p.y = Math.min(p.y + p.vy * dt, 210);
           if (p.y <= 0){ const hitV = -p.vy; p.y = 0; p.dj = false; dent(p.x, Math.min(1.2, hitV / 380)); puffs.push({ x: p.x, a: .8 });
             p.vy = hitV > 200 ? hitV * .2 : 0; if (p.vy > 0) p.y = .1; } }
-        p.swing = Math.max(0, p.swing - dt); });
+        p.swing = Math.max(0, p.swing - dt); if (p.act) p.act.t += dt; });
       // あいて：スマッシュをねらうときは、少し高いところで合わせにいく
       // あいて：打たれた瞬間に落ちるところへ歩きだす。ゆっくり加速・減速して、打ったあとは歩いて真ん中へもどる
       // シャトルが2このときは、さきにとどくほうを追いかける
@@ -926,6 +953,7 @@ GAMES.badminton = root => {
         if (s.wait > 0){ s.wait -= dt; continue; }
         const dts = dt * spd; // ステージが進むと、シャトルが速く飛ぶ
         if (!sh.smash){ sh.vy += GR * dts; sh.vx *= 1 - .22 * dts; } sh.x += sh.vx * dts; sh.y += sh.vy * dts;
+        (sh.tr = sh.tr || []).push([sh.x, sh.y]); if (sh.tr.length > 16) sh.tr.shift(); // 点線の軌跡
         if (Math.abs(sh.x - NET) < 5 && sh.y > NETTOP){ sh.x = NET + (sh.vx > 0 ? -6 : 6); sh.vx *= -.25; sh.smash = false; }
         // 雲の天井・かべ：ぽよんとはね返る
         if (sh.y < CEIL && !sh.smash){ sh.y = CEIL; sh.vy = Math.abs(sh.vy) * .45; burst(sh.x, CEIL - 4, 5); soft(740, .12, .07); pops.push({ x: sh.x, y: CEIL + 26, a: .9, txt: 'ぽよん', c: '#2e7fd0', size: 13 }); }
@@ -939,7 +967,7 @@ GAMES.badminton = root => {
         }
         if (sh.y >= FLOOR - 4){ point(sh.x < NET ? 0 : 1); break; }
       }
-      g.stat(`${stageLabel()}　あなた <b>${score[0]}</b> − <b>${score[1]}</b> あいて　ラリー ${rally}　スマッシュ <b>${smashes}</b>`);
+      g.stat(`ラリー ${rally}　スマッシュ <b>${smashes}</b>`);
     }
     if (state === 'clear'){ clearT += dt; if (clearT > clearDur()){ state = 'over'; end(); } }
     pops.forEach(p => { p.t = (p.t || 0) + dt; p.y -= (p.big ? 9 : 22) * dt; p.a -= dt * .8; }); pops = pops.filter(p => p.a > 0);
@@ -950,7 +978,7 @@ GAMES.badminton = root => {
   });
   // クリアの演出（POCHÉ RUN と同じノリ）：白い光 → 光の輪が広がる → きらきらがはじける → 大きな「クリア！」
   const clearDur = () => stage === FINAL ? 4 : 2.9; // 完全制覇のときは、コインが出るぶん長め
-  function startClear(){ state = 'clear'; clearT = 0; const X = me.x, Y = floorAt(me.x) - me.y - 40, bits2 = [];
+  function startClear(){ state = 'clear'; clearT = 0; const X = me.x, Y = SY(floorAt(me.x) - me.y - 40), bits2 = [];
     for (let i = 0; i < 46; i++){ const an = Math.PI * 2 * i / 46 + Math.random() * .5, sp = 32 * (1.6 + Math.random() * 2.6);
       bits2.push({ a: an, vx: Math.cos(an) * sp, vy: Math.sin(an) * sp - 20, r: 32 * (.1 + Math.random() * .13), sp: Math.random() * .35, c: ['#FFC53D', '#7FD8FF', '#FFFFFF', '#F4795B'][i % 4], star: i % 3 === 0 }); }
     clearFX = { x: X, y: Y, bits: bits2 };
@@ -967,59 +995,216 @@ GAMES.badminton = root => {
     else if (win) g.over(`<h5>${stageLabel()} クリア！</h5>${info}<p>つぎは「${stageDef(stage + 1).name}」。${stageDef(stage + 1).balls > ST().balls ? `シャトルが${stageDef(stage + 1).balls}こになるよ！ そのかわり、ゆっくり。` : 'シャトルが、すこし速くなるよ！'}</p>`, 'つぎのチャレンジへ', () => play(stage + 1));
     else g.over(`<h5>あいての勝ち</h5>${info}<p>${smashes ? `おしい！ もういちど、${stageLabel()}に挑戦しよう。` : 'シャトルが上がったら、ジャンプして高いところで当ててみよう。'}</p>`, 'もういちど', () => play(stage));
     addChooseBtn(); }
-  function racketMan(p, col, dir){
-    const base = floorAt(p.x), fy = base - p.y;
-    ctx.fillStyle = `rgba(80,100,140,${.16 - Math.min(p.y, 120) / 1200})`; ctx.beginPath(); ctx.ellipse(p.x, base + 2, 14 - p.y / 20, 4, 0, 0, 7); ctx.fill();
-    figure(ctx, p.x, fy, col, 2.1);
-    const up = p.y > SMASH_H, sw = p.swing > 0 ? 1 : 0, hx = p.x + dir * 10, hy = fy - 40;
-    const ax = p.x + dir * (up ? 16 : 24 - sw * 6), ay = racketY(p) + (up ? -10 : -2) + sw * 14;
-    ctx.strokeStyle = '#6a625c'; ctx.lineWidth = 2.6; ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(ax, ay); ctx.stroke();
-    ctx.beginPath(); ctx.ellipse(ax + dir * 3, ay - 10, 8, 11, dir * .3, 0, 7); ctx.stroke();
+  // 子どものキャラクター：走ると足が動き、ジャンプでひざをまげ、ラケットをかまえる
+  function racketMan(p, col, dir, isMe){
+    const base = SY(floorAt(p.x)), fy = base - p.y * KY, air = p.y > 2, up = p.y > SMASH_H, sw = p.swing > 0 ? 1 : 0;
+    const moving = Math.abs(p.x - (p.lx ?? p.x)) > .25; p.lx = p.x; p.run = (p.run || 0) + (moving && !air ? .3 : 0);
+    const bob = air ? 0 : moving ? Math.abs(Math.sin(p.run)) * 2 : Math.sin(clock * 3 + (isMe ? 0 : 1)) * .8;
+    const SKIN = '#ffd9bd', HAIR = '#4a2e1f', NAVY = '#2c3e66';
+    ctx.fillStyle = `rgba(70,110,160,${Math.max(.05, .22 - Math.min(p.y, 120) / 800)})`; ctx.beginPath(); ctx.ellipse(p.x, base + 2, Math.max(6, 18 - p.y / 14), 4.5, 0, 0, 7); ctx.fill();
+    // もらったイラストの子どもを、場面にあわせたコマで表示する（絵が読みこめていないときだけ、下の手がきの子ども）
+    if (KID_IMG.complete && KID_IMG.naturalWidth){
+      const act = p.act && p.act.t < .34 ? p.act : null, at = act ? act.t / .34 : 0;
+      const mine = shs.filter(x => x.wait <= 0 && (dir > 0 ? x.x < NET + 40 : x.x > NET - 40) && x.by !== dir && Math.abs(x.x - p.x) < 120);
+      const high = mine.some(x => SY(x.y) < fy - 46), low = !high && mine.some(x => SY(x.y) > fy - 30 && x.vy > 0);
+      // 0-5 移動／6 上でかまえ／9-12 ジャンプ／13 スマッシュ返し／14 ふりかぶり／15・16 スマッシュ／17・18 ふりおわり／19-21 かまえ・ブロック／22 ブロックした瞬間／23・24 レシーブ
+      const SEQ = { smash: [14, 15, 16], kaeshi: [13, 13, 17], hit: low ? [23, 24, 24] : [15, 16, 18], drop: [14, 18, 19], block: [21, 22, 22] };
+      // 走っているか：動いた速さを、なめらかにしてから決める（止まりかけで、走る／かまえるが行ったり来たりしないように）
+      p.spd = (p.spd || 0) * .8 + Math.abs(p.x - (p.lx2 ?? p.x)) * .2; p.lx2 = p.x; p.dist = (p.dist || 0) + Math.abs(p.x - (p.lx3 ?? p.x)); p.lx3 = p.x;
+      const want = air ? 'air' : high ? 'high' : low ? 'low' : p.spd > .6 ? 'run' : 'idle';
+      // ポーズは、少しのあいだ続ける（ジャンプはすぐ）
+      if (want !== p.pose && (want === 'air' || p.pose === 'air' || clock - (p.poseAt || 0) > .22)){ p.pose = want; p.poseAt = clock; }
+      let fi;
+      if (act){ const q2 = SEQ[act.k] || SEQ.hit; fi = q2[Math.min(q2.length - 1, Math.floor(at * q2.length))]; }
+      else if (p.pose === 'air') fi = p.vy > 0 ? 9 : 10;
+      else if (p.pose === 'high') fi = 6;
+      else if (p.pose === 'low') fi = 23;
+      else if (p.pose === 'run') fi = Math.floor(p.dist / 14) % 6;
+      else fi = 19;
+      const red = dir < 0 && RED_IMG.complete && RED_IMG.naturalWidth > 0, F = red ? RED_FRAMES[fi] : KID_FRAMES[fi], k = .44 * F[5];
+      ctx.save(); ctx.translate(p.x, fy + 2); ctx.scale(red ? k : dir * k, k);
+      ctx.drawImage(red ? RED_IMG : dir > 0 ? KID_IMG : (KID_RED || KID_IMG), F[0], F[1], F[2], F[3], -F[4], -F[3], F[2], F[3]); ctx.restore();
+      if (isMe){ const ty = fy - 90 + Math.sin(clock * 4) * 2; ctx.fillStyle = '#2e7fd0'; ctx.beginPath(); ctx.moveTo(p.x - 7, ty - 6); ctx.lineTo(p.x + 7, ty - 6); ctx.lineTo(p.x, ty + 3); ctx.closePath(); ctx.fill(); }
+      return; }
+    const crouch = !air && shs.some(x => x.wait <= 0 && x.by !== dir && Math.abs(x.x - p.x) < 110 && SY(x.y) > fy - 34 && x.vy > 0 && (dir > 0 ? x.x < NET : x.x > NET)) ? 5 : 0;
+    const hipY = fy - 22 - bob + crouch, shY = hipY - 22, hdY = shY - 15;
+    // 足とくつ
+    const lg = moving && !air ? Math.sin(p.run) * 7 : 0;
+    const feet = air ? [[p.x - dir * 8, fy - 8], [p.x + dir * 5, fy - 3]] : [[p.x - 6 + lg, fy], [p.x + 6 - lg, fy]];
+    ctx.strokeStyle = SKIN; ctx.lineWidth = 5; ctx.lineCap = 'round';
+    feet.forEach(([x, y], k) => { ctx.beginPath(); ctx.moveTo(p.x + (k ? 4 : -4), hipY + 4); ctx.lineTo(x, y - 3); ctx.stroke(); });
+    feet.forEach(([x, y]) => { ctx.fillStyle = '#fff'; ctx.strokeStyle = '#2e7fd0'; ctx.lineWidth = 1.5; rr(ctx, x - 5 + dir * 1, y - 5, 10, 6, 3); ctx.fill(); ctx.stroke(); });
+    // 半ズボンとシャツ
+    ctx.fillStyle = NAVY; rr(ctx, p.x - 9, hipY - 3, 18, 10, 3); ctx.fill();
+    ctx.fillStyle = col; rr(ctx, p.x - 10, shY - 2, 20, hipY - shY + 4, 6); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.25)'; rr(ctx, p.x - 8, shY, 5, hipY - shY - 2, 3); ctx.fill();
+    // うしろの手
+    ctx.strokeStyle = SKIN; ctx.lineWidth = 4.5; ctx.beginPath(); ctx.moveTo(p.x - dir * 6, shY + 4); ctx.lineTo(p.x - dir * 13, shY + (air ? -2 : 12)); ctx.stroke();
+    // あたま
+    ctx.fillStyle = SKIN; ctx.beginPath(); ctx.arc(p.x, hdY, 13, 0, 7); ctx.fill();
+    ctx.fillStyle = HAIR; ctx.beginPath(); ctx.arc(p.x - dir * 1, hdY - 2, 13.5, Math.PI * .95, Math.PI * 2.05); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(p.x - dir * 9, hdY - 1, 5, 8, 0, 0, 7); ctx.fill(); // うしろがみ
+    ctx.beginPath(); ctx.moveTo(p.x + dir * 2, hdY - 15); ctx.quadraticCurveTo(p.x + dir * 10, hdY - 20, p.x + dir * 8, hdY - 12); ctx.fill(); // はねた毛
+    ctx.fillStyle = SKIN; ctx.beginPath(); ctx.arc(p.x - dir * 4, hdY + 1, 3, 0, 7); ctx.fill(); // みみ
+    ctx.fillStyle = '#3a2a22'; ctx.beginPath(); ctx.ellipse(p.x + dir * 6, hdY + 1, 1.8, 2.4, 0, 0, 7); ctx.fill();
+    ctx.fillStyle = 'rgba(240,130,130,.45)'; ctx.beginPath(); ctx.ellipse(p.x + dir * 4, hdY + 6, 3, 2, 0, 0, 7); ctx.fill();
+    ctx.strokeStyle = '#a0523a'; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.arc(p.x + dir * 9, hdY + 6, 2.5, dir > 0 ? .2 : Math.PI - 1.4, dir > 0 ? 1.4 : Math.PI - .2); ctx.stroke();
+    // ラケットの手とラケット：ふだんは胸の前でかまえ、シャトルが来たら上げ、低いシャトルは下でうける。打ったときは技ごとにふる
+    const sx = p.x + dir * 6, sy = shY + 4, ease = t => 1 - Math.pow(1 - t, 3);
+    const mine = shs.filter(x => x.wait <= 0 && (dir > 0 ? x.x < NET + 40 : x.x > NET - 40) && x.by !== dir && Math.abs(x.x - p.x) < 120);
+    const high = mine.some(x => SY(x.y) < fy - 46), low = !high && mine.some(x => SY(x.y) > fy - 30 && x.vy > 0);
+    const act = p.act && p.act.t < .34 ? p.act : null, at = act ? ease(act.t / .34) : 0;
+    let tx, ty, ang = null;
+    if (act && (act.k === 'smash' || act.k === 'kaeshi')){ ang = -2.5 + 2.9 * at; }
+    else if (act && act.k === 'hit'){ ang = -1.9 + 1.6 * at; }
+    else if (act && act.k === 'drop'){ ang = -1.2 + .7 * at; }
+    else if (act && act.k === 'block'){ tx = p.x + dir * (20 + 6 * Math.sin(at * Math.PI)); ty = shY + 6; }
+    else if (air){ tx = p.x + dir * 12; ty = hdY - 24; }
+    else if (high){ tx = p.x + dir * (up ? 16 : 24 - sw * 6); ty = SY(racketY(p)) + (up ? -10 : -2) + sw * 14; }
+    else if (low){ tx = p.x + dir * 24; ty = fy - 20; }
+    else { tx = p.x + dir * 18; ty = shY + 6; }
+    if (ang !== null){ const L = 27; tx = sx + dir * Math.cos(ang) * L; ty = sy + Math.sin(ang) * L; }
+    if (p.hx === undefined){ p.hx = tx; p.hy = ty; } const fol = act ? .6 : .3; p.hx += (tx - p.hx) * fol; p.hy += (ty - p.hy) * fol;
+    const hx = p.hx, hy = p.hy;
+    // ふったあとの「シュッ」という線
+    if (act && act.k !== 'block'){ const col = act.k === 'kaeshi' ? '242,162,12' : act.k === 'smash' ? '255,255,255' : '200,225,250', a0 = act.k === 'smash' || act.k === 'kaeshi' ? -2.5 : act.k === 'drop' ? -1.2 : -1.9, a1 = a0 + (ang - a0);
+      ctx.save(); ctx.globalAlpha = (1 - act.t / .34) * .9; ctx.strokeStyle = `rgba(${col},1)`; ctx.lineWidth = act.k === 'drop' ? 3 : 7; ctx.lineCap = 'round'; ctx.beginPath();
+      const R2 = 44; if (dir > 0) ctx.arc(sx, sy, R2, a0, a1); else ctx.arc(sx, sy, R2, Math.PI - a1, Math.PI - a0); ctx.stroke();
+      if (act.k === 'smash' || act.k === 'kaeshi'){ ctx.strokeStyle = act.k === 'kaeshi' ? 'rgba(242,162,12,.5)' : 'rgba(46,127,208,.45)'; ctx.lineWidth = 2.5; ctx.beginPath(); if (dir > 0) ctx.arc(sx, sy, R2 + 7, a0 + .2, a1); else ctx.arc(sx, sy, R2 + 7, Math.PI - a1, Math.PI - a0 - .2); ctx.stroke(); }
+      ctx.restore(); }
+    ctx.strokeStyle = SKIN; ctx.lineWidth = 4.5; ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(hx, hy); ctx.stroke();
+    // ラケットは腕の先に。かまえているときは、上むきにたてる
+    const armA = Math.atan2(hy - sy, hx - sx), tilt = act && act.k !== 'block' ? 0 : -dir * .9, rA = armA + tilt;
+    const rx = hx + Math.cos(rA) * 15, ry = hy + Math.sin(rA) * 15, rot = rA + Math.PI / 2;
+    ctx.strokeStyle = '#5a5a66'; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(hx + Math.cos(rA) * 6, hy + Math.sin(rA) * 6); ctx.stroke();
+    ctx.save(); ctx.translate(rx, ry); ctx.rotate(rot);
+    ctx.fillStyle = 'rgba(255,255,255,.55)'; ctx.beginPath(); ctx.ellipse(0, 0, 7.5, 10.5, 0, 0, 7); ctx.fill();
+    ctx.save(); ctx.clip(); ctx.strokeStyle = 'rgba(90,90,110,.45)'; ctx.lineWidth = .8; for (let k = -6; k <= 6; k += 3){ ctx.beginPath(); ctx.moveTo(k, -11); ctx.lineTo(k, 11); ctx.stroke(); ctx.beginPath(); ctx.moveTo(-8, k); ctx.lineTo(8, k); ctx.stroke(); } ctx.restore();
+    ctx.strokeStyle = '#3d4f7a'; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.ellipse(0, 0, 7.5, 10.5, 0, 0, 7); ctx.stroke(); ctx.restore();
+    // ブロック：ラケットのまわりに、はじいたしるし
+    if (act && act.k === 'block'){ ctx.strokeStyle = 'rgba(46,127,208,' + (1 - act.t / .34) + ')'; ctx.lineWidth = 2; ctx.lineCap = 'round';
+      [-.6, 0, .6].forEach(o => { const a2 = (dir > 0 ? 0 : Math.PI) + o; ctx.beginPath(); ctx.moveTo(rx + Math.cos(a2) * 14, ry + Math.sin(a2) * 14); ctx.lineTo(rx + Math.cos(a2) * 21, ry + Math.sin(a2) * 21); ctx.stroke(); }); }
+    ctx.lineCap = 'butt';
+    // あなたのしるし
+    if (isMe){ const ty = hdY - 26 + Math.sin(clock * 4) * 2; ctx.fillStyle = '#2e7fd0'; ctx.beginPath(); ctx.moveTo(p.x - 7, ty - 6); ctx.lineTo(p.x + 7, ty - 6); ctx.lineTo(p.x, ty + 3); ctx.closePath(); ctx.fill(); }
   }
+  // 背景はもらったイラスト（雲の部屋とネット）をそのまま使う。絵のネット（中央 x≈683／上のテープ y≈388）と床（ポールの下 y≈539）に、
+  // ゲームの「ネット」「床」がかさなるように、たての位置だけ SY() で絵にあわせる（ゲームの動きそのものは変えない）
+  const roomImg = BAD_ROOM;
+  const IMG_W = 640, IMG_H = 640 * 752 / 1360, IMG_X = -1.6, IMG_Y = -6;
+  const useImg = () => roomImg.complete && roomImg.naturalWidth > 0;
+  let KY = 1, FS = FLOOR;
+  const SY = y => FS - (FLOOR - y) * KY;
+  const TOUCH = matchMedia('(pointer: coarse)').matches;
+  const BTN = { L: { x: 46, y: H - 42, r: 24 }, R: { x: 104, y: H - 42, r: 24 }, J: { x: W - 48, y: H - 42, r: 27 }, P: { x: W - 24, y: 24, r: 15 } };
+  const onBtn = (k, x, y) => Math.hypot(x - BTN[k].x, y - BTN[k].y) < BTN[k].r + 6;
+  let paused = false;
+  function pill(x, y, w, h){ ctx.save(); ctx.shadowColor = 'rgba(46,127,208,.25)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 2; ctx.fillStyle = 'rgba(255,255,255,.96)'; rr(ctx, x, y, w, h, h / 2); ctx.fill(); ctx.restore();
+    ctx.strokeStyle = 'rgba(46,127,208,.18)'; ctx.lineWidth = 1; rr(ctx, x, y, w, h, h / 2); ctx.stroke(); }
+  function roundBtn(b, held){ ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.beginPath(); ctx.arc(b.x, b.y, b.r + 5, 0, 7); ctx.fill();
+    ctx.fillStyle = held ? '#1d64ad' : '#2e7fd0'; ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, 7); ctx.fill(); }
+  function arrow(x, y, ang, col = '#fff'){ ctx.save(); ctx.translate(x, y); ctx.rotate(ang); ctx.strokeStyle = col; ctx.lineWidth = 4.5; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(-9, 0); ctx.lineTo(9, 0); ctx.moveTo(1, -8); ctx.lineTo(9, 0); ctx.lineTo(1, 8); ctx.stroke(); ctx.restore(); }
+  function drawHud(){
+    ctx.textBaseline = 'middle';
+    // タイトル
+    if (hudOk('logo')){ const lh = 34; ctx.drawImage(HUD_IMG.logo, 6, 7, lh * HUD_IMG.logo.naturalWidth / HUD_IMG.logo.naturalHeight, lh); }
+    else { pill(10, 9, 150, 30); ctx.fillStyle = '#2e7fd0'; ctx.font = '800 14px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'left'; ctx.fillText('雲でバドミントン', 30, 24); }
+    // 点数：絵の まるの中の数字を、いまの点数に書きかえる
+    const cx = W / 2;
+    if (hudOk('score')){ const sh2 = 32, sc2 = sh2 / HUD_SCORE.h, sw2 = HUD_SCORE.w * sc2, sx2 = cx - sw2 / 2, sy2 = 8;
+      ctx.drawImage(HUD_IMG.score, sx2, sy2, sw2, sh2);
+      [[HUD_SCORE.blue, score[0]], [HUD_SCORE.red, score[1]]].forEach(([c, v]) => { const x = sx2 + c[0] * sc2, y = sy2 + c[1] * sc2, r = c[2] * sc2;
+        ctx.fillStyle = `rgb(${c[3].join(',')})`; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.font = '800 15px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.fillText(v, x, y + 1); }); }
+    else { pill(cx - 96, 8, 192, 32); ctx.font = '800 15px "Zen Maru Gothic", sans-serif'; ctx.fillStyle = '#2e7fd0'; ctx.textAlign = 'center'; ctx.fillText(`あなた ${score[0]} − ${score[1]} あいて`, cx, 24); }
+    // ステージと一時停止
+    const lab = stageLabel(); ctx.font = '800 12px "Zen Maru Gothic", sans-serif'; const lw = ctx.measureText(lab).width + 26;
+    pill(W - 48 - lw, 10, lw, 28); ctx.fillStyle = '#2e7fd0'; ctx.textAlign = 'center'; ctx.fillText(lab, W - 48 - lw / 2, 24);
+    if (hudOk('pause') && !paused) ctx.drawImage(HUD_IMG.pause, BTN.P.x - 17, BTN.P.y - 17, 34, 34);
+    else { ctx.fillStyle = 'rgba(255,255,255,.95)'; ctx.beginPath(); ctx.arc(BTN.P.x, BTN.P.y, BTN.P.r, 0, 7); ctx.fill(); ctx.strokeStyle = '#2e7fd0'; ctx.lineWidth = 2; ctx.stroke(); }
+    ctx.fillStyle = '#2e7fd0'; if (hudOk('pause') && !paused){} else if (paused){ ctx.beginPath(); ctx.moveTo(BTN.P.x - 4, BTN.P.y - 6); ctx.lineTo(BTN.P.x + 6, BTN.P.y); ctx.lineTo(BTN.P.x - 4, BTN.P.y + 6); ctx.closePath(); ctx.fill(); }
+    else { rr(ctx, BTN.P.x - 5.5, BTN.P.y - 6, 4, 12, 1.5); ctx.fill(); rr(ctx, BTN.P.x + 1.5, BTN.P.y - 6, 4, 12, 1.5); ctx.fill(); }
+    // スマホ：左右と、ジャンプのボタン
+    if (TOUCH && state === 'play'){ roundBtn(BTN.L, keys.ArrowLeft); arrow(BTN.L.x, BTN.L.y, Math.PI); roundBtn(BTN.R, keys.ArrowRight); arrow(BTN.R.x, BTN.R.y, 0); roundBtn(BTN.J, me.y > 0); arrow(BTN.J.x, BTN.J.y, -Math.PI / 2); }
+    // パソコン：さいしょだけ、操作のしかた
+    if (!TOUCH && state === 'play' && (stageT < 7 || paused)){ ctx.globalAlpha = paused ? 1 : Math.min(1, (7 - stageT) * 1.5);
+      const py = H - 33; pill(10, py - 13, 300, 28); ctx.fillStyle = '#2e7fd0'; ctx.textAlign = 'left';
+      arrow(25, py + 1, Math.PI, '#2e7fd0'); arrow(43, py + 1, 0, '#2e7fd0'); ctx.font = '800 11px "Zen Maru Gothic", sans-serif'; ctx.fillText('左右に移動', 58, py - 3); ctx.font = '700 8px "Zen Maru Gothic", sans-serif'; ctx.fillStyle = '#5a7fa8'; ctx.fillText('マウス・キーボード', 58, py + 8);
+      ctx.fillStyle = 'rgba(46,127,208,.25)'; ctx.fillRect(150, py - 8, 1, 18);
+      ctx.fillStyle = '#2e7fd0'; ctx.beginPath(); ctx.arc(170, py + 1, 9.5, 0, 7); ctx.fill(); ctx.save(); ctx.translate(170, py + 1); ctx.scale(.55, .55); arrow(0, 0, -Math.PI / 2); ctx.restore();
+      ctx.fillStyle = '#2e7fd0'; ctx.font = '800 11px "Zen Maru Gothic", sans-serif'; ctx.fillText('ジャンプ', 186, py - 3); ctx.font = '700 8px "Zen Maru Gothic", sans-serif'; ctx.fillStyle = '#5a7fa8'; ctx.fillText('スペースキー・クリック', 186, py + 8); ctx.globalAlpha = 1; }
+    if (paused){ ctx.fillStyle = 'rgba(255,255,255,.55)'; ctx.fillRect(0, 44, W, H - 44); ctx.fillStyle = '#2e7fd0'; ctx.textAlign = 'center'; ctx.font = '900 26px "Zen Maru Gothic", sans-serif'; ctx.fillText('いちじていし', W / 2, H / 2 - 10);
+      ctx.font = '700 13px "Zen Maru Gothic", sans-serif'; ctx.fillText('もういちど おすと、つづきから', W / 2, H / 2 + 18); }
+    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic'; }
   function drawRoom(){
-    const sky = ctx.createLinearGradient(0, 0, 0, H); sky.addColorStop(0, ST().sky[0]); sky.addColorStop(1, ST().sky[1]); ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
-    // 遠くの雲
-    [[90, 96, 22], [250, 70, 18], [420, 88, 24], [560, 112, 18]].forEach(([x, y, r], k) => puff(ctx, x + Math.sin(clock * .2 + k) * 10, y, r, 'rgba(255,255,255,.7)'));
-    // 天井とかべの雲
-    for (let x = -10; x < W + 30; x += 34) puff(ctx, x, 4 + Math.sin(x * .05) * 3, 20, '#ffffff');
-    for (let y = 20; y < FLOOR; y += 36){ puff(ctx, -4, y, 16, '#ffffff'); puff(ctx, W + 4, y + 14, 16, '#ffffff'); }
-    ctx.fillStyle = 'rgba(46,127,208,.16)'; ctx.fillRect(24, HITY - SMASH_H - 2, NET - MARGIN - 24, 2);
-    ctx.fillStyle = 'rgba(46,127,208,.45)'; ctx.font = '700 10px "Zen Maru Gothic", sans-serif'; ctx.fillText('ここより上でスマッシュ', 28, HITY - SMASH_H - 6);
+    const BX0 = 118, BX1 = 522, BY0 = 50, BY1 = 248, lerp = (a, b, t) => a + (b - a) * t;
+    if (useImg()){ KY = .71; FS = 247.6; ctx.drawImage(roomImg, IMG_X, IMG_Y, IMG_W, IMG_H); } else { KY = 1; FS = FLOOR;
+    // 雲に包まれた部屋：おくのかべ・天井・左右のかべ・ゆかを、奥行きがあるようにかく
+    const base = ctx.createLinearGradient(0, 0, 0, H); base.addColorStop(0, '#bcdcf7'); base.addColorStop(1, '#e4f2fd'); ctx.fillStyle = base; ctx.fillRect(0, 0, W, H);
+    const back = ctx.createLinearGradient(0, BY0, 0, BY1); back.addColorStop(0, '#9fcdf3'); back.addColorStop(1, ST().sky[1]); ctx.fillStyle = back; ctx.fillRect(BX0, BY0, BX1 - BX0, BY1 - BY0);
+    ctx.fillStyle = ST().sky[0]; ctx.globalAlpha = .35; ctx.fillRect(BX0, BY0, BX1 - BX0, BY1 - BY0); ctx.globalAlpha = 1;
+    [[200, 120, 20], [300, 96, 14], [440, 130, 22], [370, 190, 12], [170, 200, 14], [480, 210, 16]].forEach(([x, y, r], k) => puff(ctx, x + Math.sin(clock * .2 + k) * 6, y, r, 'rgba(255,255,255,.85)'));
+    const poly = (pts, col) => { ctx.fillStyle = col; ctx.beginPath(); pts.forEach(([x, y], k) => k ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.closePath(); ctx.fill(); };
+    poly([[0, 0], [W, 0], [BX1, BY0], [BX0, BY0]], '#d3e9fb');
+    poly([[0, 0], [BX0, BY0], [BX0, BY1], [0, H]], '#d7ebfb');
+    poly([[W, 0], [BX1, BY0], [BX1, BY1], [W, H]], '#d7ebfb');
+    poly([[BX0, BY1], [BX1, BY1], [W + 60, H], [-60, H]], '#f2f8fe');
+    // かべと天井の雲（ふわふわ）
+    for (let x = -10; x < W + 30; x += 30) puff(ctx, x, 8 + Math.sin(x * .07) * 4, 22, '#ffffff');
+    for (let y = 30; y < H; y += 30){ const k = y / H; puff(ctx, 14 + k * 20, y, 22 - k * 4, '#ffffff'); puff(ctx, W - 14 - k * 20, y + 10, 22 - k * 4, '#ffffff'); }
+    for (let x = BX0; x <= BX1; x += 26) puff(ctx, x, BY0 + 4, 9, 'rgba(255,255,255,.9)');
+    // コートの線（奥ほどせまい）
+    const edge = (t, side) => side ? lerp(BX1 - 14, W - 34, t) : lerp(BX0 + 14, 34, t), yAt = t => lerp(BY1 + 8, H - 12, t);
+    ctx.strokeStyle = 'rgba(150,195,235,.85)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(edge(0, 0), yAt(0)); ctx.lineTo(edge(0, 1), yAt(0)); ctx.lineTo(edge(1, 1), yAt(1)); ctx.lineTo(edge(1, 0), yAt(1)); ctx.closePath(); ctx.stroke();
+    [.32, .62].forEach(t => { ctx.beginPath(); ctx.moveTo(edge(t, 0), yAt(t)); ctx.lineTo(edge(t, 1), yAt(t)); ctx.stroke(); });
+    [.25, .75].forEach(u => { ctx.beginPath(); ctx.moveTo(lerp(edge(0, 0), edge(0, 1), u), yAt(0)); ctx.lineTo(lerp(edge(1, 0), edge(1, 1), u), yAt(1)); ctx.stroke(); });
+    }
     // ふわふわのゆか（へこむ）
-    ctx.fillStyle = '#e6f0fa'; ctx.fillRect(0, FLOOR + 30, W, H);
-    ctx.fillStyle = '#ffffff'; for (let x = -20; x < W + 40; x += 30){ ctx.beginPath(); ctx.arc(x, floorAt(x) + 20, 26, 0, 7); ctx.fill(); }
-    puffs.forEach(p => { ctx.globalAlpha = p.a; puff(ctx, p.x - 16, floorAt(p.x) + 2, 7); puff(ctx, p.x + 16, floorAt(p.x) + 2, 7); }); ctx.globalAlpha = 1;
-    ctx.strokeStyle = 'rgba(46,127,208,.25)'; ctx.lineWidth = 2; ctx.beginPath(); for (let x = 24; x <= W - 24; x += 8) { const y = floorAt(x); x === 24 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); } ctx.stroke();
-    // 雲のネット
-    ctx.fillStyle = '#c9d8ea'; ctx.fillRect(NET - 2, NETTOP, 4, FLOOR - NETTOP);
-    ctx.strokeStyle = 'rgba(90,110,140,.4)'; ctx.lineWidth = 1;
-    for (let y = NETTOP + 4; y < NETTOP + 46; y += 7){ ctx.beginPath(); ctx.moveTo(NET - 14, y); ctx.lineTo(NET + 14, y); ctx.stroke(); }
-    puff(ctx, NET, NETTOP - 2, 7, '#ffffff');
-    if (me){ racketMan(me, '#2e7fd0', 1); racketMan(cpu, '#e4362b', -1); }
+    puffs.forEach(p => { ctx.globalAlpha = p.a; puff(ctx, p.x - 16, SY(floorAt(p.x)) + 2, 7); puff(ctx, p.x + 16, SY(floorAt(p.x)) + 2, 7); }); ctx.globalAlpha = 1;
+    if (dents.length){ ctx.strokeStyle = 'rgba(46,127,208,.18)'; ctx.lineWidth = 2; ctx.beginPath(); for (let x = 24; x <= W - 24; x += 8){ const y = SY(floorAt(x)) + 4; x === 24 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); } ctx.stroke(); }
+    ctx.fillStyle = 'rgba(46,127,208,.12)'; ctx.fillRect(24, SY(HITY - SMASH_H) - 2, NET - MARGIN - 24, 2);
+    ctx.fillStyle = 'rgba(46,127,208,.35)'; ctx.font = '700 10px "Zen Maru Gothic", sans-serif'; ctx.fillText('ここより上でスマッシュ', 28, SY(HITY - SMASH_H) - 6);
+    if (!useImg()){
+    // ネット：手前と奥のポールのあいだに、あみ
+    const P0 = [NET - 18, NETTOP - 12, BY1 + 18], P1 = [NET + 18, NETTOP + 10, FLOOR + 14];
+    ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.beginPath(); ctx.moveTo(P0[0], P0[1]); ctx.lineTo(P1[0], P1[1]); ctx.lineTo(P1[0], P1[1] + 46); ctx.lineTo(P0[0], P0[1] + 36); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = 'rgba(80,140,205,.55)'; ctx.lineWidth = .9;
+    for (let k = 1; k < 9; k++){ const t = k / 9; ctx.beginPath(); ctx.moveTo(lerp(P0[0], P1[0], t), lerp(P0[1], P1[1], t)); ctx.lineTo(lerp(P0[0], P1[0], t), lerp(P0[1] + 36, P1[1] + 46, t)); ctx.stroke(); }
+    for (let k = 1; k < 6; k++){ const t = k / 6; ctx.beginPath(); ctx.moveTo(P0[0], P0[1] + 36 * t); ctx.lineTo(P1[0], P1[1] + 46 * t); ctx.stroke(); }
+    ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(P0[0], P0[1]); ctx.lineTo(P1[0], P1[1]); ctx.stroke();
+    [P0, P1].forEach(([x, y0, y1]) => { ctx.fillStyle = '#2e7fd0'; rr(ctx, x - 3.5, y0 - 4, 7, y1 - y0 + 4, 3); ctx.fill(); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x, y0 - 4, 4.5, 0, 7); ctx.fill(); });
+    // 手前の雲
+    for (let x = -20; x < W + 40; x += 34) puff(ctx, x, H + 8 + Math.sin(x * .09) * 3, 18, '#ffffff');
+    }
+    if (me){ racketMan(cpu, '#e4362b', -1, false); racketMan(me, '#2e7fd0', 1, true); }
     if (state !== 'intro') shs.forEach((s, k) => {
       const down = sink && sink.s === s, sk = down ? Math.min(1, sink.t * 2) : 0;
       if (s.wait > 0 && !down && k > 0) ctx.globalAlpha = .35; // 2こめは、飛んでくるまでうすく
-      if (!down){ ctx.fillStyle = 'rgba(80,100,140,.12)'; ctx.beginPath(); ctx.ellipse(s.x, floorAt(s.x) + 2, 8, 2.5, 0, 0, 7); ctx.fill(); }
-      if ((s.smash || s.fast) && !down){ ctx.strokeStyle = 'rgba(228,54,43,.35)'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(s.x - s.vx * .06, s.y - s.vy * .06); ctx.stroke(); }
-      ctx.save(); ctx.globalAlpha *= 1 - sk * .7; ctx.translate(down ? sink.x : s.x, (down ? sink.y : s.y) + sk * 12); ctx.rotate(down ? Math.PI / 2 : Math.atan2(s.vy, s.vx));
+      if (!down){ ctx.fillStyle = 'rgba(80,100,140,.12)'; ctx.beginPath(); ctx.ellipse(s.x, SY(floorAt(s.x)) + 2, 8, 2.5, 0, 0, 7); ctx.fill(); }
+      if (s.tr && s.tr.length > 2 && !down && s.wait <= 0){ ctx.save(); ctx.setLineDash([5, 6]); ctx.strokeStyle = s.smash || s.fast ? 'rgba(228,54,43,.5)' : 'rgba(255,255,255,.9)'; ctx.lineWidth = 2; ctx.beginPath(); s.tr.forEach(([x, y], k) => k ? ctx.lineTo(x, SY(y)) : ctx.moveTo(x, SY(y))); ctx.stroke(); ctx.restore(); }
+      if ((s.smash || s.fast) && !down){ ctx.strokeStyle = 'rgba(228,54,43,.35)'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(s.x, SY(s.y)); ctx.lineTo(s.x - s.vx * .06, SY(s.y - s.vy * .06)); ctx.stroke(); }
+      ctx.save(); ctx.globalAlpha *= 1 - sk * .7; ctx.translate(down ? sink.x : s.x, SY(down ? sink.y : s.y) + sk * 12); ctx.rotate(down ? Math.PI / 2 : Math.atan2(s.vy * KY, s.vx));
       ctx.fillStyle = '#fff'; ctx.strokeStyle = '#3a3330'; ctx.lineWidth = 1.2;
       ctx.beginPath(); ctx.moveTo(6, 0); ctx.lineTo(-9, -6); ctx.lineTo(-9, 6); ctx.closePath(); ctx.fill(); ctx.stroke();
       ctx.fillStyle = ['#e4362b', '#2e7fd0', '#2f9a48', '#f2a20c'][k % 4]; ctx.beginPath(); ctx.arc(6, 0, 3, 0, 7); ctx.fill(); ctx.restore(); ctx.globalAlpha = 1;
-      if (down){ puff(ctx, sink.x - 10, floorAt(sink.x) + 4, 8, '#ffffff'); puff(ctx, sink.x + 10, floorAt(sink.x) + 4, 8, '#ffffff'); }
+      if (down){ puff(ctx, sink.x - 10, SY(floorAt(sink.x)) + 4, 8, '#ffffff'); puff(ctx, sink.x + 10, SY(floorAt(sink.x)) + 4, 8, '#ffffff'); }
     });
-    bits.forEach(b => { ctx.globalAlpha = Math.max(0, b.a); ctx.fillStyle = b.col; ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, 7); ctx.fill(); }); ctx.globalAlpha = 1;
+    bits.forEach(b => { ctx.globalAlpha = Math.max(0, b.a); ctx.fillStyle = b.col; ctx.beginPath(); ctx.arc(b.x, SY(b.y), b.r, 0, 7); ctx.fill(); }); ctx.globalAlpha = 1;
     ctx.textAlign = 'center';
     pops.forEach(p => { ctx.globalAlpha = Math.min(1, p.a);
-      if (p.cloud){ puff(ctx, p.x, p.y - 6, 26, 'rgba(255,255,255,.95)'); }
+      const py = SY(p.y); if (p.cloud){ puff(ctx, p.x, py - 6, 26, 'rgba(255,255,255,.95)'); }
       const sz = (p.size || 20) * (p.big && p.t < .18 ? 1 + (1 - p.t / .18) * .8 : 1);
       ctx.fillStyle = p.c || '#e4362b'; ctx.font = `900 ${sz}px "Zen Maru Gothic", sans-serif`;
-      if (p.big){ ctx.lineJoin = 'round'; ctx.lineWidth = 6; ctx.strokeStyle = 'rgba(255,255,255,.95)'; ctx.strokeText(p.txt, p.x, p.y); }
-      ctx.fillText(p.txt, p.x, p.y); }); ctx.globalAlpha = 1;
+      if (p.big){ ctx.lineJoin = 'round'; ctx.lineWidth = 6; ctx.strokeStyle = 'rgba(255,255,255,.95)'; ctx.strokeText(p.txt, p.x, py); }
+      ctx.fillText(p.txt, p.x, py); }); ctx.globalAlpha = 1;
     if (state === 'play' && shs[0] && shs[0].wait > 0 && !sink){ ctx.fillStyle = 'rgba(46,127,208,.8)'; ctx.font = '700 18px "Zen Maru Gothic", sans-serif'; ctx.fillText('サーブ！', W / 2, 120); }
     { const left = shs.filter(x => x.wait > 0).length; if (state === 'play' && left > 0 && shs[0].wait <= 0 && !sink){ ctx.fillStyle = 'rgba(228,54,43,.8)'; ctx.font = '700 16px "Zen Maru Gothic", sans-serif'; ctx.fillText(left > 1 ? `あと${left}こ来るよ！` : 'もう1こ来るよ！', W / 2, 120); } }
     // ステージのはじめに、ステージの名前
     if (state === 'play' && stageT < 2.2 && score[0] + score[1] === 0){ ctx.globalAlpha = Math.min(1, (2.2 - stageT) * 2); puff(ctx, W / 2, 74, 34, 'rgba(255,255,255,.95)'); ctx.fillStyle = '#2e7fd0'; ctx.font = '900 20px "Zen Maru Gothic", sans-serif'; ctx.fillText(ST().name, W / 2, 82); ctx.globalAlpha = 1; }
     ctx.textAlign = 'left';
+    if (state !== 'intro' && state !== 'enter') drawHud();
   }
   // 「部屋に入る」：ろうかのドアがひらいて、雲の部屋へ
   function drawHall(){
@@ -1031,8 +1216,11 @@ GAMES.badminton = root => {
     ctx.fillStyle = '#fff'; rr(ctx, DOOR.x + 4, DOOR.y - 50, DOOR.w - 8, 30, 15); ctx.fill();
     ctx.fillStyle = '#2a9fd3'; ctx.font = '900 15px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.fillText('くもの部屋', DOOR.x + DOOR.w / 2, DOOR.y - 30); ctx.textAlign = 'left';
     if (state === 'intro'){ const p = .5 + .5 * Math.sin(clock * 3); ctx.textAlign = 'center';
-      ctx.fillStyle = '#3a3330'; ctx.font = '700 14px "Zen Maru Gothic", sans-serif'; ctx.fillText('この部屋に入ると、すぐにバドミントンの試合ができます', W / 2, 30);
-      ctx.fillStyle = '#7a716c'; ctx.font = '700 12px "Zen Maru Gothic", sans-serif'; ctx.fillText('ゆかもかべも天井も、ふわふわの雲', W / 2, 50); ctx.textAlign = 'left'; }
+      ctx.fillStyle = '#3a3330'; ctx.font = '700 14px "Zen Maru Gothic", sans-serif'; ctx.fillText('この部屋に入ると、すぐにバドミントンの試合ができます', W / 2, 22);
+      // 雲の部屋ならではの2つ：シャトルがはね返る・ジャンプが高い
+      ctx.fillStyle = '#2a7fc0'; ctx.font = '700 12px "Zen Maru Gothic", sans-serif';
+      ctx.fillText('☁ 雲のかべと天井にあたると、シャトルがぽよんとはね返る', W / 2, 40);
+      ctx.fillText('☁ ふわふわの雲の床だから、ジャンプが高くとべる', W / 2, 56); ctx.textAlign = 'left'; }
     puff(ctx, DOOR.x + 6, DOOR.y - 44, 10, '#ffffff'); puff(ctx, DOOR.x + DOOR.w - 6, DOOR.y - 28, 9, '#ffffff');
   }
   function drawDoorPanel(open){ // open: 0 しまっている → 1 ひらききる
@@ -1050,7 +1238,7 @@ GAMES.badminton = root => {
       ctx.beginPath(); ctx.moveTo(6, 0); ctx.lineTo(-9, -6); ctx.lineTo(-9, 6); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.fillStyle = '#e4362b'; ctx.beginPath(); ctx.arc(6, 0, 3, 0, 7); ctx.fill(); ctx.restore(); }
     ctx.restore(); }
   function drawFx(){
-    rings.forEach(r => { ctx.globalAlpha = Math.max(0, r.a); ctx.strokeStyle = r.c; ctx.lineWidth = r.w; ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, 7); ctx.stroke(); }); ctx.globalAlpha = 1;
+    rings.forEach(r => { ctx.globalAlpha = Math.max(0, r.a); ctx.strokeStyle = r.c; ctx.lineWidth = r.w; ctx.beginPath(); ctx.arc(r.x, SY(r.y), r.r, 0, 7); ctx.stroke(); }); ctx.globalAlpha = 1;
     if (flash){ ctx.fillStyle = flash.c; ctx.globalAlpha = Math.min(.6, flash.a); ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1; }
     if (state === 'clear' && clearFX){ const e = clearT, ez = x => { x = clamp(x, 0, 1); return 1 - Math.pow(1 - x, 3); };
       ctx.save();
