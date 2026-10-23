@@ -242,6 +242,8 @@ canvas.wb{width:100%;height:210px;background:#fff;border:2px solid #cfc8c2;borde
 /* 全画面のゲーム中は、文字の選択・長おしのメニュー・拡大レンズ・2回タップの拡大を出さない */
 .gamefs,.gamefs *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
 .gamefs{touch-action:manipulation}.gamefs .gcv{touch-action:none}
+.play.imgui .ghud,.play.imgui .gctl,.play.imgui .ghelp{display:none}
+.play.imgui .gstage{box-shadow:none;background:transparent}
 .gamefs.fs-badminton .fsbar{position:absolute;top:max(6px,env(safe-area-inset-top,0px));left:max(6px,env(safe-area-inset-left,0px));z-index:3;background:none;padding:0}
 .gamefs.fs-badminton .fsbar b{display:none}
 .gamefs.fs-badminton .fsx{width:32px;height:32px;font-size:16px;background:rgba(0,0,0,.35);border-color:rgba(255,255,255,.9)}
@@ -1417,21 +1419,41 @@ GAMES.cloud = root => {
 };
 
 /* --- ふむと音がなるかいだん --- */
+// かいだんの絵（もらったイラスト）
+const STAIRS_UI = new Image(); STAIRS_UI.src = 'stairs-ui.webp';
+// 子どもを切りぬいた背景と、子どもの絵（子どもが段までとんでいく）
+const STAIRS_BG = new Image(); STAIRS_BG.src = 'stairs-bg.jpg';
+const STAIRS_KID = new Image(); STAIRS_KID.src = 'stairs-kid.png';
 GAMES.stairs = root => {
   const g = shell(root, 'ふむと音がなる、駅前のかいだん', '段をおすと音がなる。曲をえらぶと、光る段をふんで演奏できます。');
-  const { ctx, W, H, cv, pt } = mkCanvas(g.stage, 640, 320);
+  // もらったイラスト（題・かいだん・ボタン・説明まで1まい）をそのまま表示して、その上で動かす
+  root.classList.add('imgui');
+  const { ctx, W, H, cv, pt } = mkCanvas(g.stage, 1679, 937);
+  const STEPS = [[205, 582, 367, 636], [385, 536, 546, 590], [565, 494, 727, 549], [743, 450, 901, 502], [910, 408, 1064, 460], [1066, 369, 1225, 423], [1226, 328, 1383, 382], [1398, 282, 1557, 335]];
+  const BTNS = [['free', 40, 692, 452, 806], ['kaeru', 480, 692, 848, 806], ['kira', 880, 692, 1250, 806], ['up', 1282, 692, 1648, 806]];
+  const imgOk = () => STAIRS_UI.complete && STAIRS_UI.naturalWidth > 0;
   const NAME = ['ド', 'レ', 'ミ', 'ファ', 'ソ', 'ラ', 'シ', 'ド'], COL = ['#e4362b', '#ee7a1c', '#f2b630', '#8cc63f', '#2f9a48', '#2ea3c8', '#2e7fd0', '#7d55c7'];
   const SONGS = { kaeru: { name: 'かえるのうた', seq: [0, 1, 2, 3, 2, 1, 0, 2, 3, 4, 5, 4, 3, 2, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 2, 1, 0], beats: [1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, .5, .5, .5, .5, .5, .5, .5, .5, 1, 1, 2] }, kira: { name: 'きらきら星', seq: [0, 0, 4, 4, 5, 5, 4, 3, 3, 2, 2, 1, 1, 0], beats: [1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2] }, up: { name: 'のぼっておりる', seq: [0, 1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1, 0], beats: [.5, .5, .5, .5, .5, .5, .5, 1, .5, .5, .5, .5, .5, .5, 2] } };
-  const step = i => ({ x: 46 + i * 70, y: 262 - i * 24, w: 70 });
-  const GROUND = 300;
+  const step = i => { const [x0, y0, x1] = STEPS[i]; return { x: x0, y: y0, w: x1 - x0 }; };
+  const GROUND = 662;
   let gen = 0, pos = -1, hop = 0, glow = new Array(8).fill(0), bubbles = [], mode = 'free', song = null, idx = 0, miss = 0, t0 = 0, demo = false;
+  // 子どもの位置（足もと）：さいしょは、かいだんの下
+  const kid = { fx: 112, fy: 668, tx: 112, ty: 668, t: 1 };
+  const HOP = .14;
+  function moveKid(x, y){ const k = Math.min(1, kid.t / HOP), e = k * k * (3 - 2 * k); kid.fx = kid.fx + (kid.tx - kid.fx) * e; kid.fy = kid.fy + (kid.ty - kid.fy) * e; kid.tx = x; kid.ty = y; kid.t = 0; }
   function press(i, byDemo, dur = .45){
-    tone(FREQ[i], 0, dur, 'triangle', .22); pos = i; hop = 1; glow[i] = 1;
-    bubbles.push({ x: step(i).x + 35, y: step(i).y - 56, a: 1, ch: NAME[i], c: COL[i] });
-    if (mode === 'song' && !byDemo && !demo){ if (i === song.seq[idx]){ idx++; if (idx >= song.seq.length) finish(); } else { miss++; later(() => tone(140, 0, .2, 'square', .05), 60); } }
+    // まず男の子が段へとんで、着いたときに音が鳴る
+    { const [x0, y0, x1] = STEPS[i]; moveKid((x0 + x1) / 2, y0 + 6); }
+    const my = gen, judge = mode === 'song' && !byDemo && !demo;
+    if (judge){ if (i === song.seq[idx]) idx++; else { miss++; later(() => tone(140, 0, .2, 'square', .05), HOP * 1000 + 60); } }
+    later(() => { if (my !== gen) return; tone(FREQ[i], 0, dur, 'triangle', .22); pos = i; hop = 1; glow[i] = 1;
+      bubbles.push({ x: step(i).x + step(i).w / 2, y: step(i).y - 38, a: 1, ch: NAME[i], c: COL[i] });
+      if (judge && mode === 'song' && idx >= song.seq.length) finish(); status(); }, HOP * 1000);
     status();
   }
-  function status(){ if (song && mode !== 'free') g.stat(demo ? `${song.name}　お手本を聞いてね…` : `${song.name}　<b>${idx}</b> / ${song.seq.length}　まちがい ${miss}`); else g.stat('じゆうにふんでみよう'); }
+  let statTxt = '';
+  function status(){ statTxt = song && mode !== 'free' ? (demo ? `${song.name}　お手本を聞いてね` : `${song.name}　${idx} / ${song.seq.length}　まちがい ${miss}`) : '';
+    if (song && mode !== 'free') g.stat(demo ? `${song.name}　お手本を聞いてね…` : `${song.name}　<b>${idx}</b> / ${song.seq.length}　まちがい ${miss}`); else g.stat('じゆうにふんでみよう'); }
   function play(key){
     // 曲をえらびなおしたら、前の曲のお手本や「ひけた！」は鳴らさない
     const my = ++gen, at_ = (fn, ms) => later(() => { if (my === gen) fn(); }, ms);
@@ -1444,40 +1466,53 @@ GAMES.stairs = root => {
   function finish(){
     const sec = ((performance.now() - t0) / 1000).toFixed(1), stars = miss === 0 ? '★★★' : miss <= 2 ? '★★☆' : '★☆☆', my = gen;
     mode = 'done';
+    later(() => { if (my === gen){ bubbles = []; glow = glow.map(() => 0); } }, 650);
     later(() => my === gen && chord([0, 2, 4, 7]), 250);
     later(() => my === gen && g.over(`<h5>「${song.name}」がひけた！ ${stars}</h5><p>まちがい ${miss}回・${sec}秒</p>`, 'じゆうにふむ', () => { mode = 'free'; status(); }), 700);
   }
-  g.button('じゆうにふむ', () => { runSafe(); mode = 'free'; status(); });
-  Object.entries(SONGS).forEach(([k, s]) => g.button(s.name, () => { runSafe(); play(k); }, 'primary'));
+  // ボタンは絵の中のボタンをおす
+  let chosen = 'free';
+  function choose(k){ runSafe(); chosen = k; if (k === 'free'){ mode = 'free'; status(); } else play(k); }
   function runSafe(){ gen++; demo = false; pos = -1; g.hide(); }
-  cv.onpointerdown = e => { if (demo) return; const [x, y] = pt(e);
-    for (let i = 7; i >= 0; i--){ const s = step(i); if (x >= s.x && x < s.x + s.w && y >= s.y - 12 && y <= GROUND){ press(i); return; } } };
+  cv.onpointerdown = e => { const [x, y] = pt(e);
+    for (const [k, x0, y0, x1, y1] of BTNS) if (x >= x0 - 8 && x <= x1 + 8 && y >= y0 - 10 && y <= y1 + 10){ choose(k); return; }
+    if (demo) return;
+    // 段のはば（となりの段とのすきまもふくめる）で、どの段かを決める
+    for (let i = 7; i >= 0; i--){ const s = step(i), nx = i < 7 ? step(i + 1).x : W - 40; if (x >= s.x - 14 && x < nx && y >= s.y - 56 && y <= GROUND){ press(i); return; } } };
   onKey((e, d) => { if (!d || e.repeat || demo) return; const i = 'asdfghjk'.indexOf(e.key.toLowerCase()); if (i >= 0){ press(i); e.preventDefault(); } });
   loop(dt => {
-    glow = glow.map(v => Math.max(0, v - dt * 2.2)); hop = Math.max(0, hop - dt * 4);
-    bubbles.forEach(b => { b.y -= 40 * dt; b.a -= dt * .8; }); bubbles = bubbles.filter(b => b.a > 0);
+    glow = glow.map(v => Math.max(0, v - dt * 2.2)); hop = Math.max(0, hop - dt * 4); kid.t += dt;
+    bubbles.forEach(b => { b.y -= 75 * dt; b.a -= dt * 1.2; }); bubbles = bubbles.filter(b => b.a > 0);
     draw();
   });
   function draw(){
-    const sky = ctx.createLinearGradient(0, 0, 0, H); sky.addColorStop(0, '#d7ecfa'); sky.addColorStop(1, '#fdf6ee'); ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
-    ctx.fillStyle = '#e9e2d8'; rr(ctx, 520, 30, 110, 70, 6); ctx.fill(); ctx.fillStyle = '#2e7fd0'; ctx.fillRect(520, 30, 110, 16);
-    ctx.fillStyle = '#fff'; ctx.font = '700 11px "Zen Maru Gothic", sans-serif'; ctx.fillText('宇治駅', 556, 42);
-    ctx.fillStyle = '#d8cfc3'; ctx.fillRect(0, GROUND, W, H - GROUND);
+    if (!imgOk()){ ctx.fillStyle = '#e8f4fd'; ctx.fillRect(0, 0, W, H); return; }
+    const kidOk = STAIRS_BG.complete && STAIRS_BG.naturalWidth > 0 && STAIRS_KID.complete && STAIRS_KID.naturalWidth > 0;
+    ctx.drawImage(kidOk ? STAIRS_BG : STAIRS_UI, 0, 0, W, H);
+    // 絵の文字のまちがい（「ぶむ」「ぶんで」）を、「ふむ」「ふんで」に書きなおす
+    ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+    ctx.fillStyle = '#fefefe'; ctx.fillRect(168, 722, 238, 54); ctx.fillStyle = '#653d1b'; ctx.font = '900 41px "Zen Maru Gothic", sans-serif'; ctx.fillText('じゅうにふむ', 174, 750, 226);
+    ctx.fillStyle = '#fff'; ctx.fillRect(1332, 46, 296, 44); ctx.fillStyle = '#1d559c'; ctx.font = '800 30px "Zen Maru Gothic", sans-serif'; ctx.fillText('じゅうにふんでみよう', 1338, 69, 282);
+    ctx.textBaseline = 'alphabetic';
     const tgt = mode === 'song' && !demo && song && idx < song.seq.length ? song.seq[idx] : -1;
-    for (let i = 0; i < 8; i++){
-      const s = step(i);
-      ctx.fillStyle = '#efe8dd'; ctx.fillRect(s.x, s.y + 12, s.w, GROUND - s.y - 12);
-      ctx.fillStyle = COL[i]; rr(ctx, s.x + 2, s.y, s.w - 4, 14, 4); ctx.fill();
-      if (glow[i] > 0){ ctx.fillStyle = `rgba(255,255,255,${glow[i] * .7})`; rr(ctx, s.x + 2, s.y, s.w - 4, 14, 4); ctx.fill();
-        ctx.fillStyle = COL[i]; ctx.globalAlpha = glow[i] * .35; ctx.beginPath(); ctx.ellipse(s.x + 35, s.y + 6, 50, 18, 0, 0, 7); ctx.fill(); ctx.globalAlpha = 1; }
-      if (i === tgt){ const p = .5 + .5 * Math.sin(performance.now() / 120); ctx.strokeStyle = `rgba(255,216,74,${.6 + p * .4})`; ctx.lineWidth = 4; rr(ctx, s.x, s.y - 2, s.w, 18, 6); ctx.stroke();
-        ctx.fillStyle = '#e4362b'; ctx.font = '700 13px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.fillText('ここ！', s.x + 35, s.y - 10 - p * 4); ctx.textAlign = 'left'; }
-      ctx.fillStyle = '#fff'; ctx.font = '900 12px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.fillText(NAME[i], s.x + 35, s.y + 11); ctx.textAlign = 'left';
-    }
-    const px = pos < 0 ? 22 : step(pos).x + 35, py = (pos < 0 ? GROUND : step(pos).y) - Math.sin(hop * Math.PI) * 22;
-    figure(ctx, px, py, '#ee7a1c', 1.7);
-    ctx.font = '700 20px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center';
-    bubbles.forEach(b => { ctx.globalAlpha = b.a; ctx.fillStyle = b.c; ctx.fillText('♪' + b.ch, b.x, b.y); }); ctx.globalAlpha = 1; ctx.textAlign = 'left';
+    for (let i = 0; i < 8; i++){ const s = step(i), [x0, y0, x1, y1] = STEPS[i];
+      // ふんだ段：ひかる
+      if (glow[i] > 0){ ctx.save(); ctx.globalAlpha = glow[i]; ctx.shadowColor = COL[i]; ctx.shadowBlur = 48; ctx.fillStyle = 'rgba(255,255,255,.55)'; rr(ctx, x0, y0, x1 - x0, y1 - y0, 12); ctx.fill(); ctx.restore();
+        ctx.globalAlpha = glow[i] * .35; ctx.fillStyle = COL[i]; ctx.beginPath(); ctx.ellipse((x0 + x1) / 2, y1 + 12, 106, 26, 0, 0, 7); ctx.fill(); ctx.globalAlpha = 1; }
+      // つぎにふむ段：ここ！
+      if (i === tgt){ const p = .5 + .5 * Math.sin(performance.now() / 120); ctx.strokeStyle = `rgba(255,200,40,${.6 + p * .4})`; ctx.lineWidth = 9; rr(ctx, x0 - 7, y0 - 7, x1 - x0 + 14, y1 - y0 + 14, 16); ctx.stroke();
+        ctx.fillStyle = '#e4362b'; ctx.font = '800 30px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.fillText('ここ！', (x0 + x1) / 2, y0 - 18 - p * 8); ctx.textAlign = 'left'; } }
+    // えらんでいるボタン
+    { const [, x0, y0, x1, y1] = BTNS.find(b => b[0] === chosen); ctx.strokeStyle = '#ffc928'; ctx.lineWidth = 8; rr(ctx, x0 - 8, y0 - 8, x1 - x0 + 16, y1 - y0 + 16, 64); ctx.stroke(); }
+    // 右上の表示：曲をえらんでいるときは、いまのようす
+    if (statTxt){ ctx.fillStyle = '#fff'; ctx.fillRect(1320, 44, 312, 48); ctx.fillStyle = '#1d559c'; ctx.font = '800 26px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(statTxt, 1476, 69, 300); ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic'; }
+    // 子ども：ふんだ段まで、ぴょんととんでいく
+    if (kidOk){ const k = Math.min(1, kid.t / HOP), e = k * k * (3 - 2 * k), x = kid.fx + (kid.tx - kid.fx) * e, y = kid.fy + (kid.ty - kid.fy) * e - Math.sin(k * Math.PI) * 60;
+      ctx.fillStyle = 'rgba(80,90,110,.18)'; ctx.beginPath(); ctx.ellipse(x, kid.fy + (kid.ty - kid.fy) * e + 2, 30, 7, 0, 0, 7); ctx.fill();
+      ctx.drawImage(STAIRS_KID, x - 52, y - 206 + (k >= 1 ? Math.sin(hop * Math.PI) * -4 : 0)); }
+    ctx.font = '800 42px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center';
+    bubbles.forEach(b => { ctx.globalAlpha = b.a; ctx.lineWidth = 9; ctx.strokeStyle = '#fff'; ctx.strokeText('♪' + b.ch, b.x, b.y); ctx.fillStyle = b.c; ctx.fillText('♪' + b.ch, b.x, b.y); }); ctx.globalAlpha = 1; ctx.textAlign = 'left';
   }
   status();
 };
@@ -1901,63 +1936,130 @@ GAMES.game = root => {
 };
 
 /* --- AR市役所City --- */
+// 市役所のロビーの絵（もらったイラスト）と、そこから切りぬいた部品
+const AR_UI = new Image(); AR_UI.src = 'ar-ui.webp';
+const AR_TICKET = new Image(); AR_TICKET.src = 'ar-ticket.png';
+const AR_CHECK = new Image(); AR_CHECK.src = 'ar-check.png';
 GAMES.ar = root => {
   const g = shell(root, '市役所で、おつかいミッション', 'メガネをかけると、小動物が道案内してくれます。');
+  // ミッションは、窓口を2つ回る。用紙には、手つづき2つと、もっていくもの2つを書く
   const MISSIONS = [
-    { title: '引っこしてきた！ 「転入届」を出そう', purpose: '転入届', counter: 1 },
-    { title: '赤ちゃんが生まれた！ 「児童手当」を申しこもう', purpose: '児童手当', counter: 2 },
-    { title: '古いソファをすてたい！ 「粗大ごみ」を申しこもう', purpose: '粗大ごみ', counter: 3 },
+    { title: '赤ちゃんが生まれた！ 「出生届」と「児童手当」を出そう', procs: ['出生届', '児童手当'], items: ['母子手帳', '本人確認書類'], first: 1, second: 2 },
+    { title: '引っこしてきた！ 「転入届」と「児童手当」の手つづきをしよう', procs: ['転入届', '児童手当'], items: ['転出証明書', '本人確認書類'], first: 1, second: 2 },
+    { title: '保育園に入りたい！ 「税の証明」をもらって、申しこもう', procs: ['税の証明', '保育園の申しこみ'], items: ['本人確認書類', '印かん'], first: 4, second: 2 },
+    { title: '引っこしの前に！ 「粗大ごみ」と「転出届」をすませよう', procs: ['粗大ごみ', '転出届'], items: ['ごみの品名メモ', '本人確認書類'], first: 3, second: 1 },
   ];
+  const PROCS = ['出生届', '転入届', '転出届', '児童手当', '保育園の申しこみ', '粗大ごみ', '税の証明'];
+  const ITEMS = ['本人確認書類', '母子手帳', '転出証明書', '印かん', 'ごみの品名メモ', '図書館カード'];
   const COUNTERS = [
     { n: 1, hard: '市民課（戸籍・住民記録係）', easy: 'ひっこし・住民票はここ' },
     { n: 2, hard: 'こども福祉課（手当給付係）', easy: '子どものおかね・てあてはここ' },
     { n: 3, hard: 'ごみ減量推進課（収集係）', easy: '大きなごみのもうしこみはここ' },
     { n: 4, hard: '税務課（諸証明係）', easy: 'ぜいきんのしょうめいはここ' },
   ];
-  const stage = g.stage;
-  const lobby = document.createElement('div'); lobby.className = 'lobby'; stage.prepend(lobby);
-  let m, step, ticket, now, miss, t0;
+  // もらったイラスト（市役所のロビーの画面まるごと）をそのまま表示して、かわるところだけを上にかく
+  root.classList.add('imgui');
+  const { ctx, W, H, cv, pt } = mkCanvas(g.stage, 1516, 1038);
+  const A = { ticket: [54, 251, 515, 453], desk: [538, 252, 980, 452], board: [1005, 252, 1463, 453], c1: [53, 477, 402, 745], c2: [414, 477, 755, 745], c3: [765, 477, 1103, 745], c4: [1116, 477, 1464, 745], glass: [44, 902, 632, 996] };
+  const inA = (k, x, y) => { const [x0, y0, x1, y1] = A[k]; return x >= x0 && x <= x1 && y >= y0 && y <= y1; };
+  let sayOverride = '', shakeT = 0;
+  let m, step, ticket, now, miss, t0, boardC = 1, called = false, callT = 0, tickT = 0, waiting = false, lastM = -1, needHelp = false;
   const glasses = () => hasGlasses();
-  function begin(){ m = MISSIONS[Math.floor(Math.random() * MISSIONS.length)]; step = 0; ticket = 0; now = Math.floor(rnd(14, 20)); miss = 0; t0 = performance.now(); render(); }
-  const TALK = ['まずは、入口の「番号札」をとってね！', 'つぎは、記入台で用紙を書こう。', () => `${m.counter}番の窓口だよ。こっちこっち！`, 'よばれるまで、ちょっと待ってね。'];
+  function begin(){ sayOverride = ''; let k; do { k = Math.floor(Math.random() * MISSIONS.length); } while (k === lastM); lastM = k; m = MISSIONS[k];
+    step = 0; ticket = 0; now = Math.floor(rnd(14, 20)); boardC = 1 + Math.floor(Math.random() * 4); miss = 0; called = false; waiting = false; needHelp = false; t0 = performance.now(); render(); }
+  const TALK = ['まずは、入口の「番号札」をとってね！', 'つぎは記入台で用紙を書こう。手つづきは2つだよ。',
+    () => called ? `あなたの番号！ ${m.first}番窓口へ、いそいで！` : '電光板を見て、自分の番号を待とう。', '窓口の人の質問に答えよう。', () => `つぎは ${m.second}番窓口だよ。こっちこっち！`];
   function say(){ const s = TALK[step]; return typeof s === 'function' ? s() : s; }
-  function render(){
-    const gl = glasses(), hl = k => gl && ((step === 0 && k === 'ticket') || (step === 1 && k === 'desk') || (step === 2 && k === 'c' + m.counter)) ? ' guide' : '';
-    lobby.innerHTML = `
-      <div class="mission"><b>ミッション</b>${m.title}</div>
-      <div class="hallrow">
-        <button class="spot2 ticket${hl('ticket')}" data-k="ticket"><span class="ic">番</span>番号札<small>${ticket ? `あなたは ${ticket}番` : 'とる'}</small></button>
-        <button class="spot2 desk${hl('desk')}" data-k="desk"><span class="ic">記</span>記入台<small>${step > 1 ? '書けた！' : '用紙を書く'}</small></button>
-        <div class="board2"><small>よびだし中</small><b>${now}</b></div>
-      </div>
-      <div class="counters">${COUNTERS.map(c => `<button class="spot2 counter${hl('c' + c.n)}" data-k="c${c.n}"><span class="no">${c.n}</span><span class="hard">${c.hard}</span>${gl ? `<span class="easy">${c.easy}</span>` : ''}</button>`).join('')}</div>
-      <div class="guidebox">${gl ? `<svg viewBox="-30 -60 60 70" class="critter2" aria-hidden="true"><path d="M-14 -38 l-8 -20 l18 12z M14 -38 l8 -20 l-18 12z" fill="#bfe0f7" stroke="#2e7fd0" stroke-width="2"/><ellipse cx="0" cy="-14" rx="13" ry="12" fill="#bfe0f7" stroke="#2e7fd0" stroke-width="2"/><ellipse cx="0" cy="-34" rx="19" ry="16" fill="#bfe0f7" stroke="#2e7fd0" stroke-width="2"/><circle cx="-7" cy="-36" r="6" fill="#fff" stroke="#2e7fd0" stroke-width="1.8"/><circle cx="7" cy="-36" r="6" fill="#fff" stroke="#2e7fd0" stroke-width="1.8"/><circle cx="-7" cy="-36" r="2.2" fill="#2e7fd0"/><circle cx="7" cy="-36" r="2.2" fill="#2e7fd0"/><path d="M-4 -26 q4 4 8 0" fill="none" stroke="#2e7fd0" stroke-width="1.8"/></svg><p class="say">${say()}</p>` : `<p class="say dim">ムズカシイ… タイヘン… コワイ…？　どこへ行けばいいんだろう。</p>`}</div>`;
-    lobby.querySelectorAll('.spot2').forEach(b => b.onclick = () => act(b.dataset.k));
-    g.stat(`ステップ <b>${Math.min(step + 1, 4)}</b> / 4　まちがい ${miss}`);
+  function render(){ g.stat(`ステップ <b>${stepNo()}</b> / 4　まちがい ${miss}`); }
+  const stepNo = () => step <= 1 ? step + 1 : step <= 2 ? 3 : 4;
+  cv.onpointerdown = e => { const [x, y] = pt(e);
+    if (inA('glass', x, y)){ setGlasses(!hasGlasses()); if (hasGlasses()) chord([4, 7], 2, .1); return; }
+    for (const k of ['ticket', 'desk', 'c1', 'c2', 'c3', 'c4']) if (inA(k, x, y)){ act(k); return; } };
+  const ok = i => i.complete && i.naturalWidth > 0;
+  function txt(t, x, y, size, col, align = 'left', max){ ctx.font = `800 ${size}px "Zen Maru Gothic", sans-serif`; ctx.fillStyle = col; ctx.textAlign = align; ctx.textBaseline = 'middle'; ctx.fillText(t, x, y, max); ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic'; }
+  function ring(k, col = '#2e7fd0'){ const [x0, y0, x1, y1] = A[k], p = .5 + .5 * Math.sin(performance.now() / 160); ctx.strokeStyle = col; ctx.globalAlpha = .55 + p * .45; ctx.lineWidth = 8; rr(ctx, x0 - 6, y0 - 6, x1 - x0 + 12, y1 - y0 + 12, k === 'glass' ? (y1 - y0) / 2 + 6 : 30); ctx.stroke(); ctx.globalAlpha = 1; }
+  function draw(){
+    if (!ok(AR_UI)){ ctx.fillStyle = '#eef6fd'; ctx.fillRect(0, 0, W, H); return; }
+    const gl = glasses(); ctx.drawImage(AR_UI, 0, 0, W, H);
+    // 右上：ステップとまちがい
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(1210, 72, 25, 0, 7); ctx.fill(); ctx.fillStyle = '#1f6fd6'; ctx.beginPath(); ctx.arc(1210, 72, 22, 0, 7); ctx.fill(); txt(String(stepNo()), 1210, 74, 30, '#fff', 'center');
+    ctx.fillStyle = '#fff'; rr(ctx, 1415, 50, 40, 46, 10); ctx.fill(); txt(String(miss), 1435, 74, 30, '#25324d', 'center');
+    // ミッションの文
+    ctx.fillStyle = '#fefdf9'; ctx.fillRect(340, 152, 1080, 72); txt(m.title, 356, 189, 40, '#25324d', 'left', 1060);
+    // 番号札：とったら、絵のとおり（青いわく・チェック）。まだなら、ふつうのカード
+    if (!ticket){ const [x0, y0, x1, y1] = A.ticket; ctx.fillStyle = '#fbfaf5'; ctx.fillRect(x0 - 4, y0 - 4, x1 - x0 + 8, y1 - y0 + 8); ctx.drawImage(AR_UI, 538, 252, 442, 200, x0, y0, x1 - x0, y1 - y0); ctx.fillStyle = '#fdfbf7'; rr(ctx, x0 + 10, y0 + 10, x1 - x0 - 20, y1 - y0 - 22, 18); ctx.fill(); if (ok(AR_TICKET)) ctx.drawImage(AR_TICKET, 150, 258); }
+    else { ctx.fillStyle = '#eaf6fd'; ctx.fillRect(240, 402, 140, 40); txt(`あなたは ${ticket}番`, 285, 421, 28, '#25324d', 'center'); }
+    // 記入台：書けたら「書けた！」とチェック
+    if (step > 1){ ctx.fillStyle = '#fdfbf7'; ctx.fillRect(670, 402, 180, 40); txt('書けた！', 759, 421, 28, '#25324d', 'center'); if (ok(AR_CHECK)) ctx.drawImage(AR_CHECK, 905, 262); }
+    // よびだし中の番号
+    ctx.fillStyle = '#223152'; ctx.fillRect(1120, 326, 226, 110); txt(String(now), 1233, 362, 70, '#ffd21f', 'center'); txt(`${boardC}番窓口へ`, 1233, 418, 30, '#ffffff', 'center');
+    if (called) txt(`あと ${Math.ceil(callT)}びょう`, 1390, 290, 24, '#ffd21f', 'center');
+    // メガネをかけていないときは、やさしい説明と小動物は見えない
+    if (!gl){ [A.c1, A.c2, A.c3, A.c4].forEach(([x0, , x1]) => { ctx.fillStyle = '#fafcfe'; ctx.fillRect(x0 + 10, 652, x1 - x0 - 20, 70); });
+      ctx.fillStyle = '#fafbf7'; ctx.fillRect(96, 752, 206, 134); ctx.fillStyle = '#def1fc'; rr(ctx, 58, 778, 250, 80, 40); ctx.fill(); }
+    // 吹き出しの文
+    ctx.fillStyle = '#dbf0fd'; rr(ctx, 312, 792, 694, 62, 20); ctx.fill();
+    const sx = shakeT > 0 ? Math.sin(performance.now() / 25) * 6 : 0;
+    txt(sayOverride || (gl ? say() : needHelp ? 'こまったら、下のメガネのボタンで小動物をよぼう！' : 'ムズカシイ… タイヘン… コワイ…？ どこへ行けばいいんだろう。'), 330 + sx, 823, 34, gl ? '#25324d' : '#7a8597', 'left', 670);
+    // メガネをかけているとき：つぎに行くところが光る、メガネのボタンも光る
+    if (called) ring('board', '#ffd21f');
+    if (!gl && needHelp) ring('glass', '#ffc928');
+    if (gl){ if (step === 0) ring('ticket'); if (step === 1) ring('desk'); if (step === 2 && called) ring('c' + m.first); if (step === 4) ring('c' + m.second); ring('glass', '#ffc928'); }
   }
-  function wrong(txt){ miss++; tone(160, 0, .2, 'square', .05); flash(txt); }
-  function flash(txt){ const s = lobby.querySelector('.say'); if (s){ s.textContent = txt; s.classList.add('shake'); later(() => s.classList.remove('shake'), 400); } }
+  // よびだし：ほかの人の番号と窓口がつぎつぎ出る。自分の番号が出たら、6秒以内にその窓口へ
+  loop(dt => { shakeT = Math.max(0, shakeT - dt);
+    if (waiting && !called){ tickT -= dt; if (tickT <= 0){ tickT = rnd(1.1, 1.7); now++; tone(660, 0, .08, 'sine', .06);
+        if (now >= ticket){ now = ticket; boardC = m.first; called = true; callT = 6; sayOverride = `アナウンス「${ticket}番の方、${m.first}番窓口へどうぞ」`; later(() => { if (sayOverride.startsWith('アナウンス')) sayOverride = ''; }, 3500); tone(784, 0, .2, 'sine', .1); later(() => tone(988, 0, .3, 'sine', .1), 220); }
+        else boardC = 1 + Math.floor(Math.random() * 4); } }
+    if (called){ callT -= dt; if (callT <= 0){ called = false; miss++; needHelp = true; ticket = now + 2; tone(160, 0, .3, 'square', .05); flash('よびだしをのがした… もういちどよばれるまで待とう。'); render(); } }
+    draw(); });
+  function wrong(txt){ miss++; needHelp = true; tone(160, 0, .2, 'square', .05); flash(txt); }
+  function flash(t){ sayOverride = t; shakeT = .4; later(() => { if (sayOverride === t) sayOverride = ''; }, 1600); }
   function act(k){
-    if (step === 0){ if (k !== 'ticket') return wrong(glasses() ? 'さきに番号札をとってね！' : 'まどぐちの人「番号札をおとりください」'); ticket = now + 3; step = 1; tone(880, 0, .1, 'sine', .1); return render(); }
+    if (step === 0){ if (k !== 'ticket') return wrong(glasses() ? 'さきに番号札をとってね！' : 'まどぐちの人「番号札をおとりください」'); ticket = now + 4; step = 1; tone(880, 0, .1, 'sine', .1); return render(); }
     if (step === 1){ if (k !== 'desk') return wrong(glasses() ? 'そのまえに、記入台で用紙を書こう。' : 'まどぐちの人「用紙は書かれましたか？」'); return form(); }
-    if (step === 2){ if (k !== 'c' + m.counter) return wrong(glasses() ? `そこじゃないよ。${m.counter}番だよ！` : 'まどぐちの人「こちらではないですね…」'); step = 3; tone(880, 0, .1, 'sine', .1); render(); return wait(); }
+    if (step === 2){ if (k === 'ticket' || k === 'desk') return;
+      if (!called) return flash(glasses() ? 'まだよばれていないよ。電光板を見て待とう。' : 'まどぐちの人「番号でおよびしますので、お待ちください」');
+      if (k !== 'c' + m.first) return wrong(glasses() ? `そこじゃないよ。${m.first}番だよ！` : `まどぐちの人「${ticket}番の方は、こちらではないですね…」`);
+      called = false; waiting = false; step = 3; tone(880, 0, .1, 'sine', .1); render(); return later(ask, 300); }
+    if (step === 4){ if (k === 'ticket' || k === 'desk') return;
+      if (k !== 'c' + m.second) return wrong(glasses() ? `そこじゃないよ。${m.second}番だよ！` : 'まどぐちの人「こちらではないですね…」');
+      step = 5; tone(988, 0, .1, 'sine', .1); return later(done, 300); }
   }
+  // どの画面でも、小動物にたすけてもらえる（おすと、すぐメガネをかけてヒントが出る）
+  const helpBtn = () => glasses() ? '' : '<div><button class="btn helpme" style="margin:6px 0 2px">🦉 小動物にたすけてもらう</button></div>';
+  function wireHelp(again){ const h = root.querySelector('.helpme'); if (h) h.onclick = () => { setGlasses(true); chord([4, 7], 2, .1); again(); }; }
+  // 用紙：手つづきを2つ、もっていくものを2つえらぶ
   function form(){
-    const opts = ['転入届', '児童手当', '粗大ごみ', '税の証明'];
-    g.over(`<h5>用紙を書こう</h5><p>なまえ：うじ たろう　じゅうしょ：宇治市〇〇町</p><p>なんの手つづき？</p><div class="choice four">${opts.map(o => `<button class="btn fopt">${o}</button>`).join('')}</div><p class="fres">${glasses() ? `小動物「${m.purpose}だよ！」` : ''}</p>`);
-    root.querySelectorAll('.fopt').forEach(b => b.onclick = () => { if (b.textContent === m.purpose){ g.hide(); step = 2; tone(988, 0, .1, 'sine', .1); render(); } else { miss++; tone(160, 0, .2, 'square', .05); root.querySelector('.fres').textContent = 'ちがうみたい。ミッションを見なおそう。'; } });
+    const sel = { p: new Set(), i: new Set() }, gl = glasses(), chip = (kind, o) => `<button class="btn fopt" data-kind="${kind}" style="margin:3px${gl && (m.procs.includes(o) || m.items.includes(o)) ? ';box-shadow:0 0 0 3px #ffc928' : ''}">${o}</button>`;
+    g.over(`<h5>用紙を書こう</h5><p>なまえ：うじ たろう　じゅうしょ：宇治市〇〇町</p>
+      <p><b>なんの手つづき？</b>（2つ）</p><div>${PROCS.map(o => chip('p', o)).join('')}</div>
+      <p><b>もっていくものは？</b>（2つ）</p><div>${ITEMS.map(o => chip('i', o)).join('')}</div>
+      <p class="fres">${glasses() ? `小動物「${m.procs.join('と')}。もちものは${m.items.join('と')}だよ！ 光っているのをえらんでね」` : 'ミッションをよく読もう。'}</p>${helpBtn()}`, 'これで出す', () => {
+        const same = (a, b) => a.size === b.length && b.every(x => a.has(x));
+        if (same(sel.p, m.procs) && same(sel.i, m.items)){ step = 2; waiting = true; tickT = 1; tone(988, 0, .1, 'sine', .1); render(); return; }
+        miss++; needHelp = true; tone(160, 0, .2, 'square', .05); flash(!same(sel.p, m.procs) ? 'まどぐちの人「手つづきが、ちがうようです」' : 'まどぐちの人「もちものが、たりないようです」'); later(form, 700); });
+    wireHelp(form);
+    root.querySelectorAll('.fopt').forEach(b => b.onclick = () => { const S = sel[b.dataset.kind], v = b.textContent;
+      if (S.has(v)) S.delete(v); else { if (S.size >= 2) return; S.add(v); } b.classList.toggle('primary', S.has(v)); tone(S.has(v) ? 740 : 520, 0, .06, 'sine', .06); });
   }
-  function wait(){
-    const tick = () => { now++; tone(660, 0, .08, 'sine', .06); render(); if (now < ticket) later(tick, 650); else later(done, 500); };
-    later(tick, 650);
+  // 1つ目の窓口で：ほかの手つづきは、どの窓口？
+  function ask(){
+    const gl = glasses();
+    g.over(`<h5>${m.first}番窓口</h5><p>「${m.procs[0]}の手つづきができました。<br>${m.procs[1]}は、どちらの窓口でしょう？」</p>
+      <div>${COUNTERS.map(c => `<button class="btn qopt" data-n="${c.n}" style="margin:3px">${c.n}番 ${c.hard}${gl ? `<br><small>${c.easy}</small>` : ''}</button>`).join('')}</div>
+      <p class="fres">${gl ? `小動物「${m.procs[1]}は ${m.second}番だよ」` : ''}</p>${helpBtn()}`);
+    wireHelp(ask);
+    if (gl){ const q = root.querySelector(`.qopt[data-n="${m.second}"]`); if (q) q.style.boxShadow = '0 0 0 3px #ffc928'; }
+    root.querySelectorAll('.qopt').forEach(b => b.onclick = () => { if (+b.dataset.n === m.second){ g.hide(); step = 4; tone(988, 0, .1, 'sine', .1); render(); }
+      else { miss++; needHelp = true; tone(160, 0, .2, 'square', .05); root.querySelector('.fres').textContent = 'まどぐちの人「そちらではないですね…」'; render(); } });
   }
   function done(){
     const sec = Math.round((performance.now() - t0) / 1000); chord([0, 2, 4, 7]);
-    g.over(`<h5>ミッションクリア！</h5><p>「${ticket}番の方、${m.counter}番窓口へどうぞ」<br>${m.purpose}の手つづきができました。</p><p>まちがい ${miss}回・${sec}秒　${glasses() ? '小動物「Nice!」' : 'メガネをかけると、もっとかんたんかも。'}</p>`, 'つぎのミッション', begin);
+    g.over(`<h5>ミッションクリア！</h5><p>${m.procs.join('と')}の手つづきが、ぜんぶできました。</p><p>まちがい ${miss}回・${sec}秒　${glasses() ? '小動物「Nice!」' : 'メガネをかけると、もっとかんたんかも。'}</p>`, 'つぎのミッション', begin);
   }
   arSync = () => { if (m) render(); };
   onClean(() => { arSync = null; setGlasses(false); });
-  g.button('メガネをかける／はずす', () => { setGlasses(!hasGlasses()); if (hasGlasses()) chord([4, 7], 2, .1); }, 'primary');
   begin();
 };
 let arSync = null;
