@@ -941,18 +941,38 @@ GAMES.badminton = root => {
       // あいて：スマッシュをねらうときは、少し高いところで合わせにいく
       // あいて：打たれた瞬間に落ちるところへ歩きだす。ゆっくり加速・減速して、打ったあとは歩いて真ん中へもどる
       // シャトルが2このときは、さきにとどくほうを追いかける
-      let chase = null, want = 470, soon = Infinity;
+      // あいては、先を読んで動く（ふだんの速さはそのまま。どうしても間に合わないときだけダッシュ）
+      // ・シャトルが2こ以上なら、いちばん先に来るシャトルに間に合わないときは、追うのをやめて、つぎのシャトルを取りにいく
+      // ・こちらに向かってくるシャトルがないあいだは、ゆっくり歩かず、すぐに真ん中へもどってそなえる（シャトルが2こ以上のとき）
+      const cands = [];
       if (!sink) for (const s of shs){ if (s.wait > 0 || s.by === -1 || !(s.vx > 0 || s.x > NET)) continue; sh = s;
-        const lx = landing(s.cpuSmash && (cpu.y > 0 || s.y < 120) ? SMASH_AT : HITY); if (landSteps < soon){ soon = landSteps; chase = s; want = clamp(lx, NET + MARGIN, W - 24); } }
-      // シャトルが2こ以上とんでいるときは、ふつうのラリーで追いつけるように、あいては速く動ける
-      const multi = shs.filter(x => x.wait <= 0).length > 1, boost = multi ? 1.45 : 1;
-      const maxV = (chase ? 250 : 110) * ST().cpu * boost, desired = clamp((want - cpu.x) * 4, -maxV, maxV);
-      cpu.vx += clamp(desired - cpu.vx, -1100 * ST().cpu * boost * dt, 1100 * ST().cpu * boost * dt);
+        // 「いつまでに打たないといけないか」（ラケットの高さまで落ちてくる時間）で考える。スマッシュの高さでは考えない
+        const lx = landing(HITY), t = landSteps / 60 / spd, lxS = s.cpuSmash && (cpu.y > 0 || s.y < 120) ? landing(SMASH_AT) : lx;
+        cands.push({ s, lx: clamp(lx, NET + MARGIN, W - 24), lxS: clamp(lxS, NET + MARGIN, W - 24), t }); }
+      cands.sort((a, b) => a.t - b.t);
+      const vmax = 250 * ST().cpu, need = (x0, x1) => Math.abs(x1 - x0) / vmax + .18;
+      let pick = cands[0] || null, dash = 1;
+      if (cands.length > 1){ const [a, b] = cands;
+        // 2つの順番（a→b と b→a）で、いくつ返せるかをくらべて、多く返せる順にする
+        const okA = need(cpu.x, a.lx) <= a.t, okB = need(cpu.x, b.lx) <= b.t, okAB = okA && need(a.lx, b.lx) <= b.t - a.t;
+        if (!okA && okB) pick = b;
+        // ふつうの速さでは2こ目に間に合わないけれど、ダッシュすれば間に合うときだけ、ダッシュする
+        if (okA && !okAB && Math.abs(b.lx - a.lx) / (vmax * 1.4) + .18 <= b.t - a.t) dash = 1.4;
+        if (!okA && !okB && need(cpu.x, a.lx) / 1.4 <= a.t) dash = 1.4; }
+      const chase = pick ? pick.s : null, ready = ST().balls > 1;
+      // ほかのシャトルが、もうすぐ打たないといけないところまで来ていたら、ジャンプはしない（とびあがると、そのシャトルをとりのがす）
+      const busy = cands.some(c => c.s !== chase && c.t < 1.3);
+      // スマッシュをねらう位置に行くのは、ほかにいそぐシャトルがないときだけ
+      const want = pick ? (busy ? pick.lx : pick.lxS) : 470;
+      // ダッシュしているあいだは、こまをおぼえておく（つぎのシャトルを打つまで）
+      if (dash > 1) cpu.dashT = .6; cpu.dashT = Math.max(0, (cpu.dashT || 0) - dt); const dv = cpu.dashT > 0 ? 1.4 : 1;
+      const maxV = (chase || ready ? 250 : 110) * ST().cpu * dv, desired = clamp((want - cpu.x) * 4, -maxV, maxV);
+      cpu.vx += clamp(desired - cpu.vx, -1100 * ST().cpu * dv * dt, 1100 * ST().cpu * dv * dt);
       cpu.x = clamp(cpu.x + cpu.vx * dt, NET + MARGIN, W - 24);
       // スマッシュをねらうときは、高いところ（SMASH_AT）で当てられるように、シャトルがそこへとどく少し前にジャンプ（速いステージでも、時間で合わせる）
-      if (chase && chase.cpuSmash && cpu.y === 0 && chase.vy > -60 && chase.x > NET){ sh = chase; const lx = landing(SMASH_AT), tReal = landSteps / 60; // シャトルもジャンプも同じ割合で速くなるので、そのままの時間でくらべる
+      if (chase && !busy && chase.cpuSmash && cpu.y === 0 && chase.vy > -60 && chase.x > NET){ sh = chase; const lx = landing(SMASH_AT), tReal = landSteps / 60; // シャトルもジャンプも同じ割合で速くなるので、そのままの時間でくらべる
         if (tReal > .2 && tReal < .45 && Math.abs(cpu.x - lx) < 90) jump(cpu); }
-      if (chase && chase.cpuKaeshi && (chase.smash || chase.fast) && cpu.y === 0 && chase.x > NET){ sh = chase; const lx = landing(178);
+      if (chase && !busy && chase.cpuKaeshi && (chase.smash || chase.fast) && cpu.y === 0 && chase.x > NET){ sh = chase; const lx = landing(178);
         if (landSteps / 60 < .2 && Math.abs(cpu.x - lx) < 70) jump(cpu); }
       if (sink){ sink.t += dt; if (sink.t > 1){ const side = sink.side; sink = null; if (score[0] >= 5){ startClear(); } else if (score[1] >= 5){ state = 'over'; end(); } else serve(1 - side); } } // 点をとった人がつぎのサーブ（side は落ちたコートなので、その反対）
       else for (const s of shs){ sh = s;
