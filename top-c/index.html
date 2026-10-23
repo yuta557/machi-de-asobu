@@ -43,37 +43,46 @@ a{color:inherit}
 @media(max-width:860px){ .nav-in{padding:0 22px;height:64px} .brand img{height:28px} .brand b{font-size:18px} .nav-links{gap:18px;font-size:13px} }
 @media(max-width:620px){ .nav-links a:nth-child(-n+2){display:none} }
 
-/* ヒーロー：イラストは右上に寄せ、タイトルとメッセージは左の白地にまとめて置く */
-.hero{position:relative;background:#fff;overflow:hidden}
-/* 絵は右上に置き、左の切り口だけやわらかく白へ溶かす（下は切らない） */
+/* ヒーロー：1枚目はイラスト全面＋タイトル、スクロールした2枚目にメッセージ */
+.hero{position:relative;background:#fff}
+
+/* 1枚目：絵を画面いっぱいに見せ、左下の白地にタイトルを置く
+   （--hero-cut はヘッダー＋試作の帯のぶん。本番では 78px にする） */
+.hero-full{position:relative;line-height:0;--hero-cut:120px}
+.hero-full img{width:100%;height:auto;display:block;
+  max-height:calc(100svh - var(--hero-cut));object-fit:cover;object-position:50% 100%}
+.hero-ttl{position:absolute;left:0;right:0;bottom:5%;z-index:2;
+  max-width:1280px;margin:0 auto;padding:0 40px;line-height:1.18}
+.hero-ttl h1{font-weight:900;font-size:clamp(28px,4.6vw,66px);line-height:1.2;letter-spacing:.01em;
+  margin:0;white-space:nowrap}
+
+/* 2枚目：メッセージは左の白地、絵は右上から続く */
+.hero-next{position:relative;overflow:hidden}
 .hero-art{position:absolute;top:0;right:0;width:min(46%,620px);overflow:hidden;line-height:0;
   -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 18%);
   mask-image:linear-gradient(90deg,transparent 0,#000 18%)}
-.hero-art img{width:152%;max-width:none;height:auto;margin-left:-52%}
-.hero-body{position:relative;z-index:2;max-width:1280px;margin:0 auto;padding:78px 40px 92px}
-.hero-ttl{max-width:58%}
-.hero-ttl h1{font-weight:900;font-size:clamp(28px,4.1vw,58px);line-height:1.22;letter-spacing:.01em;
-  margin:0;white-space:nowrap}
-.hero-msg{max-width:min(54%,42em);margin-top:52px}
+.hero-art img{width:170%;max-width:none;height:auto;margin-left:-30%}
+.hero-body{position:relative;z-index:2;max-width:1280px;margin:0 auto;padding:96px 40px 104px}
+.hero-msg{max-width:min(54%,42em)}
 .hero-msg p{margin:0;font-size:clamp(15px,1.5vw,19px);font-weight:500}
-.hero-msg .sub{margin:16px 0 0;font-size:16px;line-height:2.25;color:var(--ink-soft);font-weight:400}
+.hero-msg .sub{margin:18px 0 0;font-size:16px;line-height:2.25;color:var(--ink-soft);font-weight:400}
 .hero-msg .sub + .sub{margin-top:1.15em}
 .hero-msg .go{display:inline-flex;align-items:center;gap:14px;margin-top:30px;padding-bottom:10px;
   border-bottom:1.5px solid var(--ink);font-weight:700;text-decoration:none;font-size:15.5px}
 .hero-msg .go span{font-family:"Outfit",sans-serif;color:var(--o)}
 .hero-msg .go:hover{border-color:var(--o);color:var(--o)}
 @media(max-width:980px){
-  /* 横幅が足りないときは、絵を上に全幅で置き、その下にタイトル→メッセージの順で並べる */
-  .hero-art{position:static;width:auto;-webkit-mask-image:none;mask-image:none}
-  .hero-art img{width:100%;margin-left:0}
-  .hero-body{padding:30px 40px 56px}
-  .hero-ttl{max-width:none}
+  /* 横幅が足りないときは、絵は1枚目だけにして、タイトル→メッセージの順に並べる */
+  .hero-full img{max-height:none}
+  .hero-ttl{position:static;padding:26px 40px 0}
   .hero-ttl h1{font-size:clamp(26px,5.4vw,40px);white-space:normal}
-  .hero-msg{max-width:none;margin-top:22px}
+  .hero-art{display:none}
+  .hero-body{padding:30px 40px 60px}
+  .hero-msg{max-width:none}
 }
 @media(max-width:700px){
-  .hero-body{padding:22px 22px 44px}
-  .hero-msg{margin-top:18px}
+  .hero-ttl{padding:22px 22px 0}
+  .hero-body{padding:24px 22px 48px}
 }
 
 /* プロジェクトの帯 */
@@ -183,21 +192,26 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 </header>
 
 <section class="hero" id="top">
-  <div class="hero-art">
+  <div class="hero-full">
     <picture>
       <source media="(max-width:700px)" srcset="../assets/hero-map-sp.webp" width="1100" height="619">
       <img src="../assets/hero-map.webp" width="1672" height="941" fetchpriority="high"
         alt="学校・公園・川沿いのまちで、子どもたちが遊んだり集まったりしているようすを俯瞰で描いたイラスト">
     </picture>
+    <div class="hero-ttl"><h1>まちであそぶ、をつくる。</h1></div>
+  </div>
+  <div class="hero-next">
+  <div class="hero-art" aria-hidden="true">
+    <img src="../assets/hero-map.webp" width="1672" height="941" alt="">
   </div>
   <div class="hero-body">
-  <div class="hero-ttl"><h1>まちであそぶ、をつくる。</h1></div>
   <div class="hero-msg">
     <p>人とまちのあいだに、新しいきっかけを。</p>
     <p class="sub">通学路も、階段も、バス停も。毎日通り過ぎている場所でも、少し見方を変えるだけで遊び場になります。まちで遊べる仕掛けやゲームをつくり、子どもたちと一緒に「ここでどう遊ぶ？」を考えています。</p>
     <p class="sub">2026年10月には、宇治のまちを舞台にした第1回のワークショップをひらきました。駅やバス停、通学路、茶畑、雲の上まで。集まった9枚のアイデアは、いま市内の施設で展示しています。</p>
     <p class="sub">遊びは、まちを見る目を変えます。その小さなきっかけを、これからもまちの中につくっていきます。</p>
     <a class="go" href="#acts">活動を見る　<span>→</span></a>
+  </div>
   </div>
   </div>
 </section>
