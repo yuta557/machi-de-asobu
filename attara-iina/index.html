@@ -261,6 +261,8 @@ canvas.wb{width:100%;height:210px;background:#fff;border:2px solid #cfc8c2;borde
 @media (prefers-reduced-motion:reduce){.fsrot .phone{animation:none;transform:rotate(-90deg)}}
 .fsrot b{font-size:20px} .fsrot p{margin:0;font-size:13px;color:var(--muted)}
 .fsrot .skip{margin-top:8px;background:none;border:0;color:var(--muted);text-decoration:underline;font-size:12px;padding:8px}
+.fsrot .never{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);padding:6px 10px;cursor:pointer}
+.fsrot .never input{width:20px;height:20px;accent-color:var(--c);margin:0}
 body.fs-open{overflow:hidden}
 html.modal-open,html.modal-open body{overflow:hidden;overscroll-behavior:none}
 .overlay,.sheet,.gamefs,.fsplay{overscroll-behavior:contain}
@@ -305,6 +307,24 @@ html.modal-open,html.modal-open body{overflow:hidden;overscroll-behavior:none}
   .fab{width:56px;height:56px;font-size:11px}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* ひらいたときの登場：地図がふわっと → しるしと線 → 吹き出しが1つずつ「ぽん」→ 指のマークで「おしてみてね！」 */
+@media (prefers-reduced-motion:no-preference){
+  .intro #map{animation:inMap .7s ease-out both}
+  .intro .spot{animation:inPop .45s cubic-bezier(.3,1.6,.5,1) both;animation-delay:calc(.35s + var(--k) * .09s)}
+  .intro #leaders line{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);animation:inLine .4s ease-out forwards;animation-delay:calc(.45s + var(--k) * .09s)}
+  .intro .idea{animation:inPop .5s cubic-bezier(.3,1.6,.5,1) both;animation-delay:calc(.55s + var(--k) * .09s)}
+  .intro-sp .area{animation:inUp .6s ease-out both;animation-delay:calc(var(--k) * .12s)}
+}
+@keyframes inMap{from{opacity:0;scale:1.04}to{opacity:1;scale:1}}
+@keyframes inPop{from{opacity:0;scale:.4}to{opacity:1;scale:1}}
+@keyframes inLine{to{stroke-dashoffset:0}}
+@keyframes inUp{from{opacity:0;translate:0 24px}to{opacity:1;translate:0 0}}
+.tapme{position:absolute;z-index:5;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:4px;transform:translate(-50%,0);animation:inPop .4s cubic-bezier(.3,1.6,.5,1) both}
+.tapme .hand{width:clamp(30px,2.8cqw,44px);height:auto;filter:drop-shadow(0 2px 3px rgba(0,0,0,.25));animation:tapHand 1s ease-in-out infinite}
+.tapme .say{background:#fff;color:#2e7fd0;font-weight:900;font-size:clamp(13px,1.1cqw,17px);padding:6px 12px;border-radius:999px;border:2.5px solid #2e7fd0;white-space:nowrap;box-shadow:0 3px 8px rgba(0,0,0,.12)}
+.tapme.out{transition:opacity .3s;opacity:0}
+@keyframes tapHand{0%,100%{translate:0 0;scale:1}45%{translate:0 -10px;scale:1}60%{translate:0 0;scale:.88}}
+@media (prefers-reduced-motion:reduce){.tapme,.tapme .hand{animation:none}}
 </style>
 </head>
 <body>
@@ -535,6 +555,8 @@ IDEAS.forEach(i => {
   b.setAttribute('aria-label', `${i.name}（${i.place}）をひらく`);
   b.innerHTML = `<span class="pic" style="${picStyle}"></span><span class="w">${i.wish}</span><span class="plus" aria-hidden="true"></span>`;
   b.onclick = () => open(i.id); bubbles.appendChild(b);
+  const k = IDEAS.indexOf(i); spot.style.setProperty('--k', k); b.style.setProperty('--k', k);
+  const ln = $('#leaders').lastElementChild; ln.style.setProperty('--k', k); ln.style.setProperty('--len', Math.ceil(Math.hypot(cx - sx, cy - sy)) + 'px');
 });
 
 /* ---------------- narrow: one round picture per idea, stacked along a dotted path ---------------- */
@@ -546,8 +568,26 @@ IDEAS.forEach(i => {
   const b = document.createElement('button'); b.className = 'bub-sp';
   b.innerHTML = `<span class="t">${i.name}</span><span class="d">${i.short}</span><span class="n">${i.place}　／　${i.nick}</span>`;
   b.onclick = () => open(i.id); area.appendChild(b);
-  $('#spAreas').appendChild(area);
+  area.style.setProperty('--k', $('#spAreas').children.length); $('#spAreas').appendChild(area);
 });
+
+/* ---------------- ひらいたときの登場と、「おしてみてね！」 ---------------- */
+(() => {
+  const wide = () => !matchMedia('(max-width:760px)').matches, calm = matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const root = document.documentElement; root.classList.add(wide() ? 'intro' : 'intro-sp');
+  let hint = null, done = false;
+  function finish(){ if (done) return; done = true; root.classList.remove('intro', 'intro-sp');
+    if (hint){ hint.classList.add('out'); setTimeout(() => hint && hint.remove(), 320); } }
+  // 指のマーク：広い画面は「学校のかべ」の吹き出しの下、せまい画面は1つ目の絵の上
+  function showHint(){ if (done) return;
+    hint = document.createElement('div'); hint.className = 'tapme'; hint.innerHTML = '<svg class="hand" viewBox="0 0 40 48" aria-hidden="true"><path d="M15 4c2.2 0 4 1.8 4 4v13l1-.2c.3-2 2-3.4 4-3.2 1.6.2 2.9 1.4 3.3 3l.5-.1c.9-1.4 2.6-2.1 4.2-1.6 1.6.5 2.6 2 2.5 3.7l-.6 9.4c-.4 6-5.4 10.8-11.5 10.8h-1.8c-3.9 0-7.5-2.1-9.4-5.5L4.8 29.6c-1-1.8-.5-4.1 1.2-5.2 1.6-1 3.7-.7 4.9.8L11 26V8c0-2.2 1.8-4 4-4z" fill="#fff" stroke="#3a3330" stroke-width="2.4" stroke-linejoin="round"/><path d="M19 21v8M24 21v8M29 22v7" stroke="#3a3330" stroke-width="1.8" stroke-linecap="round" opacity=".5"/></svg><span class="say">おしてみてね！</span>';
+    if (wide()){ const c = IDEAS[0].card; hint.style.left = (c[0] / 1536 * 100) + '%'; hint.style.top = ((c[1] + 58) / 1024 * 100) + '%'; bubbles.appendChild(hint); }
+    else { const a = $('#spAreas .area'); if (!a) return; hint.style.left = '50%'; hint.style.top = '30%'; a.appendChild(hint); } }
+  setTimeout(showHint, calm ? 300 : 1700);
+  // どこかにさわったら（キーをおしても）おわり。さわらなくても、しばらくしたら消える
+  ['pointerdown', 'keydown', 'wheel'].forEach(k => addEventListener(k, finish, { once: true, passive: true }));
+  setTimeout(finish, 9000);
+})();
 
 /* ---------------- sound ---------------- */
 let ac;
@@ -740,6 +780,9 @@ const BAD_HALL = new Image(); BAD_HALL.src = 'badminton-hall.webp';
 const HUD_IMG = { logo: new Image(), score: new Image(), pause: new Image() }; Object.keys(HUD_IMG).forEach(k => HUD_IMG[k].src = 'badminton-hud-' + k + '.png');
 const HUD_SCORE = {"w":346,"h":55,"blue":[126.0,27.5,20.5,[64,151,220]],"red":[224.5,27.0,20.5,[239,100,83]]};
 const hudOk = k => HUD_IMG[k].complete && HUD_IMG[k].naturalWidth > 0;
+const COIN_SILVER = new Image(); COIN_SILVER.src = 'badminton-coin-silver.png';
+const COIN_GOLD = new Image(); COIN_GOLD.src = 'badminton-coin-gold.png';
+const COIN_TAG = k => `<p style="margin:2px 0 6px"><img src="badminton-coin-${k}.png" alt="" style="width:72px;height:72px;display:block;margin:0 auto 2px"><b style="color:${k === 'gold' ? '#d39b1f' : '#7d8ea3'}">${k === 'gold' ? '金' : '銀'}のシャトルコイン</b>をゲット！</p>`;
 GAMES.badminton = root => {
   const g = shell(root, '雲の部屋で、5点先取の試合', '指を左右に動かして移動。ジャンプは、上にスワイプ・2回タップ・ジャンプボタン（パソコンはクリックかスペース）。高いところで当てるとスマッシュ！ ネットの近くで打つとドロップショット。勝つと、つぎのステージへ。');
   const { ctx, W, H, cv, pt } = mkCanvas(g.stage, 640, 340);
@@ -783,7 +826,7 @@ GAMES.badminton = root => {
     let html = '';
     for (let k = 0; k <= Math.min(reach, LAST); k++) html += btn(k, stageLabel(k), k === Math.min(reach, LAST) && reach <= LAST ? 'primary' : '');
     for (let k = LAST + 1; k <= reach; k++) html += btn(k, stageLabel(k), k === reach ? 'primary' : '');
-    g.over(`<h5>${title}</h5>${coin ? '<p><b style="color:#d39b1f">● 金のシャトルコイン</b>（完全制覇ずみ）</p>' : ''}${note ? `<p>${note}</p>` : ''}<div style="display:flex;flex-wrap:wrap;justify-content:center">${html}</div>`);
+    g.over(`<h5>${title}</h5>${coin ? `<p style="display:flex;align-items:center;justify-content:center;gap:6px"><img src="badminton-coin-gold.png" alt="" style="width:36px;height:36px"><b style="color:#d39b1f">金のシャトルコイン</b>（完全制覇ずみ）</p>` : ''}${note ? `<p>${note}</p>` : ''}<div style="display:flex;flex-wrap:wrap;justify-content:center">${html}</div>`);
     root.querySelectorAll('.gover [data-st]').forEach(b => b.onclick = () => play(+b.dataset.st)); }
   function addChooseBtn(){ const card = root.querySelector('.gover .gcard'); if (!card || reach < 1) return;
     const b = document.createElement('button'); b.className = 'btn'; b.textContent = 'ステージをえらぶ'; b.style.marginTop = '4px';
@@ -1018,7 +1061,7 @@ GAMES.badminton = root => {
     draw();
   });
   // クリアの演出（POCHÉ RUN と同じノリ）：白い光 → 光の輪が広がる → きらきらがはじける → 大きな「クリア！」
-  const clearDur = () => stage === FINAL ? 4 : 2.9; // 完全制覇のときは、コインが出るぶん長め
+  const clearDur = () => stage === FINAL ? 4 : 3.6; // コインが落ちてくるぶん長め
   function startClear(){ state = 'clear'; clearT = 0; const X = me.x, Y = SY(floorAt(me.x) - me.y - 40), bits2 = [];
     for (let i = 0; i < 46; i++){ const an = Math.PI * 2 * i / 46 + Math.random() * .5, sp = 32 * (1.6 + Math.random() * 2.6);
       bits2.push({ a: an, vx: Math.cos(an) * sp, vy: Math.sin(an) * sp - 20, r: 32 * (.1 + Math.random() * .13), sp: Math.random() * .35, c: ['#FFC53D', '#7FD8FF', '#FFFFFF', '#F4795B'][i % 4], star: i % 3 === 0 }); }
@@ -1028,12 +1071,12 @@ GAMES.badminton = root => {
   function end(){ const win = score[0] > score[1]; if (win){ chord([0, 2, 4, 7], 2, .12); unlock(stage + 1); }
     const info = `<p>${score[0]} − ${score[1]}　いちばん長いラリー ${best}回　スマッシュ ${smashes}回</p>`;
     if (win && stage < LAST){ const nx = STAGES[stage + 1];
-      g.over(`<h5>${stageLabel()} クリア！</h5>${info}<p>つぎは「${nx.name}」。${nx.balls > STAGES[stage].balls ? 'シャトルが2こになるよ！' : 'シャトルが速くなるよ！'}</p>`, 'つぎのステージへ', () => play(stage + 1)); }
-    else if (win && stage === LAST) g.over(`<h5>ぜんぶのステージをクリア！</h5>${info}<p>雲の部屋のチャンピオン！ <b>チャレンジ</b>が3つ開いたよ。3つともクリアすると「完全制覇」！</p>`, 'チャレンジモードへ', () => play(LAST + 1));
+      g.over(`<h5>${stageLabel()} クリア！</h5>${COIN_TAG('silver')}${info}<p>つぎは「${nx.name}」。${nx.balls > STAGES[stage].balls ? 'シャトルが2こになるよ！' : 'シャトルが速くなるよ！'}</p>`, 'つぎのステージへ', () => play(stage + 1)); }
+    else if (win && stage === LAST) g.over(`<h5>ぜんぶのステージをクリア！</h5>${COIN_TAG('silver')}${info}<p>雲の部屋のチャンピオン！ <b>チャレンジ</b>が3つ開いたよ。3つともクリアすると「完全制覇」！</p>`, 'チャレンジモードへ', () => play(LAST + 1));
     else if (win && stage === FINAL){ coin = true; try { localStorage.setItem(SAVE_KEY + '-coin', '1'); } catch(e){}
-      g.over(`<h5>完全制覇！</h5>${info}<p>ぜんぶのステージと、ぜんぶのチャレンジをクリアしました。<br><b style="color:#d39b1f">金のシャトルコイン</b>をゲット！</p>`, 'ステージをえらぶ', () => chooser('どのステージで遊ぶ？', ''));
+      g.over(`<h5>完全制覇！</h5>${COIN_TAG('gold')}${info}<p>ぜんぶのステージと、ぜんぶのチャレンジをクリアしました。<br><b style="color:#d39b1f">金のシャトルコイン</b>をゲット！</p>`, 'ステージをえらぶ', () => chooser('どのステージで遊ぶ？', ''));
       return; }
-    else if (win) g.over(`<h5>${stageLabel()} クリア！</h5>${info}<p>つぎは「${stageDef(stage + 1).name}」。${stageDef(stage + 1).balls > ST().balls ? `シャトルが${stageDef(stage + 1).balls}こになるよ！ そのかわり、ゆっくり。` : 'シャトルが、すこし速くなるよ！'}</p>`, 'つぎのチャレンジへ', () => play(stage + 1));
+    else if (win) g.over(`<h5>${stageLabel()} クリア！</h5>${COIN_TAG('silver')}${info}<p>つぎは「${stageDef(stage + 1).name}」。${stageDef(stage + 1).balls > ST().balls ? `シャトルが${stageDef(stage + 1).balls}こになるよ！ そのかわり、ゆっくり。` : 'シャトルが、すこし速くなるよ！'}</p>`, 'つぎのチャレンジへ', () => play(stage + 1));
     else g.over(`<h5>あいての勝ち</h5>${info}<p>${smashes ? `おしい！ もういちど、${stageLabel()}に挑戦しよう。` : 'シャトルが上がったら、ジャンプして高いところで当ててみよう。'}</p>`, 'もういちど', () => play(stage));
     addChooseBtn(); }
   // 子どものキャラクター：走ると足が動き、ジャンプでひざをまげ、ラケットをかまえる
@@ -1279,7 +1322,10 @@ GAMES.badminton = root => {
     ctx.fillStyle = '#b98a58'; ctx.fillRect(DOOR.x, DOOR.y, w, DOOR.h); ctx.strokeStyle = '#8a6440'; ctx.lineWidth = 3; ctx.strokeRect(DOOR.x, DOOR.y, w, DOOR.h);
     if (w > 30){ ctx.fillStyle = '#d9eef9'; ctx.fillRect(DOOR.x + w * .2, DOOR.y + 22, w * .6, 54); ctx.fillStyle = '#7a5a3a'; ctx.fillRect(DOOR.x + w - 16, DOOR.y + 96, 6, 22); }
   }
-  function drawCoin(x, y, r, spin){ const sx = Math.max(.12, Math.abs(Math.cos(spin)));
+  // クリアのコイン：ふつうのステージは銀（雲）、完全制覇は金（シャトル）
+  function drawCoin(x, y, r, spin, gold = true){ const sx = Math.max(.12, Math.abs(Math.cos(spin))), img = gold ? COIN_GOLD : COIN_SILVER;
+    if (img.complete && img.naturalWidth > 0){ ctx.save(); ctx.translate(x, y); ctx.shadowColor = gold ? 'rgba(255,197,61,.7)' : 'rgba(200,225,255,.8)'; ctx.shadowBlur = 24; ctx.scale(sx, 1);
+      if (Math.cos(spin) < 0) ctx.filter = 'brightness(.82)'; ctx.drawImage(img, -r, -r, r * 2, r * 2); ctx.restore(); return; }
     ctx.save(); ctx.translate(x, y); ctx.shadowColor = 'rgba(255,197,61,.7)'; ctx.shadowBlur = 24; ctx.scale(sx, 1);
     const gr = ctx.createLinearGradient(-r, -r, r, r); gr.addColorStop(0, '#fff1a8'); gr.addColorStop(.45, '#f6c945'); gr.addColorStop(1, '#d39b1f');
     ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(0, 0, r, 0, 7); ctx.fill(); ctx.shadowBlur = 0;
@@ -1311,10 +1357,10 @@ GAMES.badminton = root => {
         ctx.shadowColor = 'rgba(255,197,61,.55)'; ctx.shadowBlur = 22; ctx.fillStyle = '#E8A317';
         ctx.fillText(stage === FINAL ? '完全制覇！' : stage === LAST ? 'ぜんぶクリア！' : 'クリア！', 0, 0); }
       ctx.restore();
-      // 完全制覇：金のコインが上から落ちてきて、くるくる回る
-      if (stage === FINAL && e > .7){ const k = Math.min(1, (e - .7) / .6), bounce = k < 1 ? 1 - Math.abs(Math.cos(k * Math.PI * 1.5)) * (1 - k) : 1;
+      // コインが上から落ちてきて、くるくる回る（ふつうのステージは銀、完全制覇は金）
+      if (e > .7){ const k = Math.min(1, (e - .7) / .6), bounce = k < 1 ? 1 - Math.abs(Math.cos(k * Math.PI * 1.5)) * (1 - k) : 1;
         const cy = -40 + (H * .42 + 86 + 40) * (k < 1 ? k * k * (3 - 2 * k) : 1) - (k < 1 ? (1 - bounce) * 18 : 0);
-        drawCoin(W / 2, cy, 34, e * 4); }
+        drawCoin(W / 2, cy, stage === FINAL ? 46 : 40, e * 4, stage === FINAL); }
       ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic'; }
   }
   function draw(){
@@ -1486,7 +1532,7 @@ GAMES.stairs = root => {
     draw();
   });
   function draw(){
-    if (!imgOk()){ ctx.fillStyle = '#e8f4fd'; ctx.fillRect(0, 0, W, H); return; }
+    if (!imgOk()){ ctx.fillStyle = '#fde6cc'; ctx.fillRect(0, 0, W, H); return; }
     const kidOk = STAIRS_BG.complete && STAIRS_BG.naturalWidth > 0 && STAIRS_KID.complete && STAIRS_KID.naturalWidth > 0;
     ctx.drawImage(kidOk ? STAIRS_BG : STAIRS_UI, 0, 0, W, H);
     // 絵の文字のまちがい（「ぶむ」「ぶんで」）を、「ふむ」「ふんで」に書きなおす
@@ -1518,29 +1564,53 @@ GAMES.stairs = root => {
 };
 
 /* --- ゆかがガラスの歩道橋 --- */
+// ガラスの歩道橋をわたるキャラクター（キャラクターデザインから切りぬき）。
+// 0 立つ・1 歩く・2 よろこぶ・3 びっくり・4 うしろ・5 ジャンプ・6 わぁ・7 ！・8 ？・9 うれしい・13〜18 歩く6コマ（右向き）
+const GLASS_CHARA = new Image(); GLASS_CHARA.src = 'glass-chara.png';
+const GLASS_ROAD = new Image(); GLASS_ROAD.src = 'glass-road.jpg';
+const GLASS_BRIDGE = new Image(); GLASS_BRIDGE.src = 'glass-bridge.png';
+const GLASS_CARS = new Image(); GLASS_CARS.src = 'glass-cars.png';
+const GLASS_VEH = new Image(); GLASS_VEH.src = 'glass-vehicles.png';
+const GLASS_DOWN = new Image(); GLASS_DOWN.src = 'glass-down.jpg';
 GAMES.glass = root => {
   const g = shell(root, '通学路の歩道橋を、わたってみよう', '「あるく」をおしているあいだ進みます。');
-  const { ctx, W, H, cv } = mkCanvas(g.stage, 640, 340);
-  const LEN = 1700, G0 = 620, G1 = 1080, ROAD0 = 760, ROAD1 = 940, FEET = 230;
+  const { ctx, W, H, cv } = mkCanvas(g.stage, 1536, 816);
+  // 上から見た絵（1536×1024）の y=104 から下を使う。車はもとの大きさの K 倍でかく
+  const K = 4.3, SP = 2.4, OY = 104, X0 = 90, X1 = 1490, GX0 = 230, GX1 = 1330, MIDY = 470 - OY, FY = 425, LANES = [445, 610, 778, 955];
   let x, walking, step, cars, seen, doki, maxDoki, state = 'ready', stopT = 0, msg = '', msgT = 0;
-  function reset(){ x = 0; walking = false; step = 0; seen = 0; doki = 0; maxDoki = 0; stopT = 0;
-    cars = Array.from({ length: 8 }, (_, k) => newCar({ lane: k % 4, y: rnd(-60, 40) + (k >> 2) * 240 })); }
+  let react = [], reactT = 0, wantWalk = false, firstGlass = false, pauseT = 0, peekForce = 0, peekA = 0, peekSide = 1;
+  function reset(){ x = X0; walking = false; wantWalk = false; firstGlass = false; pauseT = 0; peekForce = 0; peekA = 0; step = 0; seen = 0; doki = 0; maxDoki = 0; stopT = 0; react = []; reactT = 0;
+    cars = Array.from({ length: 8 }, (_, k) => newCar({ lane: k % 4, y: (k >> 2) * H / 2 + rnd(0, H / 2) })); }
   // 同じ車線の前の車とは、少なくとも GAP だけあける
-  const GAP = 46;
+  const GAP = 46 * K;
   function leaderGap(c){ let g = Infinity, lead = null; const d = Math.sign(c.v);
-    for (const o of cars){ if (o === c || o.lane !== c.lane) continue; const gg = (o.y - c.y) * d - (o.len + c.len) / 2; if (gg > -c.len && gg < g){ g = gg; lead = o; } }
+    for (const o of cars){ if (o === c || o.lane !== c.lane) continue; const gg = (o.y - c.y) * d - (o.len + c.len) * K / 2; if (gg > -c.len * K && gg < g){ g = gg; lead = o; } }
     return [g, lead]; }
-  function respawn(c){ newCar(c); const d = Math.sign(c.v); let y = d > 0 ? -90 : H + 90;
-    for (const o of cars){ if (o === c || o.lane !== c.lane) continue; const need = o.y - d * ((o.len + c.len) / 2 + GAP + 20); if (d > 0 ? need < y : need > y) y = need; }
+  function respawn(c){ newCar(c); const d = Math.sign(c.v); let y = d > 0 ? -200 : H + 200;
+    for (const o of cars){ if (o === c || o.lane !== c.lane) continue; const need = o.y - d * ((o.len + c.len) * K / 2 + GAP + 20 * K); if (d > 0 ? need < y : need > y) y = need; }
     c.y = y; }
   // 車の種類：乗用車・タクシー・バス・トラック・軽トラ・救急車・パトカー・バイク
-  const KINDS = [['car', 32, 18, 4], ['taxi', 32, 18, 2], ['bus', 72, 22, 1], ['truck', 58, 22, 1.5], ['kei', 28, 16, 1.5], ['ambulance', 42, 20, .7], ['police', 32, 18, .7], ['bike', 16, 8, 1.5]];
+  // 車の絵：乗用車4台（白・赤・黒・青）と、バス・トラック・救急車・パトカー。長さは K でわった値
+  const KINDS = [['car', 42, 22, 8], ['bus', 77, 30, .7], ['truck', 67, 28, .7], ['ambulance', 50, 24, .5], ['police', 42, 22, .6]];
+  const VEH = { bus: 0, truck: 1, ambulance: 2, police: 3 };
   const CAR_COLS = ['#e85b8f', '#2e7fd0', '#ffffff', '#2f9a48', '#e4362b', '#7d55c7', '#9aa3ad', '#3a3330'];
   function newCar(c){ const tot = KINDS.reduce((a, k) => a + k[3], 0); let r = Math.random() * tot, kind = KINDS[0]; for (const k of KINDS){ if ((r -= k[3]) < 0){ kind = k; break; } }
-    c.kind = kind[0]; c.len = kind[1]; c.w = kind[2]; c.c = CAR_COLS[Math.floor(Math.random() * CAR_COLS.length)];
-    c.v = (c.lane < 2 ? 1 : -1) * (c.kind === 'bus' || c.kind === 'truck' ? rnd(70, 100) : c.kind === 'bike' ? rnd(60, 90) : rnd(95, 150)); c.passed = false; return c; }
+    c.kind = kind[0]; c.len = kind[1]; c.w = kind[2]; c.spr = Math.floor(Math.random() * 4); c.c = CAR_COLS[Math.floor(Math.random() * CAR_COLS.length)];
+    c.v = (c.lane < 2 ? -1 : 1) * SP * (c.kind === 'bus' || c.kind === 'truck' ? rnd(70, 100) : c.kind === 'bike' ? rnd(60, 90) : rnd(95, 150)); c.passed = false; return c; }
   function drawCar(c, lx, now){
-    const L = c.len, w = c.w; ctx.save(); ctx.translate(lx, c.y); if (c.v < 0) ctx.rotate(Math.PI);
+    if (c.kind === 'car' && GLASS_CARS.complete && GLASS_CARS.naturalWidth > 0){
+      ctx.save(); ctx.translate(lx, c.y); if (c.v < 0) ctx.rotate(Math.PI); ctx.drawImage(GLASS_CARS, c.spr * 110, 0, 110, 200, -55, -100, 110, 200); ctx.restore(); return;
+    }
+    if (c.kind in VEH && GLASS_VEH.complete && GLASS_VEH.naturalWidth > 0){
+      ctx.save(); ctx.translate(lx, c.y); if (c.v < 0) ctx.rotate(Math.PI);
+      ctx.drawImage(GLASS_VEH, VEH[c.kind] * 170, 0, 170, 350, -85, -175, 170, 350);
+      // 救急車とパトカーは、赤いランプが光る
+      if ((c.kind === 'ambulance' || c.kind === 'police') && Math.floor(now * 5) % 2){
+        const ly = c.kind === 'ambulance' ? -10 : -22, gr = ctx.createRadialGradient(0, ly, 0, 0, ly, 60); gr.addColorStop(0, 'rgba(255,60,50,.7)'); gr.addColorStop(1, 'rgba(255,60,50,0)');
+        ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(0, ly, 60, 0, 7); ctx.fill(); }
+      ctx.restore(); return;
+    }
+    const L = c.len, w = c.w; ctx.save(); ctx.translate(lx, c.y); ctx.scale(K, K); if (c.v < 0) ctx.rotate(Math.PI);
     const glass = 'rgba(40,60,90,.6)', body = (col, x, y, ww, hh, r = 5) => { ctx.fillStyle = col; rr(ctx, x, y, ww, hh, r); ctx.fill(); };
     ctx.fillStyle = 'rgba(0,0,0,.18)'; rr(ctx, -w / 2 + 2, -L / 2 + 3, w, L, 5); ctx.fill();
     if (c.kind === 'car' || c.kind === 'taxi' || c.kind === 'police'){
@@ -1568,77 +1638,147 @@ GAMES.glass = root => {
     ctx.restore();
   }
   const walkBtn = g.button('あるく（おしつづける）', () => {}, 'primary hold');
-  holdButton(walkBtn, v => { walking = v && state === 'play'; });
-  cv.addEventListener('pointerdown', e => { e.preventDefault(); if (state === 'play') walking = true; });
-  ['pointerup', 'pointerleave', 'pointercancel'].forEach(k => cv.addEventListener(k, () => walking = false));
-  onKey((e, d) => { if (e.key === 'ArrowRight' || e.key === ' '){ e.preventDefault(); walking = d && state === 'play'; } });
-  const onGlass = () => x > G0 - FEET + 40 && x < G1 - FEET - 10;
-  const below = wx => (wx - (x - FEET)) * .55 + 110; // 下の道路は遠いので、ゆっくり動いて見える
+  holdButton(walkBtn, v => { wantWalk = v && state === 'play'; });
+  cv.addEventListener('pointerdown', e => { e.preventDefault(); if (state === 'play') wantWalk = true; });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(k => cv.addEventListener(k, () => wantWalk = false));
+  onKey((e, d) => { if (e.key === 'ArrowRight' || e.key === ' '){ e.preventDefault(); wantWalk = d && state === 'play'; } });
+  const onGlass = () => x > GX0 && x < GX1;
   loop(dt => {
     if (state === 'play'){
-      if (walking){ x += 110 * dt; step += dt * 6; stopT = 0; } else stopT += dt;
+      // はじめてガラスの上に来たら、こわくて少し立ち止まる → 下が見えるのに気づく
+      if (!firstGlass && x > GX0 + 20){ firstGlass = true; pauseT = 1.8; msg = 'こわい…'; msgT = 1.8; react = [[3, .6, 4], [0, 1.2, 0]]; reactT = 0; tone(196, 0, .4, 'sine', .05); doki += 25; }
+      if (pauseT > 0){ pauseT -= dt; if (pauseT <= 0){ msg = 'ガラスの下が見える！'; msgT = 1.8; peekForce = 3; } }
+      if (peekForce > 0) peekForce -= dt;
+      walking = wantWalk && pauseT <= 0;
+      if (walking){ x += 115 * dt; step += dt * 6; stopT = 0; } else stopT += dt;
       const og = onGlass();
       doki += og ? (walking ? 10 : 18) * dt : -14 * dt;
       cars.forEach(c => { const [g, lead] = leaderGap(c); let sp = Math.abs(c.v);
         if (lead && g < GAP * 2) sp = Math.min(sp, (lead.s ?? Math.abs(lead.v)) * (g < GAP ? Math.max(0, g / GAP) : 1));
-        c.s = sp; c.y += Math.sign(c.v) * sp * dt; if (c.v > 0 && c.y > H + 90) respawn(c); if (c.v < 0 && c.y < -90) respawn(c);
-        const lx = below(ROAD0 + 22 + c.lane * 40);
-        if (!c.passed && Math.abs(lx - FEET) < 26 && Math.abs(c.y - 170) < 14){ c.passed = true; if (og){ seen++; doki += 20; msg = stopT > .6 ? 'じーっ… 真下を車がとおった！' : '足の下を車がとおった！'; msgT = 1.6; tone(330, 0, .12, 'sine', .08); } } });
+        const y0 = c.y; c.s = sp; c.y += Math.sign(c.v) * sp * dt; if ((c.v > 0 && c.y > H + 200) || (c.v < 0 && c.y < -200)){ respawn(c); return; }  // 画面の反対がわから出なおした車は、通ったことにしない
+        // 車の先が、キャラクターの足の下に入ってきたとき（ちょうど真下を通りがかったとき）
+        const fr = Math.sign(c.v) * c.len * K / 2, CY = FY - 30;
+        if (!c.passed && Math.abs(LANES[c.lane] - x) < 60 && (y0 + fr - CY) * (c.y + fr - CY) <= 0){ c.passed = true; if (og){ seen++; doki += 20; surprise(c.kind); msg = SHOUT[c.kind][Math.floor(Math.random() * SHOUT[c.kind].length)]; msgT = 1.6; tone(330, 0, .12, 'sine', .08); } } });
       doki = clamp(doki, 0, 100); maxDoki = Math.max(maxDoki, doki); msgT -= dt;
-      if (x >= LEN - 260){ state = 'over'; walking = false; chord([0, 4, 7]);
-        g.over(`<h5>わたりきった！</h5><p>ガラスの上で見た車 <b>${seen}</b>台　ドキドキ度 さいこう <b>${Math.round(maxDoki)}</b>%</p><p>${maxDoki > 70 ? 'こわいけど、おもしろかったね。' : 'つぎは、ガラスの上で立ち止まってみよう。'}</p>`, 'もういちど', () => { reset(); state = 'play'; }); }
+      if (react.length){ reactT += dt; while (react.length && reactT >= react[0][1]){ reactT -= react[0][1]; react.shift(); } }
+      if (x >= X1){ state = 'over'; walking = false; chord([0, 4, 7]);
+        g.over(`<h5>わたりきった！</h5><p>ガラスの上で見た車 <b>${seen}</b>台　ドキドキ度 さいこう <b>${Math.round(maxDoki)}</b>%</p><p>「こわかったけど、たのしかった！」</p><p>${maxDoki > 70 ? '' : 'つぎは、ガラスの上で立ち止まって、下をのぞいてみよう。'}</p>`, 'もういちど', () => { reset(); state = 'play'; }); }
       g.stat(`${og ? '<b style="color:#2e7fd0">ガラスの上</b>' : 'コンクリート'}　見た車 <b>${seen}</b>台　ドキドキ <b>${Math.round(doki)}</b>%`);
     }
     draw();
   });
   function draw(){
-    const cam = x - FEET;
-    ctx.fillStyle = '#d9d4cc'; ctx.fillRect(0, 0, W, H);
-    ctx.strokeStyle = 'rgba(120,110,100,.25)'; ctx.lineWidth = 1;
-    for (let wx = Math.floor(cam / 60) * 60; wx < cam + W + 60; wx += 60){ ctx.beginPath(); ctx.moveTo(wx - cam, 40); ctx.lineTo(wx - cam, H - 40); ctx.stroke(); }
-    const gx0 = G0 - cam, gx1 = G1 - cam;
-    if (gx1 > 0 && gx0 < W){
-      ctx.save(); ctx.beginPath(); ctx.rect(gx0, 40, gx1 - gx0, H - 80); ctx.clip();
-      ctx.fillStyle = '#86a86f'; ctx.fillRect(gx0, 40, gx1 - gx0, H - 80);
-      const r0 = below(ROAD0), r1 = below(ROAD1);
-      ctx.fillStyle = '#9a97a1'; ctx.fillRect(r0, 0, r1 - r0, H);
-      ctx.strokeStyle = '#fff'; ctx.setLineDash([14, 12]); ctx.lineWidth = 2;
-      [1, 2, 3].forEach(k => { const lx = below(ROAD0 + k * 45); ctx.beginPath(); ctx.moveTo(lx, 0); ctx.lineTo(lx, H); ctx.stroke(); }); ctx.setLineDash([]);
-      const now = performance.now() / 1000; cars.forEach(c => drawCar(c, below(ROAD0 + 22 + c.lane * 40), now));
-      ctx.fillStyle = 'rgba(170,215,245,.32)'; ctx.fillRect(gx0, 40, gx1 - gx0, H - 80);
-      ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 3;
-      for (let k = gx0 - 200; k < gx1; k += 70){ ctx.beginPath(); ctx.moveTo(k, H - 40); ctx.lineTo(k + 60, 40); ctx.stroke(); }
-      ctx.restore();
-      ctx.strokeStyle = '#8aa52a'; ctx.lineWidth = 4; for (let k = G0; k <= G1; k += 115){ ctx.beginPath(); ctx.moveTo(k - cam, 40); ctx.lineTo(k - cam, H - 40); ctx.stroke(); }
+    const now = performance.now() / 1000;
+    if (!(GLASS_ROAD.complete && GLASS_ROAD.naturalWidth > 0)){ ctx.fillStyle = '#9a97a1'; ctx.fillRect(0, 0, W, H); }
+    else ctx.drawImage(GLASS_ROAD, 0, OY, W, H, 0, 0, W, H);
+    cars.forEach(c => drawCar(c, LANES[c.lane], now));
+    // ガラスの橋を車の上にかさねる（ガラスのところは、下の車がすけて見える）
+    if (GLASS_BRIDGE.complete && GLASS_BRIDGE.naturalWidth > 0) ctx.drawImage(GLASS_BRIDGE, 320, 330 - OY);
+    ctx.font = '800 30px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center';
+    [[100, 'いえ'], [1440, '学校 →']].forEach(([lx, t]) => { ctx.fillStyle = 'rgba(255,255,255,.85)'; rr(ctx, lx - 70, 196, 140, 44, 22); ctx.fill(); ctx.fillStyle = '#3a3330'; ctx.fillText(t, lx, 229); });
+    ctx.textAlign = 'left';
+    drawChara();
+    // 立ち止まって下をのぞくと、ガラスごしの道路が大きく見える
+    // 「下をのぞくと…」：はじめてガラスに乗ったときと、ガラスの上で止まったときに出す。キャラクターと反対がわに出して、かくさない
+    const want = state === 'play' && onGlass() && (peekForce > 0 || (!walking && stopT > .3));
+    if (want && peekA <= 0) peekSide = x < W / 2 ? 1 : -1;
+    peekA = clamp(peekA + (want ? 1 : -1) * (1 / 60) * 5, 0, 1);
+    const peek = peekA;
+    if (peek > 0 && GLASS_DOWN.complete && GLASS_DOWN.naturalWidth > 0){
+      const pw = 520, ph = 347, px = peekSide > 0 ? W - pw - 24 : 32, py = peekSide > 0 ? 24 : 120; ctx.globalAlpha = peek;
+      ctx.fillStyle = '#fff'; rr(ctx, px - 8, py - 8, pw + 16, ph + 58, 20); ctx.fill();
+      ctx.save(); rr(ctx, px, py, pw, ph, 14); ctx.clip(); ctx.drawImage(GLASS_DOWN, px, py, pw, ph); ctx.restore();
+      ctx.fillStyle = '#2e6fa8'; ctx.font = '800 26px "Zen Maru Gothic", sans-serif'; ctx.fillText('下をのぞくと…', px + 8, py + ph + 36); ctx.globalAlpha = 1;
     }
-    ctx.fillStyle = '#c3e23a'; ctx.fillRect(0, 0, W, 40); ctx.fillRect(0, H - 40, W, 40);
-    ctx.fillStyle = '#8aa52a'; for (let wx = Math.floor(cam / 40) * 40; wx < cam + W + 40; wx += 40){ ctx.fillRect(wx - cam, 30, 6, 10); ctx.fillRect(wx - cam, H - 40, 6, 10); }
-    ctx.fillStyle = '#3a3330'; ctx.font = '700 13px "Zen Maru Gothic", sans-serif';
-    [[80, 'いえ'], [LEN - 200, '学校 →']].forEach(([wx, t]) => { if (wx - cam > -60 && wx - cam < W) ctx.fillText(t, wx - cam, 26); });
-    const sw = Math.sin(step) * 10;
-    ctx.fillStyle = '#e4362b'; rr(ctx, FEET - 16 + sw, 150, 30, 14, 6); ctx.fill(); rr(ctx, FEET - 16 - sw, 178, 30, 14, 6); ctx.fill();
-    ctx.fillStyle = '#fff'; ctx.fillRect(FEET + 6 + sw, 153, 6, 8); ctx.fillRect(FEET + 6 - sw, 181, 6, 8);
-    ctx.fillStyle = 'rgba(0,0,0,.6)'; rr(ctx, 16, 52, 132, 14, 7); ctx.fill();
-    ctx.fillStyle = doki > 70 ? '#e4362b' : doki > 35 ? '#f2b630' : '#8cc63f'; rr(ctx, 18, 54, 128 * doki / 100, 10, 5); ctx.fill();
-    ctx.fillStyle = '#3a3330'; ctx.font = '700 11px "Zen Maru Gothic", sans-serif'; ctx.fillText('ドキドキ', 18, 82);
-    if (msgT > 0){ ctx.globalAlpha = Math.min(1, msgT); ctx.fillStyle = '#2e6fa8'; ctx.font = '700 16px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.fillText(msg, W / 2, 120); ctx.textAlign = 'left'; ctx.globalAlpha = 1; }
+    ctx.fillStyle = 'rgba(0,0,0,.55)'; rr(ctx, 28, 28, 300, 30, 15); ctx.fill();
+    ctx.fillStyle = doki > 70 ? '#e4362b' : doki > 35 ? '#f2b630' : '#8cc63f'; rr(ctx, 32, 32, 292 * doki / 100, 22, 11); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.strokeStyle = 'rgba(0,0,0,.45)'; ctx.lineWidth = 5; ctx.font = '800 24px "Zen Maru Gothic", sans-serif';
+    ctx.strokeText('ドキドキ', 34, 90); ctx.fillText('ドキドキ', 34, 90);
+  }
+  // 足の下を車がとおったときに、キャラクターが言うこと
+  const SHOUT = { car: ['車だ！', 'ブーン！'], taxi: ['タクシーだ！'], bus: ['バスだ！ おっきい…'], truck: ['トラックだ！ おっきい…'],
+    kei: ['軽トラだ！'], ambulance: ['救急車だ！ ピーポー'], police: ['パトカーだ！'], bike: ['バイクだ！'] };
+  // 足の下を車がとおったときの、おどろき方。[絵, 秒, はねる高さ]
+  function surprise(kind){
+    if (kind === 'bus' || kind === 'truck') react = [[5, .45, 14], [3, .6, 0], [7, .7, 0]];
+    else if (kind === 'ambulance' || kind === 'police') react = [[3, .5, 6], [7, .9, 0]];
+    else if (walking) react = [[7, .8, 5]];
+    else react = [[3, .6, 4], [7, .6, 0]];
+    reactT = 0;
+  }
+  function drawChara(){
+    const now = performance.now() / 1000, og = state === 'play' && onGlass();
+    if (!(GLASS_CHARA.complete && GLASS_CHARA.naturalWidth > 0)){
+      const sw = Math.sin(step) * 10;
+      ctx.fillStyle = '#e4362b'; rr(ctx, x - 30 + sw, FY - 70, 50, 24, 10); ctx.fill(); rr(ctx, x - 30 - sw, FY - 36, 50, 24, 10); ctx.fill();
+      return;
+    }
+    const CW = 160, CH = 185, S = .9, CX = x - CW * S / 2, Y0 = FY - CH * S;
+    const cell = (f, dx = 0, dy = 0) => ctx.drawImage(GLASS_CHARA, f * CW, 0, CW, CH, CX + dx * S, Y0 + dy * S, CW * S, CH * S);
+    // ガラスの上では、ドキドキが高いほど、ふるえる
+    const shake = og && doki > 40 && state !== 'over' ? Math.sin(now * 40) * (doki - 40) / 12 : 0;
+    let f = -1, hop = 0, wow = false;
+    if (state === 'over'){ f = 9; hop = Math.abs(Math.sin(now * 5)) * 10; }
+    else if (react.length){ const [rf, rd, rh] = react[0]; f = rf; hop = rh * Math.sin(Math.PI * Math.min(1, reactT / rd)); }
+    else if (walking) f = -1;
+    else if (og && stopT > .6){ f = doki > 75 && Math.floor(now * 1.5) % 3 === 0 ? 3 : 6; wow = f === 6; }
+    else f = 0;
+    if (f >= 0){ cell(f, shake, -hop); }
+    else {
+      // 歩く：右向きの6コマを、じゅんばんに
+      cell(13 + Math.floor(step * 10 / 6) % 6, shake);
+    }
+    const say = msgT > 0 ? msg : wow ? 'わぁ…' : state === 'over' ? 'こわかったけど、たのしかった！' : '';
+    if (say){
+      ctx.font = '800 30px "Zen Maru Gothic", sans-serif';
+      const bw = Math.ceil(ctx.measureText(say).width) + 48, bh = 56, bx = Math.min(W - bw - 20, x + 30), by = Y0 - 20;
+      ctx.globalAlpha = msgT > 0 ? Math.min(1, msgT * 2) : 1;
+      ctx.fillStyle = '#fff'; ctx.strokeStyle = '#3a4a5f'; ctx.lineWidth = 4;
+      rr(ctx, bx, by, bw, bh, 28); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(bx + 24, by + bh - 2); ctx.lineTo(bx + 10, by + bh + 22); ctx.lineTo(bx + 44, by + bh - 2); ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.fillRect(bx + 22, by + bh - 8, 24, 8);
+      ctx.fillStyle = '#2e6fa8'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(say, bx + bw / 2, by + bh / 2 + 1); ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic'; ctx.globalAlpha = 1;
+    }
   }
   reset(); draw();
-  g.over('<h5>ゆかがガラスの歩道橋</h5><p>ガラスの上で、下の道路をのぞいてみよう。</p>', 'わたりはじめる', () => { state = 'play'; });
+  g.over('<h5>ゆかがガラスの歩道橋</h5><img src="glass-ahead.jpg" alt="" style="width:100%;max-height:34vh;object-fit:cover;border-radius:12px;display:block;margin:4px 0 8px"><p>ガラスの上で立ち止まって、下の道路をのぞいてみよう。</p>', 'わたりはじめる', () => { state = 'play'; });
 };
 
 /* --- 夜の暗い道も楽しく（光る石） --- */
+// 夜の道の絵（4つの場面。高さ 320）。場面のはしまで歩くと、ページがめくれて、つぎの場面へ
+// path：歩道のまん中の高さ（x ごと）。おくへ行くほど上に、小さくなる
+const NIGHT_SCENES = [
+  // x0〜x1：使うところ（おくの、歩道が細くなるところは切りすてる）
+  { src: 'night-1.jpg', w: 1502, x0: 0, x1: 1000, name: 'いつもの道', path: [[0, 292], [1502, 222]] },
+  { src: 'night-3.jpg', w: 1524, x0: 0, x1: 1000, name: '森の道', path: [[0, 290], [1524, 205]] },
+  { src: 'night-4.jpg', w: 1526, x0: 0, x1: 1000, name: '川ぞいの道', path: [[0, 292], [1526, 238]] },
+  { src: 'night-5.jpg', w: 3053, x0: 520, x1: 1990, name: 'おうちの近く', path: [[0, 284], [1300, 246], [1990, 238]] },
+].map(s => (s.img = Object.assign(new Image(), { src: s.src }), s));
 GAMES.night = root => {
   const g = shell(root, '夜の歩道を、光る石といっしょに帰ろう', '「あるく」をおしているあいだ進みます。ふんだ石が光ります。');
   const { ctx, W, H, cv } = mkCanvas(g.stage, 640, 320);
-  const LEN = 2400, PX = 200, WALK = 268, PAL = ['#ffe680', '#9ff2ff', '#ffb3e6', '#b9ff9f', '#ffd0a0'];
-  const stones = Array.from({ length: Math.floor(LEN / 34) }, (_, k) => ({ x: 120 + k * 34 + rnd(-6, 6), y: WALK + rnd(-8, 10), lit: 0, c: PAL[k % PAL.length] }));
-  const houses = Array.from({ length: 22 }, (_, k) => ({ x: k * 130 + rnd(-20, 20), w: rnd(70, 110), h: rnd(60, 120), wins: Math.random() }));
-  const stars = Array.from({ length: 60 }, () => [rnd(0, W), rnd(0, 150), rnd(.5, 1.6)]);
-  let x, walking, step, state = 'ready', photos = [], litCount;
-  function reset(){ x = 0; walking = false; step = 0; litCount = 0; noteIdx = 0; stones.forEach(s => s.lit = 0); }
+  const S = NIGHT_SCENES, FOREST = 1, SCARE = 300, HOME = 1852, PX = 200, X0 = 60;
+  const pathY = (si, lx) => { const P = S[si].path; for (let i = 1; i < P.length; i++) if (lx <= P[i][0] || i === P.length - 1){ const t = clamp((lx - P[i - 1][0]) / (P[i][0] - P[i - 1][0]), 0, 1); return P[i - 1][1] + (P[i][1] - P[i - 1][1]) * t; } };
+  const sizeAt = y => clamp(.82 + (y - 232) / 330, .84, 1);   // 歩道が上にあるほど、少しだけ小さく
+  // 光る石の形と色（森ではまる・ひし形、川ぞいで形がふえ、おうちの近くはあたたかい色）
+  const KIND = { circle: '#ffd84a', diamond: '#4fc3ff', tri: '#e06cf0', star: '#5fe06a', hex: '#ff8a3d', square: '#a46bff', clover: '#6fd0ff', heart: '#ff5a7a', rare: '#eef6ff' };
+  const SETS = [null, ['circle', 'diamond'], ['circle', 'diamond', 'tri', 'star', 'hex', 'square'], ['circle', 'heart', 'clover', 'star', 'hex', 'heart']];
+  const stones = [];
+  for (let si = FOREST; si < S.length; si++){
+    const end = si === S.length - 1 ? HOME - 30 : S[si].x1 - 40;
+    for (let lx = si === FOREST ? SCARE + 200 : S[si].x0 + 100, k = 0; lx < end; k++){
+      const kd = si > FOREST && k % 17 === 9 ? 'rare' : SETS[si][k % SETS[si].length], y = pathY(si, lx);
+      stones.push({ si, x: lx + rnd(-5, 5), y: y + 4 + rnd(-3, 4) * sizeAt(y), lit: 0, kind: kd, c: KIND[kd] });
+      lx += 46 * sizeAt(y) + 8;
+    }
+  }
+  let si, x, walking, step, state = 'ready', photos = [], litCount, scaredT, foundT, met, say = '', sayT = 0, wantWalk = false, flipT = -1, titleT = 0;
+  const page = document.createElement('canvas'); page.width = cv.width; page.height = cv.height;
+  function reset(){ si = 0; x = S[0].x0 + X0; walking = false; wantWalk = false; step = 0; litCount = 0; noteIdx = 0; cueDone = new Set(); firsts = new Set(); scaredT = 0; foundT = -1; met = false; say = ''; sayT = 0; flipT = -1; titleT = 2; stones.forEach(s => s.lit = 0); }
+  const setWalk = v => { wantWalk = v && state === 'play'; };
   const walkBtn = g.button('あるく（おしつづける）', () => {}, 'primary hold');
-  holdButton(walkBtn, v => { walking = v && state === 'play'; });
+  holdButton(walkBtn, setWalk);
   const camBtn = g.button('写真をとる', () => {
     if (state !== 'play' && state !== 'over') return;
     const c = document.createElement('canvas'); c.width = 240; c.height = 120; c.getContext('2d').drawImage(cv, 0, 0, c.width, c.height);
@@ -1646,10 +1786,10 @@ GAMES.night = root => {
     album.innerHTML = photos.map(p => `<img src="${p}" alt="夜の歩道の写真">`).join('');
   });
   const album = document.createElement('div'); album.className = 'album'; root.appendChild(album);
-  cv.addEventListener('pointerdown', e => { e.preventDefault(); if (state === 'play') walking = true; });
-  ['pointerup', 'pointerleave', 'pointercancel'].forEach(k => cv.addEventListener(k, () => walking = false));
-  onKey((e, d) => { if (e.key === 'ArrowRight' || e.key === ' '){ e.preventDefault(); walking = d && state === 'play'; } });
-  // 石をふむたびに、つぎの音へ。家につくまでの約70こで、ひとつながりの夜の曲（null = 音なし、数字はドレミの何番目）
+  cv.addEventListener('pointerdown', e => { e.preventDefault(); setWalk(true); });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(k => cv.addEventListener(k, () => setWalk(false)));
+  onKey((e, d) => { if (e.key === 'ArrowRight' || e.key === ' '){ e.preventDefault(); setWalk(d); } });
+  // 石をふむたびに、つぎの音へ。家につくまでで、ひとつながりの夜の曲（null = 音なし、数字はドレミの何番目）
   const _ = null, NIGHT_MEL = [
     0, 2, 4, 7, 6, 4, 5, 4,   2, 4, 5, 4, 2, 1, 0, _,
     4, 5, 7, 9, 7, 5, 4, 5,   4, 2, 1, 2, 4, _, 4, _,
@@ -1659,43 +1799,116 @@ GAMES.night = root => {
   const CHORD = [0, 0, 3, 4, 0, 3, 4, 0, 3, 0];
   const degF = d => 261.63 * 2 ** ((Math.floor(d / 7) * 12 + [0, 2, 4, 5, 7, 9, 11][((d % 7) + 7) % 7]) / 12);
   let noteIdx = 0;
+  const talk = (t, sec) => { say = t; sayT = sec; };
+  const CUES = [[0, 100, 'きょうは、おそくなっちゃった', 2.4], [0, 480, 'はやく、かえろう', 2], [0, 800, 'この先は、森の道だ…', 2.2],
+    [1, 80, 'くらいなあ…', 1.8], [1, 860, 'もう、こわくないよ', 2],
+    [2, 100, '川が、きらきらしてる', 2.2], [2, 600, 'お月さま、きれい', 2],
+    [3, 620, 'おうちが、見えてきた！', 2.2], [3, 1500, 'もうすぐ、おうち！', 2]];
+  let cueDone, firsts;
+  const FLIP = .9;
   loop((dt, now) => {
     if (state === 'play'){
-      if (walking){ x += 120 * dt; step += dt * 7; }
-      stones.forEach((s, k) => { if (!s.lit && Math.abs(s.x - x) < 16){ s.lit = 1; litCount++;
+      if (flipT >= 0){ flipT += dt; if (flipT >= FLIP) flipT = -1; }
+      // 森に入ると、こわくて足が止まる → 少しすると、光る石があらわれる
+      if (!met && si === FOREST && x >= SCARE){ met = true; scaredT = 2.4; talk('こわい…', 2.4); tone(196, 0, .5, 'sine', .05); }
+      if (scaredT > 0){ scaredT -= dt; if (scaredT <= 0){ foundT = 0; talk('あっ、光る石！', 2.2); [0, 2, 4, 7, 9].forEach((d, i) => tone(degF(d + 7), i * .12, .5, 'sine', .06)); } }
+      if (foundT >= 0) foundT += dt;
+      if (titleT > 0) titleT -= dt;
+      walking = wantWalk && scaredT <= 0 && flipT < 0;
+      if (walking){ x += 170 * dt; step += dt * 8; }
+      if (sayT > 0) sayT -= dt;
+      CUES.forEach((c, i) => { if (!cueDone.has(i) && c[0] === si && x >= c[1] && sayT <= .3 && scaredT <= 0){ cueDone.add(i); talk(c[2], c[3]); } });
+      if (foundT >= 0) stones.forEach(s => { if (s.si === si && !s.lit && Math.abs(s.x - x) < 18){ s.lit = 1; litCount++;
         const m = NIGHT_MEL[noteIdx % NIGHT_MEL.length]; if (m !== null) tone(degF(m + 7), 0, .7, 'sine', .07);
         if (noteIdx % 8 === 0) tone(degF(CHORD[Math.floor(noteIdx / 8) % CHORD.length] - 7), 0, 1.6, 'sine', .05);
+        if (s.kind === 'rare'){ tone(degF(14), .08, .9, 'sine', .05); talk('めずらしい石！', 1.4); }
+        else { const first = (key, t) => { if (!firsts.has(key)){ firsts.add(key); talk(t, 1.6); } };
+          if (litCount === 1) first('one', 'ふむと、光る！');
+          else if (litCount === 4) first('sound', '音もなるんだ！');
+          else if (s.kind === 'star') first('star', '星の形だ！');
+          else if (s.kind === 'tri') first('tri', 'さんかくもある！');
+          else if (s.kind === 'heart') first('heart', 'ハートだ！');
+          else if (s.kind === 'clover') first('clover', 'クローバーみたい'); }
         noteIdx++; } });
-      if (x >= LEN - 120){ state = 'over'; walking = false; chord([0, 2, 4]);
-        g.over(`<h5>おうちについた！</h5><p>光らせた石 <b>${litCount}</b>こ　とった写真 <b>${photos.length}</b>まい</p><p>ふりかえると、歩いてきた道がずっと光っています。</p>`, 'もういちど歩く', () => { reset(); state = 'play'; }); }
-      const ahead = Math.max(0, 1 - litCount / 12);
-      g.stat(`おうちまで <b>${Math.max(0, Math.round((LEN - 120 - x) / 10))}</b>m　光った石 <b>${litCount}</b>こ　${ahead > .5 ? 'ちょっとこわい…' : 'こわくない！'}`);
+      // 場面のはしまで来たら、ページをめくって、つぎの場面へ
+      if (si < S.length - 1 && x >= S[si].x1 - 40){
+        draw(now); page.getContext('2d').drawImage(cv, 0, 0);
+        si++; x = S[si].x0 + X0; flipT = 0; titleT = 2; tone(520, 0, .07, 'triangle', .04); tone(780, .06, .09, 'triangle', .035);
+      }
+      if (si === S.length - 1 && x >= HOME){ state = 'over'; walking = false; talk('ただいま！', 99); chord([0, 2, 4]);
+        g.over(`<h5>おうちについた！</h5><p>「ただいま！」</p><p>光らせた石 <b>${litCount}</b>こ　とった写真 <b>${photos.length}</b>まい</p><p>森で出会った光る石が、おうちまでつれてきてくれました。</p>`, 'もういちど歩く', () => { reset(); state = 'play'; }); }
+      g.stat(`${S[si].name}　光った石 <b>${litCount}</b>こ`);
     }
     draw(now);
   });
+  // 地面の上の石（上から少しななめに見るので、たてにつぶす）
+  function shape(kind, r){
+    ctx.beginPath();
+    if (kind === 'circle' || kind === 'rare') ctx.arc(0, 0, r, 0, 7);
+    else if (kind === 'diamond'){ ctx.moveTo(0, -r * 1.2); ctx.lineTo(r, 0); ctx.lineTo(0, r * 1.2); ctx.lineTo(-r, 0); ctx.closePath(); }
+    else if (kind === 'tri'){ ctx.moveTo(0, -r * 1.1); ctx.lineTo(r * 1.05, r * .75); ctx.lineTo(-r * 1.05, r * .75); ctx.closePath(); }
+    else if (kind === 'square') ctx.rect(-r * .85, -r * .85, r * 1.7, r * 1.7);
+    else if (kind === 'hex'){ for (let i = 0; i < 6; i++){ const a = Math.PI / 3 * i; ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); } ctx.closePath(); }
+    else if (kind === 'star'){ for (let i = 0; i < 10; i++){ const a = -Math.PI / 2 + Math.PI / 5 * i, rr2 = i % 2 ? r * .45 : r * 1.15; ctx.lineTo(Math.cos(a) * rr2, Math.sin(a) * rr2); } ctx.closePath(); }
+    else if (kind === 'clover'){ [[0, -.5], [.5, 0], [0, .5], [-.5, 0]].forEach(([cx, cy]) => { ctx.moveTo(cx * r + r * .55, cy * r); ctx.arc(cx * r, cy * r, r * .55, 0, 7); }); }
+    else if (kind === 'heart'){ ctx.moveTo(0, r * .9); ctx.bezierCurveTo(-r * 1.4, 0, -r * .7, -r * 1.1, 0, -r * .35); ctx.bezierCurveTo(r * .7, -r * 1.1, r * 1.4, 0, 0, r * .9); }
+  }
+  function drawStone(s, sx, now){
+    // 森では、近い石から、じゅんばんに光りはじめる
+    const appear = s.si === FOREST ? clamp((foundT - (s.x - SCARE - 200) / 700) * 2, 0, 1) : 1;
+    if (appear <= 0) return;
+    const k = sizeAt(s.y), pulse = .75 + .25 * Math.sin(now * 3 + s.x), R = (s.kind === 'rare' ? 42 : 34) * k;
+    const gr = ctx.createRadialGradient(sx, s.y, 0, sx, s.y, R); gr.addColorStop(0, s.c); gr.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.globalAlpha = appear * (s.lit ? .6 : .3) * pulse; ctx.fillStyle = gr; ctx.beginPath(); ctx.ellipse(sx, s.y, R, R * .55, 0, 0, 7); ctx.fill();
+    ctx.globalAlpha = appear * (s.lit ? 1 : .55); ctx.save(); ctx.translate(sx, s.y); ctx.scale(k, .5 * k); ctx.fillStyle = s.c; shape(s.kind, s.lit ? 12 : 11); ctx.fill();
+    if (s.lit){ ctx.fillStyle = 'rgba(255,255,255,.7)'; shape(s.kind, 5); ctx.fill(); }
+    ctx.restore(); ctx.globalAlpha = 1;
+    if (s.kind === 'rare' && s.lit){ ctx.fillStyle = '#fff'; for (let i = 0; i < 3; i++){ const a = now * 2 + i * 2.1; ctx.fillRect(sx + Math.cos(a) * 16 * k - 1, s.y - 10 * k + Math.sin(a) * 6 * k - 1, 2.5, 2.5); } }
+  }
+  // まわりの暗さ：いつもの道は明るく、森がいちばん暗い。石を光らせると、少し明るくなる
+  const DARK = [.1, .55, .38, .14];
+  function bubble(t, bx, by){
+    ctx.font = '800 15px "Zen Maru Gothic", sans-serif'; const bw = Math.ceil(ctx.measureText(t).width) + 24, bh = 30;
+    bx = Math.min(W - bw - 8, bx); by = Math.max(6, by);
+    ctx.fillStyle = '#fff'; ctx.strokeStyle = '#3a4a5f'; ctx.lineWidth = 2; rr(ctx, bx, by, bw, bh, 15); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(bx + 12, by + bh - 1); ctx.lineTo(bx + 4, by + bh + 12); ctx.lineTo(bx + 24, by + bh - 1); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillRect(bx + 11, by + bh - 4, 14, 4);
+    ctx.fillStyle = '#2e3a6a'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(t, bx + bw / 2, by + bh / 2 + 1); ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  }
+  function scene(now){
+    const sc = S[si], cam = clamp(x - PX, sc.x0, sc.x1 - W);
+    if (sc.img.complete && sc.img.naturalWidth > 0) ctx.drawImage(sc.img, cam, 0, W, H, 0, 0, W, H);
+    else { ctx.fillStyle = '#141b40'; ctx.fillRect(0, 0, W, H); }
+    const px = x - cam, wy = pathY(si, x), k = sizeAt(wy);
+    if (foundT >= 0) stones.forEach(s => { if (s.si !== si) return; const sx = s.x - cam; if (sx > -40 && sx < W + 40) drawStone(s, sx, now); });
+    const shake = scaredT > 0 ? Math.sin(now * 38) * 1.4 : 0;
+    const bob = walking ? Math.abs(Math.sin(step)) * 1.5 * k : 0;
+    walker(ctx, px + shake, wy + 2 - bob, 2.2 * k, step, walking);
+    const lit = foundT >= 0 ? stones.filter(s => s.si === si && s.lit && Math.abs(s.x - x) < 500).length : 0;
+    const a = clamp(DARK[si] - lit * .012, .05, .65);
+    const dark = ctx.createRadialGradient(px, wy - 30, 70, px, wy - 30, 460); dark.addColorStop(0, `rgba(5,8,25,${a * .35})`); dark.addColorStop(1, `rgba(5,8,25,${a})`); ctx.fillStyle = dark; ctx.fillRect(0, 0, W, H);
+    if (sayT > 0) bubble(say, px + 14 * k, wy - 130 * k);
+    if (titleT > 0){ ctx.globalAlpha = clamp(titleT, 0, 1); ctx.font = '800 17px "Zen Maru Gothic", sans-serif'; const tw = ctx.measureText(sc.name).width + 28;
+      ctx.fillStyle = 'rgba(10,14,40,.6)'; rr(ctx, 12, 12, tw, 32, 16); ctx.fill(); ctx.fillStyle = '#fff3c0'; ctx.fillText(sc.name, 26, 34); ctx.globalAlpha = 1; }
+  }
   function draw(now){
-    const cam = x - PX;
-    const sky = ctx.createLinearGradient(0, 0, 0, H); sky.addColorStop(0, '#0e1636'); sky.addColorStop(1, '#2a3260'); ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
-    stars.forEach(([sx, sy, r], k) => { ctx.globalAlpha = .5 + .5 * Math.sin(now * 2 + k); ctx.fillStyle = '#fff6c8'; ctx.beginPath(); ctx.arc(sx, sy, r, 0, 7); ctx.fill(); }); ctx.globalAlpha = 1;
-    ctx.fillStyle = '#fff3c0'; ctx.beginPath(); ctx.arc(560, 50, 18, 0, 7); ctx.fill(); ctx.fillStyle = '#0e1636'; ctx.beginPath(); ctx.arc(568, 45, 15, 0, 7); ctx.fill();
-    houses.forEach(hh => { const hx = hh.x - cam * .45; if (hx < -120 || hx > W + 10) return; ctx.fillStyle = '#1b2147'; ctx.fillRect(hx, 220 - hh.h, hh.w, hh.h);
-      if (hh.wins > .3){ ctx.fillStyle = 'rgba(255,214,106,.75)'; ctx.fillRect(hx + 14, 236 - hh.h, 12, 10); if (hh.wins > .6) ctx.fillRect(hx + hh.w - 28, 236 - hh.h, 12, 10); } });
-    ctx.fillStyle = '#2b2f45'; ctx.fillRect(0, 222, W, 26); ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.setLineDash([18, 16]); ctx.beginPath(); ctx.moveTo(-(cam % 34), 235); ctx.lineTo(W, 235); ctx.stroke(); ctx.setLineDash([]);
-    ctx.fillStyle = '#3b3f52'; ctx.fillRect(0, 248, W, H - 248);
-    ctx.fillStyle = '#4a4e62'; for (let wx = Math.floor(cam / 48) * 48; wx < cam + W; wx += 48) ctx.fillRect(wx - cam, 248, 2, H - 248);
-    stones.forEach(s => { const sx = s.x - cam; if (sx < -30 || sx > W + 30) return;
-      if (s.lit){ const pulse = .75 + .25 * Math.sin(now * 3 + s.x);
-        const gr = ctx.createRadialGradient(sx, s.y, 0, sx, s.y, 30); gr.addColorStop(0, s.c); gr.addColorStop(1, 'rgba(0,0,0,0)'); ctx.globalAlpha = .55 * pulse; ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(sx, s.y, 30, 0, 7); ctx.fill(); ctx.globalAlpha = 1;
-        ctx.fillStyle = s.c; } else ctx.fillStyle = '#5a5e70';
-      ctx.beginPath(); ctx.ellipse(sx, s.y, 9, 4.5, 0, 0, 7); ctx.fill(); });
-    const hx = LEN - 60 - cam; if (hx < W + 100){ ctx.fillStyle = '#f7e1c9'; ctx.fillRect(hx, 150, 90, 100); ctx.fillStyle = '#c7563f'; ctx.beginPath(); ctx.moveTo(hx - 10, 152); ctx.lineTo(hx + 45, 112); ctx.lineTo(hx + 100, 152); ctx.fill();
-      ctx.fillStyle = '#ffd96a'; ctx.fillRect(hx + 30, 196, 24, 54); ctx.fillStyle = '#3a3330'; ctx.font = '700 12px "Zen Maru Gothic", sans-serif'; ctx.fillText('おうち', hx + 24, 140); }
-    const bob = walking ? Math.abs(Math.sin(step)) * 1.5 : 0;
-    walker(ctx, PX, WALK + 6 - bob, 2.2, step, walking);
-    const dark = ctx.createRadialGradient(PX, WALK, 60, PX, WALK, 420); dark.addColorStop(0, 'rgba(5,8,25,0)'); dark.addColorStop(1, `rgba(5,8,25,${clamp(.55 - litCount / 60, .15, .55)})`); ctx.fillStyle = dark; ctx.fillRect(0, 0, W, H);
+    scene(now);
+    // ページめくり：前の場面の絵が、右はしからめくれて、つぎの場面が出てくる
+    if (flipT >= 0){
+      const t = clamp(flipT / FLIP, 0, 1), e = t * t * (3 - 2 * t), fx = W * (1 - e), fw = Math.min(fx, (W - fx) * .5);
+      if (fx > 0){
+        const sh = ctx.createLinearGradient(fx, 0, fx + 46, 0); sh.addColorStop(0, 'rgba(0,0,0,.45)'); sh.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = sh; ctx.fillRect(fx, 0, 46, H);
+        ctx.drawImage(page, 0, 0, fx * DPR, H * DPR, 0, 0, fx, H);
+        if (fw > 1){
+          const bk = ctx.createLinearGradient(fx - fw, 0, fx, 0); bk.addColorStop(0, '#cfc8ba'); bk.addColorStop(.6, '#f4efe4'); bk.addColorStop(1, '#ddd6c8');
+          ctx.fillStyle = bk; ctx.fillRect(fx - fw, 0, fw, H);
+          const sd = ctx.createLinearGradient(fx - fw - 24, 0, fx - fw, 0); sd.addColorStop(0, 'rgba(0,0,0,0)'); sd.addColorStop(1, 'rgba(0,0,0,.3)'); ctx.fillStyle = sd; ctx.fillRect(fx - fw - 24, 0, 24, H);
+        }
+      }
+    }
   }
   reset(); draw(0);
-  g.over('<h5>夜の歩道</h5><p>光る石といっしょに、おうちまで。</p>', '歩きはじめる', () => { state = 'play'; });
+  g.over('<h5>夜の歩道</h5><p>いつもの道から、おうちまで歩いて帰ろう。</p>', '歩きはじめる', () => { state = 'play'; });
 };
 
 /* --- 堤防の生き物交流 --- */
@@ -1713,7 +1926,7 @@ GAMES.river = root => {
   ];
   let cam = [W / 2, H / 2], found = new Set(), flash = 0, miss = 0, hint = null, hintT = 0, msg = '', msgT = 0, done = false, t = 0;
   const board = document.createElement('div'); board.className = 'board'; root.appendChild(board);
-  board.innerHTML = '<p class="ghelp">まだ写真がありません。生き物をさがしてみよう。</p>';
+  board.innerHTML = '<p class="ghelp"><span style="white-space:nowrap">まだ写真がありません。</span><br><span style="white-space:nowrap">生き物をさがしてみよう。</span></p>';
   const posOf = l => { if (l.id === 'tonbo') return [l.x + Math.cos(t * 1.3) * 70, l.y + Math.sin(t * 2.1) * 26]; if (l.id === 'kani') return [l.x + Math.sin(t * .9) * 26, l.y]; return [l.x, l.y]; };
   cv.onpointermove = e => { cam = pt(e); };
   cv.onpointerdown = e => {
@@ -2293,7 +2506,7 @@ const isPhone = () => matchMedia('(max-width:760px)').matches;
 function openGame(id){
   const i = IDEAS.find(x => x.id === id), fs = $('#gamefs');
   runCleanups(); fs.style.setProperty('--c', i.c);
-  fs.innerHTML = `<div class="fsbar"><b>${i.label}</b><button class="fsx" aria-label="ゲームをとじる">×</button></div><div class="play fsplay"></div><div class="fsrot" role="status"><div class="phone" aria-hidden="true"></div><b>スマホを よこ向きにしてね</b><p>よこにすると、ゲームが大きくなって遊びやすくなります</p><button class="skip" type="button">たてのまま遊ぶ</button></div>`;
+  fs.innerHTML = `<div class="fsbar"><b>${i.label}</b><button class="fsx" aria-label="ゲームをとじる">×</button></div><div class="play fsplay"></div><div class="fsrot" role="status"><div class="phone" aria-hidden="true"></div><b>スマホを よこ向きにしてね</b><p>よこにすると、ゲームが大きくなって遊びやすくなります</p><button class="skip" type="button">たてのまま遊ぶ</button>${rotSeen() >= 1 ? '<label class="never"><input type="checkbox">もうこの案内を出さない</label>' : ''}</div>`;
   fs.classList.remove('rot-skip'); fs.classList.toggle('fs-badminton', id === 'badminton');
   // iPhone：ゆびで広げる拡大・長おしメニュー・2回タップの拡大をとめる（ゲームの中だけ）
   if (!fs._noZoom){ fs._noZoom = true; const stop = e => { if (!fs.hidden) e.preventDefault(); };
@@ -2305,13 +2518,20 @@ function openGame(id){
   fs.hidden = false; document.body.classList.add('fs-open'); fs.querySelector('.fsx').onclick = closeGame;
   // たて向きのあいだはゲームを始めず、よこにしたら（または「たてのまま」を押したら）始める
   const mq = matchMedia('(orientation:portrait)'); let started = false;
+  // 「もうこの案内を出さない」にチェックしたら、つぎからは、たて向きでもそのまま始める
+  const never = rotNever();
   const start = () => { if (started) return; started = true; mq.removeEventListener('change', onTurn); GAMES[id](fs.querySelector('.fsplay')); };
   const onTurn = () => { if (!mq.matches) start(); };
   fs.querySelector('.skip').onclick = () => { fs.classList.add('rot-skip'); start(); };
+  const nv = fs.querySelector('.never input'); if (nv) nv.onchange = () => { try { nv.checked ? localStorage.setItem('uji-rot-never', '1') : localStorage.removeItem('uji-rot-never'); } catch(e){} };
+  if (never){ fs.classList.add('rot-skip'); start(); }
+  else if (mq.matches){ try { localStorage.setItem('uji-rot-seen', String(rotSeen() + 1)); } catch(e){} }
   fs._stopTurn = () => mq.removeEventListener('change', onTurn);
-  if (mq.matches) mq.addEventListener('change', onTurn); else start();
+  if (!started){ if (mq.matches) mq.addEventListener('change', onTurn); else start(); }
   try { screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape').catch(() => {}); } catch(e){}
 }
+function rotSeen(){ try { return +localStorage.getItem('uji-rot-seen') || 0; } catch(e){ return 0; } }
+function rotNever(){ try { return localStorage.getItem('uji-rot-never') === '1'; } catch(e){ return false; } }
 function closeGame(){ runCleanups(); const fs = $('#gamefs'); try { const fe = document.fullscreenElement || document.webkitFullscreenElement; if (fe) (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch(e){} fs._stopTurn && fs._stopTurn(); try { screen.orientation && screen.orientation.unlock && screen.orientation.unlock(); } catch(e){} fs.hidden = true; fs.innerHTML = ''; document.body.classList.remove('fs-open'); const b = $('#playBtn'); b && b.focus(); }
 function close(){ if (!$('#gamefs').hidden) closeGame(); runCleanups(); $('#overlay').hidden = true; document.documentElement.classList.remove('modal-open'); current = null; lastFocus && lastFocus.focus && lastFocus.focus(); }
 $('#overlay').addEventListener('click', e => { if (e.target.id === 'overlay') close(); });
