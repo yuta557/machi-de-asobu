@@ -299,10 +299,12 @@ html.modal-open,html.modal-open body{overflow:hidden;overscroll-behavior:none}
   body.night .lights-g{opacity:0}
   .sp{display:block}
   .top{padding-block:8px}
-  .today{width:auto;max-width:calc(100% - 32px);padding:8px 30px 8px 12px;border-radius:999px;display:flex;align-items:center}
+  .today{width:auto;max-width:calc(100% - 32px);padding:8px 34px 9px 14px;border-radius:16px;display:flex;align-items:center}
   .today h2,.today p{display:none}
-  .today .go{background:none;box-shadow:none;color:#fff;padding:4px 2px;font-size:0;text-align:left;white-space:nowrap}
-  .today .go::before{content:"今日のアイデア ›";font-size:13px}
+  .today .go{background:none;box-shadow:none;color:#fff;padding:2px;font-size:0;text-align:left}
+  /* スマホ：どんなアイデアかも、ひとこと出す */
+  .today .go::before{content:"今日のアイデア：" attr(data-label) " ›";display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .today .go::after{content:attr(data-short);display:block;font-size:12px;font-weight:700;opacity:.92;margin-top:2px;line-height:1.4}
   .today .x{top:50%;transform:translateY(-50%);right:10px;font-size:18px}
   .fab{width:56px;height:56px;font-size:11px}
 }
@@ -552,7 +554,7 @@ IDEAS.forEach(i => {
   const b = document.createElement('button'); b.className = 'idea'; b.style.setProperty('--c', i.c);
   b.style.left = (cx / 1536 * 100) + '%'; b.style.top = (cy / 1024 * 100) + '%';
   const ps = picOf(i); b.style.setProperty('--img', ps.img); b.style.setProperty('--imgN', ps.imgN); const picStyle = ps.style;
-  b.setAttribute('aria-label', `${i.name}（${i.place}）をひらく`);
+  b.setAttribute('aria-label', `${i.name}（${i.place}）を開く`);
   b.innerHTML = `<span class="pic" style="${picStyle}"></span><span class="w">${i.wish}</span><span class="plus" aria-hidden="true"></span>`;
   b.onclick = () => open(i.id); bubbles.appendChild(b);
   const k = IDEAS.indexOf(i); spot.style.setProperty('--k', k); b.style.setProperty('--k', k);
@@ -564,7 +566,7 @@ IDEAS.forEach(i => {
   const i = IDEAS.find(x => x.id === id), ps = picOf(i);
   const area = document.createElement('div'); area.className = 'area'; area.style.setProperty('--c', i.c);
   const pic = document.createElement('button'); pic.className = 'sppic'; pic.style.cssText = `--img:${ps.img};${ps.style}`;
-  pic.setAttribute('aria-label', `${i.name}（${i.place}）の絵。おすと体験がひらきます`); pic.onclick = () => open(i.id); area.appendChild(pic);
+  pic.setAttribute('aria-label', `${i.name}（${i.place}）の絵。おすと体験が開きます`); pic.onclick = () => open(i.id); area.appendChild(pic);
   const b = document.createElement('button'); b.className = 'bub-sp';
   b.innerHTML = `<span class="t">${i.name}</span><span class="d">${i.short}</span><span class="n">${i.place}　／　${i.nick}</span>`;
   b.onclick = () => open(i.id); area.appendChild(b);
@@ -764,10 +766,10 @@ const GAMES = {};
 // 見出しつきの表（赤い子と同じならび）から切りぬいた。パネルごとに子どもの大きさが少しちがうので、移動のコマと同じ大きさに補正している
 const KID_FRAMES = [[2,2,143,184,51.4,1.03],[147,2,154,179,67.0,1.03],[303,2,159,181,67.5,1.03],[464,2,153,181,66.9,1.03],[619,2,145,181,60.0,1.03],[303,2,159,181,67.5,1.03],[1299,2,129,241,69.8,1.051],[766,2,143,173,52.2,1.071],[911,2,144,156,61.0,1.071],[1057,2,101,222,47.8,1.154],[1057,2,101,222,47.8,1.154],[1430,2,133,242,54.2,1.051],[1057,2,101,222,47.8,1.154],[2,246,224,260,69.7,1.061],[1299,2,129,241,69.8,1.051],[1430,2,133,242,54.2,1.051],[1565,2,118,157,47.3,1.174],[1685,2,139,176,64.6,1.051],[228,246,138,161,64.0,1.092],[1826,2,148,162,61.9,1.092],[501,246,132,164,53.3,1.112],[635,246,122,178,57.6,1.112],[759,246,105,174,43.2,1.112],[1423,246,134,157,56.7,1.133],[1559,246,129,157,53.0,1.133]];
 const KID_IMG = new Image(); KID_IMG.src = 'badminton-kid.png';
-// あいて（赤い子）の絵：もらった赤い子の表を切りぬいたもの。右向きのコマは左右反転して、ぜんぶ左（ネットのほう）を向いている。番号の動きは青い子と同じ
+// 相手（赤い子）の絵：もらった赤い子の表を切りぬいたもの。右向きのコマは左右反転して、全部左（ネットのほう）を向いている。番号の動きは青い子と同じ
 const RED_FRAMES = [[2,2,132,176,80.6,1.06],[136,2,142,176,83.6,1.06],[280,2,142,175,85.0,1.06],[424,2,145,175,86.0,1.06],[571,2,139,175,83.9,1.06],[712,2,111,174,73.0,1.06],[1361,2,126,242,58.9,1.081],[825,2,144,167,87.5,1.102],[971,2,144,158,81.2,1.102],[1117,2,98,216,54.0,1.187],[1117,2,98,216,54.0,1.187],[1489,2,136,246,79.3,1.081],[1117,2,98,216,54.0,1.187],[2,250,212,236,142.9,1.092],[1361,2,126,242,58.9,1.081],[1489,2,136,246,79.3,1.081],[1627,2,125,198,70.3,1.081],[1754,2,140,174,70.4,1.081],[216,250,141,162,73.8,1.124],[1896,2,148,162,82.1,1.124],[500,250,128,163,69.4,1.145],[630,250,123,176,64.6,1.145],[755,250,106,174,57.4,1.145],[1387,250,133,157,73.1,1.166],[1522,250,149,191,87.6,1.166]];
 const RED_IMG = new Image(); RED_IMG.src = 'badminton-kid-red.png'; // 赤い子も、パネルごとに大きさがちがうので、顔の大きさで補正
-let KID_RED = null; // あいて用：シャツとくつを赤にした絵（ショートパンツの紺はそのまま）
+let KID_RED = null; // 相手用：シャツとくつを赤にした絵（ショートパンツの紺はそのまま）
 KID_IMG.onload = () => { try { const c = document.createElement('canvas'); c.width = KID_IMG.naturalWidth; c.height = KID_IMG.naturalHeight; const x = c.getContext('2d'); x.drawImage(KID_IMG, 0, 0);
   const d = x.getImageData(0, 0, c.width, c.height), p = d.data;
   for (let i = 0; i < p.length; i += 4){ const r = p[i], g = p[i + 1], b = p[i + 2]; if (p[i + 3] && b > 185 && b - r > 80 && g < 190){ p[i] = b; p[i + 1] = g * .42; p[i + 2] = r * .7; } }
@@ -784,7 +786,7 @@ const COIN_SILVER = new Image(); COIN_SILVER.src = 'badminton-coin-silver.png';
 const COIN_GOLD = new Image(); COIN_GOLD.src = 'badminton-coin-gold.png';
 const COIN_TAG = k => `<p style="margin:2px 0 6px"><img src="badminton-coin-${k}.png" alt="" style="width:72px;height:72px;display:block;margin:0 auto 2px"><b style="color:${k === 'gold' ? '#d39b1f' : '#7d8ea3'}">${k === 'gold' ? '金' : '銀'}のシャトルコイン</b>をゲット！</p>`;
 GAMES.badminton = root => {
-  const g = shell(root, '雲の部屋で、5点先取の試合', '指を左右に動かして移動。ジャンプは、上にスワイプ・2回タップ・ジャンプボタン（パソコンはクリックかスペース）。高いところで当てるとスマッシュ！ ネットの近くで打つとドロップショット。勝つと、つぎのステージへ。');
+  const g = shell(root, '雲の部屋で、5点先取の試合', '指を左右に動かして移動。ジャンプは、上にスワイプ・2回タップ・ジャンプボタン（パソコンはクリックかスペース）。高いところで当てるとスマッシュ！ ネットの近くで打つとドロップショット。勝つと、次のステージへ。');
   const { ctx, W, H, cv, pt } = mkCanvas(g.stage, 640, 340);
   const FLOOR = 296, NET = 320, NETTOP = 196, GR = 300, HITY = 222, JUMP_V = 430, JUMP_G = 560, SMASH_H = 45, CEIL = 22, WALL = 12;
   const HALL_S = 640 / 1690, HALL_Y = -6; // 廊下の絵を、横はばいっぱいに表示（上下を少しだけ切る）
@@ -792,7 +794,7 @@ GAMES.badminton = root => {
   const hallOk = () => BAD_HALL.complete && BAD_HALL.naturalWidth > 0;
   // ステージ：勝つと、つぎへ（はやくなる・シャトルが2こになる）
   const STAGES = [
-    // miss：あなたのスマッシュを受けたときに、あいてがミスする割合／whiff：あいてのジャンプスマッシュの空ぶり／smash：あいてがスマッシュをねらう割合／chain：あいてがスマッシュしたあと、つづけてスマッシュをねらう割合（ステージ2は、かならずねらってくる）／guard：あいてのサーブをいきなりスマッシュされても、かならず返す／kaeshi：あなたのスマッシュを、あいてがスマッシュで返す割合。ステージが進むほど、あいてはミスしなくなる
+    // miss：あなたのスマッシュを受けたときに、相手がミスする割合／whiff：相手のジャンプスマッシュの空ぶり／smash：相手がスマッシュをねらう割合／chain：相手がスマッシュしたあと、つづけてスマッシュをねらう割合（ステージ2は、かならずねらってくる）／guard：相手のサーブをいきなりスマッシュされても、かならず返す／kaeshi：あなたのスマッシュを、相手がスマッシュで返す割合。ステージが進むほど、相手はミスしなくなる
     { name: 'ステージ1　ふわふわの雲', speed: 1, cpu: 1, balls: 1, miss: .6, whiff: .1, smash: .45, chain: .5, guard: false, kaeshi: .12, sky: ['#d4ebfc', '#f5faff'] },
     { name: 'ステージ2　はやい雲', speed: 1.3, cpu: 1.25, balls: 1, miss: .4, whiff: .06, smash: .9, chain: 1, guard: true, kaeshi: .25, sky: ['#ffe3cc', '#fff6ec'] },
     { name: 'ステージ3　シャトルが2こ', speed: 1.1, cpu: 1.3, balls: 2, miss: .25, whiff: .03, smash: .9, chain: .9, guard: true, kaeshi: .3, sky: ['#e6dcfb', '#f8f4ff'] } ];
@@ -801,14 +803,14 @@ GAMES.badminton = root => {
   const keys = {}; let stageT = 0;
   // 気持ちいい演出：連続スマッシュ・ブロックの数、画面のゆれ、ひかり、ヒットストップ、クリアの紙ふぶき
   let combo = 0, cpuCombo = 0, blocks = 0, hitStop = 0, shake = 0, shakeT = 0, flash = null, rings = [], clearT = 0, clearFX = null;
-  // ステージ3のあとは「チャレンジ」が3つ。速さだけを上げると、あいても追いつけなくなってつまらないので、
+  // ステージ3のあとは「チャレンジ」が3つ。速さだけを上げると、相手も追いつけなくなってつまらないので、
   // シャトルの数をふやして、そのぶんゆっくりにする。チャレンジ3をクリアしたら「完全制覇」で、金のコイン
   const LAST = STAGES.length - 1, CSKY = [['#cfd6f2', '#eef1fb'], ['#d8f0e4', '#f3fbf6'], ['#fde2e8', '#fff5f7'], ['#e9e3d6', '#faf7f0']];
   const CHALLENGES = [{ balls: 2, speed: 1.35 }, { balls: 3, speed: .9 }, { balls: 4, speed: .85 }];
   const challengePlan = n => CHALLENGES[Math.min(n, CHALLENGES.length) - 1];
   function stageDef(k){ if (k <= LAST) return STAGES[k]; const n = k - LAST, c = challengePlan(n);
     return { name: `チャレンジ${n}　シャトル${c.balls}こ${c.speed < 1 ? '・ゆっくり' : ''}`, speed: c.speed,
-      // あいては、シャトルが多いほど・速いほど、それに負けないくらい動けるようにする
+      // 相手は、シャトルが多いほど・速いほど、それに負けないくらい動けるようにする
       cpu: Math.max(1.3, c.speed * 1.15) + (c.balls - 2) * .15, balls: c.balls, miss: Math.max(.12, .22 - .02 * n), whiff: .02,
       smash: .85, chain: .9, guard: true, kaeshi: Math.min(.45, .3 + .02 * n), sky: CSKY[(n - 1) % CSKY.length] }; }
   const ST = () => stageDef(stage);
@@ -820,7 +822,7 @@ GAMES.badminton = root => {
   reach = Math.min(reach, FINAL);
   const unlock = k => { k = Math.min(k, FINAL); if (k > reach){ reach = k; try { localStorage.setItem(SAVE_KEY, String(reach)); } catch(e){} } if (typeof pickBtn !== 'undefined' && state !== 'intro') pickBtn.hidden = false; };
   function play(k){ stage = k; reset(); state = 'play'; g.hide(); }
-  // ステージをえらぶカード
+  // ステージを選ぶカード
   function chooser(title, note){ state = 'select';
     const btn = (k, label, cls = '') => `<button class="btn ${cls}" data-st="${k}" style="margin:3px">${label}</button>`;
     let html = '';
@@ -829,13 +831,13 @@ GAMES.badminton = root => {
     g.over(`<h5>${title}</h5>${coin ? `<p style="display:flex;align-items:center;justify-content:center;gap:6px"><img src="badminton-coin-gold.png" alt="" style="width:36px;height:36px"><b style="color:#d39b1f">金のシャトルコイン</b>（完全制覇ずみ）</p>` : ''}${note ? `<p>${note}</p>` : ''}<div style="display:flex;flex-wrap:wrap;justify-content:center">${html}</div>`);
     root.querySelectorAll('.gover [data-st]').forEach(b => b.onclick = () => play(+b.dataset.st)); }
   function addChooseBtn(){ const card = root.querySelector('.gover .gcard'); if (!card || reach < 1) return;
-    const b = document.createElement('button'); b.className = 'btn'; b.textContent = 'ステージをえらぶ'; b.style.marginTop = '4px';
+    const b = document.createElement('button'); b.className = 'btn'; b.textContent = 'ステージを選ぶ'; b.style.marginTop = '4px';
     b.onclick = () => chooser('どのステージで遊ぶ？', reach > LAST ? 'ステージ3のあとは「チャレンジ」が3つ。3つともクリアすると完全制覇！' : ''); card.appendChild(b); }
   const soft = (f, d = .14, v = .1) => tone(f, 0, d, 'sine', v);
   function reset(){ stageT = 0; combo = 0; cpuCombo = 0; blocks = 0; hitStop = 0; shakeT = 0; flash = null; rings = []; clearFX = null; me = { x: 160, y: 0, vy: 0, swing: 0, dj: false }; cpu = { x: 480, y: 0, vy: 0, vx: 0, swing: 0, dj: false }; score = [0, 0]; smashes = 0; pops = []; puffs = []; bits = []; sink = null; serve(0); }
   function mkShuttle(side, delay){ const s = side ? { x: 470, y: 150, vx: -190, vy: -210 } : { x: 170, y: 150, vx: 190, vy: -210 };
     return Object.assign(s, { smash: false, cpuMiss: false, cpuSmash: false, whiff: false, by: side ? -1 : 1, wait: delay, serve: true }); }
-  // シャトル2このステージでは、すこしおくれて、あいてからも1こ飛んでくる
+  // シャトル2このステージでは、少しおくれて、相手からも1こ飛んでくる
   function serve(side){ shs = [mkShuttle(side, .9)]; for (let i = 1; i < ST().balls; i++) shs.push(mkShuttle(i % 2 ? 1 - side : side, .9 + i * 1.1)); sh = shs[0]; rally = 0; } // 3こ目からは、少しずつおくれて、こうごに飛んでくる
   // ふわふわのゆか：へこみ（ばねのようにゆれてもどる）
   const dent = (x, a) => dents.push({ x, a, t: 0 });
@@ -848,7 +850,7 @@ GAMES.badminton = root => {
   }
   // ネットには近づきすぎない（タッチネットは反則）
   const MARGIN = 46;
-  // あいてがスマッシュを打つ高さ：高いほど角度が急になって、コートのうしろからでもネットをこえて入る
+  // 相手がスマッシュを打つ高さ：高いほど角度が急になって、コートの後ろからでもネットをこえて入る
   const SMASH_AT = 100;
   const aim = e => { target = clamp(pt(e)[0], 24, NET - MARGIN); };
   // スマホ：タップしただけでは跳ばない。上にスワイプ・2回タップ（とジャンプボタン）でジャンプ。マウスはクリックでジャンプ
@@ -875,18 +877,18 @@ GAMES.badminton = root => {
     if ((e.key === 'p' || e.key === 'P') && d && !e.repeat && state === 'play'){ paused = !paused; Object.keys(keys).forEach(k => keys[k] = false); }
   });
   function hit(p, dir){
-    const incoming = (sh.smash || sh.fast) && sh.by === -dir; // あいてのスマッシュを打ち返すところ
-    // スマッシュ返し：スマッシュを、ジャンプしながら受けたとき（地面で受けたらブロック）。ネットすれすれの速い球で打ち返す。あなたも、あいても同じルール
+    const incoming = (sh.smash || sh.fast) && sh.by === -dir; // 相手のスマッシュを打ち返すところ
+    // スマッシュ返し：スマッシュを、ジャンプしながら受けたとき（地面で受けたらブロック）。ネットすれすれの速い球で打ち返す。あなたも、相手も同じルール
     if (incoming && p.y > 0){ const d = counterShot(dir); if (d){
       sh.vx = d[0]; sh.vy = d[1]; sh.smash = false; sh.fast = true; sh.by = dir; sh.serve = false; sh.read = false;
-      if (dir > 0){ // あなたのスマッシュ返し：あいては、スマッシュを受けたときと同じように、ミスしたり、さらにスマッシュ返ししたりする
+      if (dir > 0){ // あなたのスマッシュ返し：相手は、スマッシュを受けたときと同じように、ミスしたり、さらにスマッシュ返ししたりする
         sh.cpuMiss = Math.random() < ST().miss; sh.cpuSmash = false; sh.cpuJumpMiss = false; sh.cpuKaeshi = !sh.cpuMiss && Math.random() < ST().kaeshi;
         smashes++; cpuCombo = 0; celebrate(true, true, d[2]); }
       else { sh.cpuMiss = sh.cpuSmash = sh.cpuJumpMiss = sh.cpuKaeshi = false; blocks = 0; combo = 0;
-        cpuCombo++; fx(2, '#e4362b', sh.x, sh.y); bigText(cpuCombo >= 2 ? `あいての${cpuCombo}連続スマッシュ！` : 'あいてのスマッシュ返し！', cpuCombo >= 2 ? 'スマッシュ返し！' : '', '#e4362b', 22, sh.x, sh.y - 30); }
+        cpuCombo++; fx(2, '#e4362b', sh.x, sh.y); bigText(cpuCombo >= 2 ? `相手の${cpuCombo}連続スマッシュ！` : '相手のスマッシュ返し！', cpuCombo >= 2 ? 'スマッシュ返し！' : '', '#e4362b', 22, sh.x, sh.y - 30); }
       tone(1046, 0, .1, 'triangle', .08); tone(1568, .05, .14, 'sine', .06); rally++; best = Math.max(best, rally); p.swing = .25; p.act = { k: 'kaeshi', t: 0 }; return; } }
-    const offServe = dir > 0 && sh.serve && sh.by === -1; sh.serve = false; // あいてのサーブを、そのまま打ち返すところ
-    // スマッシュ：当てたところから、まっすぐ飛ぶ（とちゅうで向きは変わらない）。
+    const offServe = dir > 0 && sh.serve && sh.by === -1; sh.serve = false; // 相手のサーブを、そのまま打ち返すところ
+    // スマッシュ：当てたところから、まっすぐ飛ぶ（途中で向きは変わらない）。
     // ネットをこえてまっすぐ届く着地点のはんいを出して、はばがあるときは、うける人がいないところをねらう
     let smash = p.y > SMASH_H && sh.y < NETTOP - 20, land = 0;
     if (smash){
@@ -896,13 +898,13 @@ GAMES.badminton = root => {
       else {
         const rx = dir > 0 ? cpu.x : me.x;
         let dist;
-        if (far - lo > 120){ // はばがある：うける人からいちばん遠いところ（少しだけばらつかせる）
+        if (far - lo > 120){ // はばがある：うける人から一番遠いところ（少しだけばらつかせる）
           dist = [0, 1, 2, 3, 4, 5, 6].map(k => lo + (far - lo) * k / 6).reduce((a, b) => Math.abs(sh.x + dir * b - rx) > Math.abs(sh.x + dir * a - rx) ? b : a) + rnd(-18, 18);
         } else dist = rnd(lo, far);
         land = sh.x + dir * clamp(dist, lo, far);
       }
     }
-    // あいてがミスするのは、あなたのスマッシュを受けたときだけ（6割）。ふつうの球は必ず追いついて返す。スマッシュをねらったジャンプは、たまに（10%）空ぶり
+    // 相手がミスするのは、あなたのスマッシュを受けたときだけ（6割）。ふつうの球は必ず追いついて返す。スマッシュをねらったジャンプは、たまに（10%）空ぶり
     sh.whiff = false;
     if (dir > 0){ sh.cpuMiss = smash && !(offServe && ST().guard) && Math.random() < ST().miss; sh.read = smash && offServe && ST().guard; sh.cpuSmash = !smash && Math.random() < (cpuCombo > 0 ? ST().chain : ST().smash); sh.cpuJumpMiss = sh.cpuSmash && Math.random() < ST().whiff;
       sh.cpuKaeshi = smash && !sh.read && Math.random() < ST().kaeshi; if (sh.cpuKaeshi) sh.cpuMiss = false; }
@@ -910,17 +912,17 @@ GAMES.badminton = root => {
     if (smash){ const sp = (dir > 0 ? rnd(560, 640) : rnd(480, 540)) * (sh.read ? .62 : 1), dx = land - sh.x, dy = FLOOR - 4 - sh.y, d = Math.hypot(dx, dy);
       sh.vx = dx / d * sp; sh.vy = dy / d * sp; sh.smash = true; sh.fast = false; sh.land = land; smashes += dir > 0 ? 1 : 0;
       if (dir > 0) celebrate(true, incoming, land);
-      else { cpuCombo++; // あいての連続スマッシュ
-        if (cpuCombo >= 2){ const lv = Math.min(3, cpuCombo - 1); fx(lv, '#e4362b', sh.x, sh.y); bigText(`あいての${cpuCombo}連続スマッシュ！`, '', '#e4362b', 18 + lv * 3, sh.x, sh.y - 26); }
-        else pops.push({ x: sh.x, y: sh.y - 20, a: 1, txt: 'あいてのスマッシュ！' }); }
+      else { cpuCombo++; // 相手の連続スマッシュ
+        if (cpuCombo >= 2){ const lv = Math.min(3, cpuCombo - 1); fx(lv, '#e4362b', sh.x, sh.y); bigText(`相手の${cpuCombo}連続スマッシュ！`, '', '#e4362b', 18 + lv * 3, sh.x, sh.y - 26); }
+        else pops.push({ x: sh.x, y: sh.y - 20, a: 1, txt: '相手のスマッシュ！' }); }
       tone(1046, 0, .1, 'triangle', .08); tone(1568, .05, .14, 'sine', .06); }
     else { sh.vx = dir * (rnd(200, 280) + Math.min(rally * 5, 70));
-      // あいての球は天井に当たらない高さにおさえる（天井ではね返ってネットをこえないミスをしない）
+      // 相手の球は天井に当たらない高さにおさえる（天井ではね返ってネットをこえないミスをしない）
       let up = rnd(290, 360); if (dir < 0) up = Math.min(up, Math.sqrt(2 * GR * Math.max(20, sh.y - CEIL - 16)));
       // ネットの近くで打つと、ふわっと短いドロップショット（ネットのすぐむこうに落ちる）
       if (dir > 0 && p.y === 0 && p.x > NET - 100){ sh.vx = rnd(95, 125); up = rnd(205, 235); p.act = { k: 'drop', t: 0 }; }
       sh.vy = -up; sh.smash = false; sh.fast = false; soft(dir > 0 ? 880 : 700, .09, .07); if (dir > 0) celebrate(false, incoming); else cpuCombo = 0; }
-    sh.by = dir; // 打った人は、あいてが打ち返すまでもう一度は当てない
+    sh.by = dir; // 打った人は、相手が打ち返すまでもう一度は当てない
     rally++; best = Math.max(best, rally); p.swing = .25; if (!(p.act && p.act.k === 'drop' && p.act.t === 0)) p.act = { k: smash ? 'smash' : incoming ? 'block' : 'hit', t: 0 };
   }
   // 技の名前と演出（lv が大きいほど、はでに）
@@ -934,7 +936,7 @@ GAMES.badminton = root => {
   function celebrate(isSmash, incoming, land = 0){
     const x = sh.x, y = sh.y - 26;
     if (isSmash){ combo++;
-      const sharp = land - NET < 130; // あいてのコートの、ネットのすぐ近くにつきささる
+      const sharp = land - NET < 130; // 相手のコートの、ネットのすぐ近くにつきささる
       const lv = Math.min(5, combo - 1 + (sharp ? 1 : 0) + (incoming ? 2 : 0));
       const COMBO = ['#e4362b', '#ff6a00', '#ff3d7f', '#e0a400', '#ff2d2d'], col = incoming ? '#f2a20c' : sharp ? '#7d55c7' : COMBO[Math.min(4, combo - 1)];
       let main = incoming ? 'スマッシュ返し！' : sharp ? 'するどいスマッシュ！' : combo >= 2 ? `${combo}連続スマッシュ！` : 'スマッシュ！';
@@ -942,12 +944,12 @@ GAMES.badminton = root => {
       fx(lv, col, x, y); bigText(main, sub, col, 20 + lv * 3, x, y);
       for (let k = 0; k <= Math.min(5, lv + 1); k++) tone([523, 659, 784, 1046, 1318, 1568][k], .04 + k * .045, .16, 'triangle', .07); }
     else { combo = 0;
-      if (incoming){ blocks++; const lv = Math.min(4, blocks - 1); // あいてのスマッシュを、ふつうに打ち返した
+      if (incoming){ blocks++; const lv = Math.min(4, blocks - 1); // 相手のスマッシュを、ふつうに打ち返した
         fx(lv, '#2e7fd0', me.x + 16, racketY(me) - 8); bigText(blocks >= 2 ? `${blocks}連続ブロック！` : 'ブロック！', '', '#2e7fd0', 20 + lv * 3, x, y);
         tone(523, 0, .1, 'square', .05); tone(784, .05, .16, 'triangle', .08); if (blocks >= 2) tone(1046, .1, .18, 'triangle', .07); } } }
-  // スマッシュ返しの球：速く・低く。ネットをこえて、あなたのコートに入るいちばん低い軌道をさがす
+  // スマッシュ返しの球：速く・低く。ネットをこえて、あなたのコートに入る一番低い軌道をさがす
   function counterShot(dir){ let pick = null;
-    // いちばん速い横の速さから順に、ネットをこえて あいてのコートに入る、いちばん低い軌道をさがす（dir：+1 = あなたが打つ）
+    // 一番速い横の速さから順に、ネットをこえて 相手のコートに入る、一番低い軌道をさがす（dir：+1 = あなたが打つ）
     for (let sp = 560; sp >= 260 && !pick; sp -= 20) for (let vy = 60; vy >= -320; vy -= 10){ const vx = dir * sp; let x = sh.x, y = sh.y, ux = vx, uy = vy, ok = true, land = null;
       for (let i = 0; i < 300; i++){ uy += GR / 60; ux *= 1 - .22 / 60; x += ux / 60; y += uy / 60;
         if (y < CEIL){ ok = false; break; } if (Math.abs(x - NET) < 6 && y > NETTOP - 8){ ok = false; break; } if (y >= FLOOR - 4){ land = x; break; } }
@@ -969,20 +971,20 @@ GAMES.badminton = root => {
     score[1 - side]++; sink = { t: 0, x: sh.x, y: FLOOR - 4, side, s: sh };
     dent(sh.x, 1.1); burst(sh.x, FLOOR - 6, 12); pops.push({ x: sh.x, y: FLOOR - 30, a: 1, txt: 'ぽふっ', c: '#7a8aa0', size: 16 });
     blocks = 0; combo = 0; cpuCombo = 0; // 点が入ったら、連続スマッシュ・連続ブロックは、また1から
-    // あいてのコートに落ちたとき：スマッシュなら「きまった！」、とどかなかったら「おいつけない！」（空ぶりしたときは、もう出ている）
+    // 相手のコートに落ちたとき：スマッシュなら「きまった！」、とどかなかったら「おいつけない！」（空ぶりしたときは、もう出ている）
     if (side === 1 && sh.by === 1 && !sh.whiff){ if (sh.smash){ fx(1, '#e4362b', sh.x, FLOOR - 40); bigText('きまった！', '', '#e4362b', 24, sh.x, FLOOR - 70); }
       // ネットのすぐ近くに、ふわっと落とした球は「ドロップショット」（シャトル2このときに、よくきまる）
       else if (sh.x - NET < 130){ fx(1, '#2f9a48', sh.x, FLOOR - 40); bigText('ドロップショット！', 'きまった！', '#2f9a48', 22, sh.x, FLOOR - 90); tone(784, 0, .12, 'triangle', .07); tone(1046, .06, .16, 'triangle', .07); }
       else pops.push({ x: clamp(cpu.x, 380, W - 60), y: racketY(cpu) - 40, a: 1.2, txt: 'おいつけない！', c: '#7a8aa0', size: 16 }); }
     soft(196, .2, .12); soft(262, .16, .08);
-    later(() => { burst(W / 2, 70, 14, side ? '#fff6c8' : '#ffffff'); pops.push({ x: W / 2, y: 76, a: 1.2, txt: side ? 'あなたに1点！' : 'あいてに1点', c: side ? '#2e7fd0' : '#e4362b', size: 20, cloud: true }); if (side) chord([0, 4, 7]); }, 250);
+    later(() => { burst(W / 2, 70, 14, side ? '#fff6c8' : '#ffffff'); pops.push({ x: W / 2, y: 76, a: 1.2, txt: side ? 'あなたに1点！' : '相手に1点', c: side ? '#2e7fd0' : '#e4362b', size: 20, cloud: true }); if (side) chord([0, 4, 7]); }, 250);
   }
   loop(dt => {
     if (paused){ draw(); return; }
     clock += dt;
     dents.forEach(d => d.t += dt); dents = dents.filter(d => d.t < 1.6);
     bits.forEach(b => { b.x += b.vx * dt; b.y += b.vy * dt; b.vy += 60 * dt; b.a -= dt * 1.4; }); bits = bits.filter(b => b.a > 0);
-    if (state === 'enter'){ introT += dt; if (introT >= 1.25){ if (reach > 0) chooser('おかえり！ どのステージで遊ぶ？', reach > LAST ? `いちばん先は「${stageLabel(reach)}」。` : ''); else state = 'play'; } }
+    if (state === 'enter'){ introT += dt; if (introT >= 1.25){ if (reach > 0) chooser('おかえり！ どのステージで遊ぶ？', reach > LAST ? `一番先は「${stageLabel(reach)}」。` : ''); else state = 'play'; } }
     if (state === 'play' && hitStop > 0) hitStop -= dt;
     else if (state === 'play'){
       const spd = ST().speed, mv = 1 + (spd - 1) * .8; stageT += dt;
@@ -994,11 +996,11 @@ GAMES.badminton = root => {
           if (p.y <= 0){ const hitV = -p.vy; p.y = 0; p.dj = false; dent(p.x, Math.min(1.2, hitV / 380)); puffs.push({ x: p.x, a: .8 });
             p.vy = hitV > 200 ? hitV * .2 : 0; if (p.vy > 0) p.y = .1; } }
         p.swing = Math.max(0, p.swing - dt); if (p.act) p.act.t += dt; });
-      // あいて：スマッシュをねらうときは、少し高いところで合わせにいく
-      // あいて：打たれた瞬間に落ちるところへ歩きだす。ゆっくり加速・減速して、打ったあとは歩いて真ん中へもどる
+      // 相手：スマッシュをねらうときは、少し高いところで合わせにいく
+      // 相手：打たれた瞬間に落ちるところへ歩きだす。ゆっくり加速・減速して、打ったあとは歩いて真ん中へもどる
       // シャトルが2このときは、さきにとどくほうを追いかける
-      // あいては、先を読んで動く（ふだんの速さはそのまま。どうしても間に合わないときだけダッシュ）
-      // ・シャトルが2こ以上なら、いちばん先に来るシャトルに間に合わないときは、追うのをやめて、つぎのシャトルを取りにいく
+      // 相手は、先を読んで動く（ふだんの速さはそのまま。どうしても間に合わないときだけダッシュ）
+      // ・シャトルが2こ以上なら、一番先に来るシャトルに間に合わないときは、追うのをやめて、次のシャトルを取りにいく
       // ・こちらに向かってくるシャトルがないあいだは、ゆっくり歩かず、すぐに真ん中へもどってそなえる（シャトルが2こ以上のとき）
       const cands = [];
       if (!sink) for (const s of shs){ if (s.wait > 0 || s.by === -1 || !(s.vx > 0 || s.x > NET)) continue; sh = s;
@@ -1020,7 +1022,7 @@ GAMES.badminton = root => {
       const busy = cands.some(c => c.s !== chase && c.t < 1.3);
       // スマッシュをねらう位置に行くのは、ほかにいそぐシャトルがないときだけ
       const want = pick ? (busy ? pick.lx : pick.lxS) : 470;
-      // ダッシュしているあいだは、こまをおぼえておく（つぎのシャトルを打つまで）
+      // ダッシュしているあいだは、こまをおぼえておく（次のシャトルを打つまで）
       if (dash > 1) cpu.dashT = .6; cpu.dashT = Math.max(0, (cpu.dashT || 0) - dt); const dv = cpu.dashT > 0 ? 1.4 : 1;
       const maxV = (chase || ready ? 250 : 110) * ST().cpu * dv, desired = clamp((want - cpu.x) * 4, -maxV, maxV);
       cpu.vx += clamp(desired - cpu.vx, -1100 * ST().cpu * dv * dt, 1100 * ST().cpu * dv * dt);
@@ -1030,7 +1032,7 @@ GAMES.badminton = root => {
         if (tReal > .2 && tReal < .45 && Math.abs(cpu.x - lx) < 90) jump(cpu); }
       if (chase && !busy && chase.cpuKaeshi && (chase.smash || chase.fast) && cpu.y === 0 && chase.x > NET){ sh = chase; const lx = landing(178);
         if (landSteps / 60 < .2 && Math.abs(cpu.x - lx) < 70) jump(cpu); }
-      if (sink){ sink.t += dt; if (sink.t > 1){ const side = sink.side; sink = null; if (score[0] >= 5){ startClear(); } else if (score[1] >= 5){ state = 'over'; end(); } else serve(1 - side); } } // 点をとった人がつぎのサーブ（side は落ちたコートなので、その反対）
+      if (sink){ sink.t += dt; if (sink.t > 1){ const side = sink.side; sink = null; if (score[0] >= 5){ startClear(); } else if (score[1] >= 5){ state = 'over'; end(); } else serve(1 - side); } } // 点をとった人が次のサーブ（side は落ちたコートなので、その反対）
       else for (const s of shs){ sh = s;
         if (s.wait > 0){ s.wait -= dt; continue; }
         const dts = dt * spd; // ステージが進むと、シャトルが速く飛ぶ
@@ -1069,15 +1071,15 @@ GAMES.badminton = root => {
     [[0, 0], [2, 120], [4, 240], [7, 360]].forEach(([n, ms]) => later(() => tone(FREQ[n] * 2, 0, .3, 'triangle', .12), ms));
     later(() => chord([0, 4, 7], 4, .03), 520); }
   function end(){ const win = score[0] > score[1]; if (win){ chord([0, 2, 4, 7], 2, .12); unlock(stage + 1); }
-    const info = `<p>${score[0]} − ${score[1]}　いちばん長いラリー ${best}回　スマッシュ ${smashes}回</p>`;
+    const info = `<p>${score[0]} − ${score[1]}　一番長いラリー ${best}回　スマッシュ ${smashes}回</p>`;
     if (win && stage < LAST){ const nx = STAGES[stage + 1];
-      g.over(`<h5>${stageLabel()} クリア！</h5>${COIN_TAG('silver')}${info}<p>つぎは「${nx.name}」。${nx.balls > STAGES[stage].balls ? 'シャトルが2こになるよ！' : 'シャトルが速くなるよ！'}</p>`, 'つぎのステージへ', () => play(stage + 1)); }
-    else if (win && stage === LAST) g.over(`<h5>ぜんぶのステージをクリア！</h5>${COIN_TAG('silver')}${info}<p>雲の部屋のチャンピオン！ <b>チャレンジ</b>が3つ開いたよ。3つともクリアすると「完全制覇」！</p>`, 'チャレンジモードへ', () => play(LAST + 1));
+      g.over(`<h5>${stageLabel()} クリア！</h5>${COIN_TAG('silver')}${info}<p>次は「${nx.name}」。${nx.balls > STAGES[stage].balls ? 'シャトルが2こになるよ！' : 'シャトルが速くなるよ！'}</p>`, '次のステージへ', () => play(stage + 1)); }
+    else if (win && stage === LAST) g.over(`<h5>全部のステージをクリア！</h5>${COIN_TAG('silver')}${info}<p>雲の部屋のチャンピオン！ <b>チャレンジ</b>が3つ開いたよ。3つともクリアすると「完全制覇」！</p>`, 'チャレンジモードへ', () => play(LAST + 1));
     else if (win && stage === FINAL){ coin = true; try { localStorage.setItem(SAVE_KEY + '-coin', '1'); } catch(e){}
-      g.over(`<h5>完全制覇！</h5>${COIN_TAG('gold')}${info}<p>ぜんぶのステージと、ぜんぶのチャレンジをクリアしました。<br><b style="color:#d39b1f">金のシャトルコイン</b>をゲット！</p>`, 'ステージをえらぶ', () => chooser('どのステージで遊ぶ？', ''));
+      g.over(`<h5>完全制覇！</h5>${COIN_TAG('gold')}${info}<p>全部のステージと、全部のチャレンジをクリアしました。<br><b style="color:#d39b1f">金のシャトルコイン</b>をゲット！</p>`, 'ステージを選ぶ', () => chooser('どのステージで遊ぶ？', ''));
       return; }
-    else if (win) g.over(`<h5>${stageLabel()} クリア！</h5>${COIN_TAG('silver')}${info}<p>つぎは「${stageDef(stage + 1).name}」。${stageDef(stage + 1).balls > ST().balls ? `シャトルが${stageDef(stage + 1).balls}こになるよ！ そのかわり、ゆっくり。` : 'シャトルが、すこし速くなるよ！'}</p>`, 'つぎのチャレンジへ', () => play(stage + 1));
-    else g.over(`<h5>あいての勝ち</h5>${info}<p>${smashes ? `おしい！ もういちど、${stageLabel()}に挑戦しよう。` : 'シャトルが上がったら、ジャンプして高いところで当ててみよう。'}</p>`, 'もういちど', () => play(stage));
+    else if (win) g.over(`<h5>${stageLabel()} クリア！</h5>${COIN_TAG('silver')}${info}<p>次は「${stageDef(stage + 1).name}」。${stageDef(stage + 1).balls > ST().balls ? `シャトルが${stageDef(stage + 1).balls}こになるよ！ そのかわり、ゆっくり。` : 'シャトルが、少し速くなるよ！'}</p>`, '次のチャレンジへ', () => play(stage + 1));
+    else g.over(`<h5>相手の勝ち</h5>${info}<p>${smashes ? `おしい！ もう一度、${stageLabel()}に挑戦しよう。` : 'シャトルが上がったら、ジャンプして高いところで当ててみよう。'}</p>`, 'もう一度', () => play(stage));
     addChooseBtn(); }
   // 子どものキャラクター：走ると足が動き、ジャンプでひざをまげ、ラケットをかまえる
   function racketMan(p, col, dir, isMe){
@@ -1122,12 +1124,12 @@ GAMES.badminton = root => {
     ctx.fillStyle = NAVY; rr(ctx, p.x - 9, hipY - 3, 18, 10, 3); ctx.fill();
     ctx.fillStyle = col; rr(ctx, p.x - 10, shY - 2, 20, hipY - shY + 4, 6); ctx.fill();
     ctx.fillStyle = 'rgba(255,255,255,.25)'; rr(ctx, p.x - 8, shY, 5, hipY - shY - 2, 3); ctx.fill();
-    // うしろの手
+    // 後ろの手
     ctx.strokeStyle = SKIN; ctx.lineWidth = 4.5; ctx.beginPath(); ctx.moveTo(p.x - dir * 6, shY + 4); ctx.lineTo(p.x - dir * 13, shY + (air ? -2 : 12)); ctx.stroke();
     // あたま
     ctx.fillStyle = SKIN; ctx.beginPath(); ctx.arc(p.x, hdY, 13, 0, 7); ctx.fill();
     ctx.fillStyle = HAIR; ctx.beginPath(); ctx.arc(p.x - dir * 1, hdY - 2, 13.5, Math.PI * .95, Math.PI * 2.05); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(p.x - dir * 9, hdY - 1, 5, 8, 0, 0, 7); ctx.fill(); // うしろがみ
+    ctx.beginPath(); ctx.ellipse(p.x - dir * 9, hdY - 1, 5, 8, 0, 0, 7); ctx.fill(); // 後ろがみ
     ctx.beginPath(); ctx.moveTo(p.x + dir * 2, hdY - 15); ctx.quadraticCurveTo(p.x + dir * 10, hdY - 20, p.x + dir * 8, hdY - 12); ctx.fill(); // はねた毛
     ctx.fillStyle = SKIN; ctx.beginPath(); ctx.arc(p.x - dir * 4, hdY + 1, 3, 0, 7); ctx.fill(); // みみ
     ctx.fillStyle = '#3a2a22'; ctx.beginPath(); ctx.ellipse(p.x + dir * 6, hdY + 1, 1.8, 2.4, 0, 0, 7); ctx.fill();
@@ -1207,7 +1209,7 @@ GAMES.badminton = root => {
       [[HUD_SCORE.blue, score[0]], [HUD_SCORE.red, score[1]]].forEach(([c, v]) => { const x = sx2 + c[0] * sc2, y = sy2 + c[1] * sc2, r = c[2] * sc2;
         ctx.fillStyle = `rgb(${c[3].join(',')})`; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
         ctx.fillStyle = '#fff'; ctx.font = '800 15px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.fillText(v, x, y + 1); }); }
-    else { pill(cx - 96, 8, 192, 32); ctx.font = '800 15px "Zen Maru Gothic", sans-serif'; ctx.fillStyle = '#2e7fd0'; ctx.textAlign = 'center'; ctx.fillText(`あなた ${score[0]} − ${score[1]} あいて`, cx, 24); }
+    else { pill(cx - 96, 8, 192, 32); ctx.font = '800 15px "Zen Maru Gothic", sans-serif'; ctx.fillStyle = '#2e7fd0'; ctx.textAlign = 'center'; ctx.fillText(`あなた ${score[0]} − ${score[1]} 相手`, cx, 24); }
     // ステージと一時停止
     const lab = stageLabel(); ctx.font = '800 12px "Zen Maru Gothic", sans-serif'; const lw = ctx.measureText(lab).width + 26;
     pill(W - 48 - lw, 10, lw, 28); ctx.fillStyle = '#2e7fd0'; ctx.textAlign = 'center'; ctx.fillText(lab, W - 48 - lw / 2, 24);
@@ -1224,8 +1226,8 @@ GAMES.badminton = root => {
       ctx.fillStyle = 'rgba(46,127,208,.25)'; ctx.fillRect(150, py - 8, 1, 18);
       ctx.fillStyle = '#2e7fd0'; ctx.beginPath(); ctx.arc(170, py + 1, 9.5, 0, 7); ctx.fill(); ctx.save(); ctx.translate(170, py + 1); ctx.scale(.55, .55); arrow(0, 0, -Math.PI / 2); ctx.restore();
       ctx.fillStyle = '#2e7fd0'; ctx.font = '800 11px "Zen Maru Gothic", sans-serif'; ctx.fillText('ジャンプ', 186, py - 3); ctx.font = '700 8px "Zen Maru Gothic", sans-serif'; ctx.fillStyle = '#5a7fa8'; ctx.fillText('スペースキー・クリック', 186, py + 8); ctx.globalAlpha = 1; }
-    if (paused){ ctx.fillStyle = 'rgba(255,255,255,.55)'; ctx.fillRect(0, 44, W, H - 44); ctx.fillStyle = '#2e7fd0'; ctx.textAlign = 'center'; ctx.font = '900 26px "Zen Maru Gothic", sans-serif'; ctx.fillText('いちじていし', W / 2, H / 2 - 10);
-      ctx.font = '700 13px "Zen Maru Gothic", sans-serif'; ctx.fillText('もういちど おすと、つづきから', W / 2, H / 2 + 18); }
+    if (paused){ ctx.fillStyle = 'rgba(255,255,255,.55)'; ctx.fillRect(0, 44, W, H - 44); ctx.fillStyle = '#2e7fd0'; ctx.textAlign = 'center'; ctx.font = '900 26px "Zen Maru Gothic", sans-serif'; ctx.fillText('一時停止', W / 2, H / 2 - 10);
+      ctx.font = '700 13px "Zen Maru Gothic", sans-serif'; ctx.fillText('もう一度 おすと、つづきから', W / 2, H / 2 + 18); }
     ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic'; }
   function drawRoom(){
     const BX0 = 118, BX1 = 522, BY0 = 50, BY1 = 248, lerp = (a, b, t) => a + (b - a) * t;
@@ -1305,7 +1307,7 @@ GAMES.badminton = root => {
     ctx.fillStyle = '#d9cbb5'; ctx.fillRect(0, FLOOR - 14, W, 14);
     ctx.fillStyle = '#c8a27a'; ctx.fillRect(DOOR.x - 10, DOOR.y - 10, DOOR.w + 20, DOOR.h + 10);
     ctx.fillStyle = '#fff'; rr(ctx, DOOR.x + 4, DOOR.y - 50, DOOR.w - 8, 30, 15); ctx.fill();
-    ctx.fillStyle = '#2a9fd3'; ctx.font = '900 15px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.fillText('くもの部屋', DOOR.x + DOOR.w / 2, DOOR.y - 30); ctx.textAlign = 'left';
+    ctx.fillStyle = '#2a9fd3'; ctx.font = '900 15px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.fillText('雲の部屋', DOOR.x + DOOR.w / 2, DOOR.y - 30); ctx.textAlign = 'left';
     if (state === 'intro'){ const p = .5 + .5 * Math.sin(clock * 3); ctx.textAlign = 'center';
       ctx.fillStyle = '#3a3330'; ctx.font = '700 14px "Zen Maru Gothic", sans-serif'; ctx.fillText('この部屋に入ると、すぐにバドミントンの試合ができます', W / 2, 22);
       // 雲の部屋ならではの2つ：シャトルがはね返る・ジャンプが高い
@@ -1355,7 +1357,7 @@ GAMES.badminton = root => {
         ctx.translate(W / 2, H * .42); ctx.rotate(Math.sin(e * 2.1 + 1) * .028); ctx.scale(pop, pop);
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '800 48px "Zen Maru Gothic", sans-serif';
         ctx.shadowColor = 'rgba(255,197,61,.55)'; ctx.shadowBlur = 22; ctx.fillStyle = '#E8A317';
-        ctx.fillText(stage === FINAL ? '完全制覇！' : stage === LAST ? 'ぜんぶクリア！' : 'クリア！', 0, 0); }
+        ctx.fillText(stage === FINAL ? '完全制覇！' : stage === LAST ? '全部クリア！' : 'クリア！', 0, 0); }
       ctx.restore();
       // コインが上から落ちてきて、くるくる回る（ふつうのステージは銀、完全制覇は金）
       if (e > .7){ const k = Math.min(1, (e - .7) / .6), bounce = k < 1 ? 1 - Math.abs(Math.cos(k * Math.PI * 1.5)) * (1 - k) : 1;
@@ -1379,16 +1381,16 @@ GAMES.badminton = root => {
   }
   const jumpBtn = g.button('ジャンプ！', () => jump(me), 'primary');
   const enterBtn = g.button('ドアをあけて入る', () => enter(), 'primary');
-  const pickBtn = g.button('ステージをえらぶ', () => { if (state === 'play' || state === 'over') chooser('どのステージで遊ぶ？', ''); });
+  const pickBtn = g.button('ステージを選ぶ', () => { if (state === 'play' || state === 'over') chooser('どのステージで遊ぶ？', ''); });
   jumpBtn.hidden = true; pickBtn.hidden = true;
   function enter(){ if (state !== 'intro') return; state = 'enter'; introT = 0; enterBtn.hidden = true; jumpBtn.hidden = false; pickBtn.hidden = reach < 1;
     soft(392, .2, .08); later(() => soft(523, .25, .08), 200); later(() => soft(659, .3, .08), 450); }
   reset(); draw();
 };
 
-/* --- くもの上でおにごっこ（音楽つき） --- */
+/* --- 雲の上でおにごっこ（音楽つき） --- */
 GAMES.cloud = root => {
-  const g = shell(root, 'くもの上で、音楽にあわせておにごっこ', 'おしたところへ走って、にげる子にタッチ！');
+  const g = shell(root, '雲の上で、音楽にあわせておにごっこ', 'おしたところへ走って、にげる子にタッチ！');
   const { ctx, W, H, cv, pt } = mkCanvas(g.stage, 640, 360);
   const CX = 320, CY = 196, RX = 282, RY = 132;
   const inside = (x, y, k = 1) => ((x - CX) / RX) ** 2 + ((y - CY) / RY) ** 2 < k;
@@ -1415,7 +1417,7 @@ GAMES.cloud = root => {
     if (state === 'play'){
       t -= dt;
       if (t <= 0){ t = 0; state = 'over'; document.body.classList.remove('dancing'); chord([0, 4, 7, 12 % 8]);
-        g.over(`<h5>${tags}回タッチ！</h5><p>${tags >= 10 ? 'くもの上のおにごっこ名人！' : tags >= 5 ? 'いいね！ すみに追いこむと、もっとつかまえられるよ。' : '雲のはしっこに追いつめてみよう。'}</p>`, 'もういちど', start); }
+        g.over(`<h5>${tags}回タッチ！</h5><p>${tags >= 10 ? '雲の上のおにごっこ名人！' : tags >= 5 ? 'いいね！ すみに追いこむと、もっとつかまえられるよ。' : '雲のはしっこに追いつめてみよう。'}</p>`, 'もう一度', start); }
       const bpm = 132 + (30 - t) * 4; beatT -= dt; dance += dt * bpm / 60 * Math.PI;
       if (beatT <= 0){ beatT += 30 / bpm; const m = MEL[beat % MEL.length]; if (m !== null) tone(deg(m), 0, .2, 'triangle', .11);
         if (beat % 4 === 0){ const b = BASS[Math.floor(beat / 8) % BASS.length]; tone(deg(b - 7), 0, .32, 'sine', .1); if (beat % 8 === 4) tone(deg(b - 3), 0, .22, 'sine', .05); }
@@ -1461,7 +1463,7 @@ GAMES.cloud = root => {
     pops.forEach(p => { ctx.globalAlpha = p.a; ctx.fillStyle = '#d4417f'; ctx.fillText('タッチ！', p.x, p.y); }); ctx.globalAlpha = 1; ctx.textAlign = 'left';
   }
   reset(); draw();
-  g.over('<h5>くもの上でおにごっこ</h5><p>30秒で何回タッチできるかな？</p>', 'スタート', start);
+  g.over('<h5>雲の上でおにごっこ</h5><p>30秒で何回タッチできるかな？</p>', 'スタート', start);
 };
 
 /* --- ふむと音がなるかいだん --- */
@@ -1471,7 +1473,7 @@ const STAIRS_UI = new Image(); STAIRS_UI.src = 'stairs-ui.webp';
 const STAIRS_BG = new Image(); STAIRS_BG.src = 'stairs-bg.jpg';
 const STAIRS_KID = new Image(); STAIRS_KID.src = 'stairs-kid.png';
 GAMES.stairs = root => {
-  const g = shell(root, 'ふむと音がなる、駅前のかいだん', '段をおすと音がなる。曲をえらぶと、光る段をふんで演奏できます。');
+  const g = shell(root, 'ふむと音がなる、駅前のかいだん', '段をおすと音がなる。曲を選ぶと、光る段をふんで演奏できます。');
   // もらったイラスト（題・かいだん・ボタン・説明まで1まい）をそのまま表示して、その上で動かす
   root.classList.add('imgui');
   const { ctx, W, H, cv, pt } = mkCanvas(g.stage, 1679, 937);
@@ -1501,7 +1503,7 @@ GAMES.stairs = root => {
   function status(){ statTxt = song && mode !== 'free' ? (demo ? `${song.name}　お手本を聞いてね` : `${song.name}　${idx} / ${song.seq.length}　まちがい ${miss}`) : '';
     if (song && mode !== 'free') g.stat(demo ? `${song.name}　お手本を聞いてね…` : `${song.name}　<b>${idx}</b> / ${song.seq.length}　まちがい ${miss}`); else g.stat('じゆうにふんでみよう'); }
   function play(key){
-    // 曲をえらびなおしたら、前の曲のお手本や「ひけた！」は鳴らさない
+    // 曲を選びなおしたら、前の曲のお手本や「ひけた！」は鳴らさない
     const my = ++gen, at_ = (fn, ms) => later(() => { if (my === gen) fn(); }, ms);
     mode = 'song'; song = SONGS[key]; idx = 0; miss = 0; demo = true; g.hide(); status();
     // お手本は、曲のリズムどおりに鳴らす（4分音符 = 380ms）。のばす音は音も長めに
@@ -1545,12 +1547,12 @@ GAMES.stairs = root => {
       // ふんだ段：ひかる
       if (glow[i] > 0){ ctx.save(); ctx.globalAlpha = glow[i]; ctx.shadowColor = COL[i]; ctx.shadowBlur = 48; ctx.fillStyle = 'rgba(255,255,255,.55)'; rr(ctx, x0, y0, x1 - x0, y1 - y0, 12); ctx.fill(); ctx.restore();
         ctx.globalAlpha = glow[i] * .35; ctx.fillStyle = COL[i]; ctx.beginPath(); ctx.ellipse((x0 + x1) / 2, y1 + 12, 106, 26, 0, 0, 7); ctx.fill(); ctx.globalAlpha = 1; }
-      // つぎにふむ段：ここ！
+      // 次にふむ段：ここ！
       if (i === tgt){ const p = .5 + .5 * Math.sin(performance.now() / 120); ctx.strokeStyle = `rgba(255,200,40,${.6 + p * .4})`; ctx.lineWidth = 9; rr(ctx, x0 - 7, y0 - 7, x1 - x0 + 14, y1 - y0 + 14, 16); ctx.stroke();
         ctx.fillStyle = '#e4362b'; ctx.font = '800 30px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.fillText('ここ！', (x0 + x1) / 2, y0 - 18 - p * 8); ctx.textAlign = 'left'; } }
-    // えらんでいるボタン
+    // 選んでいるボタン
     { const [, x0, y0, x1, y1] = BTNS.find(b => b[0] === chosen); ctx.strokeStyle = '#ffc928'; ctx.lineWidth = 8; rr(ctx, x0 - 8, y0 - 8, x1 - x0 + 16, y1 - y0 + 16, 64); ctx.stroke(); }
-    // 右上の表示：曲をえらんでいるときは、いまのようす
+    // 右上の表示：曲を選んでいるときは、いまのようす
     if (statTxt){ ctx.fillStyle = '#fff'; ctx.fillRect(1320, 44, 312, 48); ctx.fillStyle = '#1d559c'; ctx.font = '800 26px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText(statTxt, 1476, 69, 300); ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic'; }
     // 子ども：ふんだ段まで、ぴょんととんでいく
@@ -1565,7 +1567,7 @@ GAMES.stairs = root => {
 
 /* --- ゆかがガラスの歩道橋 --- */
 // ガラスの歩道橋をわたるキャラクター（キャラクターデザインから切りぬき）。
-// 0 立つ・1 歩く・2 よろこぶ・3 びっくり・4 うしろ・5 ジャンプ・6 わぁ・7 ！・8 ？・9 うれしい・13〜18 歩く6コマ（右向き）
+// 0 立つ・1 歩く・2 よろこぶ・3 びっくり・4 後ろ・5 ジャンプ・6 わぁ・7 ！・8 ？・9 うれしい・13〜18 歩く6コマ（右向き）
 const GLASS_CHARA = new Image(); GLASS_CHARA.src = 'glass-chara.png';
 const GLASS_ROAD = new Image(); GLASS_ROAD.src = 'glass-road.jpg';
 const GLASS_BRIDGE = new Image(); GLASS_BRIDGE.src = 'glass-bridge.png';
@@ -1573,7 +1575,7 @@ const GLASS_CARS = new Image(); GLASS_CARS.src = 'glass-cars.png';
 const GLASS_VEH = new Image(); GLASS_VEH.src = 'glass-vehicles.png';
 const GLASS_DOWN = new Image(); GLASS_DOWN.src = 'glass-down.jpg';
 GAMES.glass = root => {
-  const g = shell(root, '通学路の歩道橋を、わたってみよう', '「あるく」をおしているあいだ進みます。');
+  const g = shell(root, '通学路の歩道橋を、わたってみよう', '「歩く」をおしているあいだ進みます。');
   const { ctx, W, H, cv } = mkCanvas(g.stage, 1536, 816);
   // 上から見た絵（1536×1024）の y=104 から下を使う。車はもとの大きさの K 倍でかく
   const K = 4.3, SP = 2.4, OY = 104, X0 = 90, X1 = 1490, GX0 = 230, GX1 = 1330, MIDY = 470 - OY, FY = 425, LANES = [445, 610, 778, 955];
@@ -1637,7 +1639,7 @@ GAMES.glass = root => {
     }
     ctx.restore();
   }
-  const walkBtn = g.button('あるく（おしつづける）', () => {}, 'primary hold');
+  const walkBtn = g.button('歩く（おしつづける）', () => {}, 'primary hold');
   holdButton(walkBtn, v => { wantWalk = v && state === 'play'; });
   cv.addEventListener('pointerdown', e => { e.preventDefault(); if (state === 'play') wantWalk = true; });
   ['pointerup', 'pointerleave', 'pointercancel'].forEach(k => cv.addEventListener(k, () => wantWalk = false));
@@ -1645,7 +1647,7 @@ GAMES.glass = root => {
   const onGlass = () => x > GX0 && x < GX1;
   loop(dt => {
     if (state === 'play'){
-      // はじめてガラスの上に来たら、こわくて少し立ち止まる → 下が見えるのに気づく
+      // 始めてガラスの上に来たら、こわくて少し立ち止まる → 下が見えるのに気づく
       if (!firstGlass && x > GX0 + 20){ firstGlass = true; pauseT = 1.8; msg = 'こわい…'; msgT = 1.8; react = [[3, .6, 4], [0, 1.2, 0]]; reactT = 0; tone(196, 0, .4, 'sine', .05); doki += 25; }
       if (pauseT > 0){ pauseT -= dt; if (pauseT <= 0){ msg = 'ガラスの下が見える！'; msgT = 1.8; peekForce = 3; } }
       if (peekForce > 0) peekForce -= dt;
@@ -1662,7 +1664,7 @@ GAMES.glass = root => {
       doki = clamp(doki, 0, 100); maxDoki = Math.max(maxDoki, doki); msgT -= dt;
       if (react.length){ reactT += dt; while (react.length && reactT >= react[0][1]){ reactT -= react[0][1]; react.shift(); } }
       if (x >= X1){ state = 'over'; walking = false; chord([0, 4, 7]);
-        g.over(`<h5>わたりきった！</h5><p>ガラスの上で見た車 <b>${seen}</b>台　ドキドキ度 さいこう <b>${Math.round(maxDoki)}</b>%</p><p>「こわかったけど、たのしかった！」</p><p>${maxDoki > 70 ? '' : 'つぎは、ガラスの上で立ち止まって、下をのぞいてみよう。'}</p>`, 'もういちど', () => { reset(); state = 'play'; }); }
+        g.over(`<h5>わたりきった！</h5><p>ガラスの上で見た車 <b>${seen}</b>台　ドキドキ度 さいこう <b>${Math.round(maxDoki)}</b>%</p><p>「こわかったけど、楽しかった！」</p><p>${maxDoki > 70 ? '' : '次は、ガラスの上で立ち止まって、下をのぞいてみよう。'}</p>`, 'もう一度', () => { reset(); state = 'play'; }); }
       g.stat(`${og ? '<b style="color:#2e7fd0">ガラスの上</b>' : 'コンクリート'}　見た車 <b>${seen}</b>台　ドキドキ <b>${Math.round(doki)}</b>%`);
     }
     draw();
@@ -1675,11 +1677,11 @@ GAMES.glass = root => {
     // ガラスの橋を車の上にかさねる（ガラスのところは、下の車がすけて見える）
     if (GLASS_BRIDGE.complete && GLASS_BRIDGE.naturalWidth > 0) ctx.drawImage(GLASS_BRIDGE, 320, 330 - OY);
     ctx.font = '800 30px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center';
-    [[100, 'いえ'], [1440, '学校 →']].forEach(([lx, t]) => { ctx.fillStyle = 'rgba(255,255,255,.85)'; rr(ctx, lx - 70, 196, 140, 44, 22); ctx.fill(); ctx.fillStyle = '#3a3330'; ctx.fillText(t, lx, 229); });
+    [[100, '家'], [1440, '学校 →']].forEach(([lx, t]) => { ctx.fillStyle = 'rgba(255,255,255,.85)'; rr(ctx, lx - 70, 196, 140, 44, 22); ctx.fill(); ctx.fillStyle = '#3a3330'; ctx.fillText(t, lx, 229); });
     ctx.textAlign = 'left';
     drawChara();
     // 立ち止まって下をのぞくと、ガラスごしの道路が大きく見える
-    // 「下をのぞくと…」：はじめてガラスに乗ったときと、ガラスの上で止まったときに出す。キャラクターと反対がわに出して、かくさない
+    // 「下をのぞくと…」：始めてガラスに乗ったときと、ガラスの上で止まったときに出す。キャラクターと反対がわに出して、かくさない
     const want = state === 'play' && onGlass() && (peekForce > 0 || (!walking && stopT > .3));
     if (want && peekA <= 0) peekSide = x < W / 2 ? 1 : -1;
     peekA = clamp(peekA + (want ? 1 : -1) * (1 / 60) * 5, 0, 1);
@@ -1728,7 +1730,7 @@ GAMES.glass = root => {
       // 歩く：右向きの6コマを、じゅんばんに
       cell(13 + Math.floor(step * 10 / 6) % 6, shake);
     }
-    const say = msgT > 0 ? msg : wow ? 'わぁ…' : state === 'over' ? 'こわかったけど、たのしかった！' : '';
+    const say = msgT > 0 ? msg : wow ? 'わぁ…' : state === 'over' ? 'こわかったけど、楽しかった！' : '';
     if (say){
       ctx.font = '800 30px "Zen Maru Gothic", sans-serif';
       const bw = Math.ceil(ctx.measureText(say).width) + 48, bh = 56, bx = Math.min(W - bw - 20, x + 30), by = Y0 - 20;
@@ -1742,11 +1744,11 @@ GAMES.glass = root => {
     }
   }
   reset(); draw();
-  g.over('<h5>ゆかがガラスの歩道橋</h5><img src="glass-ahead.jpg" alt="" style="width:100%;max-height:34vh;object-fit:cover;border-radius:12px;display:block;margin:4px 0 8px"><p>ガラスの上で立ち止まって、下の道路をのぞいてみよう。</p>', 'わたりはじめる', () => { state = 'play'; });
+  g.over('<h5>ゆかがガラスの歩道橋</h5><img src="glass-ahead.jpg" alt="" style="width:100%;max-height:34vh;object-fit:cover;border-radius:12px;display:block;margin:4px 0 8px"><p>ガラスの上で立ち止まって、下の道路をのぞいてみよう。</p>', 'わたり始める', () => { state = 'play'; });
 };
 
 /* --- 夜の暗い道も楽しく（光る石） --- */
-// 夜の道の絵（4つの場面。高さ 320）。場面のはしまで歩くと、ページがめくれて、つぎの場面へ
+// 夜の道の絵（4つの場面。高さ 320）。場面のはしまで歩くと、ページがめくれて、次の場面へ
 // path：歩道のまん中の高さ（x ごと）。おくへ行くほど上に、小さくなる
 const NIGHT_SCENES = [
   // x0〜x1：使うところ（おくの、歩道が細くなるところは切りすてる）
@@ -1755,8 +1757,10 @@ const NIGHT_SCENES = [
   { src: 'night-4.jpg', w: 1526, x0: 0, x1: 1000, name: '川ぞいの道', path: [[0, 292], [1526, 238]] },
   { src: 'night-5.jpg', w: 3053, x0: 520, x1: 1990, name: 'おうちの近く', path: [[0, 284], [1300, 246], [1990, 238]] },
 ].map(s => (s.img = Object.assign(new Image(), { src: s.src }), s));
+// 歩く女の子の絵：0 立つ・1〜7 歩く・8 歩く（表情の絵）・9 こわがっている・10 下を見ている・11 おどろいている・12 うれしい・13 安心している
+const NIGHT_GIRL = new Image(); NIGHT_GIRL.src = 'night-girl.png';
 GAMES.night = root => {
-  const g = shell(root, '夜の歩道を、光る石といっしょに帰ろう', '「あるく」をおしているあいだ進みます。ふんだ石が光ります。');
+  const g = shell(root, '夜の歩道を、光る石といっしょに帰ろう', '「歩く」をおしているあいだ進みます。ふんだ石が光ります。');
   const { ctx, W, H, cv } = mkCanvas(g.stage, 640, 320);
   const S = NIGHT_SCENES, FOREST = 1, SCARE = 300, HOME = 1852, PX = 200, X0 = 60;
   const pathY = (si, lx) => { const P = S[si].path; for (let i = 1; i < P.length; i++) if (lx <= P[i][0] || i === P.length - 1){ const t = clamp((lx - P[i - 1][0]) / (P[i][0] - P[i - 1][0]), 0, 1); return P[i - 1][1] + (P[i][1] - P[i - 1][1]) * t; } };
@@ -1768,16 +1772,17 @@ GAMES.night = root => {
   for (let si = FOREST; si < S.length; si++){
     const end = si === S.length - 1 ? HOME - 30 : S[si].x1 - 40;
     for (let lx = si === FOREST ? SCARE + 200 : S[si].x0 + 100, k = 0; lx < end; k++){
-      const kd = si > FOREST && k % 17 === 9 ? 'rare' : SETS[si][k % SETS[si].length], y = pathY(si, lx);
+      // めずらしい石は、川ぞいの道のまん中あたりに1こだけ
+      const kd = si === FOREST + 1 && k === 9 ? 'rare' : SETS[si][k % SETS[si].length], y = pathY(si, lx);
       stones.push({ si, x: lx + rnd(-5, 5), y: y + 4 + rnd(-3, 4) * sizeAt(y), lit: 0, kind: kd, c: KIND[kd] });
       lx += 46 * sizeAt(y) + 8;
     }
   }
-  let si, x, walking, step, state = 'ready', photos = [], litCount, scaredT, foundT, met, say = '', sayT = 0, wantWalk = false, flipT = -1, titleT = 0;
+  let si, x, walking, step, state = 'ready', photos = [], litCount, lookT = 0, scaredT, foundT, met, say = '', sayT = 0, wantWalk = false, flipT = -1, titleT = 0;
   const page = document.createElement('canvas'); page.width = cv.width; page.height = cv.height;
-  function reset(){ si = 0; x = S[0].x0 + X0; walking = false; wantWalk = false; step = 0; litCount = 0; noteIdx = 0; cueDone = new Set(); firsts = new Set(); scaredT = 0; foundT = -1; met = false; say = ''; sayT = 0; flipT = -1; titleT = 2; stones.forEach(s => s.lit = 0); }
+  function reset(){ si = 0; x = S[0].x0 + X0; walking = false; wantWalk = false; step = 0; litCount = 0; noteIdx = 0; cueDone = new Set(); firsts = new Set(); lookT = 0; scaredT = 0; foundT = -1; met = false; say = ''; sayT = 0; flipT = -1; titleT = 2; stones.forEach(s => s.lit = 0); }
   const setWalk = v => { wantWalk = v && state === 'play'; };
-  const walkBtn = g.button('あるく（おしつづける）', () => {}, 'primary hold');
+  const walkBtn = g.button('歩く（おしつづける）', () => {}, 'primary hold');
   holdButton(walkBtn, setWalk);
   const camBtn = g.button('写真をとる', () => {
     if (state !== 'play' && state !== 'over') return;
@@ -1789,18 +1794,23 @@ GAMES.night = root => {
   cv.addEventListener('pointerdown', e => { e.preventDefault(); setWalk(true); });
   ['pointerup', 'pointerleave', 'pointercancel'].forEach(k => cv.addEventListener(k, () => setWalk(false)));
   onKey((e, d) => { if (e.key === 'ArrowRight' || e.key === ' '){ e.preventDefault(); setWalk(d); } });
-  // 石をふむたびに、つぎの音へ。家につくまでで、ひとつながりの夜の曲（null = 音なし、数字はドレミの何番目）
+  // 石をふむたびに、次の音へ。家につくまでで、ひとつながりの夜の曲（null = 音なし、数字はドレミの何番目）
   const _ = null, NIGHT_MEL = [
     0, 2, 4, 7, 6, 4, 5, 4,   2, 4, 5, 4, 2, 1, 0, _,
     4, 5, 7, 9, 7, 5, 4, 5,   4, 2, 1, 2, 4, _, 4, _,
     7, 6, 5, 4, 5, 4, 2, 0,   1, 2, 4, 5, 4, 2, 1, _,
     0, 2, 4, 7, 9, 7, 4, 5,   4, 2, 4, 2, 1, 0, _, 0,
     7, 9, 11, 9, 7, 4, 2, 4,  2, 1, 0 ];
+  const NIGHT_END = [4, 5, 4, 2, 4, 2, 1, 0];
   const CHORD = [0, 0, 3, 4, 0, 3, 4, 0, 3, 0];
   const degF = d => 261.63 * 2 ** ((Math.floor(d / 7) * 12 + [0, 2, 4, 5, 7, 9, 11][((d % 7) + 7) % 7]) / 12);
   let noteIdx = 0;
-  const talk = (t, sec) => { say = t; sayT = sec; };
-  const CUES = [[0, 100, 'きょうは、おそくなっちゃった', 2.4], [0, 480, 'はやく、かえろう', 2], [0, 800, 'この先は、森の道だ…', 2.2],
+  // せりふごとの表情（9 こわい・10 下を見る・11 おどろく・12 うれしい・13 安心）
+  const FACE = { 'こわい…': 9, 'くらいなあ…': 10, 'あっ、光る石！': 11, 'めずらしい石！': 11, 'もう、こわくないよ': 13, 'おうちが、見えてきた！': 13, 'もうすぐ、おうち！': 13, 'ただいま！': 12,
+    'ふむと、光る！': 12, '音もなるんだ！': 12, '星の形だ！': 12, 'さんかくもある！': 12, 'ハートだ！': 12, 'クローバーみたい': 12, '川が、きらきらしてる': 12, 'お月さま、きれい': 13 };
+  let sayAge = 0;
+  const talk = (t, sec) => { say = t; sayT = sec; sayAge = 0; };
+  const CUES = [[0, 100, '今日は、おそくなっちゃった', 2.4], [0, 480, 'はやく、帰ろう', 2], [0, 800, 'この先は、森の道だ…', 2.2],
     [1, 80, 'くらいなあ…', 1.8], [1, 860, 'もう、こわくないよ', 2],
     [2, 100, '川が、きらきらしてる', 2.2], [2, 600, 'お月さま、きれい', 2],
     [3, 620, 'おうちが、見えてきた！', 2.2], [3, 1500, 'もうすぐ、おうち！', 2]];
@@ -1814,14 +1824,18 @@ GAMES.night = root => {
       if (scaredT > 0){ scaredT -= dt; if (scaredT <= 0){ foundT = 0; talk('あっ、光る石！', 2.2); [0, 2, 4, 7, 9].forEach((d, i) => tone(degF(d + 7), i * .12, .5, 'sine', .06)); } }
       if (foundT >= 0) foundT += dt;
       if (titleT > 0) titleT -= dt;
-      walking = wantWalk && scaredT <= 0 && flipT < 0;
+      if (lookT > 0) lookT -= dt;
+      walking = wantWalk && scaredT <= 0 && lookT <= 0 && flipT < 0;
       if (walking){ x += 170 * dt; step += dt * 8; }
-      if (sayT > 0) sayT -= dt;
+      if (sayT > 0){ sayT -= dt; sayAge += dt; }
       CUES.forEach((c, i) => { if (!cueDone.has(i) && c[0] === si && x >= c[1] && sayT <= .3 && scaredT <= 0){ cueDone.add(i); talk(c[2], c[3]); } });
       if (foundT >= 0) stones.forEach(s => { if (s.si === si && !s.lit && Math.abs(s.x - x) < 18){ s.lit = 1; litCount++;
-        const m = NIGHT_MEL[noteIdx % NIGHT_MEL.length]; if (m !== null) tone(degF(m + 7), 0, .7, 'sine', .07);
+        // おうちの前の、最後の8こは「おわりのふし」。最後の石で、ドにもどって曲がおわる
+        const left = stones.length - 1 - noteIdx, m = left < NIGHT_END.length ? NIGHT_END[NIGHT_END.length - 1 - left] : NIGHT_MEL[noteIdx % NIGHT_MEL.length];
+        if (m !== null) tone(degF(m + 7), 0, left === 0 ? 1.4 : .7, 'sine', .07);
+        if (left === 0){ tone(degF(0), 0, 1.8, 'sine', .05); tone(degF(4), 0, 1.8, 'sine', .04); }
         if (noteIdx % 8 === 0) tone(degF(CHORD[Math.floor(noteIdx / 8) % CHORD.length] - 7), 0, 1.6, 'sine', .05);
-        if (s.kind === 'rare'){ tone(degF(14), .08, .9, 'sine', .05); talk('めずらしい石！', 1.4); }
+        if (s.kind === 'rare'){ tone(degF(14), .08, .9, 'sine', .05); talk('めずらしい石！', 1.6); lookT = 1.4; x = s.x; }
         else { const first = (key, t) => { if (!firsts.has(key)){ firsts.add(key); talk(t, 1.6); } };
           if (litCount === 1) first('one', 'ふむと、光る！');
           else if (litCount === 4) first('sound', '音もなるんだ！');
@@ -1830,13 +1844,13 @@ GAMES.night = root => {
           else if (s.kind === 'heart') first('heart', 'ハートだ！');
           else if (s.kind === 'clover') first('clover', 'クローバーみたい'); }
         noteIdx++; } });
-      // 場面のはしまで来たら、ページをめくって、つぎの場面へ
+      // 場面のはしまで来たら、ページをめくって、次の場面へ
       if (si < S.length - 1 && x >= S[si].x1 - 40){
         draw(now); page.getContext('2d').drawImage(cv, 0, 0);
         si++; x = S[si].x0 + X0; flipT = 0; titleT = 2; tone(520, 0, .07, 'triangle', .04); tone(780, .06, .09, 'triangle', .035);
       }
       if (si === S.length - 1 && x >= HOME){ state = 'over'; walking = false; talk('ただいま！', 99); chord([0, 2, 4]);
-        g.over(`<h5>おうちについた！</h5><p>「ただいま！」</p><p>光らせた石 <b>${litCount}</b>こ　とった写真 <b>${photos.length}</b>まい</p><p>森で出会った光る石が、おうちまでつれてきてくれました。</p>`, 'もういちど歩く', () => { reset(); state = 'play'; }); }
+        g.over(`<h5>おうちについた！</h5><p>「ただいま！」</p><p>光らせた石 <b>${litCount}</b>こ　とった写真 <b>${photos.length}</b>まい</p><p>森で出会った光る石が、おうちまでつれてきてくれました。</p>`, 'もう一度歩く', () => { reset(); state = 'play'; }); }
       g.stat(`${S[si].name}　光った石 <b>${litCount}</b>こ`);
     }
     draw(now);
@@ -1854,7 +1868,7 @@ GAMES.night = root => {
     else if (kind === 'heart'){ ctx.moveTo(0, r * .9); ctx.bezierCurveTo(-r * 1.4, 0, -r * .7, -r * 1.1, 0, -r * .35); ctx.bezierCurveTo(r * .7, -r * 1.1, r * 1.4, 0, 0, r * .9); }
   }
   function drawStone(s, sx, now){
-    // 森では、近い石から、じゅんばんに光りはじめる
+    // 森では、近い石から、じゅんばんに光り始める
     const appear = s.si === FOREST ? clamp((foundT - (s.x - SCARE - 200) / 700) * 2, 0, 1) : 1;
     if (appear <= 0) return;
     const k = sizeAt(s.y), pulse = .75 + .25 * Math.sin(now * 3 + s.x), R = (s.kind === 'rare' ? 42 : 34) * k;
@@ -1865,7 +1879,7 @@ GAMES.night = root => {
     ctx.restore(); ctx.globalAlpha = 1;
     if (s.kind === 'rare' && s.lit){ ctx.fillStyle = '#fff'; for (let i = 0; i < 3; i++){ const a = now * 2 + i * 2.1; ctx.fillRect(sx + Math.cos(a) * 16 * k - 1, s.y - 10 * k + Math.sin(a) * 6 * k - 1, 2.5, 2.5); } }
   }
-  // まわりの暗さ：いつもの道は明るく、森がいちばん暗い。石を光らせると、少し明るくなる
+  // まわりの暗さ：いつもの道は明るく、森が一番暗い。石を光らせると、少し明るくなる
   const DARK = [.1, .55, .38, .14];
   function bubble(t, bx, by){
     ctx.font = '800 15px "Zen Maru Gothic", sans-serif'; const bw = Math.ceil(ctx.measureText(t).width) + 24, bh = 30;
@@ -1883,17 +1897,37 @@ GAMES.night = root => {
     if (foundT >= 0) stones.forEach(s => { if (s.si !== si) return; const sx = s.x - cam; if (sx > -40 && sx < W + 40) drawStone(s, sx, now); });
     const shake = scaredT > 0 ? Math.sin(now * 38) * 1.4 : 0;
     const bob = walking ? Math.abs(Math.sin(step)) * 1.5 * k : 0;
-    walker(ctx, px + shake, wy + 2 - bob, 2.2 * k, step, walking);
+    if (NIGHT_GIRL.complete && NIGHT_GIRL.naturalWidth > 0){
+      // 歩いているあいだは歩く絵。話した直後と、止まっているときは、せりふに合った表情
+      const face = sayT > 0 ? FACE[say] : undefined, nearLit = foundT >= 0 && stones.some(s => s.si === si && s.lit && Math.abs(s.x - x) < 30);
+      let f = walking ? -1 : nearLit ? 10 : 0;
+      if (state === 'over') f = 12;
+      else if (scaredT > 0) f = 9;
+      else if (lookT > 0) f = 10;
+      else if (face !== undefined && (!walking || sayAge < .8)) f = face;
+      const sc = .9 * k, cw = 120 * sc, ch = 198 * sc, ox = px + shake - 60 * sc, oy = wy + 4 - 187 * sc;
+      if (f >= 0) ctx.drawImage(NIGHT_GIRL, f * 120, 0, 120, 198, ox, oy, cw, ch);
+      else {
+        // 足（絵の色で）：おくの足 → 手前の足 → 上半身（立つ絵の、こしから上）
+        const ph = step * .9, bob = Math.abs(Math.sin(ph)) * 1.6, HX = 56, HY = 137, L = 24;
+        const leg = (sw, col, shoe) => { const a = Math.sin(sw) * .5, kn = Math.max(0, -Math.cos(sw)) * .7;
+          const hx = ox + HX * sc, hy = oy + (HY - bob) * sc, kx = hx + Math.sin(a) * L * sc, ky = hy + Math.cos(a) * L * sc, fx = kx + Math.sin(a - kn) * L * sc, fy = ky + Math.cos(a - kn) * L * sc;
+          ctx.strokeStyle = col; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.lineWidth = 12.5 * sc; ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(kx, ky); ctx.lineTo(fx, fy); ctx.stroke();
+          ctx.fillStyle = shoe; ctx.beginPath(); ctx.ellipse(fx + 4 * sc, fy + 1.5 * sc, 9.5 * sc, 5 * sc, 0, 0, 7); ctx.fill(); };
+        leg(ph + Math.PI, '#2f4763', '#221d1a'); leg(ph, '#3b5777', '#29231f');
+        ctx.drawImage(NIGHT_GIRL, 0, 0, 120, HY + 2, ox, oy - bob * sc, cw, (HY + 2) * sc);
+      }
+    } else walker(ctx, px + shake, wy + 2 - bob, 2.2 * k, step, walking);
     const lit = foundT >= 0 ? stones.filter(s => s.si === si && s.lit && Math.abs(s.x - x) < 500).length : 0;
     const a = clamp(DARK[si] - lit * .012, .05, .65);
     const dark = ctx.createRadialGradient(px, wy - 30, 70, px, wy - 30, 460); dark.addColorStop(0, `rgba(5,8,25,${a * .35})`); dark.addColorStop(1, `rgba(5,8,25,${a})`); ctx.fillStyle = dark; ctx.fillRect(0, 0, W, H);
-    if (sayT > 0) bubble(say, px + 14 * k, wy - 130 * k);
+    if (sayT > 0) bubble(say, px + 14 * k, wy - 150 * k);
     if (titleT > 0){ ctx.globalAlpha = clamp(titleT, 0, 1); ctx.font = '800 17px "Zen Maru Gothic", sans-serif'; const tw = ctx.measureText(sc.name).width + 28;
       ctx.fillStyle = 'rgba(10,14,40,.6)'; rr(ctx, 12, 12, tw, 32, 16); ctx.fill(); ctx.fillStyle = '#fff3c0'; ctx.fillText(sc.name, 26, 34); ctx.globalAlpha = 1; }
   }
   function draw(now){
     scene(now);
-    // ページめくり：前の場面の絵が、右はしからめくれて、つぎの場面が出てくる
+    // ページめくり：前の場面の絵が、右はしからめくれて、次の場面が出てくる
     if (flipT >= 0){
       const t = clamp(flipT / FLIP, 0, 1), e = t * t * (3 - 2 * t), fx = W * (1 - e), fw = Math.min(fx, (W - fx) * .5);
       if (fx > 0){
@@ -1908,89 +1942,116 @@ GAMES.night = root => {
     }
   }
   reset(); draw(0);
-  g.over('<h5>夜の歩道</h5><p>いつもの道から、おうちまで歩いて帰ろう。</p>', '歩きはじめる', () => { state = 'play'; });
+  g.over('<h5>夜の歩道</h5><p>いつもの道から、おうちまで歩いて帰ろう。</p>', '歩き始める', () => { state = 'play'; });
 };
 
 /* --- 堤防の生き物交流 --- */
+const RIVER_BG = new Image(); RIVER_BG.src = 'river-bg.jpg';
 GAMES.river = root => {
-  const g = shell(root, '茶づな近くの堤防で、生き物さがし', 'かくれている生き物をおして、写真をとろう（7しゅるい）。');
-  const { ctx, W, H, cv, pt } = mkCanvas(g.stage, 640, 360);
+  const g = shell(root, '茶づな近くの堤防で、生き物さがし', 'かくれている生き物をおして、写真をとろう（8種類）。');
+  const { ctx, W, H, cv, pt } = mkCanvas(g.stage, 1480, 754);
+  const U = W / 640; // 絵が大きいので、カメラのわくや文字も大きく
+  // 絵（茶づな近くの堤防）にかいてある生き物。x, y, r は絵の中の場所
   const LIFE = [
-    { id: 'kawasemi', name: 'カワセミ', x: 470, y: 150, r: 18, fact: '「川の宝石」とよばれる青い鳥。水にとびこんで魚をとる。' },
-    { id: 'kani', name: 'サワガニ', x: 300, y: 262, r: 15, fact: '石の下や草のかげにかくれている。横に歩くよ。' },
-    { id: 'tonbo', name: 'シオカラトンボ', x: 200, y: 120, r: 18, fact: '水辺で生まれる。宇治川のまわりにもたくさん。' },
-    { id: 'kame', name: 'カメ', x: 560, y: 252, r: 18, fact: '石の上で甲らぼし。あたたまると元気になる。' },
-    { id: 'tsuyukusa', name: 'ツユクサ', x: 96, y: 300, r: 15, fact: '朝にさいて、昼にはしぼむ青い花。' },
-    { id: 'batta', name: 'ショウリョウバッタ', x: 230, y: 318, r: 14, fact: '草と同じ色で、かくれんぼが上手。' },
-    { id: 'sagi', name: 'コサギ', x: 388, y: 222, r: 20, fact: '長い足で浅いところを歩いて、魚をねらう。' },
+    { id: 'kawasemi', name: 'カワセミ', x: 1206, y: 308, r: 30, where: '右の、水の中の棒の上', fact: '「川の宝石」とよばれる青い鳥。水にとびこんで魚をとる。' },
+    { id: 'sagi', name: 'コサギ', x: 927, y: 440, r: 48, where: '川べりの草むら', fact: '長い足で浅いところを歩いて、魚をねらう。' },
+    { id: 'kame', name: 'カメ', x: 1377, y: 524, r: 36, where: '右の、川の水の上', fact: '水面から顔を出して、のんびりうかんでいる。' },
+    { id: 'kani', name: 'サワガニ', x: 912, y: 594, r: 30, where: 'まん中の下の、岩の上', fact: '石の上や草のかげにいる。横に歩くよ。' },
+    { id: 'batta', name: 'ショウリョウバッタ', x: 540, y: 382, r: 30, where: '道の向こうの草むら', fact: '草と同じ色で、かくれんぼが上手。' },
+    { id: 'kaeru', name: 'アマガエル', x: 82, y: 614, r: 32, where: '左下の、葉っぱのかげ', fact: '雨がふりそうになると、よく鳴く。葉っぱの色ににて、見つけにくい。' },
+    { id: 'chou', name: 'ジャノメチョウ', x: 682, y: 672, r: 32, where: '下のほうの、花のそば', fact: '茶色いはねに、目のようなもようがあるチョウ。' },
+    { id: 'kotori', name: 'スズメ', x: 112, y: 54, r: 30, where: '左上の、木の枝', fact: '人のくらしの近くにすむ小鳥。木の枝でひと休み。' },
   ];
   let cam = [W / 2, H / 2], found = new Set(), flash = 0, miss = 0, hint = null, hintT = 0, msg = '', msgT = 0, done = false, t = 0;
   const board = document.createElement('div'); board.className = 'board'; root.appendChild(board);
   board.innerHTML = '<p class="ghelp"><span style="white-space:nowrap">まだ写真がありません。</span><br><span style="white-space:nowrap">生き物をさがしてみよう。</span></p>';
-  const posOf = l => { if (l.id === 'tonbo') return [l.x + Math.cos(t * 1.3) * 70, l.y + Math.sin(t * 2.1) * 26]; if (l.id === 'kani') return [l.x + Math.sin(t * .9) * 26, l.y]; return [l.x, l.y]; };
+  const posOf = l => [l.x, l.y];
   cv.onpointermove = e => { cam = pt(e); };
   cv.onpointerdown = e => {
     cam = pt(e); tone(1300, 0, .04, 'square', .05); tone(800, .05, .05, 'square', .04);
-    const hitL = LIFE.find(l => { const [lx, ly] = posOf(l); return Math.hypot(cam[0] - lx, cam[1] - ly) < l.r + 16; });
-    if (!hitL){ flash = 1; miss++; msg = 'なにもいないみたい…'; msgT = 1.2; if (miss >= 3) hintBtn.disabled = false; return; }
+    const hitL = LIFE.find(l => { const [lx, ly] = posOf(l); return Math.hypot(cam[0] - lx, cam[1] - ly) < l.r + 18; });
+    if (!hitL){ flash = 1; miss++; msg = 'なにもいないみたい…'; msgT = 1.2; return; }
     if (found.has(hitL.id)){ flash = 1; msg = `${hitL.name}は、もうとったよ`; msgT = 1.2; return; }
-    // 写真：フラッシュや文字が入らないように、いったん景色だけかきなおしてから切りとる
-    flash = 0; msgT = 0; const keepCam = cam; cam = [-99, -99]; draw(); cam = keepCam;
-    const [lx, ly] = posOf(hitL), c = document.createElement('canvas'); c.width = 160; c.height = 110;
-    const cx2 = c.getContext('2d'); cx2.fillStyle = '#fff'; cx2.fillRect(0, 0, 160, 110);
-    cx2.drawImage(cv, clamp(lx - 60, 0, W - 120) * DPR, clamp(ly - 42, 0, H - 84) * DPR, 120 * DPR, 84 * DPR, 0, 0, 160, 110);
+    // 写真：生き物ごとに、近くから見た絵を使う
     found.add(hitL.id); flash = 1; msg = `${hitL.name}を見つけた！`; msgT = 1.6; chord([4, 7], 2, .06);
     if (found.size === 1) board.innerHTML = '';
     const post = document.createElement('div'); post.className = 'post';
-    post.innerHTML = `<img src="${c.toDataURL('image/jpeg', .85)}" alt="${hitL.name}の写真"><b>${hitL.name}</b><span>${hitL.fact}</span><button class="like" aria-label="いいね">♥ <i>${Math.floor(rnd(1, 9))}</i></button>`;
+    post.innerHTML = `<img src="river-p-${hitL.id}.jpg" alt="${hitL.name}の写真"><b>${hitL.name}</b><span>${hitL.fact}</span><button class="like" aria-label="いいね">♥ <i>${Math.floor(rnd(1, 9))}</i></button>`;
     post.querySelector('.like').onclick = ev => { const i = ev.currentTarget.querySelector('i'); i.textContent = +i.textContent + 1; tone(988, 0, .1, 'sine', .08); };
     board.prepend(post);
-    if (found.size === LIFE.length && !done){ done = true; later(() => { chord([0, 2, 4, 7]); g.over(`<h5>ぜんぶ見つけた！ 堤防ずかん かんせい</h5><p>${LIFE.length}しゅるいの写真が、みんなのボードにのりました。<br>つぎはクイズを出してみよう。</p>`, 'クイズを出す', quiz); }, 900); }
+    if (found.size === LIFE.length && !done){ done = true; later(() => { chord([0, 2, 4, 7]); g.over(`<h5>全部見つけた！ 堤防ずかん 完成</h5><p>${LIFE.length}種類の写真が、みんなのボードにのりました。</p><p>生き物博士「よく見つけたね！ では、わたしから<b>クイズ</b>を出すよ。5問、答えてみてね」</p>`, 'クイズにちょうせん', quiz); }, 900); }
   };
-  const hintBtn = g.button('ヒント', () => { const left = LIFE.filter(l => !found.has(l.id)); if (!left.length) return; hint = left[Math.floor(Math.random() * left.length)]; hintT = 2.5; });
-  hintBtn.disabled = true;
+  // ヒント：まだ見つけていない生き物が、どのあたりにいるかを文で言う（丸はかかない）
+  const hintBtn = g.button('ヒント', () => { const left = LIFE.filter(l => !found.has(l.id)); if (!left.length) return; hint = left[Math.floor(Math.random() * left.length)]; hintT = 3.5; msg = `ヒント：${hint.where}を見てみよう`; msgT = 3; tone(880, 0, .12, 'sine', .07); });
+  // 生き物クイズ：生き物博士が、次々に出す。1もん目は、ワークショップの子が考えたクイズ
+  const QUIZ = [
+    { q: '「川の宝石」とよばれる青い鳥は？', a: 'カワセミ', o: ['コサギ', 'スズメ'], id: 'kawasemi', by: true , ex: 'カワセミは、せなかの青と、おなかのオレンジ色がとてもきれいで、宝石のようにかがやいて見えることから「川の宝石」とよばれます。' },
+    { q: '長い足で浅いところを歩いて、魚をねらう白い鳥は？', a: 'コサギ', o: ['カワセミ', 'スズメ'], id: 'sagi' , ex: 'コサギは、長い足で浅い川の中を歩き、首をのばして、近づいてきた魚をくちばしですばやくつかまえます。' },
+    { q: '草と同じ色で、かくれんぼが上手な虫は？', a: 'ショウリョウバッタ', o: ['ジャノメチョウ', 'サワガニ'], id: 'batta' , ex: 'ショウリョウバッタは、体が緑色や茶色で、細長い形をしています。草にまぎれて、敵に見つかりにくくしています。' },
+    { q: '雨がふりそうになると、よく鳴くのは？', a: 'アマガエル', o: ['スズメ', 'カメ'], id: 'kaeru' , ex: 'アマガエルは、空気がしめって雨がふりそうになると、よく鳴きます。そのため「雨ガエル」という名前がつきました。' },
+    { q: 'サワガニが、とくいな歩き方は？', a: '横に歩く', o: ['前に歩く', '後ろに歩く'], id: 'kani' , ex: 'カニの足は、横に曲がるようにできています。だから、前よりも横に歩くほうが、ずっと速く動けます。' },
+    { q: 'ジャノメチョウのはねにある、もようは？', a: '目のようなもよう', o: ['しましま', 'ハートの形'], id: 'chou' , ex: 'ジャノメチョウは「蛇の目」という意味で、はねに目のような丸いもようがあります。鳥が目だと思って、おどろくといわれています。' },
+    { q: 'カワセミは、どうやって魚をとる？', a: '水にとびこむ', o: ['足でつかむ', '口から水をすう'], id: 'kawasemi' , ex: 'カワセミは、枝などにとまって水の中を見つめ、魚を見つけると、頭から水にとびこんでくちばしでつかまえます。' },
+    { q: 'カメは、川で何をしていた？', a: '水にうかんでいた', o: ['木にのぼっていた', '空をとんでいた'], id: 'kame' , ex: 'カメは、水面に顔を出してうかび、息をすったり、のんびり休んだりします。あたたかい日には、岩の上で甲らをかわかすこともあります。' },
+    { q: 'スズメがひと休みしていたのは？', a: '木の枝', o: ['水の中の棒', '岩の上'], id: 'kotori' , ex: 'スズメは、人の家の近くの木や電線にとまって休みます。人のくらしの近くで、草の実や虫を食べてくらしています。' },
+    // 難しい問題（図かんにのっているような、少しくわしいこと）
+    { q: 'カワセミが、たまごを産むすをつくる場所は？', a: '土のがけにほった、横あな', o: ['高い木の枝の上', '水草をあんだ、うき草の上'], id: 'kawasemi', hard: true , ex: 'カワセミは、川ぞいの土のがけに、くちばしで1mほどの横あなをほって、そのおくにたまごを産みます。' },
+    { q: 'カワセミは、下のくちばしの色でオスとメスがわかる。下のくちばしがオレンジ色なのは？', a: 'メス', o: ['オス', 'オスもメスも同じ色'], id: 'kawasemi', hard: true , ex: 'オスはくちばしが上も下も黒く、メスは下のくちばしがオレンジ色です。くちばしを見ると、オスかメスかがわかります。' },
+    { q: 'コサギが、浅い水の中で魚を追い出すときにすることは？', a: '足をふるわせて、水底をかきまわす', o: ['羽を広げて、くるくる回る', '頭を水に入れたまま、じっと待つ'], id: 'sagi', hard: true , ex: 'コサギは、足を水底でふるわせて、かくれている魚やエビをおどろかせます。にげ出したところを、すばやくつかまえます。' },
+    { q: '白いサギのなかまで、コサギだけに見られる特ちょうは？', a: '足の指が黄色い', o: ['くちばしが赤い', '首が一番長い'], id: 'sagi', hard: true , ex: '白いサギには、ダイサギやチュウサギもいますが、足の指が黄色いのはコサギだけです。「黄色いくつ下」が見分けるポイントです。' },
+    { q: 'ショウリョウバッタのオスは、飛ぶときに音を立てる。その音からついた名前は？', a: 'キチキチバッタ', o: ['ガチャガチャバッタ', 'リンリンバッタ'], id: 'batta', hard: true , ex: 'オスは飛ぶときに、はねを打ち合わせて「キチキチ」と音を出します。そのため「キチキチバッタ」ともよばれます。' },
+    { q: 'サワガニのたまごから生まれる子どもは、どんな形？', a: '親と同じ、小さなカニの形', o: ['水の中をおよぐ、エビのような形', 'おたまじゃくしのような形'], id: 'kani', hard: true , ex: '海のカニは、エビのような形の子どもが生まれますが、サワガニは、たまごの中で育ってから、親と同じ小さなカニの形で生まれます。' },
+    { q: 'アマガエルの指先にある、木や葉にくっつくためのものは？', a: '吸ばん', o: ['するどいツメ', '大きな水かき'], id: 'kaeru', hard: true , ex: 'アマガエルの指先には、まるい吸ばんがあります。これで、つるつるの葉っぱや、まどガラスにもくっつくことができます。' },
+    { q: 'ジャノメチョウのなかまの幼虫が食べるのは？', a: 'ススキなど、イネのなかまの葉', o: ['花のみつ', 'サクラなど、木の葉'], id: 'chou', hard: true , ex: 'ジャノメチョウのなかまの幼虫は、ススキやイネなど、イネのなかまの草の葉を食べて大きくなります。' },
+    { q: 'スズメの顔にある、見分けるときの目じるしは？', a: 'ほっぺの黒いもよう', o: ['目のまわりの白いわ', '頭のてっぺんの赤いもよう'], id: 'kotori', hard: true , ex: 'スズメは、白いほっぺに黒いもようがあります。にた鳥のニュウナイスズメには、この黒いもようがありません。' },
+  ];
   function quiz(){
-    const q = LIFE[0], opts = ['コサギ', 'カワセミ', 'ツユクサ'];
-    g.over(`<h5>Q. 「川の宝石」とよばれる青い鳥は？</h5><div class="choice">${opts.map(o => `<button class="btn qopt">${o}</button>`).join('')}</div><p class="qres"></p>`);
-    root.querySelectorAll('.qopt').forEach(b => b.onclick = () => { const ok = b.textContent === q.name; root.querySelector('.qres').textContent = ok ? 'せいかい！ ボードのみんなにも出してみよう。' : 'ざんねん。写真を見なおしてみよう。'; ok ? chord([0, 4, 7]) : tone(180, 0, .2, 'square', .05); if (ok) later(() => g.hide(), 1600); });
+    // 5問：1問目は子どものクイズ。つぎにふつうの問題を2問、最後に難しい問題を2問
+    const mix = a => a.slice().sort(() => Math.random() - .5), nh = 2;
+    // 同じ生き物の問題が、かさならないようにえらぶ
+    const used = new Set([QUIZ[0].id]), pick = (arr, k) => { const out = []; for (const x of mix(arr)) if (out.length < k && !used.has(x.id)){ used.add(x.id); out.push(x); } return out; };
+    const easy = pick(QUIZ.slice(1).filter(x => !x.hard), 4 - nh), hard = pick(QUIZ.filter(x => x.hard), nh);
+    const list = [QUIZ[0], ...easy, ...hard]; let n = 0, ok = 0;
+    const ask = () => {
+      const qz = list[n], opts = [qz.a, ...qz.o].sort(() => Math.random() - .5);
+      g.over(`<p style="margin:0;color:var(--muted)">第${n + 1}問 / ${list.length}${qz.by ? '　（ワークショップの子が考えたクイズ）' : ''}${qz.hard ? '　<b style="color:#d4543a">難しい問題！</b>' : ''}</p>
+        <p style="margin:4px 0 0;color:#14958a;font-weight:700">生き物博士からの問題</p><h5>${qz.q}</h5><div class="choice">${opts.map(o => `<button class="btn qopt">${o}</button>`).join('')}</div><div class="qres"></div>`);
+      root.querySelectorAll('.qopt').forEach(btn => btn.onclick = () => {
+        const right = btn.textContent === qz.a; if (right) ok++;
+        root.querySelectorAll('.qopt').forEach(x => { x.disabled = true; if (x.textContent === qz.a) x.classList.add('primary'); });
+        right ? chord([0, 4, 7], 2, .05) : tone(180, 0, .2, 'square', .05);
+        const life = LIFE.find(l => l.id === qz.id), last = n === list.length - 1;
+        root.querySelector('.qres').innerHTML = `<p><b style="color:${right ? '#14958a' : '#d4543a'}">${right ? '正解！' : `残念… 答えは「${qz.a}」`}</b></p>
+          <p style="display:flex;gap:10px;align-items:flex-start;text-align:left;margin:6px 0"><img src="river-p-${life.id}.jpg" alt="" style="width:72px;border-radius:6px;flex:none"><span><b>解説</b><br>${qz.ex}</span></p>
+          <button class="btn primary qnext">${last ? '結果を見る' : '次の問題'}</button>`;
+        root.querySelector('.qnext').onclick = () => { n++; n < list.length ? ask() : result(); };
+      });
+    };
+    const result = () => { chord([0, 2, 4, 7]);
+      const title = ok === list.length ? '堤防の生き物博士' : ok >= 3 ? '堤防の生き物探検隊' : '堤防の生き物見習い';
+      g.over(`<h5>${list.length}問中 ${ok}問 正解！</h5><p>生き物博士「きみは<b>${title}</b>だ！ ${ok === list.length ? '全問正解、すごい！' : 'また堤防に生き物を見にきてね。'}」</p>`, 'もう一度クイズ', quiz); };
+    ask();
   }
   loop(dt => { t += dt; flash = Math.max(0, flash - dt * 3); msgT -= dt; hintT -= dt; draw(); g.stat(`見つけた <b>${found.size}</b> / ${LIFE.length}`); });
   function draw(){
-    const sky = ctx.createLinearGradient(0, 0, 0, 120); sky.addColorStop(0, '#bfe3fb'); sky.addColorStop(1, '#e9f6ff'); ctx.fillStyle = sky; ctx.fillRect(0, 0, W, 130);
-    ctx.fillStyle = '#9cc79a'; ctx.beginPath(); ctx.moveTo(0, 110); ctx.quadraticCurveTo(160, 60, 320, 100); ctx.quadraticCurveTo(480, 70, 640, 104); ctx.lineTo(640, 130); ctx.lineTo(0, 130); ctx.fill();
-    ctx.fillStyle = '#c9c3bb'; ctx.fillRect(330, 108, 240, 6); for (let k = 340; k < 570; k += 30) ctx.fillRect(k, 108, 4, 18);
-    ctx.fillStyle = '#7fbde6'; ctx.beginPath(); ctx.moveTo(300, 130); ctx.lineTo(640, 130); ctx.lineTo(640, 290); ctx.quadraticCurveTo(470, 250, 330, 200); ctx.closePath(); ctx.fill();
-    ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 2; for (let k = 0; k < 5; k++){ const yy = 160 + k * 24, xx = 420 + ((t * 30 + k * 60) % 180); ctx.beginPath(); ctx.moveTo(xx, yy); ctx.lineTo(xx + 26, yy + 3); ctx.stroke(); }
-    ctx.fillStyle = '#9bc77a'; ctx.beginPath(); ctx.moveTo(0, 130); ctx.lineTo(300, 130); ctx.quadraticCurveTo(330, 210, 470, 260); ctx.quadraticCurveTo(560, 290, 640, 296); ctx.lineTo(640, H); ctx.lineTo(0, H); ctx.fill();
-    ctx.fillStyle = '#ead8b4'; ctx.beginPath(); ctx.moveTo(0, 200); ctx.quadraticCurveTo(200, 190, 300, 232); ctx.lineTo(290, 248); ctx.quadraticCurveTo(200, 210, 0, 220); ctx.fill();
-    ctx.fillStyle = '#fffaf2'; ctx.fillRect(40, 132, 80, 44); ctx.fillStyle = '#6aa84f'; ctx.fillRect(34, 124, 92, 12); ctx.fillStyle = '#2f5a22'; ctx.font = '700 11px "Zen Maru Gothic", sans-serif'; ctx.fillText('茶づな', 62, 160);
-    ctx.fillStyle = '#8a8378'; ctx.beginPath(); ctx.ellipse(560, 262, 30, 10, 0, 0, 7); ctx.fill();
-    ctx.strokeStyle = '#7a4e30'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(500, 210); ctx.lineTo(500, 160); ctx.quadraticCurveTo(480, 152, 455, 156); ctx.stroke();
-    LIFE.forEach(l => { const [lx, ly] = posOf(l); drawLife(l.id, lx, ly); });
-    ctx.fillStyle = '#5f9a45'; for (let k = 0; k < 70; k++){ const gx = (k * 97) % 640, gy = 230 + (k * 53) % 130; if (gy < 290 && gx > 300) continue; ctx.beginPath(); ctx.moveTo(gx, gy + 10); ctx.quadraticCurveTo(gx + 2 + Math.sin(t + k) * 2, gy, gx + 4, gy - 8); ctx.lineTo(gx + 6, gy + 10); ctx.fill(); }
-    if (hintT > 0 && hint){ const [hx, hy] = posOf(hint); ctx.strokeStyle = `rgba(255,216,74,${Math.min(1, hintT)})`; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(hx, hy, 26 + Math.sin(t * 8) * 4, 0, 7); ctx.stroke(); }
-    const [cx, cy] = cam; ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.5; ctx.shadowColor = 'rgba(0,0,0,.4)'; ctx.shadowBlur = 4;
-    [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(([sx, sy]) => { ctx.beginPath(); ctx.moveTo(cx + sx * 34, cy + sy * 20); ctx.lineTo(cx + sx * 34, cy + sy * 30); ctx.lineTo(cx + sx * 24, cy + sy * 30); ctx.stroke(); });
-    ctx.beginPath(); ctx.arc(cx, cy, 3, 0, 7); ctx.stroke(); ctx.shadowBlur = 0;
+    if (RIVER_BG.complete && RIVER_BG.naturalWidth > 0) ctx.drawImage(RIVER_BG, 0, 0, W, H);
+    else { ctx.fillStyle = '#bfe3fb'; ctx.fillRect(0, 0, W, H); }
+    // 見つけた生き物には、小さなしるし
+    LIFE.forEach(l => { if (!found.has(l.id)) return; const [lx, ly] = posOf(l), mx = lx + l.r * .8, my = ly - l.r * .8 < 18 ? ly + l.r * .8 : ly - l.r * .8;
+      ctx.fillStyle = 'rgba(255,255,255,.92)'; ctx.beginPath(); ctx.arc(mx, my, 12, 0, 7); ctx.fill();
+      ctx.strokeStyle = '#14958a'; ctx.lineWidth = 3.5; ctx.beginPath(); ctx.moveTo(mx - 6, my); ctx.lineTo(mx - 1, my + 5); ctx.lineTo(mx + 7, my - 5); ctx.stroke(); });
+    const [cx, cy] = cam; ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.5 * U; ctx.shadowColor = 'rgba(0,0,0,.4)'; ctx.shadowBlur = 4 * U;
+    [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(([sx, sy]) => { ctx.beginPath(); ctx.moveTo(cx + sx * 34 * U, cy + sy * 20 * U); ctx.lineTo(cx + sx * 34 * U, cy + sy * 30 * U); ctx.lineTo(cx + sx * 24 * U, cy + sy * 30 * U); ctx.stroke(); });
+    ctx.beginPath(); ctx.arc(cx, cy, 3 * U, 0, 7); ctx.stroke(); ctx.shadowBlur = 0;
     if (flash > 0){ ctx.fillStyle = `rgba(255,255,255,${flash * .8})`; ctx.fillRect(0, 0, W, H); }
-    if (msgT > 0){ ctx.globalAlpha = Math.min(1, msgT); ctx.fillStyle = 'rgba(255,255,255,.9)'; rr(ctx, W / 2 - 130, 14, 260, 30, 15); ctx.fill(); ctx.fillStyle = '#14958a'; ctx.font = '700 15px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.fillText(msg, W / 2, 34); ctx.textAlign = 'left'; ctx.globalAlpha = 1; }
-  }
-  function drawLife(id, x, y){
-    if (id === 'kawasemi'){ ctx.fillStyle = '#2e86d8'; ctx.beginPath(); ctx.ellipse(x, y, 9, 7, 0, 0, 7); ctx.fill(); ctx.fillStyle = '#f08a3a'; ctx.beginPath(); ctx.ellipse(x, y + 3, 6, 4, 0, 0, 7); ctx.fill(); ctx.fillStyle = '#2e86d8'; ctx.beginPath(); ctx.arc(x - 6, y - 5, 5, 0, 7); ctx.fill(); ctx.fillStyle = '#333'; ctx.beginPath(); ctx.moveTo(x - 10, y - 6); ctx.lineTo(x - 20, y - 4); ctx.lineTo(x - 10, y - 3); ctx.fill(); }
-    if (id === 'kani'){ ctx.fillStyle = '#d4543a'; ctx.beginPath(); ctx.ellipse(x, y, 9, 6, 0, 0, 7); ctx.fill(); ctx.strokeStyle = '#d4543a'; ctx.lineWidth = 2; [-1, 1].forEach(s => { ctx.beginPath(); ctx.moveTo(x + s * 8, y); ctx.lineTo(x + s * 14, y - 6); ctx.stroke(); }); }
-    if (id === 'tonbo'){ ctx.strokeStyle = '#5b86c4'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(x - 10, y); ctx.lineTo(x + 10, y); ctx.stroke(); ctx.fillStyle = 'rgba(220,235,255,.8)'; [-1, 1].forEach(s => { ctx.beginPath(); ctx.ellipse(x - 3, y + s * 6, 3, 7, 0, 0, 7); ctx.fill(); ctx.beginPath(); ctx.ellipse(x + 2, y + s * 6, 3, 7, 0, 0, 7); ctx.fill(); }); }
-    if (id === 'kame'){ ctx.fillStyle = '#5c7a3a'; ctx.beginPath(); ctx.ellipse(x, y - 4, 12, 7, 0, Math.PI, 0); ctx.fill(); ctx.fillStyle = '#8aa65a'; ctx.beginPath(); ctx.arc(x + 13, y - 4, 4, 0, 7); ctx.fill(); }
-    if (id === 'tsuyukusa'){ ctx.fillStyle = '#4f6fe0'; [-4, 4].forEach(dx => { ctx.beginPath(); ctx.arc(x + dx, y, 4.5, 0, 7); ctx.fill(); }); ctx.fillStyle = '#f2d43a'; ctx.beginPath(); ctx.arc(x, y + 3, 2, 0, 7); ctx.fill(); }
-    if (id === 'batta'){ ctx.fillStyle = '#6fae46'; ctx.beginPath(); ctx.ellipse(x, y, 11, 3.5, -.2, 0, 7); ctx.fill(); ctx.strokeStyle = '#6fae46'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x + 4, y); ctx.lineTo(x - 2, y - 7); ctx.lineTo(x - 8, y + 3); ctx.stroke(); }
-    if (id === 'sagi'){ ctx.strokeStyle = '#3a3330'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x - 3, y + 6); ctx.lineTo(x - 4, y + 20); ctx.moveTo(x + 3, y + 6); ctx.lineTo(x + 4, y + 20); ctx.stroke();
-      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(x, y, 11, 7, -.2, 0, 7); ctx.fill(); ctx.beginPath(); ctx.moveTo(x - 6, y - 3); ctx.quadraticCurveTo(x - 12, y - 14, x - 8, y - 20); ctx.lineWidth = 3; ctx.strokeStyle = '#fff'; ctx.stroke(); ctx.fillStyle = '#f2c43a'; ctx.beginPath(); ctx.moveTo(x - 8, y - 21); ctx.lineTo(x - 18, y - 19); ctx.lineTo(x - 8, y - 18); ctx.fill(); }
+    if (msgT > 0){ ctx.globalAlpha = Math.min(1, msgT); ctx.font = `700 ${15 * U}px "Zen Maru Gothic", sans-serif`; const mw = Math.max(300 * U, ctx.measureText(msg).width + 40 * U); ctx.fillStyle = 'rgba(255,255,255,.92)'; rr(ctx, W / 2 - mw / 2, 14 * U, mw, 32 * U, 16 * U); ctx.fill(); ctx.fillStyle = '#14958a'; ctx.textAlign = 'center'; ctx.fillText(msg, W / 2, 36 * U); ctx.textAlign = 'left'; ctx.globalAlpha = 1; }
   }
 };
 
 /* --- まちゲームで使ううさぎ（育ち方と、よく飲んだお茶で姿が変わる） --- */
 const TEA_LEVELS = [[0, 'あかちゃん'], [20, 'こども'], [50, 'おにいさん'], [100, 'おとな'], [160, '茶うさぎ名人']];
 const teaLevelOf = n => { let i = 0; TEA_LEVELS.forEach(([th], k) => { if (n >= th) i = k; }); return i; };
-// いちばんよく飲んだお茶で、身につけるものが変わる（毛の色はいつも白）（まだ飲んでいなければ、ふつうのうさぎ）
+// 一番よく飲んだお茶で、身につけるものが変わる（毛の色はいつも白）（まだ飲んでいなければ、ふつうのうさぎ）
 const RABBIT_FORMS = {
   normal: { name: '', fur: '#fffdf8', line: '#d9cfc4', ear: '#f7c6d3', scarf: '#2f9a48' },
   gyokuro: { name: '上品', fur: '#fffdf8', line: '#d9cfc4', ear: '#f7c6d3', scarf: '#7d55c7' },
@@ -2070,7 +2131,7 @@ GAMES.game = root => {
         const next = LEVELS[lv + 1], item = save.total >= 160 ? '<p><b>スペシャルアイテム「金の茶つぼ」をゲット！</b></p>' : '';
         g.over(`<h5>バスが来た！</h5><p>今日あげた宇治茶 <b>${fed}</b>こ　これまでの合計 <b>${save.total}</b>こ（${save.visits}回目のバス停）</p>
           <p>つんだ新芽 <b>${picks}</b>こ・抹茶のおやつ <b>${treatsToday}</b>こ${bugsEaten ? `・食べちゃった虫 ${bugsEaten}ぴき` : ''}</p>
-          <p>うさぎ：<b>${LEVELS[lv][1]}</b>${lv > before ? '　大きくなった！' : ''}</p>${item}<p>${next ? `「${next[1]}」まで、あと ${next[0] - save.total}こ。また来たときに続きから育てられます。` : 'いちばん大きく育ちました！'}</p>`, 'もういちど', begin); }
+          <p>うさぎ：<b>${LEVELS[lv][1]}</b>${lv > before ? '　大きくなった！' : ''}</p>${item}<p>${next ? `「${next[1]}」まで、あと ${next[0] - save.total}こ。また来たときに続きから育てられます。` : '一番大きく育ちました！'}</p>`, 'もう一度', begin); }
     }
     // つんだお茶が、うさぎの口までとんでいく
     flies.forEach(f => { f.k += dt * 2.2; if (f.k >= 1 && !f.done){ f.done = true; fed += 1; picks++; eat = .5; hop = 1;
@@ -2085,7 +2146,7 @@ GAMES.game = root => {
       if (cut.t >= CUT_END) cut = null; }
     eat = Math.max(0, eat - dt); hop = Math.max(0, hop - dt * 3); happy = Math.max(0, happy - dt);
     pops.forEach(p => { p.y -= 30 * dt; p.a -= dt * 1.2; }); pops = pops.filter(p => p.a > 0);
-    g.stat(state === 'play' ? cut ? `${cut.name}ができた！` : sadT > 0 ? 'うさぎがしょんぼり… ちょっと待ってね' : `バスが来るまで <b>${Math.ceil(t)}</b>秒　つぎのおやつまで あと <b>${EVERY - (save.leaves + picks) % EVERY}</b>こ　うさぎ：${LEVELS[levelOf(grown())][1]}` : `うさぎ：<b>${LEVELS[levelOf(save.total)][1]}</b>（あげたお茶 ${save.total}こ）`);
+    g.stat(state === 'play' ? cut ? `${cut.name}ができた！` : sadT > 0 ? 'うさぎがしょんぼり… ちょっと待ってね' : `バスが来るまで <b>${Math.ceil(t)}</b>秒　次のおやつまで あと <b>${EVERY - (save.leaves + picks) % EVERY}</b>こ　うさぎ：${LEVELS[levelOf(grown())][1]}` : `うさぎ：<b>${LEVELS[levelOf(save.total)][1]}</b>（あげたお茶 ${save.total}こ）`);
     draw();
   });
   function leaf(x, y, sc, col){ ctx.fillStyle = col; [[-6, 0, -.6], [6, 0, .6], [0, -8, 0]].forEach(([dx, dy, a]) => { ctx.save(); ctx.translate(x + dx * sc, y + dy * sc); ctx.rotate(a); ctx.beginPath(); ctx.ellipse(0, 0, 4 * sc, 8 * sc, 0, 0, 7); ctx.fill(); ctx.restore(); }); }
@@ -2155,7 +2216,7 @@ const AR_TICKET = new Image(); AR_TICKET.src = 'ar-ticket.png';
 const AR_CHECK = new Image(); AR_CHECK.src = 'ar-check.png';
 GAMES.ar = root => {
   const g = shell(root, '市役所で、おつかいミッション', 'メガネをかけると、小動物が道案内してくれます。');
-  // ミッションは、窓口を2つ回る。用紙には、手つづき2つと、もっていくもの2つを書く
+  // ミッションは、窓口を2つ回る。用紙には、手つづき2つと、もってい雲の2つを書く
   const MISSIONS = [
     { title: '赤ちゃんが生まれた！ 「出生届」と「児童手当」を出そう', procs: ['出生届', '児童手当'], items: ['母子手帳', '本人確認書類'], first: 1, second: 2 },
     { title: '引っこしてきた！ 「転入届」と「児童手当」の手つづきをしよう', procs: ['転入届', '児童手当'], items: ['転出証明書', '本人確認書類'], first: 1, second: 2 },
@@ -2180,8 +2241,8 @@ GAMES.ar = root => {
   const glasses = () => hasGlasses();
   function begin(){ sayOverride = ''; let k; do { k = Math.floor(Math.random() * MISSIONS.length); } while (k === lastM); lastM = k; m = MISSIONS[k];
     step = 0; ticket = 0; now = Math.floor(rnd(14, 20)); boardC = 1 + Math.floor(Math.random() * 4); miss = 0; called = false; waiting = false; needHelp = false; t0 = performance.now(); render(); }
-  const TALK = ['まずは、入口の「番号札」をとってね！', 'つぎは記入台で用紙を書こう。手つづきは2つだよ。',
-    () => called ? `あなたの番号！ ${m.first}番窓口へ、いそいで！` : '電光板を見て、自分の番号を待とう。', '窓口の人の質問に答えよう。', () => `つぎは ${m.second}番窓口だよ。こっちこっち！`];
+  const TALK = ['まずは、入口の「番号札」をとってね！', '次は記入台で用紙を書こう。手つづきは2つだよ。',
+    () => called ? `あなたの番号！ ${m.first}番窓口へ、急いで！` : '電光板を見て、自分の番号を待とう。', '窓口の人の質問に答えよう。', () => `次は ${m.second}番窓口だよ。こっちこっち！`];
   function say(){ const s = TALK[step]; return typeof s === 'function' ? s() : s; }
   function render(){ g.stat(`ステップ <b>${stepNo()}</b> / 4　まちがい ${miss}`); }
   const stepNo = () => step <= 1 ? step + 1 : step <= 2 ? 3 : 4;
@@ -2204,54 +2265,55 @@ GAMES.ar = root => {
     else { ctx.fillStyle = '#eaf6fd'; ctx.fillRect(240, 402, 140, 40); txt(`あなたは ${ticket}番`, 285, 421, 28, '#25324d', 'center'); }
     // 記入台：書けたら「書けた！」とチェック
     if (step > 1){ ctx.fillStyle = '#fdfbf7'; ctx.fillRect(670, 402, 180, 40); txt('書けた！', 759, 421, 28, '#25324d', 'center'); if (ok(AR_CHECK)) ctx.drawImage(AR_CHECK, 905, 262); }
-    // よびだし中の番号
+    // 呼び出し中の番号
     ctx.fillStyle = '#223152'; ctx.fillRect(1120, 326, 226, 110); txt(String(now), 1233, 362, 70, '#ffd21f', 'center'); txt(`${boardC}番窓口へ`, 1233, 418, 30, '#ffffff', 'center');
     if (called) txt(`あと ${Math.ceil(callT)}びょう`, 1390, 290, 24, '#ffd21f', 'center');
     // メガネをかけていないときは、やさしい説明と小動物は見えない
     if (!gl){ [A.c1, A.c2, A.c3, A.c4].forEach(([x0, , x1]) => { ctx.fillStyle = '#fafcfe'; ctx.fillRect(x0 + 10, 652, x1 - x0 - 20, 70); });
-      ctx.fillStyle = '#fafbf7'; ctx.fillRect(96, 752, 206, 134); ctx.fillStyle = '#def1fc'; rr(ctx, 58, 778, 250, 80, 40); ctx.fill(); }
+      // 小動物の青い吹き出しも、メガネをかけたときだけ。かけていないときは、文だけを出す
+      ctx.fillStyle = '#fcfbf5'; rr(ctx, 54, 764, 970, 116, 30); ctx.fill(); ctx.fillRect(96, 752, 206, 134); }
     // 吹き出しの文
-    ctx.fillStyle = '#dbf0fd'; rr(ctx, 312, 792, 694, 62, 20); ctx.fill();
+    if (gl){ ctx.fillStyle = '#dbf0fd'; rr(ctx, 312, 792, 694, 62, 20); ctx.fill(); }
     const sx = shakeT > 0 ? Math.sin(performance.now() / 25) * 6 : 0;
-    txt(sayOverride || (gl ? say() : needHelp ? 'こまったら、下のメガネのボタンで小動物をよぼう！' : 'ムズカシイ… タイヘン… コワイ…？ どこへ行けばいいんだろう。'), 330 + sx, 823, 34, gl ? '#25324d' : '#7a8597', 'left', 670);
-    // メガネをかけているとき：つぎに行くところが光る、メガネのボタンも光る
+    txt(sayOverride || (gl ? say() : needHelp ? 'こまったら、下のメガネのボタンで小動物をよぼう！' : 'ムズカシイ… タイヘン… コワイ…？ どこへ行けばいいんだろう。'), (gl ? 330 : 80) + sx, 823, 34, gl ? '#25324d' : '#7a8597', 'left', gl ? 670 : 920);
+    // メガネをかけているとき：次に行くところが光る、メガネのボタンも光る
     if (called) ring('board', '#ffd21f');
     if (!gl && needHelp) ring('glass', '#ffc928');
     if (gl){ if (step === 0) ring('ticket'); if (step === 1) ring('desk'); if (step === 2 && called) ring('c' + m.first); if (step === 4) ring('c' + m.second); ring('glass', '#ffc928'); }
   }
-  // よびだし：ほかの人の番号と窓口がつぎつぎ出る。自分の番号が出たら、6秒以内にその窓口へ
+  // 呼び出し：ほかの人の番号と窓口が次々出る。自分の番号が出たら、6秒以内にその窓口へ
   loop(dt => { shakeT = Math.max(0, shakeT - dt);
     if (waiting && !called){ tickT -= dt; if (tickT <= 0){ tickT = rnd(1.1, 1.7); now++; tone(660, 0, .08, 'sine', .06);
         if (now >= ticket){ now = ticket; boardC = m.first; called = true; callT = 6; sayOverride = `アナウンス「${ticket}番の方、${m.first}番窓口へどうぞ」`; later(() => { if (sayOverride.startsWith('アナウンス')) sayOverride = ''; }, 3500); tone(784, 0, .2, 'sine', .1); later(() => tone(988, 0, .3, 'sine', .1), 220); }
         else boardC = 1 + Math.floor(Math.random() * 4); } }
-    if (called){ callT -= dt; if (callT <= 0){ called = false; miss++; needHelp = true; ticket = now + 2; tone(160, 0, .3, 'square', .05); flash('よびだしをのがした… もういちどよばれるまで待とう。'); render(); } }
+    if (called){ callT -= dt; if (callT <= 0){ called = false; miss++; needHelp = true; ticket = now + 2; tone(160, 0, .3, 'square', .05); flash('呼び出しをのがした… もう一度よばれるまで待とう。'); render(); } }
     draw(); });
   function wrong(txt){ miss++; needHelp = true; tone(160, 0, .2, 'square', .05); flash(txt); }
   function flash(t){ sayOverride = t; shakeT = .4; later(() => { if (sayOverride === t) sayOverride = ''; }, 1600); }
   function act(k){
-    if (step === 0){ if (k !== 'ticket') return wrong(glasses() ? 'さきに番号札をとってね！' : 'まどぐちの人「番号札をおとりください」'); ticket = now + 4; step = 1; tone(880, 0, .1, 'sine', .1); return render(); }
-    if (step === 1){ if (k !== 'desk') return wrong(glasses() ? 'そのまえに、記入台で用紙を書こう。' : 'まどぐちの人「用紙は書かれましたか？」'); return form(); }
+    if (step === 0){ if (k !== 'ticket') return wrong(glasses() ? 'さきに番号札をとってね！' : '窓口の人「番号札をおとりください」'); ticket = now + 4; step = 1; tone(880, 0, .1, 'sine', .1); return render(); }
+    if (step === 1){ if (k !== 'desk') return wrong(glasses() ? 'そのまえに、記入台で用紙を書こう。' : '窓口の人「用紙は書かれましたか？」'); return form(); }
     if (step === 2){ if (k === 'ticket' || k === 'desk') return;
-      if (!called) return flash(glasses() ? 'まだよばれていないよ。電光板を見て待とう。' : 'まどぐちの人「番号でおよびしますので、お待ちください」');
-      if (k !== 'c' + m.first) return wrong(glasses() ? `そこじゃないよ。${m.first}番だよ！` : `まどぐちの人「${ticket}番の方は、こちらではないですね…」`);
+      if (!called) return flash(glasses() ? 'まだよばれていないよ。電光板を見て待とう。' : '窓口の人「番号でおよびしますので、お待ちください」');
+      if (k !== 'c' + m.first) return wrong(glasses() ? `そこじゃないよ。${m.first}番だよ！` : `窓口の人「${ticket}番の方は、こちらではないですね…」`);
       called = false; waiting = false; step = 3; tone(880, 0, .1, 'sine', .1); render(); return later(ask, 300); }
     if (step === 4){ if (k === 'ticket' || k === 'desk') return;
-      if (k !== 'c' + m.second) return wrong(glasses() ? `そこじゃないよ。${m.second}番だよ！` : 'まどぐちの人「こちらではないですね…」');
+      if (k !== 'c' + m.second) return wrong(glasses() ? `そこじゃないよ。${m.second}番だよ！` : '窓口の人「こちらではないですね…」');
       step = 5; tone(988, 0, .1, 'sine', .1); return later(done, 300); }
   }
   // どの画面でも、小動物にたすけてもらえる（おすと、すぐメガネをかけてヒントが出る）
   const helpBtn = () => glasses() ? '' : '<div><button class="btn helpme" style="margin:6px 0 2px">🦉 小動物にたすけてもらう</button></div>';
   function wireHelp(again){ const h = root.querySelector('.helpme'); if (h) h.onclick = () => { setGlasses(true); chord([4, 7], 2, .1); again(); }; }
-  // 用紙：手つづきを2つ、もっていくものを2つえらぶ
+  // 用紙：手つづきを2つ、もってい雲のを2つ選ぶ
   function form(){
     const sel = { p: new Set(), i: new Set() }, gl = glasses(), chip = (kind, o) => `<button class="btn fopt" data-kind="${kind}" style="margin:3px${gl && (m.procs.includes(o) || m.items.includes(o)) ? ';box-shadow:0 0 0 3px #ffc928' : ''}">${o}</button>`;
-    g.over(`<h5>用紙を書こう</h5><p>なまえ：うじ たろう　じゅうしょ：宇治市〇〇町</p>
+    g.over(`<h5>用紙を書こう</h5><p>名前：うじ たろう　じゅうしょ：宇治市〇〇町</p>
       <p><b>なんの手つづき？</b>（2つ）</p><div>${PROCS.map(o => chip('p', o)).join('')}</div>
-      <p><b>もっていくものは？</b>（2つ）</p><div>${ITEMS.map(o => chip('i', o)).join('')}</div>
-      <p class="fres">${glasses() ? `小動物「${m.procs.join('と')}。もちものは${m.items.join('と')}だよ！ 光っているのをえらんでね」` : 'ミッションをよく読もう。'}</p>${helpBtn()}`, 'これで出す', () => {
+      <p><b>もってい雲のは？</b>（2つ）</p><div>${ITEMS.map(o => chip('i', o)).join('')}</div>
+      <p class="fres">${glasses() ? `小動物「${m.procs.join('と')}。もちものは${m.items.join('と')}だよ！ 光っているのを選んでね」` : 'ミッションをよく読もう。'}</p>${helpBtn()}`, 'これで出す', () => {
         const same = (a, b) => a.size === b.length && b.every(x => a.has(x));
         if (same(sel.p, m.procs) && same(sel.i, m.items)){ step = 2; waiting = true; tickT = 1; tone(988, 0, .1, 'sine', .1); render(); return; }
-        miss++; needHelp = true; tone(160, 0, .2, 'square', .05); flash(!same(sel.p, m.procs) ? 'まどぐちの人「手つづきが、ちがうようです」' : 'まどぐちの人「もちものが、たりないようです」'); later(form, 700); });
+        miss++; needHelp = true; tone(160, 0, .2, 'square', .05); flash(!same(sel.p, m.procs) ? '窓口の人「手つづきが、ちがうようです」' : '窓口の人「もちものが、たりないようです」'); later(form, 700); });
     wireHelp(form);
     root.querySelectorAll('.fopt').forEach(b => b.onclick = () => { const S = sel[b.dataset.kind], v = b.textContent;
       if (S.has(v)) S.delete(v); else { if (S.size >= 2) return; S.add(v); } b.classList.toggle('primary', S.has(v)); tone(S.has(v) ? 740 : 520, 0, .06, 'sine', .06); });
@@ -2265,11 +2327,11 @@ GAMES.ar = root => {
     wireHelp(ask);
     if (gl){ const q = root.querySelector(`.qopt[data-n="${m.second}"]`); if (q) q.style.boxShadow = '0 0 0 3px #ffc928'; }
     root.querySelectorAll('.qopt').forEach(b => b.onclick = () => { if (+b.dataset.n === m.second){ g.hide(); step = 4; tone(988, 0, .1, 'sine', .1); render(); }
-      else { miss++; needHelp = true; tone(160, 0, .2, 'square', .05); root.querySelector('.fres').textContent = 'まどぐちの人「そちらではないですね…」'; render(); } });
+      else { miss++; needHelp = true; tone(160, 0, .2, 'square', .05); root.querySelector('.fres').textContent = '窓口の人「そちらではないですね…」'; render(); } });
   }
   function done(){
     const sec = Math.round((performance.now() - t0) / 1000); chord([0, 2, 4, 7]);
-    g.over(`<h5>ミッションクリア！</h5><p>${m.procs.join('と')}の手つづきが、ぜんぶできました。</p><p>まちがい ${miss}回・${sec}秒　${glasses() ? '小動物「Nice!」' : 'メガネをかけると、もっとかんたんかも。'}</p>`, 'つぎのミッション', begin);
+    g.over(`<h5>ミッションクリア！</h5><p>${m.procs.join('と')}の手つづきが、全部できました。</p><p>まちがい ${miss}回・${sec}秒　${glasses() ? '小動物「Nice!」' : 'メガネをかけると、もっとかんたんかも。'}</p>`, '次のミッション', begin);
   }
   arSync = () => { if (m) render(); };
   onClean(() => { arSync = null; setGlasses(false); });
@@ -2283,8 +2345,8 @@ GAMES.wall = root => {
   const g = shell(root, '休み時間の教室', 'かべをおすと近づいて、ペンやスタンプでかけます。');
   const { ctx, W, H, cv, pt } = mkCanvas(g.stage, 640, 360);
   const WW = 640, WH = 300, ORDER = ['front', 'right', 'back', 'left'];
-  const NAME = { front: '前のかべ', right: '右のかべ（ろうかがわ）', back: 'うしろのかべ', left: '左のかべ（まどがわ）' };
-  const SHORT = { front: '前', right: '右', back: 'うしろ', left: '左' };
+  const NAME = { front: '前のかべ', right: '右のかべ（ろうかがわ）', back: '後ろのかべ', left: '左のかべ（窓側）' };
+  const SHORT = { front: '前', right: '右', back: '後ろ', left: '左' };
   // かけないところ（時計・ドア・ロッカー・まど）
   const HOLES = { front: [[296, 6, 48, 48]], right: [[470, 60, 120, 240]], back: [[0, 232, 640, 68]], left: [[46, 26, 166, 140], [238, 26, 166, 140], [430, 26, 166, 140]] };
   const COLORS = [['#3a3330', '黒'], ['#2e7fd0', '青'], ['#e4362b', '赤'], ['#2f9a48', '緑'], ['#ee7a1c', 'オレンジ']];
@@ -2312,13 +2374,12 @@ GAMES.wall = root => {
         if (i % 3 !== 2){ c.fillStyle = ['#e4362b', '#2e7fd0', '#f2b630', '#2f9a48', '#7d55c7'][i % 5]; c.beginPath(); c.roundRect ? c.roundRect(x + 12, y + 22, 34, 34, 6) : c.rect(x + 12, y + 22, 34, 34); c.fill(); } } }
   }
   function seed(){
-    const line = (k, pts, col, wd = 3) => { const d = classWalls[k].d; d.strokeStyle = col; d.lineWidth = wd; d.beginPath(); d.moveTo(...pts[0]); pts.slice(1).forEach(p => d.lineTo(...p)); d.stroke(); classWalls[k].count++; };
-    const circle = (k, x, y, r, col) => { const d = classWalls[k].d; d.strokeStyle = col; d.lineWidth = 3; d.beginPath(); d.arc(x, y, r, 0, 7); d.stroke(); };
-    circle('front', 120, 110, 26, '#ee7a1c'); for (let a = 0; a < 8; a++){ const r = a * Math.PI / 4; line('front', [[120 + Math.cos(r) * 34, 110 + Math.sin(r) * 34], [120 + Math.cos(r) * 46, 110 + Math.sin(r) * 46]], '#ee7a1c'); }
+    const S = n => SHAPES.find(x => x.name === n);
+    drawAll('front', S('たいよう'), 110, 105, ORG, 1.2);
     const fd = classWalls.front.d; fd.fillStyle = '#2e7fd0'; fd.font = '28px "Klee One", sans-serif'; fd.fillText('おはよう！', 420, 140);
-    for (let a = 0; a < 5; a++){ const r = a * Math.PI * 2 / 5; circle('left', 320 + Math.cos(r) * 12, 220 + Math.sin(r) * 12, 9, '#e4362b'); } line('left', [[320, 240], [316, 280]], '#2f9a48');
-    line('right', [[180, 160], [190, 130], [205, 150], [225, 150], [240, 130], [250, 160], [240, 190], [190, 190], [180, 160]], '#2e7fd0');
-    ['#e4362b', '#f2b630', '#2f9a48', '#2e7fd0'].forEach((col, k) => { const d = classWalls.back.d; d.strokeStyle = col; d.lineWidth = 6; d.beginPath(); d.arc(320, 200, 110 - k * 10, Math.PI, 0); d.stroke(); }); classWalls.back.count++;
+    drawAll('left', S('お花'), 320, 225, RED, 1.1);
+    drawAll('right', S('ねこ'), 215, 160, BLU, 1.3);
+    drawAll('back', S('にじ'), 320, 160, RED, 2.2);
   }
   if (!classWalls){
     classWalls = {};
@@ -2330,7 +2391,7 @@ GAMES.wall = root => {
       const d = dr.getContext('2d'); d.save(); d.beginPath(); d.rect(0, 0, WW, WH); HOLES[k].forEach(r => d.rect(...r)); d.clip('evenodd'); d.lineCap = d.lineJoin = 'round';
       classWalls[k] = { bg, dr, d, small, count: 0 };
     });
-    seed();
+    classWalls.needSeed = true;
   }
   const total = () => ORDER.reduce((s, k) => s + classWalls[k].count, 0);
 
@@ -2348,10 +2409,13 @@ GAMES.wall = root => {
   // いまの画面：'room'（教室を見わたす）か、かべの名前
   let view = 'room', anim = null, hover = null, auto = null;
   const btnL = g.button('← となりのかべ', () => turn(-1)), btnRoom = g.button('教室を見わたす', () => go('room')), btnR = g.button('となりのかべ →', () => turn(1));
-  const btnBack = g.button('うしろのかべを見る', () => go('back'));
+  const btnBack = g.button('後ろのかべを見る', () => go('back'));
   const btnPhoto = g.button('写真にのこす', () => { gallery.insertAdjacentHTML('afterbegin', `<img src="${cv.toDataURL('image/jpeg', .85)}" alt="教室のかべの写真">`); while (gallery.children.length > 4) gallery.lastChild.remove(); tone(1200, 0, .05, 'square', .05); }, 'primary');
   function sync(){ const room = view === 'room'; btnL.hidden = btnR.hidden = btnRoom.hidden = room; btnBack.hidden = !room; tools.classList.toggle('dim', room); status(); }
-  function status(){ g.stat(`${view === 'room' ? '教室を見わたしています' : `いま：<b>${NAME[view]}</b>`}　かべの絵 <b>${total()}</b>こ${auto ? `　<span style="color:#2f9a48">${auto.who}が${SHORT[auto.k]}のかべに「${auto.shape.name}」をかいてる…</span>` : ''}`); }
+  function status(){ g.stat(`${view === 'room' ? '教室を見わたしています' : `いま：<b>${NAME[view]}</b>`}　かべの絵 <b>${total()}</b>こ${auto ? `　<span style="color:#2f9a48">${autoText()}</span>` : ''}`); }
+  function autoText(){ const a = auto, who = a.pens.map(p => p.who).join('と'), erasing = a.strokes.some(x => x.erase && !x.fin);
+    if (erasing) return `${a.pens[0].who}が${SHORT[a.k]}のかべを、けしごむできれいにしてる…`;
+    return a.pair ? `${who}が、${SHORT[a.k]}のかべにいっしょに「${a.shape.name}」をかいてる…` : `${who}が${SHORT[a.k]}のかべに「${a.shape.name}」をかいてる…`; }
   function go(to, x = W / 2, y = H / 2){ if (anim || to === view) return; anim = { type: 'zoom', from: view, to, t: 0, x, y }; tone(to === 'room' ? 523 : 659, 0, .1, 'sine', .07); }
   function turn(dir){ if (anim || view === 'room') return; const to = ORDER[(ORDER.indexOf(view) + dir + 4) % 4]; anim = { type: 'slide', from: view, to, dir, t: 0 }; tone(587, 0, .08, 'sine', .06); }
   onKey((e, d) => { if (!d || view === 'room') return; if (e.key === 'ArrowLeft'){ e.preventDefault(); turn(-1); } if (e.key === 'ArrowRight'){ e.preventDefault(); turn(1); } });
@@ -2437,27 +2501,84 @@ GAMES.wall = root => {
     drawing = true; last = p; cv.setPointerCapture(e.pointerId); };
   cv.onpointerup = cv.onpointercancel = () => { if (drawing){ drawing = false; const w = classWalls[view]; w.d.globalCompositeOperation = 'source-over'; if (tool !== 'erase') w.count++; status(); } };
 
-  // ほかの子のかきたし
-  const FRIENDS = ['りっちゃん', 'まっちゃん', 'はるの', 'ゆうな', 'しおり', 'りさ'];
+  // ほかの子のかきたし（名前は、このゲームのために考えた名前）
+  const FRIENDS = ['そらくん', 'ひなたちゃん', 'こはるちゃん', 'いっくん', 'みのりちゃん', 'たっくん'];
+  // 絵：線（色・太さ・点の列）をいくつか。点は、まん中を (0, 0) にした、だいたい ±40 の大きさ
+  const ARC = (cx, cy, rx, ry, a0, a1, n = 28) => Array.from({ length: n + 1 }, (_, i) => { const a = a0 + (a1 - a0) * i / n; return [cx + Math.cos(a) * rx, cy + Math.sin(a) * ry]; });
+  const RING = (cx, cy, r, n) => ARC(cx, cy, r, r, 0, Math.PI * 2, n || Math.max(10, Math.round(r * 1.2)));
+  const DOT = (cx, cy) => RING(cx, cy, 2.2, 8);
+  const LINE = (...pts) => { const out = []; for (let i = 0; i < pts.length - 1; i++){ const [a, b] = [pts[i], pts[i + 1]], n = Math.max(2, Math.round(Math.hypot(b[0] - a[0], b[1] - a[1]) / 4)); for (let k = i ? 1 : 0; k <= n; k++) out.push([a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n]); } return out; };
+  const INK = '#3a3330', PINK = '#f29bb0', YEL = '#f2b630', GRN = '#2f9a48', RED = '#e4362b', BLU = '#2e7fd0', ORG = '#ee7a1c';
   const SHAPES = [
-    { name: 'にこにこ', f: t => t < .7 ? [Math.cos(t / .7 * 6.28) * 26, Math.sin(t / .7 * 6.28) * 26] : [Math.cos(.5 + (t - .7) / .3 * 2.1) * 14, Math.sin(.5 + (t - .7) / .3 * 2.1) * 14] },
-    { name: 'おほしさま', f: t => { const k = Math.floor(t * 10), a = k * Math.PI * .8 - Math.PI / 2, a2 = (k + 1) * Math.PI * .8 - Math.PI / 2, q = t * 10 - k; return [(Math.cos(a) * (1 - q) + Math.cos(a2) * q) * 30, (Math.sin(a) * (1 - q) + Math.sin(a2) * q) * 30]; } },
-    { name: 'おさかな', f: t => t < .7 ? [Math.cos(t / .7 * 6.28) * 30, Math.sin(t / .7 * 6.28) * 15] : [30 + (t - .7) / .3 * 20, ((t - .7) / .3 < .5 ? -1 : 1) * 14] },
-    { name: 'おうち', f: t => { const P = [[-26, 20], [-26, -6], [0, -28], [26, -6], [26, 20], [-26, 20]], k = Math.min(4, Math.floor(t * 5)), q = t * 5 - k; return [P[k][0] + (P[k + 1][0] - P[k][0]) * q, P[k][1] + (P[k + 1][1] - P[k][1]) * q]; } },
+    { name: 'にこにこ', make: c => [{ c, w: 4, p: RING(0, 0, 30) }, { c: INK, w: 4, p: DOT(-10, -6) }, { c: INK, w: 4, p: DOT(10, -6) },
+      { c: INK, w: 3.5, p: ARC(0, 2, 14, 11, .25, Math.PI - .25) }, { c: PINK, w: 4, p: RING(-19, 6, 4, 10) }, { c: PINK, w: 4, p: RING(19, 6, 4, 10) }] },
+    { name: 'お花', make: c => [...Array.from({ length: 6 }, (_, i) => { const a = i * Math.PI / 3 - Math.PI / 2; return { c, w: 4, p: RING(Math.cos(a) * 15, -12 + Math.sin(a) * 15, 9, 14) }; }),
+      { c: YEL, w: 5, p: RING(0, -12, 6, 10) }, { c: GRN, w: 4, p: LINE([0, 2], [2, 18], [0, 40]) },
+      { c: GRN, w: 3.5, p: [...ARC(10, 24, 10, 5, Math.PI, Math.PI * 2, 10), ...ARC(10, 24, 10, 5, 0, Math.PI, 10)] }, { c: GRN, w: 3.5, p: [...ARC(-9, 30, 9, 4.5, Math.PI, Math.PI * 2, 10), ...ARC(-9, 30, 9, 4.5, 0, Math.PI, 10)] }] },
+    { name: 'おさかな', make: c => [{ c, w: 4, p: ARC(-4, 0, 30, 17, 0, Math.PI * 2, 36) }, { c, w: 4, p: LINE([25, 0], [42, -14], [42, 14], [25, 0]) },
+      { c: INK, w: 4, p: DOT(-20, -4) }, { c, w: 3, p: ARC(-4, 0, 9, 12, -1.2, 1.2, 12) }, { c, w: 3, p: ARC(6, 0, 9, 12, -1.2, 1.2, 12) },
+      { c: BLU, w: 3, p: RING(-40, -20, 4, 10) }, { c: BLU, w: 3, p: RING(-48, -32, 3, 8) }] },
+    { name: 'おうち', make: c => [{ c, w: 4, p: LINE([-24, -4], [-24, 30], [24, 30], [24, -4]) }, { c: RED, w: 4, p: LINE([-32, -2], [0, -30], [32, -2], [-32, -2]) },
+      { c: INK, w: 3.5, p: LINE([-6, 30], [-6, 12], [6, 12], [6, 30]) }, { c: BLU, w: 3.5, p: LINE([10, 0], [20, 0], [20, 10], [10, 10], [10, 0]) }, { c: BLU, w: 2.5, p: LINE([15, 0], [15, 10]) },
+      { c: INK, w: 3.5, p: LINE([14, -18], [14, -30], [22, -30], [22, -11]) }, { c: '#9aa3ad', w: 3, p: ARC(20, -40, 6, 4, Math.PI, Math.PI * 2.6, 14) }] },
+    { name: 'ねこ', make: c => [{ c, w: 4, p: ARC(0, 4, 28, 24, 0, Math.PI * 2, 36) }, { c, w: 4, p: LINE([-24, -6], [-20, -32], [-6, -18]) }, { c, w: 4, p: LINE([6, -18], [20, -32], [24, -6]) },
+      { c: INK, w: 4, p: DOT(-10, 0) }, { c: INK, w: 4, p: DOT(10, 0) }, { c: PINK, w: 4, p: DOT(0, 7) },
+      { c: INK, w: 3, p: [...ARC(-4, 11, 4, 4, 0, Math.PI, 8), ...ARC(4, 11, 4, 4, 0, Math.PI, 8)] },
+      { c: INK, w: 2.5, p: LINE([-14, 8], [-34, 4]) }, { c: INK, w: 2.5, p: LINE([-14, 12], [-34, 14]) }, { c: INK, w: 2.5, p: LINE([14, 8], [34, 4]) }, { c: INK, w: 2.5, p: LINE([14, 12], [34, 14]) }] },
+    { name: 'にじ', make: () => [...[RED, ORG, YEL, GRN, BLU].map((col, i) => ({ c: col, w: 5, p: ARC(0, 22, 44 - i * 6, 40 - i * 6, Math.PI, Math.PI * 2, 30) })),
+      { c: '#9aa3ad', w: 3.5, p: [...ARC(-40, 20, 8, 7, Math.PI * .6, Math.PI * 2.1, 12), ...ARC(-30, 22, 8, 7, Math.PI * 1.1, Math.PI * 2.4, 12)] }, { c: '#9aa3ad', w: 3.5, p: [...ARC(30, 22, 8, 7, Math.PI * .6, Math.PI * 1.9, 12), ...ARC(40, 20, 8, 7, Math.PI, Math.PI * 2.4, 12)] }] },
+    { name: 'ロケット', make: c => [{ c, w: 4, p: LINE([-11, 20], [-11, -12], [0, -34], [11, -12], [11, 20], [-11, 20]) }, { c: BLU, w: 3.5, p: RING(0, -6, 6, 14) },
+      { c: RED, w: 4, p: LINE([-11, 6], [-22, 24], [-11, 20]) }, { c: RED, w: 4, p: LINE([11, 6], [22, 24], [11, 20]) },
+      { c: ORG, w: 4, p: LINE([-6, 22], [0, 38], [6, 22]) }, { c: YEL, w: 3, p: LINE([-3, 22], [0, 30], [3, 22]) }] },
+    { name: 'たいよう', make: () => [{ c: ORG, w: 4, p: RING(0, 0, 18) }, ...Array.from({ length: 8 }, (_, i) => { const a = i * Math.PI / 4; return { c: ORG, w: 4, p: LINE([Math.cos(a) * 25, Math.sin(a) * 25], [Math.cos(a) * 36, Math.sin(a) * 36]) }; }),
+      { c: INK, w: 3.5, p: DOT(-6, -4) }, { c: INK, w: 3.5, p: DOT(6, -4) }, { c: INK, w: 3, p: ARC(0, 2, 8, 6, .3, Math.PI - .3, 10) }] },
   ];
+  // 絵を、いっぺんにかく（さいしょからある絵）
+  function drawAll(k, shape, cx, cy, c, sc = 1){ const d = classWalls[k].d; d.globalCompositeOperation = 'source-over';
+    shape.make(c).forEach(st => { d.strokeStyle = st.c; d.lineWidth = st.w; d.beginPath(); st.p.forEach(([x, y], i) => i ? d.lineTo(cx + x * sc, cy + y * sc) : d.moveTo(cx + x * sc, cy + y * sc)); d.stroke(); });
+    classWalls[k].count++; }
   const SPOTS = { front: [[80, 520], [70, 230]], right: [[60, 430], [70, 230]], back: [[80, 560], [60, 200]], left: [[60, 580], [190, 270]] };
+  if (classWalls.needSeed){ delete classWalls.needSeed; seed(); }
+  // 相手いるところをさがす：絵のある点が、どれくらいあるか（少しまばらに数える）
+  function inkIn(k, cx, cy, hw = 54, hh = 48){ const d = classWalls[k].d, x = Math.max(0, cx - hw), y = Math.max(0, cy - hh);
+    const im = d.getImageData(Math.round(x * DPR), Math.round(y * DPR), Math.round(hw * 2 * DPR), Math.round(hh * 2 * DPR)).data; let n = 0;
+    for (let i = 3; i < im.length; i += 4 * 3) if (im[i] > 40) n++; return n; }
+  // けしごむ：ジグザグに、かくところをきれいにする
+  const ERASE = () => { const pts = []; for (let r = 0, y = -46; y <= 46; y += 13, r++) pts.push(...LINE(r % 2 ? [56, y] : [-56, y], r % 2 ? [-56, y] : [56, y])); return [{ erase: true, c: '#c9ccd1', w: 28, p: pts }]; };
   function friend(){
-    const k = ORDER[Math.floor(Math.random() * 4)], [[x0, x1], [y0, y1]] = SPOTS[k];
-    auto = { k, who: FRIENDS[Math.floor(Math.random() * FRIENDS.length)], shape: SHAPES[Math.floor(Math.random() * SHAPES.length)], cx: rnd(x0, x1), cy: rnd(y0, y1), t: 0, c: COLORS[Math.floor(rnd(1, COLORS.length))][0], last: null };
+    // ときどき、ふたりでいっしょに、ひとつの絵をかく（線をわけあって、同時にかく）
+    const pair = Math.random() < .4, sc = pair ? 1.35 : 1;
+    // かべと場所をいくつかためして、一番相手いるところにかく。どこもいっぱいなら、さきに消しゴムで消す
+    let best = null;
+    for (let tries = 0; tries < 24; tries++){
+      const k = ORDER[Math.floor(Math.random() * 4)], [[x0, x1], [y0, y1]] = SPOTS[k], cx = rnd(x0, x1), cy = rnd(y0, y1), n = inkIn(k, cx, cy, 54 * sc, 48 * sc);
+      if (!best || n < best.n) best = { k, cx, cy, n };
+      if (n === 0) break;
+    }
+    const { k, cx, cy } = best, shape = SHAPES[Math.floor(Math.random() * SHAPES.length)], c = COLORS[Math.floor(rnd(1, COLORS.length))][0];
+    const strokes = [...(best.n > 0 ? ERASE() : []), ...shape.make(c)].map(st => ({ ...st, p: st.p.map(([x, y]) => [x * sc, y * sc]), w: st.erase ? st.w * sc : st.w }));
+    const names = [...FRIENDS].sort(() => Math.random() - .5).slice(0, pair ? 2 : 1);
+    auto = { k, shape, cx, cy, strokes, next: 0, done: 0, pair, c, pens: names.map(who => ({ who, st: -1, pi: 0, acc: 0, last: null })) };
     status();
   }
   const iv = setInterval(() => { if (!auto) friend(); }, 9000); onClean(() => clearInterval(iv));
   later(friend, 3000);
 
   loop(dt => {
-    if (auto){ const a = auto; a.t = Math.min(1, a.t + dt * .45); const [dx, dy] = a.shape.f(a.t), p = [a.cx + dx, a.cy + dy], d = classWalls[a.k].d;
-      if (a.last){ d.globalCompositeOperation = 'source-over'; d.strokeStyle = a.c; d.lineWidth = 4; d.beginPath(); d.moveTo(...a.last); d.lineTo(...p); d.stroke(); }
-      a.last = p; if (a.t >= 1){ classWalls[a.k].count++; auto = null; tone(659, 0, .1, 'sine', .07); status(); } }
+    if (auto){ const a = auto, d = classWalls[a.k].d; d.lineCap = d.lineJoin = 'round';
+      // それぞれのペン：まだだれもかいていない線をとって、1秒に90点ぶん進む。消しゴムがおわるまでは、ほかの子は待つ
+      a.pens.forEach((pn, pi) => { pn.acc += dt * 90;
+        while (pn.acc >= 1){
+          if (pn.st < 0){ const nx = a.strokes[a.next]; if (!nx) break; const erasing = a.strokes.slice(0, a.next).some((x, i) => x.erase && !x.fin);
+            if (erasing && !nx.erase) break; if (nx.erase && pi > 0) break; pn.st = a.next++; pn.pi = 0; status(); }
+          const st = a.strokes[pn.st]; pn.acc--;
+          d.globalCompositeOperation = st.erase ? 'destination-out' : 'source-over';
+          if (pn.pi > 0){ const [p0, p1] = [st.p[pn.pi - 1], st.p[pn.pi]]; d.strokeStyle = st.c; d.lineWidth = st.w; d.beginPath(); d.moveTo(a.cx + p0[0], a.cy + p0[1]); d.lineTo(a.cx + p1[0], a.cy + p1[1]); d.stroke(); }
+          pn.last = [a.cx + st.p[pn.pi][0], a.cy + st.p[pn.pi][1]]; pn.pen = st.c;
+          if (++pn.pi >= st.p.length){ st.fin = true; a.done++; pn.st = -1; pn.acc -= 6; status(); }   // 線と線のあいだは、ペンをはなす
+        } });
+      d.globalCompositeOperation = 'source-over';
+      if (a.done >= a.strokes.length){ classWalls[a.k].count++; auto = null; tone(659, 0, .1, 'sine', .07); if (a.pair) later(() => tone(784, 0, .1, 'sine', .07), 120); status(); } }
     if (anim){ anim.t = Math.min(1, anim.t + dt / .38); if (anim.t >= 1){ view = anim.to; anim = null; hover = null; sync(); } }
     // かく
     ctx.fillStyle = '#efece6'; ctx.fillRect(0, 0, W, H);
@@ -2471,8 +2592,8 @@ GAMES.wall = root => {
       const e = anim.t * anim.t * (3 - 2 * anim.t); drawWall(anim.from, -anim.dir * W * e); drawWall(anim.to, anim.dir * W * (1 - e));
     } else if (view === 'room') drawRoom();
     else drawWall(view);
-    if (auto && !anim && view === auto.k && auto.last){ ctx.fillStyle = auto.c; ctx.beginPath(); ctx.arc(...auto.last, 5, 0, 7); ctx.fill();
-      ctx.font = '700 12px "Zen Maru Gothic", sans-serif'; ctx.fillText(auto.who, auto.last[0] + 8, auto.last[1] - 8); }
+    if (auto && !anim && view === auto.k) auto.pens.forEach(pn => { if (!pn.last) return; ctx.fillStyle = pn.pen || auto.c; ctx.beginPath(); ctx.arc(...pn.last, 5, 0, 7); ctx.fill();
+      ctx.font = '700 12px "Zen Maru Gothic", sans-serif'; ctx.fillText(pn.who, pn.last[0] + 8, pn.last[1] - 8); });
   });
   sync();
 };
@@ -2543,6 +2664,7 @@ setNight(clockNight);
 const todayIdea = IDEAS[new Date().getDate() % IDEAS.length];
 $('#todayName').textContent = `「${todayIdea.name}」（${todayIdea.nick}）`;
 $('#todayGo').onclick = () => open(todayIdea.id);
+Object.assign($('#todayGo').dataset, { label: todayIdea.label, short: todayIdea.short });
 $('#todayX').onclick = () => { $('#today').hidden = true; };
 </script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c351ef734eb54b488d820041ba2f7e84"}'></script><!-- End Cloudflare Web Analytics -->
