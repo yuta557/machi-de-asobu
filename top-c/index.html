@@ -58,13 +58,8 @@ a{color:inherit}
 .hero-ttl .tag{margin:14px 0 0;font-size:clamp(15px,1.5vw,21px);font-weight:700;line-height:1.6;
   letter-spacing:.02em}
 
-/* 2枚目：メッセージは左の白地、絵は右上から続く */
-.hero-next{position:relative;overflow:hidden}
-.hero-art{position:absolute;top:0;right:0;width:min(46%,620px);overflow:hidden;line-height:0;
-  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 18%);
-  mask-image:linear-gradient(90deg,transparent 0,#000 18%)}
-.hero-art img{width:170%;max-width:none;height:auto;margin-left:-30%}
-.hero-body{position:relative;z-index:2;max-width:1280px;margin:0 auto;padding:96px 40px 104px}
+/* 2枚目：白地にメッセージだけを置く */
+.hero-body{max-width:1280px;margin:0 auto;padding:96px 40px 104px}
 .hero-msg{max-width:min(54%,42em)}
 .hero-msg p{margin:0;font-size:clamp(15px,1.5vw,19px);font-weight:500}
 .hero-msg .sub{margin:18px 0 0;font-size:16px;line-height:2.25;color:var(--ink-soft);font-weight:400}
@@ -79,7 +74,6 @@ a{color:inherit}
   .hero-ttl{position:static;padding:26px 40px 0}
   .hero-ttl h1{font-size:clamp(26px,5.4vw,40px);white-space:normal}
   .hero-ttl .tag{margin-top:10px;font-size:clamp(14px,2.2vw,17px)}
-  .hero-art{display:none}
   .hero-body{padding:30px 40px 60px}
   .hero-msg{max-width:none}
 }
@@ -197,18 +191,14 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 <section class="hero" id="top">
   <div class="hero-full">
     <picture>
-      <source media="(max-width:700px)" srcset="../assets/hero-map-sp.webp" width="1100" height="619">
-      <img src="../assets/hero-map.webp" width="1672" height="941" fetchpriority="high"
+      <source media="(max-width:700px)" srcset="../assets/hero-map-sp.webp" width="1000" height="625">
+      <img src="../assets/hero-map.webp" width="1402" height="1122" fetchpriority="high"
         alt="学校・公園・川沿いのまちで、子どもたちが遊んだり集まったりしているようすを俯瞰で描いたイラスト">
     </picture>
     <div class="hero-ttl">
       <h1>まちであそぶ、をつくる。</h1>
       <p class="tag">いつものまちに、新しいつながりを。</p>
     </div>
-  </div>
-  <div class="hero-next">
-  <div class="hero-art" aria-hidden="true">
-    <img src="../assets/hero-map.webp" width="1672" height="941" alt="">
   </div>
   <div class="hero-body">
   <div class="hero-msg">
@@ -217,7 +207,6 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
     <p class="sub">MACHI PLAYは、「楽しい」をきっかけに、まちの中に新しいつながりを生み出す取り組みです。子どもも大人も、たまたまそこを通りかかった人も。遊びを通して人と人との間に生まれたつながりが、いつもの風景への新しい気づきや、まちへの愛着を育んでいきます。</p>
     <p class="sub">いつもの道で誰かと出会い、見慣れたまちをもっと好きになる。そんな日常を、遊びの力でつくっていきたいと考えています。</p>
     <a class="go" href="#acts">活動を見る　<span>→</span></a>
-  </div>
   </div>
   </div>
 </section>
