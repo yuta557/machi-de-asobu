@@ -92,7 +92,9 @@ a{color:inherit}
 .hand span:nth-child(2){padding-left:1.2em}
 .hand span:nth-child(3){padding-left:2.2em}
 
-.intro .closing{margin-top:clamp(34px,3.6vw,58px)}
+.intro .closing{margin-top:clamp(34px,3.6vw,58px);display:grid;align-items:center;
+  grid-template-columns:clamp(170px,21vw,320px) minmax(0,1fr);gap:clamp(20px,2.8vw,48px)}
+.closing-art{width:100%;height:auto}
 .closing p{margin:0;font-size:clamp(15px,1.3vw,20px);line-height:2.1;font-weight:700;color:var(--ink)}
 .closing p + p{margin-top:.3em;font-weight:500;color:#2F5E92;font-size:clamp(14px,1.14vw,17.5px)}
 
@@ -106,6 +108,8 @@ a{color:inherit}
   .intro .wrap{padding:0 22px}
   .q-row{grid-template-columns:1fr;gap:22px}
   .panel{grid-template-columns:1fr;gap:22px;text-align:left}
+  .intro .closing{grid-template-columns:1fr;gap:16px}
+  .closing-art{max-width:280px}
   .hand{text-align:left}
 }
 
@@ -246,8 +250,12 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
   </div>
 
   <div class="wrap closing">
-    <p>いつもの道で誰かと出会い、見慣れたまちをもっと好きになる。</p>
-    <p>そんな日常を、遊びの力で作っていきたいと考えています。</p>
+    <img class="closing-art" src="../assets/scene-river.webp" width="2000" height="668"
+      loading="lazy" alt="" aria-hidden="true">
+    <div>
+      <p>いつもの道で誰かと出会い、見慣れたまちをもっと好きになる。</p>
+      <p>そんな日常を、遊びの力で作っていきたいと考えています。</p>
+    </div>
   </div>
 </section>
 
