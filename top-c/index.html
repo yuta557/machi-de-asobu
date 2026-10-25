@@ -50,8 +50,8 @@ a{color:inherit}
    （--hero-cut はヘッダー＋試作の帯のぶん。本番では 78px にする） */
 .hero-full{position:relative;line-height:0;--hero-cut:120px}
 .hero-full img{width:100%;height:auto;display:block;
-  max-height:calc(100svh - var(--hero-cut));object-fit:cover;object-position:50% 100%}
-.hero-ttl{position:absolute;left:0;right:0;bottom:5%;z-index:2;
+  max-height:calc(100svh - var(--hero-cut));object-fit:cover;object-position:50% 45%}
+.hero-ttl{position:absolute;left:0;right:0;bottom:9%;z-index:2;
   max-width:1280px;margin:0 auto;padding:0 40px;line-height:1.18}
 .hero-ttl h1{font-weight:900;font-size:clamp(28px,4.6vw,66px);line-height:1.2;letter-spacing:.01em;
   margin:0;white-space:nowrap}
@@ -191,8 +191,8 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 <section class="hero" id="top">
   <div class="hero-full">
     <picture>
-      <source media="(max-width:700px)" srcset="../assets/hero-map-sp.webp" width="1000" height="625">
-      <img src="../assets/hero-map.webp" width="1402" height="1122" fetchpriority="high"
+      <source media="(max-width:700px)" srcset="../assets/hero-map-sp.webp" width="1000" height="526">
+      <img src="../assets/hero-map.webp" width="1671" height="941" fetchpriority="high"
         alt="学校・公園・川沿いのまちで、子どもたちが遊んだり集まったりしているようすを俯瞰で描いたイラスト">
     </picture>
     <div class="hero-ttl">
