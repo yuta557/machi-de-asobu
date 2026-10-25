@@ -127,7 +127,7 @@ a{color:inherit}
   /* 絵の上に文字を置かず、絵の下に順番に並べる */
   /* 絵を画面いっぱいに出し、その上に文字を置く */
   .hero-full{height:calc(100svh - 64px);min-height:520px;overflow:hidden}
-  .hero-full img{height:100%;object-fit:cover;object-position:54% 46%}
+  .hero-full img{height:100%;object-fit:cover;object-position:50% 50%}
   .hero-ttl{left:7%;top:11%;width:min(80%,430px)}
   .hero-ttl::before{left:-16%;right:-12%;top:-18%;bottom:-14%}
   .hero-go{left:7%;bottom:7%;min-width:160px}
@@ -255,8 +255,11 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 
 <section class="hero" id="top">
   <div class="hero-full">
-    <img src="../assets/hero-town.webp" width="1646" height="956" fetchpriority="high"
-      alt="海辺のまち。学校や公園、桟橋のまわりで子どもたちが遊んだり集まったりしているようすを描いたイラスト">
+    <picture>
+      <source media="(max-width:860px)" srcset="../assets/hero-town-sp.webp" width="940" height="1550">
+      <img src="../assets/hero-town.webp" width="1646" height="956" fetchpriority="high"
+        alt="海辺のまち。学校や公園、桟橋のまわりで子どもたちが遊んだり集まったりしているようすを描いたイラスト">
+    </picture>
     <svg class="hero-wave" viewBox="0 0 1440 110" preserveAspectRatio="none" aria-hidden="true">
       <path d="M0 110 L0 52 C 160 96, 330 110, 520 88 C 688 68, 830 96, 1006 74
                C 1168 54, 1292 70, 1440 32 L1440 110 Z" fill="#fff"/>
