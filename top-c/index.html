@@ -97,12 +97,13 @@ a{color:inherit}
 .blob{position:absolute;z-index:0;height:auto;display:block;pointer-events:none}
 .blob-l{left:-20%;top:clamp(10px,2vw,44px);width:27%}
 .blob-r{right:-12%;top:clamp(40px,6vw,120px);width:17%}
-.q-row{display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,.98fr) minmax(0,1.04fr);
-  gap:clamp(20px,2.2vw,38px);align-items:center}
+.q-row{display:grid;grid-template-columns:minmax(0,.84fr) minmax(0,1.08fr) minmax(0,1fr);
+  gap:clamp(18px,2vw,34px);align-items:center}
 .q-art{width:100%;height:auto;display:block}
 .q{margin:0;line-height:0}
 .q img{width:100%;height:auto;max-width:min(100%,520px)}
 .pc{display:inline}
+.q-body p + p{margin-top:1.6em}
 .q-body p{margin:0;font-size:clamp(14px,1.07vw,17px);line-height:1.95;font-weight:500;color:#2F5E92}
 
 /* うすい水色の帯。上下のふちはゆるい曲線 */
@@ -292,12 +293,13 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
     <h2 class="q"><img src="../assets/q-heading.webp" width="596" height="308" loading="lazy"
       alt="毎日歩くその道で、最後に足を止めたのはいつですか？"></h2>
     <div class="q-body">
-      <p>まちは、目的地へ向かう道のりの中にも、<br class="pc">
-        思いがけない出会いや発見が生まれる場所です。<br class="pc">
-        いつもの道で誰かと何かを一緒に楽しんだり、<br class="pc">
-        思いがけない出会いが生まれたり。<br class="pc">
-        そんな小さな出来事が、見慣れたまちを<br class="pc">
-        少しずつ違った場所に変えていきます。</p>
+      <p>まちには、目的地へ向かう道のりにも、<br class="pc">
+        さまざまな可能性が広がっています。</p>
+      <p class="n">いつも歩いている道も、遊びの場になったり、<br class="pc">
+        誰かと一緒に楽しむ場になったりするかもしれません。<br class="pc">
+        そんな体験から、思いがけない出会いや、<br class="pc">
+        今まで気づかなかったまちの魅力が<br class="pc">
+        生まれることがあります。</p>
     </div>
     <img class="q-art" src="../assets/scene-street.webp" width="1855" height="848"
       loading="lazy" alt="" aria-hidden="true">
@@ -314,10 +316,9 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
       <img class="band-art" src="../assets/scene-play.webp" width="1849" height="851"
         loading="lazy" alt="" aria-hidden="true">
       <div>
-        <p class="lead">MACHI PLAYは、<br class="pc">「楽しい」をきっかけに、<br class="pc">まちの中に新しいつながりを生み出す取り組みです。</p>
-        <p class="sub">子どもも大人も、たまたまそこを通りかかった人も。<br class="pc">
-          遊びを通して人と人との間に生まれたつながりが、<br class="pc">
-          いつもの風景への新しい気づきや、まちへの愛着を育んでいきます。</p>
+        <p class="lead">MACHI PLAYは、「楽しい」をきっかけに、<br class="pc">いつものまちに新しい出会いや発見を生み出す取り組みです。</p>
+        <p class="sub">誰かと一緒に楽しむことで、人と人との関わりが生まれ、<br class="pc">
+          見慣れた風景にも新しい意味が加わっていく。</p>
       </div>
       <img class="hand-art" src="../assets/hand-lettering.webp" width="1486" height="970"
         loading="lazy" alt="つながる、あそぶ、まちが変わる">
@@ -334,7 +335,7 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
       loading="lazy" alt="" aria-hidden="true">
     <div>
       <p>いつもの道で誰かと出会い、見慣れたまちをもっと好きになる。</p>
-      <p>そんな日常を、遊びの力で作っていきたいと考えています。</p>
+      <p>そんな日常を、遊びの力でつくっていきたいと考えています。</p>
     </div>
   </div>
 </section>
