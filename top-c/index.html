@@ -62,6 +62,11 @@ a{color:inherit}
 .hero-full img{width:100%;height:auto;display:block}
 .hero-ttl{position:absolute;left:5.6%;top:11.5%;z-index:2;width:clamp(290px,34vw,580px)}
 .hero-ttl h1{margin:0;line-height:0}
+/* 文字のまわりに、うすい白のもや */
+.hero-ttl::before{content:"";position:absolute;z-index:-1;pointer-events:none;
+  left:-19%;right:-15%;top:-24%;bottom:-18%;
+  background:radial-gradient(58% 58% at 47% 50%,rgba(255,255,255,.78) 0%,
+    rgba(255,255,255,.55) 44%,rgba(255,255,255,0) 78%)}
 .hero-ttl img{width:100%;height:auto}
 .hero-go{position:absolute;left:8.2%;bottom:7.5%;z-index:2;min-width:clamp(150px,13vw,210px)}
 
@@ -94,6 +99,7 @@ a{color:inherit}
 @media(max-width:860px){
   /* 絵の上に文字を置かず、絵の下に順番に並べる */
   .hero-ttl{position:static;width:auto;padding:26px 22px 0}
+  .hero-ttl::before{display:none}
   .hero-ttl img{max-width:min(100%,420px)}
   .hero-go{position:static;display:inline-flex;margin:20px 22px 0}
   .intro{padding:36px 0 40px}
