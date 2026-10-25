@@ -53,8 +53,10 @@ a{color:inherit}
   max-height:calc(100svh - var(--hero-cut));object-fit:cover;object-position:50% 45%}
 .hero-ttl{position:absolute;left:0;right:0;bottom:9%;z-index:2;
   max-width:1280px;margin:0 auto;padding:0 40px;line-height:1.18}
-.hero-ttl h1{font-weight:900;font-size:clamp(28px,4.6vw,66px);line-height:1.2;letter-spacing:.01em;
-  margin:0;white-space:nowrap}
+/* タイトルはイラストの中に描かれているので、画面には出さない。
+   検索と読み上げのために h1 は残しておく */
+.hero-ttl h1{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;
+  clip-path:inset(50%);white-space:nowrap;border:0}
 .hero-ttl .tag{margin:14px 0 0;font-size:clamp(15px,1.5vw,21px);font-weight:700;line-height:1.6;
   letter-spacing:.02em}
 
@@ -64,15 +66,15 @@ a{color:inherit}
 .hero-msg p{margin:0;font-size:clamp(15px,1.5vw,19px);font-weight:500}
 .hero-msg .sub{margin:18px 0 0;font-size:16px;line-height:2.25;color:var(--ink-soft);font-weight:400}
 .hero-msg .sub + .sub{margin-top:1.15em}
-.hero-msg .go{display:inline-flex;align-items:center;gap:14px;margin-top:30px;padding-bottom:10px;
+.go{display:inline-flex;align-items:center;gap:14px;margin-top:30px;padding-bottom:10px;
   border-bottom:1.5px solid var(--ink);font-weight:700;text-decoration:none;font-size:15.5px}
-.hero-msg .go span{font-family:"Outfit",sans-serif;color:var(--o)}
-.hero-msg .go:hover{border-color:var(--o);color:var(--o)}
+.go span{font-family:"Outfit",sans-serif;color:var(--o)}
+.go:hover{border-color:var(--o);color:var(--o)}
+.hero-ttl .go{margin-top:22px}
 @media(max-width:980px){
   /* 横幅が足りないときは、絵は1枚目だけにして、タイトル→メッセージの順に並べる */
   .hero-full img{max-height:none}
   .hero-ttl{position:static;padding:26px 40px 0}
-  .hero-ttl h1{font-size:clamp(26px,5.4vw,40px);white-space:normal}
   .hero-ttl .tag{margin-top:10px;font-size:clamp(14px,2.2vw,17px)}
   .hero-body{padding:56px 40px 64px}
   .hero-msg{max-width:none}
@@ -193,11 +195,12 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
     <picture>
       <source media="(max-width:700px)" srcset="../assets/hero-map-sp.webp" width="1000" height="526">
       <img src="../assets/hero-map.webp" width="1671" height="941" fetchpriority="high"
-        alt="学校・公園・川沿いのまちで、子どもたちが遊んだり集まったりしているようすを俯瞰で描いたイラスト">
+        alt="「まちであそぶ、をつくる。」の文字と、学校・公園・川沿いのまちで子どもたちが遊んでいるようすを描いたイラスト">
     </picture>
     <div class="hero-ttl">
       <h1>まちであそぶ、をつくる。</h1>
       <p class="tag">いつものまちに、新しいつながりを。</p>
+      <a class="go" href="#acts">活動を見る　<span>→</span></a>
     </div>
   </div>
   <div class="hero-body">
@@ -206,7 +209,6 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
     <p class="sub">まちは、目的地へ向かう道のりの中にも、思いがけない出会いや発見が生まれる場所です。いつもの道で誰かと何かを一緒に楽しんだり、思いがけない出会いが生まれたり。そんな小さな出来事が、見慣れたまちを少しずつ違った場所に変えていきます。</p>
     <p class="sub">MACHI PLAYは、「楽しい」をきっかけに、まちの中に新しいつながりを生み出す取り組みです。子どもも大人も、たまたまそこを通りかかった人も。遊びを通して人と人との間に生まれたつながりが、いつもの風景への新しい気づきや、まちへの愛着を育んでいきます。</p>
     <p class="sub">いつもの道で誰かと出会い、見慣れたまちをもっと好きになる。そんな日常を、遊びの力でつくっていきたいと考えています。</p>
-    <a class="go" href="#acts">活動を見る　<span>→</span></a>
   </div>
   </div>
 </section>
