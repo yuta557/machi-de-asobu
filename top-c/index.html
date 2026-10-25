@@ -73,7 +73,7 @@ a{color:inherit}
 @media(max-width:620px){ .nav-links a:nth-child(-n+2){display:none} }
 
 /* ヒーロー：イラストはそのまま全面に置き、文字を上にのせる */
-.hero{position:relative;background:#fff}
+.hero{position:relative;overflow:hidden;background:#fff}
 .hero-full{position:relative;line-height:0}
 .hero-full img{width:100%;height:auto;display:block}
 /* 絵の下のふちを、白でゆるく波の形に切る */
@@ -90,7 +90,8 @@ a{color:inherit}
 .hero-go{position:absolute;left:8.2%;bottom:7.5%;z-index:2;min-width:clamp(150px,13vw,210px)}
 
 /* 2枚目：問いかけと本文 */
-.intro{position:relative;background:#fff;padding:clamp(48px,5.4vw,92px) 0 clamp(40px,4vw,64px)}
+/* 端からはみ出す飾りで横スクロールが出ないよう、ここで切る */
+.intro{position:relative;overflow:hidden;background:#fff;padding:clamp(48px,5.4vw,92px) 0 clamp(40px,4vw,64px)}
 .intro .wrap{position:relative;z-index:1;max-width:1280px;margin:0 auto;padding:0 40px}
 /* 左右から入ってくる、うすい水色のかたまり。まるではなく、ふちが何度かうねる形 */
 .blob{position:absolute;z-index:0;height:auto;display:block;pointer-events:none}
