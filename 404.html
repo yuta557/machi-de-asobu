@@ -6,62 +6,94 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
 <title>ページが見つかりません｜MACHI PLAY</title>
-<link rel="icon" href="/assets/icon-32.png" sizes="32x32">
-<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/icon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/icon-192.png">
+<link rel="apple-touch-icon" href="/assets/icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#123E7C; --ink-2:#1E5FA8; --ink-soft:#466A9B;
-  --line:#DCE7F2; --band:#FBF8EF; --o:#F0714A;
+  --bg:#FEFEFC;
+  --num:#58A9E4;        /* 404 の数字 */
+  --head:#1D6DAA;       /* 見出し */
+  --body:#407CAB;       /* 本文 */
+  --line:#CFE4F1;       /* カードの枠 */
+  --arrow:#58A7DE;
+  --yellow:#FEF9CD;     /* 左上のまる */
+  --green:#E1F5E9;      /* 右下のまる */
 }
 *{box-sizing:border-box}
-body{margin:0;background:#fff;color:var(--ink);
-  font-family:"Zen Kaku Gothic New",system-ui,sans-serif;line-height:1.95;-webkit-font-smoothing:antialiased}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--body);
+  font-family:"Zen Kaku Gothic New",system-ui,sans-serif;line-height:1.9;
+  -webkit-font-smoothing:antialiased;position:relative;overflow-x:hidden}
 img{display:block;max-width:100%}
-a{color:inherit}
+a{color:inherit;text-decoration:none}
 
-.wrap{max-width:720px;margin:0 auto;padding:clamp(56px,9vw,112px) 24px 64px;text-align:center}
-.mark{height:72px;width:auto;margin:0 auto 28px}
-.code{font-family:"Outfit",sans-serif;font-weight:700;font-size:clamp(56px,11vw,96px);
-  line-height:1;letter-spacing:.06em;color:#BFD6EC;margin:0}
-h1{font-size:clamp(20px,2.6vw,27px);font-weight:900;line-height:1.6;margin:18px 0 0}
-.lead{margin:18px 0 0;font-size:clamp(15px,1.3vw,17px);line-height:2.2;color:var(--ink-soft);font-weight:500}
+/* 背景のまる */
+body::before,body::after{content:"";position:fixed;border-radius:50%;z-index:0;pointer-events:none}
+body::before{background:var(--yellow);width:min(46vw,420px);aspect-ratio:1;
+  top:min(-23vw,-210px);left:min(-14vw,-130px)}
+body::after{background:var(--green);width:min(52vw,520px);aspect-ratio:1;
+  right:min(-16vw,-150px);bottom:min(-24vw,-240px)}
 
-.links{display:grid;gap:14px;margin:40px auto 0;max-width:460px;text-align:left}
-.links a{display:flex;align-items:center;gap:14px;padding:18px 22px;text-decoration:none;
-  border:1px solid var(--line);border-radius:14px;background:#fff;font-weight:700;font-size:15.5px}
-.links a:hover{border-color:var(--ink-2);background:#F7FBFF}
-.links .sub{display:block;font-weight:400;font-size:13px;color:var(--ink-soft);margin-top:2px}
-.links .arrow{margin-left:auto;font-family:"Outfit",sans-serif;color:var(--o)}
-.note{margin:38px 0 0;font-size:13px;color:var(--ink-soft)}
+.page{position:relative;z-index:1;min-height:100svh;display:grid;align-items:center;
+  max-width:1180px;margin:0 auto;padding:72px 32px;
+  grid-template-columns:1.12fr 1fr;gap:clamp(36px,4.6vw,76px)}
+
+.lead-col{text-align:center}
+.mark{height:clamp(52px,5vw,70px);width:auto;margin:0 auto 10px}
+.code{font-family:"Zen Maru Gothic","Zen Kaku Gothic New",sans-serif;font-weight:900;
+  font-size:clamp(78px,9.2vw,140px);line-height:1.08;letter-spacing:.02em;color:var(--num);margin:0}
+h1{color:var(--head);font-weight:900;font-size:clamp(19px,1.92vw,28px);line-height:1.6;text-wrap:balance;
+  margin:10px 0 0;letter-spacing:.01em}
+.note{margin:16px 0 0;font-size:clamp(13.5px,1.12vw,16px);line-height:2.15;font-weight:500}
+
+.links{display:grid;gap:clamp(14px,1.5vw,20px);align-content:center}
+.links a{display:flex;align-items:center;gap:18px;
+  padding:clamp(16px,1.5vw,22px) clamp(20px,1.9vw,30px);
+  border:1.5px solid var(--line);border-radius:16px;background:#fff;
+  transition:border-color .15s ease, transform .15s ease}
+.links a:hover{border-color:var(--arrow);transform:translateY(-2px)}
+.links .ttl{display:block;color:var(--head);font-weight:900;font-size:clamp(15px,1.25vw,18px);line-height:1.5}
+.links .sub{display:block;margin-top:2px;font-size:clamp(12.5px,1vw,14px);font-weight:500;line-height:1.7}
+.links .arrow{margin-left:auto;color:var(--arrow);font-size:20px;line-height:1}
+
+@media(max-width:860px){
+  .page{grid-template-columns:1fr;gap:32px;padding:56px 24px;align-content:center}
+  .links{max-width:520px;width:100%;margin:0 auto}
+  .links a{gap:14px}
+}
 </style>
 </head>
 <body>
-<main class="wrap">
-  <img class="mark" src="/assets/logo-mark.webp" alt="MACHI PLAY">
-  <p class="code">404</p>
-  <h1>お探しのページは見つかりませんでした。</h1>
-  <p class="lead">アドレスが変わったか、削除された可能性があります。<br>
-    お手数ですが、下のいずれかからお進みください。</p>
+<main class="page">
+  <div class="lead-col">
+    <img class="mark" src="/assets/logo-mark.webp" alt="MACHI PLAY">
+    <p class="code">404</p>
+    <h1>お探しのページは見つかりませんでした。</h1>
+    <p class="note">アドレスが変わったか、削除された可能性があります。<br>
+      お手数ですが、下のいずれかからお進みください。</p>
+  </div>
 
   <nav class="links">
     <a href="/">
-      <span>ワークショップのページ<span class="sub">まちであそぶ、をつくる（宇治NEXT）</span></span>
+      <span><span class="ttl">ワークショップのページ</span>
+        <span class="sub">まちであそぶ、をつくる（宇治NEXT）</span></span>
       <span class="arrow">→</span>
     </a>
     <a href="/top-c/">
-      <span>MACHI PLAY の活動<span class="sub">いつものまちに、新しいつながりを。</span></span>
+      <span><span class="ttl">MACHI PLAY の活動</span>
+        <span class="sub">いつものまちに、新しいつながりを。</span></span>
       <span class="arrow">→</span>
     </a>
     <a href="/attara-iina/">
-      <span>子どもたちのアイデア展<span class="sub">まちにあったらいいな、9枚</span></span>
+      <span><span class="ttl">子どもたちのアイデア展</span>
+        <span class="sub">まちにあったらいいな、9枚</span></span>
       <span class="arrow">→</span>
     </a>
   </nav>
-
-  <p class="note">machi-play.com</p>
 </main>
 </body>
 </html>
