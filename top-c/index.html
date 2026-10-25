@@ -53,7 +53,23 @@ a{color:inherit}
 .nav-links{margin-left:auto;display:flex;gap:34px;font-size:14.5px}
 .nav-links a{text-decoration:none;color:var(--ink)}
 .nav-links a:hover{color:var(--ink-2)}
-@media(max-width:860px){ .nav-in{padding:0 22px;height:64px} .brand img{height:38px} .brand b{font-size:18px} .nav-links{gap:18px;font-size:13px} }
+/* 狭い画面のメニュー（三本線） */
+.burger{display:none;margin-left:auto;width:44px;height:44px;padding:0;border:0;background:none;
+  cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:7px}
+.burger span{display:block;width:28px;height:3px;border-radius:3px;background:var(--ink);transition:.2s}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(10px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-10px) rotate(-45deg)}
+@media(max-width:860px){
+  .nav-in{padding:0 22px;height:64px} .brand img{height:38px} .brand b{font-size:18px}
+  .burger{display:flex}
+  .nav-links{position:fixed;left:0;right:0;top:64px;margin:0;z-index:59;
+    flex-direction:column;gap:0;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);
+    border-top:1px solid var(--line);font-size:15.5px;
+    max-height:0;overflow:hidden;transition:max-height .25s ease}
+  .nav-links.open{max-height:60svh}
+  .nav-links a{padding:17px 22px;border-bottom:1px solid var(--line);font-weight:700}
+}
 @media(max-width:620px){ .nav-links a:nth-child(-n+2){display:none} }
 
 /* ヒーロー：イラストはそのまま全面に置き、文字を上にのせる */
@@ -109,10 +125,13 @@ a{color:inherit}
 
 @media(max-width:860px){
   /* 絵の上に文字を置かず、絵の下に順番に並べる */
-  .hero-ttl{position:static;width:auto;padding:26px 22px 0}
-  .hero-ttl::before{display:none}
-  .hero-ttl img{max-width:min(100%,420px)}
-  .hero-go{position:static;display:inline-flex;margin:20px 22px 0}
+  /* 絵を画面いっぱいに出し、その上に文字を置く */
+  .hero-full{height:calc(100svh - 64px);min-height:520px;overflow:hidden}
+  .hero-full img{height:100%;object-fit:cover;object-position:54% 46%}
+  .hero-ttl{left:7%;top:11%;width:min(80%,430px)}
+  .hero-ttl::before{left:-16%;right:-12%;top:-18%;bottom:-14%}
+  .hero-go{left:7%;bottom:7%;min-width:160px}
+  .hero-wave{height:clamp(30px,8vw,56px)}
   .intro{padding:36px 0 40px}
   .intro .wrap{padding:0 22px}
   .band{padding:38px 0 42px}
@@ -222,7 +241,10 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 <header class="nav">
   <div class="nav-in">
     <a class="brand" href="#top"><img src="../assets/logo-mark.webp" alt=""><b>MACHI PLAY</b></a>
-    <nav class="nav-links">
+    <button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="navlinks">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav-links" id="navlinks">
       <a href="#acts">活動</a>
       <a href="#projects">プロジェクト</a>
       <a href="#who">プロフィール</a>
@@ -486,5 +508,20 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 })();
 </script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c351ef734eb54b488d820041ba2f7e84"}'></script><!-- End Cloudflare Web Analytics -->
+<script>
+/* 狭い画面のメニュー開閉 */
+(function(){
+  var b = document.querySelector('.burger'), n = document.getElementById('navlinks');
+  if(!b || !n) return;
+  function close(){ b.setAttribute('aria-expanded','false'); n.classList.remove('open'); }
+  b.addEventListener('click', function(){
+    var open = b.getAttribute('aria-expanded') === 'true';
+    b.setAttribute('aria-expanded', String(!open));
+    n.classList.toggle('open', !open);
+  });
+  n.addEventListener('click', function(e){ if(e.target.tagName === 'A') close(); });
+  addEventListener('resize', function(){ if(innerWidth > 860) close(); });
+})();
+</script>
 </body>
 </html>
