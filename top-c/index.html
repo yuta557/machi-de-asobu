@@ -23,7 +23,7 @@
 <link rel="apple-touch-icon" href="/assets/icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Yomogi&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#FFFFFF;
@@ -76,13 +76,10 @@ a{color:inherit}
 /* 2枚目：問いかけと本文 */
 .intro{position:relative;background:#fff;padding:clamp(48px,5.4vw,92px) 0 clamp(40px,4vw,64px)}
 .intro .wrap{position:relative;z-index:1;max-width:1280px;margin:0 auto;padding:0 40px}
-/* 左から入ってくる、うすい水色のかたまり（まるではなく、いびつな形） */
-.intro::before{content:"";position:absolute;z-index:0;left:-15%;top:clamp(10px,2vw,40px);
-  width:40%;aspect-ratio:1.3;background:#EFF9FD;
-  border-radius:58% 42% 47% 53% / 46% 58% 42% 54%;transform:rotate(-6deg)}
-.intro::after{content:"";position:absolute;z-index:0;right:-9%;top:clamp(120px,16vw,300px);
-  width:22%;aspect-ratio:1.15;background:#F3FAFD;
-  border-radius:44% 56% 62% 38% / 56% 44% 56% 44%}
+/* 左右から入ってくる、うすい水色のかたまり。まるではなく、ふちが何度かうねる形 */
+.blob{position:absolute;z-index:0;height:auto;display:block;pointer-events:none}
+.blob-l{left:-17%;top:clamp(0px,1vw,28px);width:46%}
+.blob-r{right:-11%;top:clamp(110px,15vw,280px);width:26%}
 .q-row{display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,.98fr) minmax(0,1.04fr);
   gap:clamp(20px,2.2vw,38px);align-items:center}
 .q-art{width:100%;height:auto;display:block}
@@ -100,16 +97,10 @@ a{color:inherit}
 .band .lead{margin:0;font-size:clamp(15px,1.2vw,19px);font-weight:700;line-height:1.95;color:var(--ink)}
 .band .sub{margin:clamp(14px,1.5vw,24px) 0 0;font-size:clamp(14px,1.07vw,17px);
   line-height:1.95;font-weight:500;color:#2F5E92}
-.hand{margin:0;font-family:"Yomogi",system-ui,sans-serif;font-size:clamp(15px,1.5vw,24px);
-  line-height:2;color:var(--ink-2);text-align:center;white-space:nowrap}
-.hand span{display:block}
-.hand span:nth-child(2){padding-left:1.2em}
-.hand span:nth-child(3){padding-left:2.2em}
-.hand{position:relative}
-.hand .sparkle{position:absolute;right:-6%;top:-26%;width:clamp(26px,2.6vw,44px);height:auto}
+.hand-art{width:100%;height:auto;max-width:clamp(150px,17vw,260px);display:block}
 .closing{position:relative}
-.closing .sparkle{position:absolute;left:clamp(150px,20vw,300px);top:-18%;width:clamp(20px,2vw,34px);height:auto}
-
+.closing .sparkle{position:absolute;z-index:2;left:clamp(150px,21vw,320px);top:-14%;
+  width:clamp(20px,2vw,34px);height:auto}
 .intro .closing{margin-top:clamp(26px,3vw,48px);display:grid;align-items:center;
   grid-template-columns:clamp(170px,21vw,320px) minmax(0,1fr);gap:clamp(20px,2.8vw,48px)}
 .closing-art{width:100%;height:auto}
@@ -129,10 +120,10 @@ a{color:inherit}
   .pc{display:none}
   .q-row{grid-template-columns:1fr}
   .band-art{max-width:420px}
-  .intro::before{display:none}
+  .blob{display:none}
   .intro .closing{grid-template-columns:1fr;gap:16px}
   .closing-art{max-width:280px}
-  .hand{text-align:left}
+  .hand-art{max-width:220px}
 }
 
 /* プロジェクトの帯 */
@@ -257,6 +248,17 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 </section>
 
 <section class="intro">
+  <svg class="blob blob-l" viewBox="0 0 620 480" aria-hidden="true">
+    <path d="M22 152 C 58 70, 152 24, 252 40 C 320 50, 352 104, 418 128
+             C 494 156, 588 172, 598 238 C 608 306, 526 340, 450 364
+             C 370 390, 298 432, 210 428 C 126 424, 46 390, 22 320
+             C 4 268, 0 212, 22 152 Z" fill="#EFF9FD"/>
+  </svg>
+  <svg class="blob blob-r" viewBox="0 0 460 420" aria-hidden="true">
+    <path d="M30 170 C 46 96, 128 38, 212 52 C 278 64, 308 120, 362 152
+             C 420 186, 454 234, 436 286 C 416 342, 346 368, 280 376
+             C 204 384, 116 388, 64 346 C 18 308, 14 236, 30 170 Z" fill="#F3FAFD"/>
+  </svg>
   <div class="wrap q-row">
     <h2 class="q"><img src="../assets/q-heading.webp" width="596" height="308" loading="lazy"
       alt="毎日歩くその道で、最後に足を止めたのはいつですか？"></h2>
@@ -280,20 +282,16 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
                C 258 538, 122 510, 0 478 Z" fill="#EAF7FD"/>
     </svg>
     <div class="wrap band-in">
-      <div></div>
+      <img class="band-art" src="../assets/scene-play.webp" width="1849" height="851"
+        loading="lazy" alt="" aria-hidden="true">
       <div>
         <p class="lead">MACHI PLAYは、<br class="pc">「楽しい」をきっかけに、<br class="pc">まちの中に新しいつながりを生み出す取り組みです。</p>
         <p class="sub">子どもも大人も、たまたまそこを通りかかった人も。<br class="pc">
           遊びを通して人と人との間に生まれたつながりが、<br class="pc">
           いつもの風景への新しい気づきや、まちへの愛着を育んでいきます。</p>
       </div>
-      <p class="hand"><span>つながる</span><span>あそぶ</span><span>まちが変わる</span>
-        <svg class="sparkle" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-          <g stroke="#F6E6A0" stroke-width="8" stroke-linecap="round">
-            <path d="M6 44 L26 26"/><path d="M34 18 L40 4"/><path d="M48 44 L62 36"/>
-          </g>
-        </svg>
-      </p>
+      <img class="hand-art" src="../assets/hand-lettering.webp" width="1486" height="970"
+        loading="lazy" alt="つながる、あそぶ、まちが変わる">
     </div>
   </div>
 
