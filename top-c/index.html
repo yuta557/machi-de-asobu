@@ -55,6 +55,8 @@ a{color:inherit}
   max-width:1280px;margin:0 auto;padding:0 40px;line-height:1.18}
 .hero-ttl h1{font-weight:900;font-size:clamp(28px,4.6vw,66px);line-height:1.2;letter-spacing:.01em;
   margin:0;white-space:nowrap}
+.hero-ttl .tag{margin:14px 0 0;font-size:clamp(15px,1.5vw,21px);font-weight:700;line-height:1.6;
+  letter-spacing:.02em}
 
 /* 2枚目：メッセージは左の白地、絵は右上から続く */
 .hero-next{position:relative;overflow:hidden}
@@ -76,6 +78,7 @@ a{color:inherit}
   .hero-full img{max-height:none}
   .hero-ttl{position:static;padding:26px 40px 0}
   .hero-ttl h1{font-size:clamp(26px,5.4vw,40px);white-space:normal}
+  .hero-ttl .tag{margin-top:10px;font-size:clamp(14px,2.2vw,17px)}
   .hero-art{display:none}
   .hero-body{padding:30px 40px 60px}
   .hero-msg{max-width:none}
@@ -198,7 +201,10 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
       <img src="../assets/hero-map.webp" width="1672" height="941" fetchpriority="high"
         alt="学校・公園・川沿いのまちで、子どもたちが遊んだり集まったりしているようすを俯瞰で描いたイラスト">
     </picture>
-    <div class="hero-ttl"><h1>まちであそぶ、をつくる。</h1></div>
+    <div class="hero-ttl">
+      <h1>まちであそぶ、をつくる。</h1>
+      <p class="tag">いつものまちに、新しいつながりを。</p>
+    </div>
   </div>
   <div class="hero-next">
   <div class="hero-art" aria-hidden="true">
