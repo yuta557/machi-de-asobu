@@ -33,10 +33,11 @@ a{color:inherit;text-decoration:none}
 
 /* 背景のまる */
 body::before,body::after{content:"";position:fixed;border-radius:50%;z-index:0;pointer-events:none}
-body::before{background:var(--yellow);width:min(46vw,420px);aspect-ratio:1;
-  top:min(-23vw,-210px);left:min(-14vw,-130px)}
-body::after{background:var(--green);width:min(52vw,520px);aspect-ratio:1;
-  right:min(-16vw,-150px);bottom:min(-24vw,-240px)}
+/* はみ出す量は、まる自身の大きさに対する割合で決める（幅が変わっても見え方が崩れない） */
+body::before{background:var(--yellow);width:clamp(200px,26vw,400px);aspect-ratio:1;
+  top:0;left:0;transform:translate(-42%,-52%)}
+body::after{background:var(--green);width:clamp(250px,33vw,520px);aspect-ratio:1;
+  right:0;bottom:0;transform:translate(40%,44%)}
 
 .page{position:relative;z-index:1;min-height:100svh;display:grid;align-items:center;
   max-width:1180px;margin:0 auto;padding:72px 32px;
