@@ -46,11 +46,9 @@ a{color:inherit}
 /* ヒーロー：1枚目はイラスト全面＋タイトル、スクロールした2枚目にメッセージ */
 .hero{position:relative;background:#fff}
 
-/* 1枚目：絵を画面いっぱいに見せ、左上にタイトルを重ねる
-   （--hero-cut はヘッダー＋試作の帯のぶん。本番では 78px にする） */
-.hero-full{position:relative;line-height:0;--hero-cut:120px}
-.hero-full img{width:100%;height:auto;display:block;
-  max-height:calc(100svh - var(--hero-cut));object-fit:cover;object-position:50% 45%}
+/* 1枚目：絵は全幅でそのまま（タイトルは上にあるので切らなくてよい） */
+.hero-full{position:relative;line-height:0}
+.hero-full img{width:100%;height:auto;display:block}
 .hero-ttl{position:absolute;left:0;right:0;top:7%;z-index:2;
   padding:0 40px 0 clamp(28px,5.2vw,100px)}
 /* 文字のまわりだけ、うすい白でぼかす。左端にも学校にもかけない */
@@ -63,7 +61,8 @@ a{color:inherit}
   letter-spacing:.02em}
 
 /* 2枚目：白地にメッセージだけを置く */
-.hero-body{max-width:1280px;margin:0 auto;padding:148px 40px 120px}
+/* 文章は、絵の下のあいているところへ重ねるように上げる */
+.hero-body{position:relative;z-index:2;max-width:1280px;margin:-19vw auto 0;padding:0 40px 120px}
 .hero-msg{max-width:min(54%,42em)}
 .hero-msg p{margin:0;font-size:clamp(15px,1.5vw,19px);font-weight:500}
 .hero-msg .sub{margin:18px 0 0;font-size:16px;line-height:2.25;color:var(--ink-soft);font-weight:400}
@@ -75,12 +74,11 @@ a{color:inherit}
 .hero-ttl .go{margin-top:22px}
 @media(max-width:980px){
   /* 横幅が足りないときは、絵は1枚目だけにして、タイトル→メッセージの順に並べる */
-  .hero-full img{max-height:none}
   .hero-ttl::before{display:none}
   .hero-ttl{position:static;padding:26px 40px 0}
   .hero-ttl h1{font-size:clamp(26px,5vw,40px)}
   .hero-ttl .tag{margin-top:12px;font-size:clamp(14px,2.2vw,17px)}
-  .hero-body{padding:56px 40px 64px}
+  .hero-body{margin-top:0;padding:56px 40px 64px}
   .hero-msg{max-width:none}
 }
 @media(max-width:700px){
