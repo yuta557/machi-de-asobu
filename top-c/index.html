@@ -60,6 +60,9 @@ a{color:inherit}
 .hero{position:relative;background:#fff}
 .hero-full{position:relative;line-height:0}
 .hero-full img{width:100%;height:auto;display:block}
+/* 絵の下のふちを、白でゆるく波の形に切る */
+.hero-wave{position:absolute;left:0;right:0;bottom:-1px;width:100%;
+  height:clamp(42px,6.2vw,104px);display:block;z-index:1}
 .hero-ttl{position:absolute;left:5.6%;top:11.5%;z-index:2;width:clamp(290px,34vw,580px)}
 .hero-ttl h1{margin:0;line-height:0}
 /* 文字のまわりに、うすい白のもや */
@@ -71,32 +74,47 @@ a{color:inherit}
 .hero-go{position:absolute;left:8.2%;bottom:7.5%;z-index:2;min-width:clamp(150px,13vw,210px)}
 
 /* 2枚目：問いかけと本文 */
-.intro{background:#fff;padding:clamp(56px,6vw,96px) 0 clamp(40px,4vw,64px)}
-.intro .wrap{max-width:1280px;margin:0 auto;padding:0 40px}
-.q-row{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);
-  gap:clamp(32px,4.4vw,72px);align-items:start}
+.intro{position:relative;background:#fff;padding:clamp(48px,5.4vw,92px) 0 clamp(40px,4vw,64px)}
+.intro .wrap{position:relative;z-index:1;max-width:1280px;margin:0 auto;padding:0 40px}
+/* 左から入ってくる、うすい水色のかたまり（まるではなく、いびつな形） */
+.intro::before{content:"";position:absolute;z-index:0;left:-15%;top:clamp(10px,2vw,40px);
+  width:40%;aspect-ratio:1.3;background:#EFF9FD;
+  border-radius:58% 42% 47% 53% / 46% 58% 42% 54%;transform:rotate(-6deg)}
+.intro::after{content:"";position:absolute;z-index:0;right:-9%;top:clamp(120px,16vw,300px);
+  width:22%;aspect-ratio:1.15;background:#F3FAFD;
+  border-radius:44% 56% 62% 38% / 56% 44% 56% 44%}
+.q-row{display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,.98fr) minmax(0,1.04fr);
+  gap:clamp(20px,2.2vw,38px);align-items:center}
+.q-art{width:100%;height:auto;display:block}
 .q{margin:0;line-height:0}
 .q img{width:100%;height:auto;max-width:min(100%,520px)}
-.q-body p{margin:0;font-size:clamp(15px,1.16vw,17.5px);line-height:2.45;font-weight:500;color:#2F5E92}
+.pc{display:inline}
+.q-body p{margin:0;font-size:clamp(14px,1.07vw,17px);line-height:1.95;font-weight:500;color:#2F5E92}
 
-/* うすい水色の帯 */
-.panel{margin:clamp(40px,4.5vw,74px) 0 0;background:#E9F8FE;border-radius:clamp(24px,2.6vw,44px);
-  padding:clamp(30px,3.4vw,58px) clamp(26px,3.6vw,64px);
-  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(24px,3vw,56px);align-items:center}
-.panel .lead{margin:0;font-size:clamp(16px,1.42vw,23px);font-weight:700;line-height:1.95;color:var(--ink)}
-.panel .sub{margin:clamp(14px,1.5vw,24px) 0 0;font-size:clamp(14.5px,1.12vw,17px);
-  line-height:2.35;font-weight:500;color:#2F5E92}
+/* うすい水色の帯。上下のふちはゆるい曲線 */
+.band{position:relative;margin:clamp(34px,4vw,70px) 0 0;padding:clamp(56px,6.6vw,118px) 0 clamp(60px,7vw,124px)}
+.band-bg{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block}
+.band-in{position:relative;z-index:1;display:grid;align-items:center;
+  grid-template-columns:minmax(0,.84fr) minmax(0,1.16fr) auto;gap:clamp(22px,2.8vw,52px)}
+.band-art{width:100%;height:auto;border-radius:999px/22%;display:block}
+.band .lead{margin:0;font-size:clamp(15px,1.2vw,19px);font-weight:700;line-height:1.95;color:var(--ink)}
+.band .sub{margin:clamp(14px,1.5vw,24px) 0 0;font-size:clamp(14px,1.07vw,17px);
+  line-height:1.95;font-weight:500;color:#2F5E92}
 .hand{margin:0;font-family:"Yomogi",system-ui,sans-serif;font-size:clamp(15px,1.5vw,24px);
   line-height:2;color:var(--ink-2);text-align:center;white-space:nowrap}
 .hand span{display:block}
 .hand span:nth-child(2){padding-left:1.2em}
 .hand span:nth-child(3){padding-left:2.2em}
+.hand{position:relative}
+.hand .sparkle{position:absolute;right:-6%;top:-26%;width:clamp(26px,2.6vw,44px);height:auto}
+.closing{position:relative}
+.closing .sparkle{position:absolute;left:clamp(150px,20vw,300px);top:-18%;width:clamp(20px,2vw,34px);height:auto}
 
-.intro .closing{margin-top:clamp(34px,3.6vw,58px);display:grid;align-items:center;
+.intro .closing{margin-top:clamp(26px,3vw,48px);display:grid;align-items:center;
   grid-template-columns:clamp(170px,21vw,320px) minmax(0,1fr);gap:clamp(20px,2.8vw,48px)}
 .closing-art{width:100%;height:auto}
-.closing p{margin:0;font-size:clamp(15px,1.3vw,20px);line-height:2.1;font-weight:700;color:var(--ink)}
-.closing p + p{margin-top:.3em;font-weight:500;color:#2F5E92;font-size:clamp(14px,1.14vw,17.5px)}
+.closing p{margin:0;font-size:clamp(14.5px,1.14vw,18px);line-height:2;font-weight:700;color:var(--ink)}
+.closing p + p{margin-top:.35em;font-weight:500;color:#2F5E92;font-size:clamp(13.5px,1.03vw,16.5px)}
 
 @media(max-width:860px){
   /* 絵の上に文字を置かず、絵の下に順番に並べる */
@@ -106,8 +124,12 @@ a{color:inherit}
   .hero-go{position:static;display:inline-flex;margin:20px 22px 0}
   .intro{padding:36px 0 40px}
   .intro .wrap{padding:0 22px}
-  .q-row{grid-template-columns:1fr;gap:22px}
-  .panel{grid-template-columns:1fr;gap:22px;text-align:left}
+  .band{padding:38px 0 42px}
+  .band-in{grid-template-columns:1fr;gap:20px}
+  .pc{display:none}
+  .q-row{grid-template-columns:1fr}
+  .band-art{max-width:420px}
+  .intro::before{display:none}
   .intro .closing{grid-template-columns:1fr;gap:16px}
   .closing-art{max-width:280px}
   .hand{text-align:left}
@@ -222,6 +244,10 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
   <div class="hero-full">
     <img src="../assets/hero-town.webp" width="1646" height="956" fetchpriority="high"
       alt="海辺のまち。学校や公園、桟橋のまわりで子どもたちが遊んだり集まったりしているようすを描いたイラスト">
+    <svg class="hero-wave" viewBox="0 0 1440 110" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 110 L0 52 C 160 96, 330 110, 520 88 C 688 68, 830 96, 1006 74
+               C 1168 54, 1292 70, 1440 32 L1440 110 Z" fill="#fff"/>
+    </svg>
     <div class="hero-ttl">
       <h1><img src="../assets/hero-title.webp" width="665" height="363" fetchpriority="high"
         alt="まちであそぶ、をつくる。 人とまちのあいだに、新しいきっかけを。"></h1>
@@ -235,21 +261,48 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
     <h2 class="q"><img src="../assets/q-heading.webp" width="596" height="308" loading="lazy"
       alt="毎日歩くその道で、最後に足を止めたのはいつですか？"></h2>
     <div class="q-body">
-      <p>まちは、目的地へ向かう道のりの中にも、思いがけない出会いや発見が生まれる場所です。いつもの道で誰かと何かを一緒に楽しんだり、思いがけない出会いが生まれたり。そんな小さな出来事が、見慣れたまちを少しずつ違った場所に変えていきます。</p>
+      <p>まちは、目的地へ向かう道のりの中にも、<br class="pc">
+        思いがけない出会いや発見が生まれる場所です。<br class="pc">
+        いつもの道で誰かと何かを一緒に楽しんだり、<br class="pc">
+        思いがけない出会いが生まれたり。<br class="pc">
+        そんな小さな出来事が、見慣れたまちを<br class="pc">
+        少しずつ違った場所に変えていきます。</p>
     </div>
+    <img class="q-art" src="../assets/scene-street.webp" width="1855" height="848"
+      loading="lazy" alt="" aria-hidden="true">
   </div>
 
-  <div class="wrap">
-    <div class="panel">
+  <div class="band">
+    <svg class="band-bg" viewBox="0 0 1440 560" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 96 C 150 44, 286 26, 452 52 C 626 80, 806 14, 1004 40
+               C 1174 62, 1312 26, 1440 68
+               L1440 470 C 1304 528, 1158 498, 992 518 C 800 542, 652 498, 436 520
+               C 258 538, 122 510, 0 478 Z" fill="#EAF7FD"/>
+    </svg>
+    <div class="wrap band-in">
+      <div></div>
       <div>
-        <p class="lead">MACHI PLAYは、「楽しい」をきっかけに、<br>まちの中に新しいつながりを生み出す取り組みです。</p>
-        <p class="sub">子どもも大人も、たまたまそこを通りかかった人も。遊びを通して人と人との間に生まれたつながりが、いつもの風景への新しい気づきや、まちへの愛着を育んでいきます。</p>
+        <p class="lead">MACHI PLAYは、<br class="pc">「楽しい」をきっかけに、<br class="pc">まちの中に新しいつながりを生み出す取り組みです。</p>
+        <p class="sub">子どもも大人も、たまたまそこを通りかかった人も。<br class="pc">
+          遊びを通して人と人との間に生まれたつながりが、<br class="pc">
+          いつもの風景への新しい気づきや、まちへの愛着を育んでいきます。</p>
       </div>
-      <p class="hand"><span>つながる</span><span>あそぶ</span><span>まちが変わる</span></p>
+      <p class="hand"><span>つながる</span><span>あそぶ</span><span>まちが変わる</span>
+        <svg class="sparkle" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <g stroke="#F6E6A0" stroke-width="8" stroke-linecap="round">
+            <path d="M6 44 L26 26"/><path d="M34 18 L40 4"/><path d="M48 44 L62 36"/>
+          </g>
+        </svg>
+      </p>
     </div>
   </div>
 
   <div class="wrap closing">
+    <svg class="sparkle" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      <g stroke="#F6E6A0" stroke-width="8" stroke-linecap="round">
+        <path d="M6 44 L26 26"/><path d="M34 18 L40 4"/><path d="M48 44 L62 36"/>
+      </g>
+    </svg>
     <img class="closing-art" src="../assets/scene-river.webp" width="2000" height="668"
       loading="lazy" alt="" aria-hidden="true">
     <div>
