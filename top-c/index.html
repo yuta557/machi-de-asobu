@@ -71,7 +71,12 @@ a{color:inherit}
   border-bottom:1.5px solid var(--ink);font-weight:700;text-decoration:none;font-size:15.5px}
 .go span{font-family:"Outfit",sans-serif;color:var(--o)}
 .go:hover{border-color:var(--o);color:var(--o)}
-.hero-ttl .go{margin-top:22px}
+.hero-ttl .go{position:relative;margin-top:22px}
+/* 矢印が草に重なって見えないよう、ここだけ白を強めにする */
+.hero-ttl .go::before{content:"";position:absolute;z-index:-1;pointer-events:none;
+  left:-30px;right:-40px;top:-18px;bottom:-12px;
+  background:radial-gradient(58% 72% at 50% 50%,rgba(255,255,255,.97) 0%,
+    rgba(255,255,255,.9) 52%,rgba(255,255,255,0) 100%)}
 @media(max-width:980px){
   /* 横幅が足りないときは、絵は1枚目だけにして、タイトル→メッセージの順に並べる */
   .hero-ttl::before{display:none}
