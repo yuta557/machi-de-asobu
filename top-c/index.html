@@ -143,11 +143,14 @@ a{color:inherit}
 @media(max-width:860px){
   .intro{display:none}
   .panels{display:block;background:#fff}
-  .panel{height:100svh;min-height:480px;overflow:hidden}
+  .panel{position:relative;height:100svh;min-height:480px;overflow:hidden}
   /* 文字が切れないよう、絵の全体を入れる（上下に白が少し出る） */
-  .panel img{width:100%;height:100%;display:block;object-fit:contain;object-position:50% 50%}
-  .panels.js .panel img{opacity:var(--o,0);
-    transition:opacity .3s linear, transform .3s ease-out}
+  .panel .p-bg{width:100%;height:100%;display:block;object-fit:contain;object-position:50% 50%}
+  /* 見出しは絵の上に重ね、スクロールに少しついてくる */
+  .panel .p-ttl{position:absolute;z-index:2;left:7%;top:9%;width:min(84%,540px);height:auto;
+    display:block;transform:translateY(var(--ty,0px))}
+  /* 切り替わるときは、絵と見出しがいっしょに変わる */
+  .panels.js .panel{opacity:var(--o,0);transition:opacity .3s linear}
   /* 絵の上に文字を置かず、絵の下に順番に並べる */
   /* 絵を画面いっぱいに出し、その上に文字を置く */
   .hero-full{height:calc(100svh - 64px)}
@@ -373,8 +376,10 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 </section>
 
 <section class="panels" id="story">
-  <div class="panel"><img src="../assets/sp-panel-1.webp" width="941" height="1672" loading="lazy"
-    alt="毎日歩くその道で、最後に足を止めたのはいつですか？ まちには、目的地へ向かうための道や、ただ通り過ぎるだけの広場があります。そこでは、多くの人が同じ場所を利用していても、互いを知ったり、関わったりする機会はそう多くありません。けれど、そんな公共空間にも、人と人が出会い、お互いを知るきっかけが眠っています。"></div>
+  <div class="panel"><img class="p-bg" src="../assets/sp-panel-1.webp" width="941" height="1672" loading="lazy"
+    alt="まちには、目的地へ向かうための道や、ただ通り過ぎるだけの広場があります。そこでは、多くの人が同じ場所を利用していても、互いを知ったり、関わったりする機会はそう多くありません。けれど、そんな公共空間にも、人と人が出会い、お互いを知るきっかけが眠っています。">
+    <img class="p-ttl" src="../assets/q-heading-sp.webp" width="585" height="297" loading="lazy"
+      alt="毎日歩くその道で、最後に足を止めたのはいつですか？"></div>
   <div class="panel"><img src="../assets/sp-panel-2.webp" width="941" height="1457" loading="lazy"
     alt="MACHI PLAYは、公共空間に眠る、そんな人と人との新たな関わりの可能性を、遊びの力で切り拓いていく取り組みです。その中で大事にしているのは、一人ひとりの「好き」を大切にすること、そして、人と一緒に何かを楽しむことです。誰かと一緒に楽しみ、その人の好きなものや人柄を知る。そんな出会いを通して、その人が暮らすまちも少しずつ身近になっていきます。"></div>
   <div class="panel"><img src="../assets/sp-panel-3.webp" width="941" height="1457" loading="lazy"
@@ -564,13 +569,29 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
   if(!box || !('IntersectionObserver' in window)) return;
   if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   box.classList.add('js');
+  var panels = [].slice.call(box.querySelectorAll('.panel'));
   var io = new IntersectionObserver(function(list){
     list.forEach(function(e){
       var o = Math.max(0, Math.min(1, (e.intersectionRatio - 0.18) / 0.5));
       e.target.style.setProperty('--o', o.toFixed(3));
     });
   }, { threshold: Array.from({length:21}, function(_, i){ return i / 20; }) });
-  box.querySelectorAll('.panel img').forEach(function(el){ io.observe(el); });
+  panels.forEach(function(el){ io.observe(el); });
+
+  /* 見出しは、パネルが流れるあいだ少しついてくる */
+  var tops = [].slice.call(box.querySelectorAll('.p-ttl')), ticking = false;
+  function follow(){
+    ticking = false;
+    tops.forEach(function(t){
+      var r = t.parentNode.getBoundingClientRect();
+      var prog = Math.max(0, Math.min(1, -r.top / r.height));
+      t.style.setProperty('--ty', (prog * r.height * 0.40).toFixed(1) + 'px');
+    });
+  }
+  addEventListener('scroll', function(){
+    if(!ticking){ ticking = true; requestAnimationFrame(follow); }
+  }, { passive: true });
+  addEventListener('resize', follow); follow();
 })();
 /* 狭い画面のメニュー開閉 */
 (function(){
