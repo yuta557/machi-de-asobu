@@ -142,7 +142,9 @@ a{color:inherit}
 
 /* スマホ：全画面の絵を、スクロールにつれて現れては消す */
 .panels{display:none}
-@media(max-width:860px){
+/* 画面の狭い端末だけ、下の文章を3枚のパネルに差し替える
+   （それより広い画面では、ヒーローはスマホ版のまま、下はパソコン版の組みを使う） */
+@media(max-width:560px){
   .intro{display:none}
   .panels{display:block;background:#fff}
   /* 3枚を同じ場所に重ねる。絵は貼りついたまま動かず、スクロール量で入れ替わる */
@@ -162,6 +164,9 @@ a{color:inherit}
   /* 切り替わりは、その場でゆっくり入れ替わる */
   .panels.js .slide{opacity:0;transition:opacity .45s ease}
   .panels.js .slide.on{opacity:1}
+}
+
+@media(max-width:860px){
   /* 絵の上に文字を置かず、絵の下に順番に並べる */
   /* 絵を画面いっぱいに出し、その上に文字を置く */
   .hero-full{height:calc(100svh - 64px)}
