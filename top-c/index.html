@@ -121,11 +121,14 @@ a{color:inherit}
   line-height:1.95;font-weight:500;color:#2F5E92}
 .hand-art{width:100%;height:auto;max-width:clamp(150px,17vw,260px);display:block}
 .closing{position:relative}
-.closing .sparkle{position:absolute;z-index:2;left:clamp(150px,21vw,330px);top:-16%;
+/* きらめきは、川の絵と文章のあいだの上に置く */
+.closing .sparkle{position:absolute;z-index:2;top:-26%;
+  left:calc(clamp(170px,21vw,320px) + clamp(16px,3.4vw,70px));
   width:clamp(22px,2.1vw,36px);height:auto}
 .intro .closing{margin-top:clamp(26px,3vw,48px);display:grid;align-items:center;
-  grid-template-columns:clamp(170px,21vw,320px) minmax(0,1fr) clamp(120px,15vw,230px);
-  gap:clamp(18px,2.4vw,42px)}
+  grid-template-columns:clamp(170px,21vw,320px) minmax(0,1fr) clamp(150px,19vw,300px);
+  gap:clamp(16px,2vw,36px)}
+.closing-txt{padding-left:clamp(10px,2.6vw,48px)}
 .closing-sky{width:100%;height:auto}
 .closing-art{width:100%;height:auto}
 .closing p{margin:0;font-size:clamp(14.5px,1.14vw,18px);line-height:2;font-weight:700;color:var(--ink)}
@@ -144,7 +147,7 @@ a{color:inherit}
   .intro .wrap{padding:0 22px}
   .band{padding:38px 0 42px}
   .band-in{grid-template-columns:1fr;gap:20px}
-  .q-body,.band-txt{padding-left:0}
+  .q-body,.band-txt,.closing-txt{padding-left:0}
   .pc{display:none}
   .q-row{grid-template-columns:1fr}
   .band-art{max-width:420px}
@@ -345,7 +348,7 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
       loading="lazy" alt="" aria-hidden="true">
     <img class="closing-art" src="../assets/scene-river.webp" width="2000" height="668"
       loading="lazy" alt="" aria-hidden="true">
-    <div>
+    <div class="closing-txt">
       <p>いつもの道や広場に、思いがけない出会いや楽しみをつくる。</p>
       <p>そんな夢に向かって、「楽しい」と「好き」を大切にしながら、<br class="pc">これからも活動を続けていきます。</p>
     </div>
