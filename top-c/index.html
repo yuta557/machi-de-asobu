@@ -125,6 +125,10 @@ a{color:inherit}
 .closing .sparkle{position:absolute;z-index:2;top:-26%;
   left:calc(clamp(170px,21vw,320px) + clamp(16px,3.4vw,70px));
   width:clamp(22px,2.1vw,36px);height:auto}
+/* 右下にもうひとつ */
+.closing .sparkle-r{top:auto;bottom:-8%;left:auto;
+  right:calc(clamp(150px,19vw,300px) + clamp(10px,1.6vw,30px));
+  width:clamp(18px,1.7vw,30px)}
 .intro .closing{margin-top:clamp(26px,3vw,48px);display:grid;align-items:center;
   grid-template-columns:clamp(170px,21vw,320px) minmax(0,1fr) clamp(150px,19vw,300px);
   gap:clamp(16px,2vw,36px)}
@@ -352,6 +356,8 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
       <p>いつもの道や広場に、思いがけない出会いや楽しみをつくる。</p>
       <p>そんな夢に向かって、「楽しい」と「好き」を大切にしながら、<br class="pc">これからも活動を続けていきます。</p>
     </div>
+    <img class="sparkle sparkle-r" src="../assets/spark-2.webp" width="59" height="68"
+      loading="lazy" alt="" aria-hidden="true">
     <img class="closing-sky" src="../assets/scene-sky.webp" width="2000" height="668"
       loading="lazy" alt="" aria-hidden="true">
   </div>
