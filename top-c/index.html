@@ -74,8 +74,9 @@ a{color:inherit}
 
 /* ヒーロー：イラストはそのまま全面に置き、文字を上にのせる */
 .hero{position:relative;overflow:hidden;background:#fff}
-.hero-full{position:relative;line-height:0}
-.hero-full img{width:100%;height:auto;display:block}
+/* 「活動を見る」までを1画面に入れるため、絵は画面の高さに合わせて上を少し切る */
+.hero-full{position:relative;line-height:0;height:calc(100svh - 78px);min-height:360px;overflow:hidden}
+.hero-full img{width:100%;height:100%;display:block;object-fit:cover;object-position:50% 85%}
 /* 絵の下のふちを、白でゆるく波の形に切る */
 .hero-wave{position:absolute;left:0;right:0;bottom:-1px;width:100%;
   height:clamp(42px,6.2vw,104px);display:block;z-index:1}
@@ -129,8 +130,8 @@ a{color:inherit}
 @media(max-width:860px){
   /* 絵の上に文字を置かず、絵の下に順番に並べる */
   /* 絵を画面いっぱいに出し、その上に文字を置く */
-  .hero-full{height:calc(100svh - 64px);min-height:520px;overflow:hidden}
-  .hero-full img{height:100%;object-fit:cover;object-position:50% 50%}
+  .hero-full{height:calc(100svh - 64px)}
+  .hero-full img{object-position:50% 50%}
   .hero-ttl{left:6%;top:10%;width:min(88%,520px)}
   .hero-ttl::before{left:-16%;right:-12%;top:-18%;bottom:-14%}
   .hero-go{left:7%;bottom:7%;min-width:160px}
