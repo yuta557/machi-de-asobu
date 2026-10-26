@@ -151,6 +151,8 @@ a{color:inherit}
   .stage{position:sticky;top:64px;height:calc(100svh - 64px);min-height:430px;overflow:hidden;
     margin-bottom:calc(64px - 100svh)}
   .trig{display:block;height:calc(100svh - 64px);min-height:430px}
+  /* 3枚目を見終えたら、絵をすっと消すための余り */
+  .trig-out{height:60svh;min-height:260px}
   .slide{position:absolute;inset:0;display:grid;place-items:center}
   /* 枠は絵にぴったり沿わせる。この中なら、見出しの位置が絵と合う */
   .p-wrap{position:relative;display:inline-grid;max-width:100%;max-height:100%}
@@ -399,7 +401,7 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
         alt="いつもの道や広場に、思いがけない出会いや楽しみをつくる。そんな夢に向かって、「楽しい」と「好き」を大切にしながら、これからも活動を続けていきます。"></div>
     </div>
   </div>
-  <i class="trig"></i><i class="trig"></i><i class="trig"></i>
+  <i class="trig"></i><i class="trig"></i><i class="trig"></i><i class="trig trig-out"></i>
 </section>
 
 <div class="pbar">
@@ -585,7 +587,7 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
   if(!box || !('IntersectionObserver' in window)) return;
   var slides = [].slice.call(box.querySelectorAll('.slide'));
   var trigs  = [].slice.call(box.querySelectorAll('.trig'));
-  if(slides.length < 2 || slides.length !== trigs.length) return;
+  if(slides.length < 2 || trigs.length < slides.length) return;
   box.classList.add('js');
   function show(i){ slides.forEach(function(el, k){ el.classList.toggle('on', k === i); }); }
   var io = new IntersectionObserver(function(list){
