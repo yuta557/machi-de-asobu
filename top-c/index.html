@@ -143,17 +143,20 @@ a{color:inherit}
 @media(max-width:860px){
   .intro{display:none}
   .panels{display:block;background:#fff}
-  .panel{position:relative;height:100svh;min-height:480px;overflow:hidden;
-    display:grid;place-items:center}
+  /* 3枚を同じ場所に重ねる。絵は貼りついたまま動かず、スクロール量で入れ替わる */
+  .panels{position:relative}
+  .stage{position:sticky;top:0;height:100svh;min-height:480px;overflow:hidden;
+    margin-bottom:-100svh}
+  .trig{display:block;height:100svh;min-height:480px}
+  .slide{position:absolute;inset:0;display:grid;place-items:center}
   /* 枠は絵にぴったり沿わせる。この中なら、見出しの位置が絵と合う */
   .p-wrap{position:relative;display:inline-grid;max-width:100%;max-height:100%}
   /* 絵の形がどれでも、画面の幅と高さの両方に収める */
   .p-wrap .p-bg{display:block;width:auto;height:auto;max-width:100vw;max-height:100svh}
-  /* 見出しは絵の上に重ね、スクロールに少しついてくる */
-  .p-wrap .p-ttl{position:absolute;z-index:2;left:6.5%;top:7%;width:85%;height:auto;
-    display:block;transform:translateY(var(--ty,0px))}
-  /* 切り替わるときは、絵と見出しがいっしょに変わる */
-  .panels.js .panel{opacity:var(--o,0);transition:opacity .3s linear}
+  .p-wrap .p-ttl{position:absolute;z-index:2;left:6.5%;top:7%;width:85%;height:auto;display:block}
+  /* 切り替わりは、その場でゆっくり入れ替わる */
+  .panels.js .slide{opacity:0;transition:opacity .45s ease}
+  .panels.js .slide.on{opacity:1}
   /* 絵の上に文字を置かず、絵の下に順番に並べる */
   /* 絵を画面いっぱいに出し、その上に文字を置く */
   .hero-full{height:calc(100svh - 64px)}
@@ -379,14 +382,23 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 </section>
 
 <section class="panels" id="story">
-  <div class="panel"><div class="p-wrap"><img class="p-bg" src="../assets/sp-panel-1.webp" width="941" height="1672" loading="lazy"
-    alt="まちには、目的地へ向かうための道や、ただ通り過ぎるだけの広場があります。そこでは、多くの人が同じ場所を利用していても、互いを知ったり、関わったりする機会はそう多くありません。けれど、そんな公共空間にも、人と人が出会い、お互いを知るきっかけが眠っています。">
-    <img class="p-ttl" src="../assets/q-heading-sp.webp" width="585" height="297" loading="lazy"
-      alt="毎日歩くその道で、最後に足を止めたのはいつですか？"></div></div>
-  <div class="panel"><div class="p-wrap p-wrap-2"><img class="p-bg" src="../assets/sp-panel-2.webp" width="941" height="1672" loading="lazy"
-    alt="MACHI PLAYは、公共空間に眠る、そんな人と人との新たな関わりの可能性を、遊びの力で切り拓いていく取り組みです。その中で大事にしているのは、一人ひとりの「好き」を大切にすること、そして、人と一緒に何かを楽しむことです。誰かと一緒に楽しみ、その人の好きなものや人柄を知る。そんな出会いを通して、その人が暮らすまちも少しずつ身近になっていきます。"></div></div>
-  <div class="panel"><div class="p-wrap p-wrap-3"><img class="p-bg" src="../assets/sp-panel-3.webp" width="941" height="1672" loading="lazy"
-    alt="いつもの道や広場に、思いがけない出会いや楽しみをつくる。そんな夢に向かって、「楽しい」と「好き」を大切にしながら、これからも活動を続けていきます。"></div></div>
+  <div class="stage">
+    <div class="slide on">
+      <div class="p-wrap"><img class="p-bg" src="../assets/sp-panel-1.webp" width="941" height="1672"
+        alt="まちには、目的地へ向かうための道や、ただ通り過ぎるだけの広場があります。そこでは、多くの人が同じ場所を利用していても、互いを知ったり、関わったりする機会はそう多くありません。けれど、そんな公共空間にも、人と人が出会い、お互いを知るきっかけが眠っています。">
+        <img class="p-ttl" src="../assets/q-heading-sp.webp" width="585" height="297"
+          alt="毎日歩くその道で、最後に足を止めたのはいつですか？"></div>
+    </div>
+    <div class="slide">
+      <div class="p-wrap"><img class="p-bg" src="../assets/sp-panel-2.webp" width="941" height="1508" loading="lazy"
+        alt="MACHI PLAYは、公共空間に眠る、そんな人と人との新たな関わりの可能性を、遊びの力で切り拓いていく取り組みです。その中で大事にしているのは、一人ひとりの「好き」を大切にすること、そして、人と一緒に何かを楽しむことです。誰かと一緒に楽しみ、その人の好きなものや人柄を知る。そんな出会いを通して、その人が暮らすまちも少しずつ身近になっていきます。"></div>
+    </div>
+    <div class="slide">
+      <div class="p-wrap"><img class="p-bg" src="../assets/sp-panel-3.webp" width="941" height="1524" loading="lazy"
+        alt="いつもの道や広場に、思いがけない出会いや楽しみをつくる。そんな夢に向かって、「楽しい」と「好き」を大切にしながら、これからも活動を続けていきます。"></div>
+    </div>
+  </div>
+  <i class="trig"></i><i class="trig"></i><i class="trig"></i>
 </section>
 
 <div class="pbar">
@@ -566,35 +578,19 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 </script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c351ef734eb54b488d820041ba2f7e84"}'></script><!-- End Cloudflare Web Analytics -->
 <script>
-/* スマホの全画面パネル：画面に入っているぶんだけ濃くする */
+/* スマホの全画面パネル：画面の中央を横切った目印に合わせて、その場で入れ替える */
 (function(){
   var box = document.querySelector('.panels');
   if(!box || !('IntersectionObserver' in window)) return;
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var slides = [].slice.call(box.querySelectorAll('.slide'));
+  var trigs  = [].slice.call(box.querySelectorAll('.trig'));
+  if(slides.length < 2 || slides.length !== trigs.length) return;
   box.classList.add('js');
-  var panels = [].slice.call(box.querySelectorAll('.panel'));
+  function show(i){ slides.forEach(function(el, k){ el.classList.toggle('on', k === i); }); }
   var io = new IntersectionObserver(function(list){
-    list.forEach(function(e){
-      var o = Math.max(0, Math.min(1, (e.intersectionRatio - 0.18) / 0.5));
-      e.target.style.setProperty('--o', o.toFixed(3));
-    });
-  }, { threshold: Array.from({length:21}, function(_, i){ return i / 20; }) });
-  panels.forEach(function(el){ io.observe(el); });
-
-  /* 見出しは、パネルが流れるあいだ少しついてくる */
-  var tops = [].slice.call(box.querySelectorAll('.p-ttl')), ticking = false;
-  function follow(){
-    ticking = false;
-    tops.forEach(function(t){
-      var r = t.parentNode.getBoundingClientRect();
-      var prog = Math.max(0, Math.min(1, -r.top / r.height));
-      t.style.setProperty('--ty', (prog * r.height * 0.11).toFixed(1) + 'px');
-    });
-  }
-  addEventListener('scroll', function(){
-    if(!ticking){ ticking = true; requestAnimationFrame(follow); }
-  }, { passive: true });
-  addEventListener('resize', follow); follow();
+    list.forEach(function(e){ if(e.isIntersecting) show(trigs.indexOf(e.target)); });
+  }, { rootMargin: '-50% 0px -50% 0px', threshold: 0 });
+  trigs.forEach(function(t){ io.observe(t); });
 })();
 /* 狭い画面のメニュー開閉 */
 (function(){
