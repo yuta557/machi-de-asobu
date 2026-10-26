@@ -98,8 +98,9 @@ a{color:inherit}
 .blob{position:absolute;z-index:0;height:auto;display:block;pointer-events:none}
 .blob-l{left:-20%;top:clamp(10px,2vw,44px);width:27%}
 .blob-r{right:-12%;top:clamp(40px,6vw,120px);width:17%}
-.q-row{display:grid;grid-template-columns:minmax(0,.84fr) minmax(0,1.08fr) minmax(0,1fr);
+.q-row{display:grid;grid-template-columns:minmax(0,.84fr) minmax(0,1.2fr) minmax(0,.92fr);
   gap:clamp(18px,2vw,34px);align-items:center}
+.q-body{padding-left:clamp(10px,2.6vw,48px)}
 .q-art{width:100%;height:auto;display:block}
 .q{margin:0;line-height:0}
 .q img{width:100%;height:auto;max-width:min(100%,520px)}
@@ -111,7 +112,8 @@ a{color:inherit}
 .band{position:relative;margin:clamp(34px,4vw,70px) 0 0;padding:clamp(56px,6.6vw,118px) 0 clamp(60px,7vw,124px)}
 .band-bg{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block}
 .band-in{position:relative;z-index:1;display:grid;align-items:center;
-  grid-template-columns:minmax(0,.84fr) minmax(0,1.16fr) auto;gap:clamp(22px,2.8vw,52px)}
+  grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr) auto;gap:clamp(22px,2.8vw,52px)}
+.band-txt{padding-left:clamp(10px,2.6vw,48px)}
 .band-art{width:100%;height:auto;display:block}
 .band .lead{margin:0;font-size:clamp(15px,1.2vw,19px);font-weight:700;line-height:1.95;color:var(--ink)}
 .band .sub + .sub{margin-top:1.4em}
@@ -140,6 +142,7 @@ a{color:inherit}
   .intro .wrap{padding:0 22px}
   .band{padding:38px 0 42px}
   .band-in{grid-template-columns:1fr;gap:20px}
+  .q-body,.band-txt{padding-left:0}
   .pc{display:none}
   .q-row{grid-template-columns:1fr}
   .band-art{max-width:420px}
@@ -299,8 +302,8 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
         ただ通り過ぎるだけの広場があります。<br class="pc">
         そこでは、多くの人が同じ場所を利用していても、<br class="pc">
         互いを知ったり、関わったりする機会は<br class="pc">
-        そう多くありません。<br class="pc">
-        けれど、そんな公共空間にも、<br class="pc">
+        そう多くありません。</p>
+      <p class="n">けれど、そんな公共空間にも、<br class="pc">
         人と人が出会い、お互いを知るきっかけが<br class="pc">
         眠っています。</p>
     </div>
@@ -318,7 +321,7 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
     <div class="wrap band-in">
       <img class="band-art" src="../assets/scene-play.webp" width="1849" height="851"
         loading="lazy" alt="" aria-hidden="true">
-      <div>
+      <div class="band-txt">
         <p class="lead">MACHI PLAYは、公共空間に眠る、<br class="pc">
           そんな人と人との新たな関わりの可能性を、<br class="pc">
           遊びの力で切り拓いていく取り組みです。</p>
