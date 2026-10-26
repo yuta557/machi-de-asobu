@@ -45,7 +45,8 @@ a{color:inherit}
 @media(max-width:700px){ .wrap{padding:0 22px} }
 
 /* ヘッダー */
-.nav{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.92);backdrop-filter:blur(8px)}
+.nav{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+  border-bottom:1px solid #EAF1F7}
 .nav-in{max-width:1280px;margin:0 auto;padding:0 40px;height:78px;display:flex;align-items:center}
 .brand{display:flex;align-items:center;gap:11px;text-decoration:none}
 .brand img{height:48px;width:auto}
@@ -54,14 +55,15 @@ a{color:inherit}
 .nav-links a{text-decoration:none;color:var(--ink)}
 .nav-links a:hover{color:var(--ink-2)}
 /* 狭い画面のメニュー（三本線） */
-.burger{display:none;margin-left:auto;width:44px;height:44px;padding:0;border:0;background:none;
-  cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:7px}
-.burger span{display:block;width:28px;height:3px;border-radius:3px;background:var(--ink);transition:.2s}
-.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(10px) rotate(45deg)}
+.burger{display:none;margin-left:auto;width:48px;height:48px;padding:0;border:0;background:none;
+  cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:8px}
+.burger span{display:block;width:34px;height:3.5px;border-radius:3px;background:var(--ink);transition:.2s}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(11.5px) rotate(45deg)}
 .burger[aria-expanded="true"] span:nth-child(2){opacity:0}
-.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-10px) rotate(-45deg)}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-11.5px) rotate(-45deg)}
 @media(max-width:860px){
-  .nav-in{padding:0 22px;height:64px} .brand img{height:38px} .brand b{font-size:18px}
+  .nav-in{padding:0 20px;height:64px} .brand img{height:42px} .brand b{font-size:20px}
+  .brand{gap:13px}
   .burger{display:flex}
   .nav-links{position:fixed;left:0;right:0;top:64px;margin:0;z-index:59;
     flex-direction:column;gap:0;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);
