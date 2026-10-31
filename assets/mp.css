@@ -24,7 +24,7 @@ a{color:inherit}
 .brand{display:flex;align-items:center;gap:11px;text-decoration:none}
 .brand img{height:48px;width:auto}
 .brand b{font-family:"Outfit",sans-serif;font-weight:700;font-size:22px;letter-spacing:.1em}
-.nav-links{margin-left:auto;display:flex;gap:34px;font-size:14.5px}
+.nav-links{margin-left:auto;display:flex;align-items:center;gap:34px;font-size:14.5px}
 .nav-links a{text-decoration:none;color:var(--ink)}
 .nav-links a:hover{color:var(--ink-2)}
 /* 狭い画面のメニュー（三本線） */
@@ -39,7 +39,7 @@ a{color:inherit}
   .brand{gap:13px}
   .burger{display:flex}
   .nav-links{position:fixed;left:0;right:0;top:64px;margin:0;z-index:59;
-    flex-direction:column;gap:0;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);
+    flex-direction:column;align-items:stretch;gap:0;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);
     border-top:1px solid var(--line);font-size:15.5px;
     max-height:0;overflow:hidden;transition:max-height .25s ease}
   .nav-links.open{max-height:60svh}
