@@ -278,6 +278,42 @@ h2{font-weight:900;font-size:clamp(26px,3.4vw,40px);line-height:1.45;margin:8px 
 
 footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;color:var(--ink-soft);font-size:13.5px}
 .foot-in{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+/* ───────── 動き ───────── */
+/* 開いたときに、絵がゆっくり落ち着き、文字が下から浮かび上がる */
+@keyframes mp-rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes mp-settle{from{transform:scale(1.06)}to{transform:scale(1)}}
+.hero-full img{animation:mp-settle 2.4s cubic-bezier(.2,.7,.25,1) both}
+.hero-ttl{animation:mp-rise 1s cubic-bezier(.2,.7,.25,1) .15s both}
+.hero-go{animation:mp-rise .9s cubic-bezier(.2,.7,.25,1) .7s both}
+
+/* スクロールして画面に入ったら、ふわっと出す */
+.rv{opacity:0;transform:translateY(26px);
+  transition:opacity .8s ease, transform .8s cubic-bezier(.2,.7,.25,1)}
+.rv.in{opacity:1;transform:none}
+
+/* 触れたときの小さな反応 */
+.go span,.chip .arw{display:inline-block;transition:transform .25s ease}
+.go:hover span,.chip:hover .arw{transform:translateX(6px)}
+.chip{transition:border-color .2s ease, transform .2s ease, box-shadow .2s ease}
+.chip:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(18,62,124,.07)}
+.pj{transition:transform .28s ease, box-shadow .28s ease, border-color .28s ease}
+.pj img{transition:transform .5s cubic-bezier(.2,.7,.25,1)}
+.pj:hover{transform:translateY(-5px);border-color:#C6DBEF;box-shadow:0 16px 34px rgba(18,62,124,.10)}
+.pj:hover img{transform:scale(1.045)}
+.rep .side img,.rep .main img{transition:transform .5s cubic-bezier(.2,.7,.25,1)}
+.rep .side img:hover,.rep .main img:hover{transform:scale(1.03)}
+.submit{transition:transform .15s ease, box-shadow .15s ease, filter .15s ease}
+.submit:hover{filter:saturate(1.08)}
+
+/* 動きが苦手な人の設定を優先する */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .hero-full img,.hero-ttl,.hero-go{animation:none}
+  .rv,.rv.in{opacity:1;transform:none;transition:none}
+  .pj,.pj img,.chip,.rep .side img,.rep .main img,.go span,.chip .arw{transition:none}
+  .pj:hover,.pj:hover img,.chip:hover,.go:hover span,.chip:hover .arw{transform:none}
+}
 </style>
 </head>
 <body>
@@ -301,8 +337,14 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 <section class="hero" id="top">
   <div class="hero-full">
     <picture>
-      <source media="(max-width:860px)" srcset="../assets/hero-town-sp.webp" width="940" height="1550">
-      <img src="../assets/hero-town.webp" width="1646" height="956" fetchpriority="high"
+      <source media="(max-width:860px)" width="940" height="1550" sizes="100vw"
+        srcset="../assets/hero-town-sp.webp?v=2 940w,
+                ../assets/hero-town-sp-1400.webp 1400w,
+                ../assets/hero-town-sp-1880.webp 1880w">
+      <img src="../assets/hero-town.webp?v=2" width="2400" height="1394" fetchpriority="high" sizes="100vw"
+        srcset="../assets/hero-town-1646.webp 1646w,
+                ../assets/hero-town.webp?v=2 2400w,
+                ../assets/hero-town-3292.webp 3292w"
         alt="海辺のまち。学校や公園、桟橋のまわりで子どもたちが遊んだり集まったりしているようすを描いたイラスト">
     </picture>
     <svg class="hero-wave" viewBox="0 0 1440 110" preserveAspectRatio="none" aria-hidden="true">
@@ -612,6 +654,53 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
   });
   n.addEventListener('click', function(e){ if(e.target.tagName === 'A') close(); });
   addEventListener('resize', function(){ if(innerWidth > 860) close(); });
+})();
+</script>
+<script>
+/* スクロールして画面に入った所から、順番にふわっと出す。
+   JavaScript が動かないときは何も付かないので、そのまま全部見えたままになる。 */
+(function(){
+  if(!('IntersectionObserver' in window)) return;
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var groups = [
+    '.intro .q-row > *',
+    '.intro .band-in > *',
+    '.intro .closing > *',
+    '.pbar-in > *',
+    '.sec-head > *',
+    '.acts .act',
+    '.pjs .pj',
+    '.rep .main',
+    '.rep .side img',
+    '.who > *',
+    '.contact .form'
+  ];
+
+  var items = [];
+  groups.forEach(function(sel){
+    [].slice.call(document.querySelectorAll(sel)).forEach(function(el){
+      if(items.indexOf(el) < 0) items.push(el);
+    });
+  });
+  if(!items.length) return;
+
+  /* 同じ並びのものは、少しずつ遅らせて出す */
+  items.forEach(function(el){
+    var p = el.parentNode;
+    if(!p.__rvIndex){ p.__rvIndex = 0; }
+    var i = p.__rvIndex++;
+    if(i > 0) el.style.transitionDelay = Math.min(i * 0.09, 0.45) + 's';
+    el.classList.add('rv');
+  });
+
+  var io = new IntersectionObserver(function(list){
+    list.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { rootMargin: '0px 0px -12% 0px', threshold: 0 });
+
+  items.forEach(function(el){ io.observe(el); });
 })();
 </script>
 </body>
