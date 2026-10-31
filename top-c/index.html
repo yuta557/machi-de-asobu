@@ -84,6 +84,8 @@ a{color:inherit}
   height:clamp(42px,6.2vw,104px);display:block;z-index:1}
 .hero-ttl{position:absolute;left:5.6%;top:8%;z-index:2;width:clamp(290px,34vw,580px)}
 .hero-ttl h1{margin:0;line-height:0}
+/* キャッチコピーは別の画像。左右・上下の位置はここで決める */
+.hero-tag{position:relative;margin:2.6% 0 0 40%;width:37.7%;line-height:0}
 /* 文字のまわりに、うすい白のもや */
 .hero-ttl::before{content:"";position:absolute;z-index:-1;pointer-events:none;
   left:-19%;right:-15%;top:-24%;bottom:-18%;
@@ -353,10 +355,12 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
     </svg>
     <div class="hero-ttl">
       <h1><picture>
-        <source media="(max-width:860px)" srcset="../assets/play-title-sp.webp?v=5">
-        <img src="../assets/play-title.webp?v=5" width="1571" height="850" fetchpriority="high"
-          alt="まちであそぶ、をつくる。 人とまちのあいだに、新しいきっかけを。">
+        <source media="(max-width:860px)" srcset="../assets/play-title-sp.webp?v=6">
+        <img src="../assets/play-title.webp?v=6" width="1571" height="660" fetchpriority="high"
+          alt="まちであそぶ、をつくる。">
       </picture></h1>
+      <p class="hero-tag"><img src="../assets/play-tagline.webp" width="604" height="150"
+        fetchpriority="high" alt="人とまちのあいだに、新しいきっかけを。"></p>
     </div>
     <a class="go hero-go" href="#acts">活動を見る　<span>→</span></a>
   </div>
