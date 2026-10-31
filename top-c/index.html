@@ -12,8 +12,6 @@
 <meta property="og:title" content="MACHI PLAY｜まちであそぶ、をつくる。">
 <meta property="og:description" content="いつもの道を、誰かと出会う場所に。まちで遊べる仕掛けやゲームを作り、人とまちのあいだに新しいつながりをつくる MACHI PLAY の活動サイトです。">
 <meta property="og:image" content="https://machi-play.com/assets/ogp-play.jpg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
 <meta property="og:locale" content="ja_JP">
 <meta property="og:site_name" content="MACHI PLAY">
 <meta name="twitter:card" content="summary_large_image">
@@ -24,317 +22,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg:#FFFFFF;
-  --band:#FBF8EF;        /* 下の帯のクリーム */
-  --ink:#123E7C;         /* ネイビー */
-  --ink-2:#1E5FA8;
-  --ink-soft:#5B7CA6;
-  --line:#DCE7F2;
-  --sky:#EAF4FC;
-  --g:#46B07A; --o:#F0714A; --b:#3D7BD6;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--ink);
-  font-family:"Zen Kaku Gothic New",system-ui,sans-serif;font-size:16px;line-height:1.95;-webkit-font-smoothing:antialiased}
-img{max-width:100%;display:block}
-a{color:inherit}
-.wrap{max-width:1280px;margin:0 auto;padding:0 40px}
-@media(max-width:700px){ .wrap{padding:0 22px} }
-
-/* ヘッダー */
-.nav{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
-  border-bottom:1px solid #EAF1F7}
-.nav-in{max-width:1280px;margin:0 auto;padding:0 40px;height:78px;display:flex;align-items:center}
-.brand{display:flex;align-items:center;gap:11px;text-decoration:none}
-.brand img{height:48px;width:auto}
-.brand b{font-family:"Outfit",sans-serif;font-weight:700;font-size:22px;letter-spacing:.1em}
-.nav-links{margin-left:auto;display:flex;gap:34px;font-size:14.5px}
-.nav-links a{text-decoration:none;color:var(--ink)}
-.nav-links a:hover{color:var(--ink-2)}
-/* 狭い画面のメニュー（三本線） */
-.burger{display:none;margin-left:auto;width:48px;height:48px;padding:0;border:0;background:none;
-  cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:8px}
-.burger span{display:block;width:34px;height:3.5px;border-radius:3px;background:var(--ink);transition:.2s}
-.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(11.5px) rotate(45deg)}
-.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
-.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-11.5px) rotate(-45deg)}
-@media(max-width:860px){
-  .nav-in{padding:0 20px;height:64px} .brand img{height:42px} .brand b{font-size:20px}
-  .brand{gap:13px}
-  .burger{display:flex}
-  .nav-links{position:fixed;left:0;right:0;top:64px;margin:0;z-index:59;
-    flex-direction:column;gap:0;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);
-    border-top:1px solid var(--line);font-size:15.5px;
-    max-height:0;overflow:hidden;transition:max-height .25s ease}
-  .nav-links.open{max-height:60svh}
-  .nav-links a{padding:17px 22px;border-bottom:1px solid var(--line);font-weight:700}
-}
-@media(max-width:620px){ .nav-links a:nth-child(-n+2){display:none} }
-
-/* ヒーロー：イラストはそのまま全面に置き、文字を上にのせる */
-.hero{position:relative;overflow:hidden;background:#fff}
-/* 「活動を見る」までを1画面に入れるため、絵は画面の高さに合わせて上を少し切る */
-.hero-full{position:relative;line-height:0;height:calc(100svh - 78px);min-height:360px;overflow:hidden}
-.hero-full img{width:100%;height:100%;display:block;object-fit:cover;object-position:50% 85%}
-/* 絵の下のふちを、白でゆるく波の形に切る */
-.hero-wave{position:absolute;left:0;right:0;bottom:-1px;width:100%;
-  height:clamp(42px,6.2vw,104px);display:block;z-index:1}
-.hero-ttl{position:absolute;left:5.6%;top:8%;z-index:2;width:clamp(290px,34vw,580px)}
-.hero-ttl h1{margin:0;line-height:0}
-/* キャッチコピーは別の画像。左右・上下の位置はここで決める */
-.hero-tag{position:relative;margin:2.6% 0 0 32%;width:37.7%;line-height:0}
-/* 文字のまわりに、うすい白のもや */
-.hero-ttl::before{content:"";position:absolute;z-index:-1;pointer-events:none;
-  left:-19%;right:-15%;top:-24%;bottom:-18%;
-  background:radial-gradient(58% 58% at 47% 50%,rgba(255,255,255,.78) 0%,
-    rgba(255,255,255,.55) 44%,rgba(255,255,255,0) 78%)}
-.hero-ttl img{width:100%;height:auto}
-.hero-go{position:absolute;left:8.2%;bottom:7.5%;z-index:2;min-width:clamp(150px,13vw,210px)}
-
-/* 2枚目：問いかけと本文 */
-/* 端からはみ出す飾りで横スクロールが出ないよう、ここで切る */
-.intro{position:relative;overflow:hidden;background:#fff;padding:clamp(48px,5.4vw,92px) 0 clamp(40px,4vw,64px)}
-.intro .wrap{position:relative;z-index:1;max-width:1280px;margin:0 auto;padding:0 40px}
-/* 左右から入ってくる、うすい水色のかたまり。まるではなく、ふちが何度かうねる形 */
-.blob{position:absolute;z-index:0;height:auto;display:block;pointer-events:none}
-.blob-l{left:-20%;top:clamp(10px,2vw,44px);width:27%}
-.blob-r{right:-12%;top:clamp(40px,6vw,120px);width:17%}
-.q-row{display:grid;grid-template-columns:minmax(0,.84fr) minmax(0,1.2fr) minmax(0,.92fr);
-  gap:clamp(18px,2vw,34px);align-items:center}
-.q-body{padding-left:clamp(10px,2.6vw,48px)}
-.q-art{width:100%;height:auto;display:block}
-.q{margin:0;line-height:0}
-.q img{width:100%;height:auto;max-width:min(100%,520px)}
-.pc{display:inline}
-.q-body p + p{margin-top:1.6em}
-.q-body p{margin:0;font-size:clamp(14px,1.07vw,17px);line-height:1.95;font-weight:500;color:#2F5E92}
-
-/* うすい水色の帯。上下のふちはゆるい曲線 */
-.band{position:relative;margin:clamp(34px,4vw,70px) 0 0;padding:clamp(56px,6.6vw,118px) 0 clamp(60px,7vw,124px)}
-.band-bg{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block}
-.band-in{position:relative;z-index:1;display:grid;align-items:center;
-  grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr) auto;gap:clamp(22px,2.8vw,52px)}
-.band-txt{padding-left:clamp(10px,2.6vw,48px)}
-.band-art{width:100%;height:auto;display:block}
-.band .lead{margin:0;font-size:clamp(15px,1.2vw,19px);font-weight:700;line-height:1.95;color:var(--ink)}
-.band .sub + .sub{margin-top:1.4em}
-.band .sub{margin:clamp(14px,1.5vw,24px) 0 0;font-size:clamp(14px,1.07vw,17px);
-  line-height:1.95;font-weight:500;color:#2F5E92}
-.hand-art{width:100%;height:auto;max-width:clamp(150px,17vw,260px);display:block}
-.closing{position:relative}
-/* きらめきは、川の絵と文章のあいだの上に置く */
-.closing .sparkle{position:absolute;z-index:2;top:-26%;
-  left:calc(clamp(170px,21vw,320px) + clamp(16px,3.4vw,70px));
-  width:clamp(22px,2.1vw,36px);height:auto}
-/* 右下にもうひとつ */
-.closing .sparkle-r{top:auto;bottom:-6%;left:auto;
-  right:calc(clamp(150px,19vw,300px) + clamp(44px,5.4vw,96px));
-  width:clamp(18px,1.7vw,30px)}
-.intro .closing{margin-top:clamp(26px,3vw,48px);display:grid;align-items:center;
-  grid-template-columns:clamp(170px,21vw,320px) minmax(0,1fr) clamp(150px,19vw,300px);
-  gap:clamp(16px,2vw,36px)}
-.closing-txt{padding-left:clamp(10px,2.6vw,48px)}
-.closing-sky{width:100%;height:auto}
-.closing-art{width:100%;height:auto}
-.closing p{margin:0;font-size:clamp(14.5px,1.14vw,18px);line-height:2;font-weight:700;color:var(--ink)}
-.closing p + p{margin-top:.35em;font-weight:500;color:#2F5E92;font-size:clamp(13.5px,1.03vw,16.5px)}
-
-/* スマホ：全画面の絵を、スクロールにつれて現れては消す */
-.panels{display:none}
-/* 画面の狭い端末だけ、下の文章を3枚のパネルに差し替える
-   （それより広い画面では、ヒーローはスマホ版のまま、下はパソコン版の組みを使う） */
-@media(max-width:560px){
-  .intro{display:none}
-  .panels{display:block;background:#fff}
-  /* 3枚を同じ場所に重ねる。絵は貼りついたまま動かず、スクロール量で入れ替わる */
-  .panels{position:relative}
-  /* ヘッダー（64px）の下に貼りつける */
-  .stage{position:sticky;top:64px;height:calc(100svh - 64px);min-height:430px;overflow:hidden;
-    margin-bottom:calc(64px - 100svh)}
-  .trig{display:block;height:calc(100svh - 64px);min-height:430px}
-  /* 3枚目を見終えたら、絵をすっと消すための余り */
-  .trig-out{height:60svh;min-height:260px}
-  .slide{position:absolute;inset:0;display:grid;place-items:center}
-  /* 枠は絵にぴったり沿わせる。この中なら、見出しの位置が絵と合う */
-  .p-wrap{position:relative;display:inline-grid;max-width:100%;max-height:100%}
-  /* 絵の形がどれでも、画面の幅と高さの両方に収める */
-  .p-wrap .p-bg{display:block;width:auto;height:auto;max-width:100vw;max-height:calc(100svh - 64px)}
-  .p-wrap .p-ttl{position:absolute;z-index:2;left:6.5%;top:7%;width:85%;height:auto;display:block}
-  /* 切り替わりは、その場でゆっくり入れ替わる */
-  .panels.js .slide{opacity:0;transition:opacity .45s ease}
-  .panels.js .slide.on{opacity:1}
-}
-
-@media(max-width:860px){
-  /* 絵の上に文字を置かず、絵の下に順番に並べる */
-  /* 絵を画面いっぱいに出し、その上に文字を置く */
-  .hero-full{height:calc(100svh - 64px)}
-  .hero-full img{object-position:50% 50%}
-  .hero-ttl{left:6%;top:10%;width:min(84%,500px)}
-  .hero-ttl::before{left:-16%;right:-12%;top:-18%;bottom:-14%}
-  .hero-go{left:7%;bottom:7%;min-width:160px}
-  .hero-wave{height:clamp(30px,8vw,56px)}
-  .intro{padding:36px 0 40px}
-  .intro .wrap{padding:0 22px}
-  .band{padding:38px 0 42px}
-  .band-in{grid-template-columns:1fr;gap:20px}
-  .q-body,.band-txt,.closing-txt{padding-left:0}
-  .pc{display:none}
-  .q-row{grid-template-columns:1fr}
-  .band-art{max-width:420px}
-  .blob{display:none}
-  .intro .closing{grid-template-columns:1fr;gap:16px}
-  .closing-art{max-width:280px}
-  .closing-sky{display:none}
-  .hand-art{max-width:220px}
-}
-
-/* プロジェクトの帯 */
-.pbar{background:var(--band);border-top:1px solid #F0E9D8}
-.pbar-in{max-width:1280px;margin:0 auto;padding:26px 40px;display:flex;align-items:center;gap:26px;flex-wrap:wrap}
-.pbar .ttl{font-family:"Outfit",sans-serif;font-weight:700;letter-spacing:.18em;font-size:16px}
-.pbar .ja{font-size:14px;color:var(--ink-soft)}
-.pbar .chips{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
-.chip{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:10px;
-  padding:12px 16px;font-size:14px;text-decoration:none;min-width:230px}
-.chip .dot{width:9px;height:9px;border-radius:50%;flex:none}
-.chip .arw{margin-left:auto;font-family:"Outfit",sans-serif;color:var(--ink-soft)}
-.chip:hover{border-color:var(--ink-2)}
-@media(max-width:1100px){ .pbar .chips{margin-left:0;width:100%} .chip{flex:1 1 220px;min-width:0} }
-@media(max-width:700px){ .pbar-in{padding:20px 22px;gap:14px} }
-
-/* セクション共通 */
-.sec{padding:92px 0}
-.sec-head{margin-bottom:40px}
-.kick{font-family:"Outfit",sans-serif;font-weight:700;letter-spacing:.18em;font-size:13px;color:var(--ink-2)}
-h2{font-weight:900;font-size:clamp(26px,3.4vw,40px);line-height:1.45;margin:8px 0 0}
-.sec-head p{color:var(--ink-soft);max-width:44em;margin:16px 0 0}
-
-/* 活動 3つ */
-.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
-.act{border-top:2px solid var(--ink);padding-top:18px}
-.act .no{font-family:"Outfit",sans-serif;font-weight:700;color:var(--ink-2);font-size:14px}
-.act h3{font-weight:900;font-size:21px;margin:6px 0 10px}
-.act p{margin:0;color:var(--ink-soft);font-size:14.5px}
-@media(max-width:860px){ .acts{grid-template-columns:1fr;gap:22px} }
-
-/* プロジェクト */
-.pjs{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-.pj{border:1px solid var(--line);border-radius:18px;overflow:hidden;text-decoration:none;background:#fff;display:flex;flex-direction:column}
-.pj img{aspect-ratio:16/9;object-fit:cover;width:100%}
-.pj .body{padding:22px 24px 26px}
-.pj .tags{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
-.pj .tag{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--ink-soft)}
-.pj h3{font-weight:900;font-size:20px;margin:0 0 8px}
-.pj p{margin:0;color:var(--ink-soft);font-size:14.5px}
-.pj .more{margin-top:14px;font-size:14px;color:var(--ink-2);font-weight:700}
-@media(max-width:860px){ .pjs{grid-template-columns:1fr} }
-
-/* 記録 */
-.rep{display:grid;grid-template-columns:1.3fr 1fr;gap:22px;align-items:start}
-.rep .main{border:1px solid var(--line);border-radius:18px;overflow:hidden}
-.rep .main img{width:100%;aspect-ratio:3/2;object-fit:cover}
-.rep .main .cap{padding:20px 22px 24px}
-.rep .main h3{font-weight:900;font-size:19px;margin:0 0 8px}
-.rep .main p{margin:0;color:var(--ink-soft);font-size:14.5px}
-.rep .side{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.rep .side img{width:100%;aspect-ratio:1;object-fit:cover;border:1px solid var(--line);border-radius:12px}
-@media(max-width:900px){ .rep{grid-template-columns:1fr} }
-
-/* プロフィール */
-.who{display:grid;grid-template-columns:240px 1fr;gap:34px;align-items:center}
-.who .ph{aspect-ratio:1;border-radius:18px;background:var(--sky);display:grid;place-items:center;color:var(--ink-soft);font-size:13px}
-.who h3{font-weight:900;font-size:24px;margin:6px 0 10px}
-.who p{color:var(--ink-soft);margin:0;font-size:15px}
-@media(max-width:800px){ .who{grid-template-columns:1fr} }
-
-
-/* お問い合わせフォーム */
-.contact{background:var(--band);border-top:1px solid #F0E9D8}
-.contact .wrap{max-width:860px}
-.form{display:grid;gap:18px;margin-top:30px}
-.field{display:grid;gap:7px}
-.field label{font-size:14px;font-weight:700}
-.field .req{color:var(--o);font-size:12px;margin-left:6px;font-weight:700}
-.field input,.field select,.field textarea{
-  font:inherit;font-size:15.5px;color:var(--ink);background:#fff;
-  border:1px solid var(--line);border-radius:10px;padding:13px 14px;width:100%}
-.field textarea{min-height:150px;resize:vertical;line-height:1.8}
-.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--ink-2);outline-offset:1px;border-color:transparent}
-.field .hint{font-size:12.5px;color:var(--ink-soft)}
-.form .row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
-.submit{display:inline-flex;align-items:center;gap:10px;background:var(--o);color:#fff;border:0;
-  border-radius:999px;padding:15px 30px;font:inherit;font-weight:700;font-size:15.5px;cursor:pointer;
-  box-shadow:0 6px 0 rgba(0,0,0,.08)}
-.submit:hover{transform:translateY(1px);box-shadow:0 5px 0 rgba(0,0,0,.08)}
-.submit[disabled]{opacity:.6;cursor:default;transform:none}
-.form-note{font-size:13.5px;color:var(--ink-soft);margin:16px 0 0}
-.form-msg{margin:18px 0 0;padding:16px 18px;border-radius:12px;font-size:15px;display:none}
-.form-msg.ok{display:block;background:#E8F6EE;color:#1F6B45}
-.form-msg.ng{display:block;background:#FCECE6;color:#9A3A14}
-@media(max-width:700px){ .form .row{grid-template-columns:1fr} }
-
-footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;color:var(--ink-soft);font-size:13.5px}
-.foot-in{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
-
-/* ───────── 動き ───────── */
-/* 開いたときに、絵がゆっくり落ち着き、文字が下から浮かび上がる */
-@keyframes mp-rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
-@keyframes mp-settle{
-  from{transform:scale(1.09);opacity:0}
-  28% {opacity:1}
-  to  {transform:scale(1);opacity:1}}
-.hero-full img{animation:mp-settle 2.8s cubic-bezier(.16,.72,.2,1) both}
-.hero-ttl{animation:mp-rise 1s cubic-bezier(.2,.7,.25,1) .15s both}
-.hero-go{animation:mp-rise .9s cubic-bezier(.2,.7,.25,1) .7s both}
-
-/* スクロールして画面に入ったら、ふわっと出す */
-.rv{opacity:0;transform:translateY(26px);
-  transition:opacity .8s ease, transform .8s cubic-bezier(.2,.7,.25,1)}
-.rv.in{opacity:1;transform:none}
-
-/* 触れたときの小さな反応 */
-.go span,.chip .arw{display:inline-block;transition:transform .25s ease}
-.go:hover span,.chip:hover .arw{transform:translateX(6px)}
-.chip{transition:border-color .2s ease, transform .2s ease, box-shadow .2s ease}
-.chip:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(18,62,124,.07)}
-.pj{transition:transform .28s ease, box-shadow .28s ease, border-color .28s ease}
-.pj img{transition:transform .5s cubic-bezier(.2,.7,.25,1)}
-.pj:hover{transform:translateY(-5px);border-color:#C6DBEF;box-shadow:0 16px 34px rgba(18,62,124,.10)}
-.pj:hover img{transform:scale(1.045)}
-.rep .side img,.rep .main img{transition:transform .5s cubic-bezier(.2,.7,.25,1)}
-.rep .side img:hover,.rep .main img:hover{transform:scale(1.03)}
-.submit{transition:transform .15s ease, box-shadow .15s ease, filter .15s ease}
-.submit:hover{filter:saturate(1.08)}
-
-/* 動きが苦手な人の設定を優先する */
-@media(prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-  .hero-full img,.hero-ttl,.hero-go{animation:none}
-  .rv,.rv.in{opacity:1;transform:none;transition:none}
-  .pj,.pj img,.chip,.rep .side img,.rep .main img,.go span,.chip .arw{transition:none}
-  .pj:hover,.pj:hover img,.chip:hover,.go:hover span,.chip:hover .arw{transform:none}
-}
-</style>
+<link rel="stylesheet" href="/assets/mp.css?v=7">
 </head>
 <body>
-
-
 <header class="nav">
   <div class="nav-in">
-    <a class="brand" href="#top"><img src="../assets/logo-mark.webp" alt=""><b>MACHI PLAY</b></a>
+    <a class="brand" href="/top-c/"><img src="/assets/logo-mark.webp" alt=""><b>MACHI PLAY</b></a>
     <button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="navlinks">
       <span></span><span></span><span></span>
     </button>
     <nav class="nav-links" id="navlinks">
-      <a href="#acts">活動</a>
-      <a href="#projects">プロジェクト</a>
-      <a href="#who">プロフィール</a>
-      <a href="#contact">お問い合わせ</a>
+      <a href="/top-c/#about">活動</a>
+      <a href="/top-c/projects/">プロジェクト</a>
+      <a href="/top-c/about/">プロフィール</a>
+      <a href="/top-c/contact/">お問い合わせ</a>
     </nav>
   </div>
 </header>
@@ -343,13 +44,13 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
   <div class="hero-full">
     <picture>
       <source media="(max-width:860px)" width="940" height="1550" sizes="100vw"
-        srcset="../assets/hero-town-sp.webp?v=2 940w,
-                ../assets/hero-town-sp-1400.webp 1400w,
-                ../assets/hero-town-sp-1880.webp 1880w">
-      <img src="../assets/hero-town.webp?v=2" width="2400" height="1394" fetchpriority="high" sizes="100vw"
-        srcset="../assets/hero-town-1646.webp 1646w,
-                ../assets/hero-town.webp?v=2 2400w,
-                ../assets/hero-town-3292.webp 3292w"
+        srcset="/assets/hero-town-sp.webp?v=2 940w,
+                /assets/hero-town-sp-1400.webp 1400w,
+                /assets/hero-town-sp-1880.webp 1880w">
+      <img src="/assets/hero-town.webp?v=2" width="2400" height="1394" fetchpriority="high" sizes="100vw"
+        srcset="/assets/hero-town-1646.webp 1646w,
+                /assets/hero-town.webp?v=2 2400w,
+                /assets/hero-town-3292.webp 3292w"
         alt="海辺のまち。学校や公園、桟橋のまわりで子どもたちが遊んだり集まったりしているようすを描いたイラスト">
     </picture>
     <svg class="hero-wave" viewBox="0 0 1440 110" preserveAspectRatio="none" aria-hidden="true">
@@ -358,14 +59,14 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
     </svg>
     <div class="hero-ttl">
       <h1><picture>
-        <source media="(max-width:860px)" srcset="../assets/play-title-sp.webp?v=6">
-        <img src="../assets/play-title.webp?v=6" width="1571" height="660" fetchpriority="high"
+        <source media="(max-width:860px)" srcset="/assets/play-title-sp.webp?v=6">
+        <img src="/assets/play-title.webp?v=6" width="1571" height="660" fetchpriority="high"
           alt="まちであそぶ、をつくる。">
       </picture></h1>
-      <p class="hero-tag"><img src="../assets/play-tagline.webp" width="604" height="150"
+      <p class="hero-tag"><img src="/assets/play-tagline.webp" width="604" height="150"
         fetchpriority="high" alt="人とまちのあいだに、新しいきっかけを。"></p>
     </div>
-    <a class="go hero-go" href="#acts">活動を見る　<span>→</span></a>
+    <a class="go hero-go" href="#about">活動を見る　<span>→</span></a>
   </div>
 </section>
 
@@ -382,7 +83,7 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
              C 204 384, 116 388, 64 346 C 18 308, 14 236, 30 170 Z" fill="#F3FAFD"/>
   </svg>
   <div class="wrap q-row">
-    <h2 class="q"><img src="../assets/q-heading.webp" width="596" height="308" loading="lazy"
+    <h2 class="q"><img src="/assets/q-heading.webp" width="596" height="308" loading="lazy"
       alt="毎日歩くその道で、最後に足を止めたのはいつですか？"></h2>
     <div class="q-body">
       <p>まちには、目的地へ向かうための道や、<br class="pc">
@@ -394,7 +95,7 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
         人と人が出会い、お互いを知るきっかけが<br class="pc">
         眠っています。</p>
     </div>
-    <img class="q-art" src="../assets/scene-street.webp" width="1855" height="848"
+    <img class="q-art" src="/assets/scene-street.webp" width="1855" height="848"
       loading="lazy" alt="" aria-hidden="true">
   </div>
 
@@ -406,7 +107,7 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
                C 258 538, 122 510, 0 478 Z" fill="#EAF7FD"/>
     </svg>
     <div class="wrap band-in">
-      <img class="band-art" src="../assets/scene-play.webp" width="1849" height="851"
+      <img class="band-art" src="/assets/scene-play.webp" width="1849" height="851"
         loading="lazy" alt="" aria-hidden="true">
       <div class="band-txt">
         <p class="lead">MACHI PLAYは、公共空間に眠る、<br class="pc">
@@ -419,23 +120,23 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
           そんな出会いを通して、その人が暮らすまちも<br class="pc">
           少しずつ身近になっていきます。</p>
       </div>
-      <img class="hand-art" src="../assets/hand-lettering.webp" width="1486" height="970"
+      <img class="hand-art" src="/assets/hand-lettering.webp" width="1486" height="970"
         loading="lazy" alt="つながる、あそぶ、まちが変わる">
     </div>
   </div>
 
   <div class="wrap closing">
-    <img class="sparkle" src="../assets/spark-3.webp" width="68" height="112"
+    <img class="sparkle" src="/assets/spark-3.webp" width="68" height="112"
       loading="lazy" alt="" aria-hidden="true">
-    <img class="closing-art" src="../assets/scene-river.webp" width="2000" height="668"
+    <img class="closing-art" src="/assets/scene-river.webp" width="2000" height="668"
       loading="lazy" alt="" aria-hidden="true">
     <div class="closing-txt">
       <p>いつもの道や広場に、思いがけない出会いや楽しみをつくる。</p>
       <p>そんな夢に向かって、「楽しい」と「好き」を大切にしながら、<br class="pc">これからも活動を続けていきます。</p>
     </div>
-    <img class="sparkle sparkle-r" src="../assets/spark-2.webp" width="59" height="68"
+    <img class="sparkle sparkle-r" src="/assets/spark-2.webp" width="59" height="68"
       loading="lazy" alt="" aria-hidden="true">
-    <img class="closing-sky" src="../assets/scene-sky.webp" width="2000" height="668"
+    <img class="closing-sky" src="/assets/scene-sky.webp" width="2000" height="668"
       loading="lazy" alt="" aria-hidden="true">
   </div>
 </section>
@@ -443,15 +144,15 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 <section class="panels" id="story">
   <div class="stage">
     <div class="slide on">
-      <div class="p-wrap"><img class="p-bg" src="../assets/sp-panel-1.webp" width="992" height="1474"
+      <div class="p-wrap"><img class="p-bg" src="/assets/sp-panel-1.webp" width="992" height="1474"
         alt="毎日歩くその道で、最後に足を止めたのはいつですか？ まちには、目的地へ向かうための道や、ただ通り過ぎるだけの広場があります。そこでは、多くの人が同じ場所を利用していても、互いを知ったり、関わったりする機会はそう多くありません。けれど、そんな公共空間にも、人と人が出会い、お互いを知るきっかけが眠っています。"></div>
     </div>
     <div class="slide">
-      <div class="p-wrap"><img class="p-bg" src="../assets/sp-panel-2.webp" width="992" height="1475" loading="lazy"
+      <div class="p-wrap"><img class="p-bg" src="/assets/sp-panel-2.webp" width="992" height="1475" loading="lazy"
         alt="MACHI PLAYは、公共空間に眠る、そんな人と人との新たな関わりの可能性を、遊びの力で切り拓いていく取り組みです。その中で大事にしているのは、一人ひとりの「好き」を大切にすること、そして、人と一緒に何かを楽しむことです。誰かと一緒に楽しみ、その人の好きなものや人柄を知る。そんな出会いを通して、その人が暮らすまちも少しずつ身近になっていきます。"></div>
     </div>
     <div class="slide">
-      <div class="p-wrap"><img class="p-bg" src="../assets/sp-panel-3.webp" width="941" height="1506" loading="lazy"
+      <div class="p-wrap"><img class="p-bg" src="/assets/sp-panel-3.webp" width="941" height="1506" loading="lazy"
         alt="いつもの道や広場に、思いがけない出会いや楽しみをつくる。そんな夢に向かって、「楽しい」と「好き」を大切にしながら、これからも活動を続けていきます。"></div>
     </div>
   </div>
@@ -463,14 +164,14 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
     <p class="ttl" style="margin:0">PROJECTS</p>
     <p class="ja" style="margin:0">／　活動・プロジェクト</p>
     <div class="chips">
-      <a class="chip" href="#projects"><span class="dot" style="background:var(--g)"></span>子ども向けワークショップ<span class="arw">→</span></a>
-      <a class="chip" href="#projects"><span class="dot" style="background:var(--o)"></span>まちの空間づくり<span class="arw">→</span></a>
-      <a class="chip" href="#projects"><span class="dot" style="background:var(--b)"></span>創作・デザインプロジェクト<span class="arw">→</span></a>
+      <a class="chip" href="/top-c/projects/workshop/"><span class="dot" style="background:var(--g)"></span>子ども向けワークショップ<span class="arw">→</span></a>
+      <a class="chip" href="/top-c/projects/ideas/"><span class="dot" style="background:var(--o)"></span>展示・記録<span class="arw">→</span></a>
+      <a class="chip" href="/top-c/projects/"><span class="dot" style="background:var(--b)"></span>これまでの活動ぜんぶ<span class="arw">→</span></a>
     </div>
   </div>
 </div>
 
-<section class="sec" id="acts">
+<section class="sec" id="about">
   <div class="wrap">
     <div class="sec-head">
       <p class="kick">ABOUT</p>
@@ -485,224 +186,83 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
   </div>
 </section>
 
-<section class="sec" id="projects" style="padding-top:0">
+<section class="sec" style="padding-top:0">
   <div class="wrap">
     <div class="sec-head">
       <p class="kick">PROJECTS</p>
-      <h2>プロジェクト</h2>
+      <h2>これまでの活動</h2>
+      <p>一つずつ、やったこと・集まったアイデア・当日のようすを残しています。</p>
     </div>
     <div class="pjs">
-      <a class="pj" href="../">
-        <img src="../assets/ogp.jpg" alt="" loading="lazy">
+      <a class="pj" href="/top-c/projects/workshop/">
+        <img src="/assets/ogp.jpg" alt="" loading="lazy">
         <div class="body">
           <div class="tags"><span class="tag">子ども向けワークショップ</span><span class="tag">2026.10.3</span></div>
           <h3>まちであそぶ、をつくる</h3>
           <p>宇治のまちを「遊び」の視点から考える120分。宇治NEXT主催、小学4年生〜中学生向け。</p>
-          <p class="more">詳しく見る →</p>
+          <p class="more">活動報告を見る →</p>
         </div>
       </a>
-      <a class="pj" href="#report">
-        <img src="../assets/photos/exhibit-01.webp" alt="" loading="lazy">
+      <a class="pj" href="/top-c/projects/ideas/">
+        <img src="/assets/photos/exhibit-01.webp" alt="" loading="lazy">
         <div class="body">
           <div class="tags"><span class="tag">展示</span><span class="tag">2026.10.20–23</span></div>
           <h3>子どもたちのアイデア展</h3>
           <p>ワークショップで集まったアイデアを、市内の施設でパネル展示しました。</p>
-          <p class="more">記録を見る →</p>
+          <p class="more">活動報告を見る →</p>
         </div>
       </a>
     </div>
+    <div class="btns">
+      <a class="btn alt" href="/top-c/projects/">プロジェクトの一覧へ　<span>→</span></a>
+    </div>
   </div>
 </section>
 
-<section class="sec" id="report" style="padding-top:0">
+<section class="sec" style="padding-top:0">
   <div class="wrap">
     <div class="sec-head">
-      <p class="kick">REPORT</p>
-      <h2>第1回を開きました。</h2>
-      <p>2026年10月3日、宇治市産業会館 多目的ホール。子どもたちが考えた「宇治のまちにあったらいいな」が9枚、会場に並びました。</p>
-    </div>
-    <div class="rep">
-      <div class="main">
-        <img src="../assets/photos/record-board.webp" alt="会場に展示されたアイデアシート" loading="lazy">
-        <div class="cap">
-          <h3>まちの遊び方が、9枚分</h3>
-          <p>駅やバス停、通学路、茶畑、雲の上。身近な場所から思いもよらない場所まで、絵と短い言葉で描いてもらいました。</p>
-        </div>
-      </div>
-      <div class="side">
-        <img src="../assets/photos/idea-01.webp" alt="参加者が描いたアイデアシート" loading="lazy">
-        <img src="../assets/photos/idea-03.webp" alt="参加者が描いたアイデアシート" loading="lazy">
-        <img src="../assets/photos/idea-05.webp" alt="参加者が描いたアイデアシート" loading="lazy">
-        <img src="../assets/photos/exhibit-03.webp" alt="台紙に貼られたアイデアシート" loading="lazy">
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="sec who-sec" id="who" style="padding-top:0">
-  <div class="wrap who">
-    <div class="ph">顔写真が入ります</div>
-    <div>
       <p class="kick">PROFILE</p>
-      <h3>野寺 悠太（灘高校）</h3>
-      <p>宇治市未来キャンパス受講生。いつもの道をもっと面白くしたいと思い、まちで遊べる仕掛けやゲームを作っています。2026年10月のワークショップでは、企画・当日の運営・ゲームの開発を担当しました。</p>
+      <h2>作っている人</h2>
+    </div>
+    <div class="who">
+      <div class="ph">顔写真が入ります</div>
+      <div>
+        <h3>野寺 悠太（灘高校）</h3>
+        <p>宇治市未来キャンパス受講生。いつもの道をもっと面白くしたいと思い、まちで遊べる仕掛けやゲームを作っています。</p>
+        <div class="btns"><a class="btn alt" href="/top-c/about/">くわしく見る　<span>→</span></a></div>
+      </div>
     </div>
   </div>
 </section>
 
-
-<section class="sec contact" id="contact">
+<section class="sec contact">
   <div class="wrap">
     <div class="sec-head">
       <p class="kick">CONTACT</p>
       <h2>お問い合わせ</h2>
-      <p>ワークショップの開催や取材のご相談、「うちのまちでもやってみたい」というお話も歓迎です。いただいた内容は、ご本人への返信にのみ使います。</p>
+      <p>ワークショップの開催や取材のご相談、「うちのまちでもやってみたい」というお話も歓迎です。</p>
     </div>
-
-    <form class="form" id="contactForm" novalidate>
-      <div class="row">
-        <div class="field">
-          <label for="cf-name">お名前<span class="req">必須</span></label>
-          <input id="cf-name" name="name" type="text" autocomplete="name" required>
-        </div>
-        <div class="field">
-          <label for="cf-email">メールアドレス<span class="req">必須</span></label>
-          <input id="cf-email" name="email" type="email" autocomplete="email" required>
-        </div>
-      </div>
-      <div class="field">
-        <label for="cf-topic">ご用件</label>
-        <select id="cf-topic" name="topic">
-          <option>ワークショップの開催について</option>
-          <option>取材・掲載について</option>
-          <option>展示について</option>
-          <option>その他</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="cf-body">内容<span class="req">必須</span></label>
-        <textarea id="cf-body" name="message" required></textarea>
-        <p class="hint">お返事は数日いただくことがあります。</p>
-      </div>
-      <div class="hp" aria-hidden="true">
-        <label>この欄は入力しないでください<input name="_gotcha" tabindex="-1" autocomplete="off"></label>
-      </div>
-      <div>
-        <button class="submit" type="submit">送信する　<span>→</span></button>
-      </div>
-      <p class="form-msg" id="cf-msg" role="status" aria-live="polite"></p>
-      <p class="form-note">うまく送れないときは <a href="mailto:yuta109010@gmail.com">yuta109010@gmail.com</a> まで直接お送りください。</p>
-    </form>
+    <div class="btns" style="margin-top:0">
+      <a class="btn" href="/top-c/contact/">お問い合わせへ　<span>→</span></a>
+    </div>
   </div>
 </section>
 
 <footer>
   <div class="wrap foot-in">
     <div>© 2026 MACHI PLAY</div>
-    <div><a href="../">ワークショップサイト</a>　／　<a href="#contact">お問い合わせ</a></div>
+    <nav class="foot-links">
+      <a href="/top-c/projects/">プロジェクト</a>
+      <a href="/top-c/about/">プロフィール</a>
+      <a href="/top-c/contact/">お問い合わせ</a>
+      <a href="/">ワークショップのサイト</a>
+      <a href="/attara-iina/">子どもたちのアイデア展</a>
+    </nav>
   </div>
 </footer>
 
-
-<script>
-/* お問い合わせフォーム：ページを離れずに送信する。
-   ENDPOINT に送信先（Formspree か Google Apps Script のURL）を入れる。
-   空のままのあいだは送信せず、メールでの連絡をうながす。 */
-(function(){
-  var ENDPOINT = "";   /* 例: https://formspree.io/f/xxxxxxx */
-  var MAIL = "yuta109010@gmail.com";
-  var form = document.getElementById("contactForm");
-  if(!form) return;
-  var msg = document.getElementById("cf-msg");
-  var btn = form.querySelector(".submit");
-  function show(kind, text){ msg.className = "form-msg " + kind; msg.textContent = text; }
-  form.addEventListener("submit", function(e){
-    e.preventDefault();
-    show("", "");
-    var name = form.name.value.trim(), email = form.email.value.trim(), body = form.message.value.trim();
-    if(!name || !email || !body){ show("ng","お名前・メールアドレス・内容を入力してください。"); return; }
-    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ show("ng","メールアドレスの形式をご確認ください。"); return; }
-    if(form._gotcha.value){ return; }
-    if(!ENDPOINT){ show("ng","ただいまフォームからの送信を準備中です。お手数ですが " + MAIL + " までお送りください。"); return; }
-    btn.disabled = true; btn.textContent = "送信中…";
-    fetch(ENDPOINT, { method:"POST", headers:{"Accept":"application/json"}, body:new FormData(form) })
-      .then(function(r){ if(!r.ok) throw new Error(r.status);
-        form.reset(); show("ok","送信しました。お返事までしばらくお待ちください。"); })
-      .catch(function(){ show("ng","送信できませんでした。お手数ですが " + MAIL + " までお送りください。"); })
-      .then(function(){ btn.disabled = false; btn.textContent = "送信する　→"; });
-  });
-})();
-</script>
+<script src="/assets/mp.js?v=7" defer></script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c351ef734eb54b488d820041ba2f7e84"}'></script><!-- End Cloudflare Web Analytics -->
-<script>
-/* スマホの全画面パネル：画面の中央を横切った目印に合わせて、その場で入れ替える */
-(function(){
-  var box = document.querySelector('.panels');
-  if(!box || !('IntersectionObserver' in window)) return;
-  var slides = [].slice.call(box.querySelectorAll('.slide'));
-  var trigs  = [].slice.call(box.querySelectorAll('.trig'));
-  if(slides.length < 2 || trigs.length < slides.length) return;
-  box.classList.add('js');
-  function show(i){ slides.forEach(function(el, k){ el.classList.toggle('on', k === i); }); }
-  var io = new IntersectionObserver(function(list){
-    list.forEach(function(e){ if(e.isIntersecting) show(trigs.indexOf(e.target)); });
-  }, { rootMargin: '-50% 0px -50% 0px', threshold: 0 });
-  trigs.forEach(function(t){ io.observe(t); });
-})();
-/* 狭い画面のメニュー開閉 */
-(function(){
-  var b = document.querySelector('.burger'), n = document.getElementById('navlinks');
-  if(!b || !n) return;
-  function close(){ b.setAttribute('aria-expanded','false'); n.classList.remove('open'); }
-  b.addEventListener('click', function(){
-    var open = b.getAttribute('aria-expanded') === 'true';
-    b.setAttribute('aria-expanded', String(!open));
-    n.classList.toggle('open', !open);
-  });
-  n.addEventListener('click', function(e){ if(e.target.tagName === 'A') close(); });
-  addEventListener('resize', function(){ if(innerWidth > 860) close(); });
-})();
-</script>
-<script>
-/* スクロールして画面に入った所から、順番にふわっと出す。
-   JavaScript が動かないときは何も付かないので、そのまま全部見えたままになる。 */
-(function(){
-  if(!('IntersectionObserver' in window)) return;
-  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  /* 動きを付けるのは、問いかけから「これからも活動を続けていきます。」まで。
-     その下（プロジェクト・活動・記録・プロフィール・お問い合わせ）は動かさない。 */
-  var groups = [
-    '.intro .q-row > *',
-    '.intro .band-in > *',
-    '.intro .closing > *'
-  ];
-
-  var items = [];
-  groups.forEach(function(sel){
-    [].slice.call(document.querySelectorAll(sel)).forEach(function(el){
-      if(items.indexOf(el) < 0) items.push(el);
-    });
-  });
-  if(!items.length) return;
-
-  /* 同じ並びのものは、少しずつ遅らせて出す */
-  items.forEach(function(el){
-    var p = el.parentNode;
-    if(!p.__rvIndex){ p.__rvIndex = 0; }
-    var i = p.__rvIndex++;
-    if(i > 0) el.style.transitionDelay = Math.min(i * 0.09, 0.45) + 's';
-    el.classList.add('rv');
-  });
-
-  var io = new IntersectionObserver(function(list){
-    list.forEach(function(e){
-      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
-    });
-  }, { rootMargin: '0px 0px -12% 0px', threshold: 0 });
-
-  items.forEach(function(el){ io.observe(el); });
-})();
-</script>
 </body>
 </html>
