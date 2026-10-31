@@ -285,7 +285,12 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 /* 開いたときに、絵がゆっくり落ち着き、文字が下から浮かび上がる */
 @keyframes mp-rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
 @keyframes mp-settle{from{transform:scale(1.06)}to{transform:scale(1)}}
-.hero-full img{animation:mp-settle 2.4s cubic-bezier(.2,.7,.25,1) both}
+/* そのあとは、まちの上をゆっくり近づいていく（40秒かけて往復する） */
+@keyframes mp-drift{
+  from{transform:scale(1) translate3d(0,0,0)}
+  to  {transform:scale(1.05) translate3d(-1.1%,-0.7%,0)}}
+.hero-full img{animation:mp-settle 2.4s cubic-bezier(.2,.7,.25,1) both,
+                         mp-drift 40s ease-in-out 2.4s infinite alternate}
 .hero-ttl{animation:mp-rise 1s cubic-bezier(.2,.7,.25,1) .15s both}
 .hero-go{animation:mp-rise .9s cubic-bezier(.2,.7,.25,1) .7s both}
 
