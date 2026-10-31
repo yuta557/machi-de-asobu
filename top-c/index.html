@@ -663,18 +663,12 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
   if(!('IntersectionObserver' in window)) return;
   if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+  /* 動きを付けるのは、問いかけから「これからも活動を続けていきます。」まで。
+     その下（プロジェクト・活動・記録・プロフィール・お問い合わせ）は動かさない。 */
   var groups = [
     '.intro .q-row > *',
     '.intro .band-in > *',
-    '.intro .closing > *',
-    '.pbar-in > *',
-    '.sec-head > *',
-    '.acts .act',
-    '.pjs .pj',
-    '.rep .main',
-    '.rep .side img',
-    '.who > *',
-    '.contact .form'
+    '.intro .closing > *'
   ];
 
   var items = [];
