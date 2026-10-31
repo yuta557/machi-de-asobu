@@ -3,7 +3,7 @@
    空のままのあいだは送信せず、メールでの連絡をうながす。 */
 (function(){
   var ENDPOINT = "";   /* 例: https://formspree.io/f/xxxxxxx */
-  var MAIL = "yuta109010@gmail.com";
+  var MAIL = atob("eXV0YTEwOTAxMEBnbWFpbC5jb20=");
   var form = document.getElementById("contactForm");
   if(!form) return;
   var msg = document.getElementById("cf-msg");
@@ -92,4 +92,23 @@
   }, { rootMargin: '0px 0px -12% 0px', threshold: 0 });
 
   items.forEach(function(el){ io.observe(el); });
+})();
+
+
+/* メールアドレスは、集めて回るプログラムに拾われないよう、
+   読み込んだあとに組み立てて置く。JavaScript が動かないときは
+   「アットマーク」と書いた形のまま残る。 */
+(function(){
+  var list = document.querySelectorAll('.mail[data-m]');
+  if(!list.length) return;
+  [].slice.call(list).forEach(function(el){
+    var addr;
+    try { addr = atob(el.getAttribute('data-m')); } catch(e){ return; }
+    var a = document.createElement('a');
+    a.href = 'mail' + 'to:' + addr;
+    a.textContent = addr;
+    el.textContent = '';
+    el.appendChild(a);
+    el.removeAttribute('data-m');
+  });
 })();
