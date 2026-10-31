@@ -423,3 +423,8 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 .nav-ext .ext-i svg{width:12px;height:12px}
 .foot-ext a .ext-i svg{width:13px;height:13px}
 .site .more .ext-i svg{width:14px;height:14px}
+
+/* Instagram */
+.foot-ext a.ig{padding-left:14px}
+.ig-i{width:21px;height:21px;display:block;color:var(--ink-2)}
+.foot-ext a.ig:hover .ig-i{color:var(--ink-2)}
