@@ -352,3 +352,74 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
   .btn,.btn span,.gal img,.next a{transition:none}
   .btn:hover,.btn:hover span,.gal img:hover,.next a:hover{transform:none}
 }
+
+/* ───────── ほかのサイトへの入口 ───────── */
+.sites{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.site{display:flex;flex-direction:column;text-decoration:none;background:#fff;overflow:hidden;
+  border:1.5px solid #CFE3F3;border-radius:18px;
+  transition:transform .28s ease, box-shadow .28s ease, border-color .28s ease}
+.site img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;
+  transition:transform .5s cubic-bezier(.2,.7,.25,1)}
+.site .body{padding:22px 24px 26px}
+.site .lb{margin:0;font-family:"Outfit",sans-serif;font-weight:700;font-size:12.5px;
+  letter-spacing:.08em;color:var(--ink-2)}
+.site h3{font-weight:900;font-size:20px;margin:7px 0 8px}
+.site .dsc{margin:0;color:var(--ink-soft);font-size:14.5px}
+.site .more{margin:16px 0 0;display:flex;align-items:center;gap:8px;
+  font-size:14.5px;font-weight:700;color:var(--ink-2)}
+.site .more span{display:inline-block;transition:transform .25s ease}
+.site:hover{transform:translateY(-5px);border-color:var(--ink-2);box-shadow:0 16px 34px rgba(18,62,124,.12)}
+.site:hover img{transform:scale(1.045)}
+.site:hover .more span{transform:translate(4px,-4px)}
+.sites-sec{background:linear-gradient(180deg,#fff 0%,#F4FAFE 100%);padding-bottom:clamp(60px,6vw,100px)}
+@media(max-width:860px){ .sites{grid-template-columns:1fr;gap:18px} }
+
+/* ほかのサイトへのリンク。広い画面ではヘッダーの右に小さく常時出し、
+   狭い画面ではメニューの中に入れる。ヘッダーは貼りついているので、
+   ページのどこを見ていても押せる。 */
+.nav-ext{display:none}
+.nav-ext i{font-style:normal}
+@media(min-width:1040px){
+  .nav-links{gap:26px}
+  .nav-ext{display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
+    border:1.5px solid #CFE3F3;border-radius:999px;background:#F5FAFE;
+    padding:8px 14px;font-size:13.5px;font-weight:700;color:var(--ink-2);
+    transition:border-color .2s ease, background .2s ease, transform .2s ease}
+  .nav-ext i{display:none}
+  .nav-ext span{font-size:12px;transition:transform .2s ease}
+  .nav-links .nav-ext:first-of-type{margin-left:10px}
+  .nav-links .nav-ext + .nav-ext{margin-left:-18px}
+  .nav-ext:hover{border-color:var(--ink-2);background:#fff;transform:translateY(-1px)}
+  .nav-ext:hover span{transform:translate(2px,-2px)}
+}
+@media(max-width:860px){
+  .nav-ext{display:flex;align-items:center;gap:8px;background:#F4FAFE;color:var(--ink-2)!important}
+  .nav-ext span{margin-left:auto}
+}
+
+/* フッター */
+.foot-ttl{margin:0 0 14px;font-family:"Outfit",sans-serif;font-weight:700;
+  letter-spacing:.14em;font-size:12px;color:var(--ink-2)}
+.foot-ext{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px}
+.foot-ext a{display:inline-flex;align-items:center;gap:10px;background:#fff;color:var(--ink);
+  border:1.5px solid #CFE3F3;border-radius:999px;padding:10px 20px 10px 12px;
+  text-decoration:none;font-weight:700;font-size:14px;
+  transition:border-color .2s ease, transform .2s ease, box-shadow .2s ease}
+.foot-ext a img{width:28px;height:28px}
+.foot-ext a span{display:inline-block;color:var(--ink-2);transition:transform .25s ease}
+.foot-ext a:hover{border-color:var(--ink-2);transform:translateY(-2px);box-shadow:0 8px 18px rgba(18,62,124,.08)}
+.foot-ext a:hover span{transform:translate(3px,-3px)}
+@media(max-width:700px){ .foot-ext{gap:10px} .foot-ext a{width:100%} }
+
+@media(prefers-reduced-motion:reduce){
+  .site,.site img,.site .more span,.foot-ext a,.foot-ext a span{transition:none}
+  .site:hover,.site:hover img,.site:hover .more span,
+  .foot-ext a:hover,.foot-ext a:hover span{transform:none}
+}
+
+/* 外部リンクの矢印（フォントに無い文字を使わず、線で描く） */
+.ext-i{display:inline-flex;align-items:center;justify-content:center}
+.ext-i svg{width:1em;height:1em;display:block}
+.nav-ext .ext-i svg{width:12px;height:12px}
+.foot-ext a .ext-i svg{width:13px;height:13px}
+.site .more .ext-i svg{width:14px;height:14px}
