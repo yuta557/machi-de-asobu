@@ -483,3 +483,9 @@ figcaption{margin-top:12px;font-size:13px;color:var(--ink-soft);line-height:1.8}
 /* 書き出しの見出し部分 */
 .article-head .meta{margin-top:18px}
 .lede{font-size:clamp(15.5px,1.2vw,18px);line-height:2;color:var(--ink);font-weight:500}
+
+/* 本文の中のリンク */
+.col p a{color:var(--ink-2);text-decoration:underline;text-underline-offset:3px;
+  text-decoration-thickness:1.5px;text-decoration-color:#AFD2EC;
+  transition:text-decoration-color .2s ease}
+.col p a:hover{text-decoration-color:var(--ink-2)}
