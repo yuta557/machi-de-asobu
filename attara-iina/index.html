@@ -59,7 +59,8 @@ button{font:inherit;cursor:pointer;color:inherit}
 
 /* diorama */
 .scroller{overflow-x:auto;overflow-y:hidden;background:#f3efe9;-webkit-overflow-scrolling:touch}
-.scene{position:relative;min-width:1040px;max-width:1536px;margin:0 auto;aspect-ratio:1536/1024}
+/* 地図は、横幅いっぱいに全体を出す（切らない）。ページは、ふつうにスクロールしてフッターまで */
+.scene{position:relative;width:100%;min-width:1040px;margin:0 auto;aspect-ratio:1536/1024}
 #map,#mapNight{position:absolute;inset:0;width:100%;height:100%;display:block;max-width:none}
 #mapNight{opacity:0;transition:opacity 1.2s ease}
 body.night #mapNight{opacity:1}
@@ -235,14 +236,34 @@ canvas.wb{width:100%;height:210px;background:#fff;border:2px solid #cfc8c2;borde
 .fsx{width:36px;height:36px;border-radius:50%;border:2px solid #fff;background:transparent;color:#fff;font-size:18px;line-height:1;flex:none}
 .fsplay{flex:1;min-height:0;border-radius:0;padding:8px 10px;overflow:auto;gap:6px;background:transparent}
 .fsplay > *{flex-shrink:0}
-.fsplay{justify-content:safe center}
+/* 遊ぶ画面は上にそろえる：写真やボタンがふえても、遊ぶ画面の位置と高さが変わらないように */
+.fsplay{justify-content:flex-start;scrollbar-gutter:stable}
+.fsplay .ghud{flex-wrap:nowrap;min-height:24px;align-items:center}
+.fsplay .gtitle{flex:none}
+.fsplay .gstat{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;text-align:right}
 .fsplay .gstage:has(.gcv){width:min(100%, calc((100dvh - var(--reserve, 150px)) * var(--ar, 2)));margin:0 auto}
 /* よこ向きのスマホ：説明と重ねての題をかくして、ゲームを大きく */
 @media (orientation:landscape) and (max-height:520px){.gamefs{--reserve:96px}.fsbar{padding:2px 8px 2px 12px;font-size:13px}.fsx{width:30px;height:30px;font-size:15px}.fsplay{padding:4px 10px;gap:4px}.fsplay .ghelp,.fsplay .gtitle{display:none}.fsplay .ghud{justify-content:center}.fsplay .gctl .btn{padding:5px 14px}.fsplay .tools{gap:4px;flex-direction:row;flex-wrap:wrap;justify-content:center}.fsplay .tools .btn{padding:4px 10px}.fsplay .tools .sw{width:24px;height:24px}}
 .fsplay .gtitle{font-size:14px}
 .fsplay .ghelp{text-align:center;font-size:12px}
 .fsplay .gctl{justify-content:center}
-.gamefs .gcard{padding:8px 12px;gap:6px} .gamefs .gcard h5{font-size:15px} .gamefs .gcard p{font-size:12px}
+/* 生き物クイズの答え：文字を小さめにして、1行におさめる（入らないときは、ボタンごと次の行へ） */
+.foldbtn{display:block;margin:8px auto 0;font-size:13px} .foldbtn[hidden]{display:none}
+.rqz{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.rqz .qopt{white-space:nowrap;font-size:14px;padding:8px 14px;margin:0}
+/* パソコンの窓の中：ゲームの画面が、スクロールなしで窓の高さに入るように */
+.sheet .gstage:has(.gcv){width:min(100%, calc((100dvh - 290px) * var(--ar, 2)));margin:0 auto}
+.gover{container-type:size}
+/* クイズや用紙のカードは、ゲームの画面に入るように、横に広く、文字は小さめに */
+.gcard:has(.qopt),.gcard:has(.fopt),.gcard:has(.qnext){max-width:100%;width:100%;padding:8px 14px;gap:3px}
+.gcard:has(.qopt) h5,.gcard:has(.fopt) h5,.gcard:has(.qnext) h5{font-size:16px}
+.gcard:has(.qopt) p,.gcard:has(.fopt) p,.gcard:has(.qnext) p{font-size:12.5px;line-height:1.5}
+.gcard .fopt{font-size:12.5px;padding:3px 10px;margin:2px!important}
+.gcard .coinimg{width:72px;height:72px} .gamefs .gcard{max-height:calc(100% - 12px);overflow-y:auto}
+/* 全画面のカード：スマホ（せまい・低い画面）は小さく、パソコンの大きな画面では大きく */
+@media (max-width:900px),(max-height:520px){ .gamefs .gcard{padding:8px 12px;gap:6px} .gamefs .gcard h5{font-size:15px} .gamefs .gcard p{font-size:12px} .gamefs .gcard .coinimg{width:52px;height:52px} }
+@media (min-width:1100px) and (min-height:640px){ .gamefs .gcard{max-width:min(92%,620px);padding:24px 34px;gap:12px;border-width:4px;border-radius:22px}
+  .gamefs .gcard h5{font-size:30px} .gamefs .gcard p{font-size:18px} .gamefs .gcard .coinimg{width:120px;height:120px} .gamefs .gcard .btn{font-size:19px;padding:12px 30px} }
 .fsbar{position:relative;z-index:3}
 /* 全画面のゲーム中は、文字の選択・長おしのメニュー・拡大レンズ・2回タップの拡大を出さない */
 .gamefs,.gamefs *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
@@ -356,9 +377,9 @@ html.modal-open,html.modal-open body{overflow:hidden;overscroll-behavior:none}
 
 <div class="scroller" id="scroller">
   <div class="scene" id="sceneWrap">
-    <img id="map" src="town.webp" width="1536" height="1024" alt="山と川と海にかこまれた、宇治をイメージしたまちのイラスト。9つのアイデアが置かれている">
-    <img id="mapNight" src="town-night.webp" width="1536" height="1024" alt="" aria-hidden="true" loading="lazy">
-    <svg id="mapOverlay" viewBox="0 0 1536 1024" aria-hidden="true">
+    <img id="map" src="town-wide-day.webp" width="1915" height="821" alt="山と川と海にかこまれた、宇治をイメージしたまちのイラスト。9つのアイデアが置かれている">
+    <img id="mapNight" src="town-wide-night.webp" width="1915" height="821" alt="" aria-hidden="true" loading="lazy">
+    <svg id="mapOverlay" viewBox="0 0 1915 821" aria-hidden="true">
       <g id="leaders"></g>
       <g id="lights" class="lights-g"></g>
       <g id="critter" class="critter-g"></g>
@@ -395,28 +416,28 @@ html.modal-open,html.modal-open body{overflow:hidden;overscroll-behavior:none}
 <script>
 /* ---------------- data ---------------- */
 const IDEAS = [
-  {id:'wall', pic:[1255,255,218,'idea-pics5.webp',1536,1024], pos:[470,232], card:[640,108], wish:'学校のかべが<br>ぜんぶホワイトボードに<br>なったらいいな', label:'ホワイトボードの学校', c:'#2f9a48', a:[3.4,2.4,5.6], name:'学校のかべが全面ホワイトボード', short:'学校のかべに、どこでも絵がかける！', place:'学校',
+  {id:'wall', pic:[1255,255,218,'idea-pics5.webp',1536,1024], pos:[720,215], card:[560,75], wish:'学校のかべが<br>ぜんぶホワイトボードに<br>なったらいいな', label:'ホワイトボードの学校', c:'#2f9a48', a:[3.4,2.4,5.6], name:'学校のかべが全面ホワイトボード', short:'学校のかべに、どこでも絵がかける！', place:'学校',
    what:'絵をどこでもかける。', how:'学校に行く。', who:'自分・絵が大好きな人', nick:'まっちゃん'},
-  {id:'glass', pic:[288,255,218,'idea-pics5.webp',1536,1024], pos:[564,562], card:[660,700], wish:'ゆかがガラスで<br>下の道路が見える<br>歩道橋があったらいいな', label:'ガラスの歩道橋', c:'#6c9a12', a:[6,6.1,2.3], name:'ガラスの歩道橋', tmpName:true, short:'足の下に道路が見える歩道橋。', place:'通学路',
+  {id:'glass', pic:[288,255,218,'idea-pics5.webp',1536,1024], pos:[820,468], card:[690,705], wish:'ゆかがガラスで<br>下の道路が見える<br>歩道橋があったらいいな', label:'ガラスの歩道橋', c:'#6c9a12', a:[6,6.1,2.3], name:'ガラスの歩道橋', tmpName:true, short:'足の下に道路が見える歩道橋。', place:'通学路',
    what:'横断歩道を歩道橋にして、ゆかにガラスをはる。', how:'下の道路が見える。', who:'わたる人が楽しい、おもしろい', nick:'りさ'},
-  {id:'game', pic:[440,694,176,'idea-pics2.jpg',1675,939], pos:[248,530], card:[180,372], wish:'宇治茶を使った育成<br>ゲームがバス停で<br>できたらいいな', label:'まちゲーム', c:'#2e7fd0', a:[15.2,3.4,3.4], name:'まちゲーム', short:'バスを待つあいだに、宇治茶を使ってうさぎを育てよう。', place:'駅やバス停', badge:'また来て',
+  {id:'game', pic:[440,694,176,'idea-pics2.jpg',1675,939], pos:[550,460], card:[235,425], wish:'宇治茶を使った育成<br>ゲームがバス停で<br>できたらいいな', label:'まちゲーム', c:'#2e7fd0', a:[15.2,3.4,3.4], name:'まちゲーム', short:'バスを待つあいだに、宇治茶を使ってうさぎを育てよう。', place:'駅やバス停', badge:'また来て',
    what:'待っている間も楽しめるように、その地域で有名なものを使ったゲームのQRコードをはる。',
    how:'宇治茶の場合は、お茶を使った育成ゲームをして、また来たときに読み取るとスペシャルアイテムをゲットできる。',
    who:'観光で来た人がそのゲームをしてくれると、その地域について知ってもらえて、地域の方々も嬉しくなる。', nick:'りっちゃん'},
-  {id:'ar', pic:[623,614,562,'idea-ar.webp',1254,1254], pos:[752,330], card:[1000,190], wish:'メガネをかけると<br>小動物が手つづきを<br>教えてくれたらいいな', label:'AR市役所City', c:'#e4362b', a:[13.4,7.6,3.6], name:'AR市役所City', short:'メガネをかけると、小動物が手つづきを教えてくれる。', place:'市役所の前', badge:'メガネ',
+  {id:'ar', pic:[623,614,562,'idea-ar.webp',1254,1254], pos:[950,295], card:[1000,75], wish:'メガネをかけると<br>小動物が手つづきを<br>教えてくれたらいいな', label:'AR市役所City', c:'#e4362b', a:[13.4,7.6,3.6], name:'AR市役所City', short:'メガネをかけると、小動物が手つづきを教えてくれる。', place:'市役所の前', badge:'メガネ',
    what:'メガネ的なものをつけると、かわいい小動物が表れ、手つづき等のやり方を教えてくれるもの。（ミニゲームも）',
    how:'メガネをつけることで、会うことができる。', who:'子供、市役所になれていない人', nick:'Periodic table 大スキな人'},
-  {id:'night', pic:[1252,740,218,'idea-pics5.webp',1536,1024], pos:[470,563], card:[230,650], wish:'夜の歩道に<br>光る石がうまっていたら<br>いいな', label:'光る石の夜道', c:'#7d55c7', a:[6.2,15.2,1], name:'夜の暗い道も楽しく!!', short:'夜になると、歩道にうめた石が光る。', place:'夜の歩道、街道の下', badge:'夜',
+  {id:'night', pic:[1252,740,218,'idea-pics5.webp',1536,1024], pos:[660,470], card:[250,588], wish:'夜の歩道に<br>光る石がうまっていたら<br>いいな', label:'光る石の夜道', c:'#7d55c7', a:[6.2,15.2,1], name:'夜の暗い道も楽しく!!', short:'夜になると、歩道にうめた石が光る。', place:'夜の歩道、街道の下', badge:'夜',
    what:'夜の暗い道でも怖くないような道にするために、道の中に夜になったら光る石を埋めこむ。',
    how:'上を歩いてみたり、写真を撮ったりすると、とても楽しい。', who:'仕事帰りでヘトヘトの人や部活帰りの人、遊んで帰ってくる人', nick:'ゆうな'},
-  {id:'stairs', pic:[292,740,218,'idea-pics5.webp',1536,1024], pos:[1270,263], card:[1360,112], wish:'ふむと音がなる<br>かいだんが<br>あったらいいな', label:'音のかいだん', c:'#ee7a1c', a:[12.6,14.8,2.6], name:'かいだんをふんだらおとがなる', short:'ふむと、ドレミの曲ができるかいだん。', place:'かいだん', badge:'音',
+  {id:'stairs', pic:[292,740,218,'idea-pics5.webp',1536,1024], pos:[1330,232], card:[1450,75], wish:'ふむと音がなる<br>かいだんが<br>あったらいいな', label:'音のかいだん', c:'#ee7a1c', a:[12.6,14.8,2.6], name:'かいだんをふんだらおとがなる', short:'ふむと、ドレミの曲ができるかいだん。', place:'かいだん', badge:'音',
    what:'ふんだら曲ができる。', how:'ふんであそぶ。', who:'みんな', nick:'はるの'},
-  {id:'river', pic:[772,740,218,'idea-pics5.webp',1536,1024], pos:[905,712], card:[1080,885], wish:'堤防で見つけた生き物を<br>みんなで見せあえたら<br>いいな', label:'生き物交流', c:'#14958a', a:[16.6,13.3,1.8], name:'植物、生き物交流', short:'堤防で見つけた生き物を、みんなでシェア。', place:'茶づなの近くの堤防',
+  {id:'river', pic:[772,740,218,'idea-pics5.webp',1536,1024], pos:[1060,580], card:[1175,740], wish:'堤防で見つけた生き物を<br>みんなで見せあえたら<br>いいな', label:'生き物交流', c:'#14958a', a:[16.6,13.3,1.8], name:'植物、生き物交流', short:'堤防で見つけた生き物を、みんなでシェア。', place:'茶づなの近くの堤防',
    what:'堤防で見つけた様々なものを交流し合う。',
    how:'スマホでQRコードを読みこんで、サイトに写真をのせたり、クイズを出したりする。', who:'植物や生き物が好きな人', nick:'しおり'},
-  {id:'badminton', pic:[772,250,218,'idea-pics5.webp',1536,1024], pos:[1408,618], card:[1385,705], wish:'雲みたいな部屋で<br>バドミントンが<br>できたらいいな', label:'雲でバドミントン', c:'#2a9fd3', a:[-0.5,6.4,7.4], name:'雲の上でバドミントン', short:'雲みたいな部屋で、ふわふわ試合。', place:'雲みたいにした部屋',
+  {id:'badminton', pic:[772,250,218,'idea-pics5.webp',1536,1024], pos:[1425,485], card:[1690,640], wish:'雲みたいな部屋で<br>バドミントンが<br>できたらいいな', label:'雲でバドミントン', c:'#2a9fd3', a:[-0.5,6.4,7.4], name:'雲の上でバドミントン', short:'雲みたいな部屋で、ふわふわ試合。', place:'雲みたいにした部屋',
    what:'部屋に入ったらバドミントンの試合ができる。', how:'', who:'みんな', nick:'さくらこ'},
-  {id:'cloud', pic:[624,620,576,'idea-cloud.webp',1254,1254], pos:[1496,292], card:[1360,410], wish:'くもの上で<br>音楽にあわせて<br>おにごっこできたらいいな', label:'くもの上おにごっこ', c:'#d4417f', a:[13.6,-0.6,8.4], name:'くもの上でおにごっこしながら音楽がながれる', short:'くもの上で、音楽にあわせておにごっこ。', place:'くもの上', badge:'音',
+  {id:'cloud', pic:[624,620,576,'idea-cloud.webp',1254,1254], pos:[395,212], card:[235,250], wish:'くもの上で<br>音楽にあわせて<br>おにごっこできたらいいな', label:'くもの上おにごっこ', c:'#d4417f', a:[13.6,-0.6,8.4], name:'くもの上でおにごっこしながら音楽がながれる', short:'くもの上で、音楽にあわせておにごっこ。', place:'くもの上', badge:'音',
    what:'', how:'', who:'', nick:'ひなの'},
 ];
 
@@ -531,13 +552,6 @@ function drawCritter(sx, sy, parent){
   const t = el('text', {x:sx-50, y:sy-61, 'text-anchor':'middle','font-family':'Zen Maru Gothic, sans-serif','font-weight':900,'font-size':13, fill:'#2e7fd0'}, g); t.textContent = 'こっちだよ！';
 }
 /* ---------------- the illustrated town: night lights + glasses creature ---------------- */
-drawCritter(706, 392, $('#critter'));
-// 光る石：駅前から歩道橋へつづく大通りの歩道
-for (let k = 0; k <= 22; k++){
-  const x = 300 + k * 19, y = 500 + (x - 390) * .53 + 20 + (k % 2 ? 3 : -3);
-  el('circle', {cx:x, cy:y, r:14, fill:'#ffe680', opacity:.6, filter:'url(#soft)'}, lights);
-  el('circle', {cx:x, cy:y, r:3.4, fill:'#fff7c2'}, lights);
-}
 
 /* ---------------- round pictures ---------------- */
 // 丸い絵：描いてもらった絵があればその丸を、なければまちのイラストのその場所を切り抜いて見せる
@@ -549,22 +563,48 @@ function picOf(i){
 }
 
 /* ---------------- spots on the map ---------------- */
+// 地図は2しゅるい：今までの地図（1536×1024）と、横長の地図（1915×821）。地図を出すところの形に近いほうを使い、
+// はみ出したところは切って、画面いっぱいに出す。切られたほうのカードは、見えるところへずらす
 const bubbles = $('#bubbles');
-IDEAS.forEach(i => {
-  const [sx, sy] = i.pos;
-  const spot = document.createElement('span'); spot.className = 'spot'; spot.style.setProperty('--c', i.c);
-  spot.style.left = (sx / 1536 * 100) + '%'; spot.style.top = (sy / 1024 * 100) + '%'; bubbles.appendChild(spot);
-  const [cx, cy] = i.card;
-  el('line', {x1:cx, y1:cy, x2:sx, y2:sy, stroke:i.c, 'stroke-width':2.4, 'stroke-linecap':'round'}, $('#leaders'));
-  const b = document.createElement('button'); b.className = 'idea'; b.style.setProperty('--c', i.c);
-  b.style.left = (cx / 1536 * 100) + '%'; b.style.top = (cy / 1024 * 100) + '%';
-  const ps = picOf(i); b.style.setProperty('--img', ps.img); b.style.setProperty('--imgN', ps.imgN); const picStyle = ps.style;
-  b.setAttribute('aria-label', `${i.name}（${i.place}）を開く`);
-  b.innerHTML = `<span class="pic" style="${picStyle}"></span><span class="w">${i.wish}</span><span class="plus" aria-hidden="true"></span>`;
-  b.onclick = () => open(i.id); bubbles.appendChild(b);
-  const k = IDEAS.indexOf(i); spot.style.setProperty('--k', k); b.style.setProperty('--k', k);
-  const ln = $('#leaders').lastElementChild; ln.style.setProperty('--k', k); ln.style.setProperty('--len', Math.ceil(Math.hypot(cx - sx, cy - sy)) + 'px');
-});
+const MAPS = {
+  old: { w: 1536, h: 1024, day: 'town.webp', night: 'town-night.webp', critter: [706, 392], light: k => { const x = 300 + k * 19; return [x, 500 + (x - 390) * .53 + 20 + (k % 2 ? 3 : -3)]; },
+    at: { wall: [[470, 232], [640, 108]], glass: [[564, 562], [660, 700]], game: [[248, 530], [180, 372]], ar: [[752, 330], [1000, 190]], night: [[470, 563], [230, 650]],
+      stairs: [[1270, 263], [1360, 112]], river: [[905, 712], [1080, 885]], badminton: [[1408, 618], [1385, 705]], cloud: [[1496, 292], [1300, 410]] } },
+  wide: { w: 1915, h: 821, day: 'town-wide-day.webp', night: 'town-wide-night.webp', critter: [905, 352], light: k => { const x = 520 + k * 11; return [x, 418 + (x - 520) * .4 + (k % 2 ? 2 : -2)]; },
+    at: Object.fromEntries(IDEAS.map(i => [i.id, [i.pos, i.card]])) },
+};
+let mapMode = null, mapCards = [];
+function buildMap(mode){
+  const M = MAPS[mode]; mapMode = mode;
+  $('#map').src = M.day; $('#map').width = M.w; $('#map').height = M.h; $('#mapNight').src = M.night; $('#mapNight').width = M.w; $('#mapNight').height = M.h;
+  $('#mapOverlay').setAttribute('viewBox', `0 0 ${M.w} ${M.h}`);
+  ['#leaders', '#lights', '#critter'].forEach(q => $(q).innerHTML = ''); bubbles.querySelectorAll('.spot,.idea').forEach(e => e.remove());
+  drawCritter(...M.critter, $('#critter'));
+  for (let k = 0; k <= 22; k++){ const [x, y] = M.light(k);  // 光る石：駅前から歩道橋へつづく大通りの歩道
+    el('circle', {cx:x, cy:y, r:14, fill:'#ffe680', opacity:.6, filter:'url(#soft)'}, lights); el('circle', {cx:x, cy:y, r:3.4, fill:'#fff7c2'}, lights); }
+  mapCards = IDEAS.map((i, k) => {
+    const [[sx, sy], [cx, cy]] = M.at[i.id];
+    const spot = document.createElement('span'); spot.className = 'spot'; spot.style.setProperty('--c', i.c);
+    spot.style.left = (sx / M.w * 100) + '%'; spot.style.top = (sy / M.h * 100) + '%'; bubbles.appendChild(spot);
+    const line = el('line', {x1:cx, y1:cy, x2:sx, y2:sy, stroke:i.c, 'stroke-width':2.4, 'stroke-linecap':'round'}, $('#leaders'));
+    const b = document.createElement('button'); b.className = 'idea'; b.style.setProperty('--c', i.c);
+    const ps = picOf(i); b.style.setProperty('--img', ps.img); b.style.setProperty('--imgN', ps.imgN);
+    b.setAttribute('aria-label', `${i.name}（${i.place}）を開く`);
+    b.innerHTML = `<span class="pic" style="${ps.style}"></span><span class="w">${i.wish}</span><span class="plus" aria-hidden="true"></span>`;
+    b.onclick = () => open(i.id); bubbles.appendChild(b);
+    spot.style.setProperty('--k', k); b.style.setProperty('--k', k); line.style.setProperty('--k', k); line.style.setProperty('--len', Math.ceil(Math.hypot(cx - sx, cy - sy)) + 'px');
+    return { id: i.id, b, line, cx, cy, sx, sy };
+  });
+}
+function layoutMap(){
+  if (!$('#scroller').offsetWidth) return; // せまい画面（地図を出さない）
+  // 画面が横に長いとき・とても広いときは、横長の地図。それ以外は、今までの地図
+  const mode = innerWidth / innerHeight > 1.87 || innerWidth > 1536 ? 'wide' : 'old'; if (mode !== mapMode) buildMap(mode);
+  const M = MAPS[mode]; $('#sceneWrap').style.aspectRatio = `${M.w} / ${M.h}`;
+  mapCards.forEach(c => { c.b.style.left = (c.cx / M.w * 100) + '%'; c.b.style.top = (c.cy / M.h * 100) + '%'; c.line.setAttribute('x1', c.cx); c.line.setAttribute('y1', c.cy); });
+}
+layoutMap(); layoutMap(); // 2回目は、カードの大きさが決まってから
+addEventListener('resize', layoutMap); if (window.ResizeObserver) new ResizeObserver(() => layoutMap()).observe($('#scroller'));
 
 /* ---------------- narrow: one round picture per idea, stacked along a dotted path ---------------- */
 ['badminton','wall','glass','game','ar','night','stairs','river','cloud'].forEach(id => {
@@ -588,9 +628,9 @@ IDEAS.forEach(i => {
   // 指のマーク：広い画面は「学校のかべ」の吹き出しの下、せまい画面は1つ目の絵の上
   function showHint(){ if (done) return;
     hint = document.createElement('div'); hint.className = 'tapme'; hint.innerHTML = '<svg class="hand" viewBox="0 0 40 48" aria-hidden="true"><path d="M15 4c2.2 0 4 1.8 4 4v13l1-.2c.3-2 2-3.4 4-3.2 1.6.2 2.9 1.4 3.3 3l.5-.1c.9-1.4 2.6-2.1 4.2-1.6 1.6.5 2.6 2 2.5 3.7l-.6 9.4c-.4 6-5.4 10.8-11.5 10.8h-1.8c-3.9 0-7.5-2.1-9.4-5.5L4.8 29.6c-1-1.8-.5-4.1 1.2-5.2 1.6-1 3.7-.7 4.9.8L11 26V8c0-2.2 1.8-4 4-4z" fill="#fff" stroke="#3a3330" stroke-width="2.4" stroke-linejoin="round"/><path d="M19 21v8M24 21v8M29 22v7" stroke="#3a3330" stroke-width="1.8" stroke-linecap="round" opacity=".5"/></svg><span class="say">おしてみてね！</span>';
-    if (wide()){ const c = IDEAS[0].card; hint.style.left = (c[0] / 1536 * 100) + '%'; hint.style.top = ((c[1] + 58) / 1024 * 100) + '%'; bubbles.appendChild(hint); }
+    if (wide()){ const b = mapCards[0].b; hint.style.left = b.style.left; hint.style.top = `calc(${b.style.top} + ${b.offsetHeight / 2 + 6}px)`; bubbles.appendChild(hint); }
     else { const a = $('#spAreas .area'); if (!a) return; hint.style.left = '50%'; hint.style.top = '30%'; a.appendChild(hint); } }
-  setTimeout(showHint, calm ? 300 : 1700);
+  // 「おしてみてね！」の指マークは出さない（showHint は使わない）
   // どこかにさわったら（キーをおしても）おわり。さわらなくても、しばらくしたら消える
   ['pointerdown', 'keydown', 'wheel'].forEach(k => addEventListener(k, finish, { once: true, passive: true }));
   setTimeout(finish, 9000);
@@ -789,7 +829,7 @@ const HUD_SCORE = {"w":346,"h":55,"blue":[126.0,27.5,20.5,[64,151,220]],"red":[2
 const hudOk = k => HUD_IMG[k].complete && HUD_IMG[k].naturalWidth > 0;
 const COIN_SILVER = new Image(); COIN_SILVER.src = 'badminton-coin-silver.png';
 const COIN_GOLD = new Image(); COIN_GOLD.src = 'badminton-coin-gold.png';
-const COIN_TAG = k => `<p style="margin:2px 0 6px"><img src="badminton-coin-${k}.png" alt="" style="width:72px;height:72px;display:block;margin:0 auto 2px"><b style="color:${k === 'gold' ? '#d39b1f' : '#7d8ea3'}">${k === 'gold' ? '金' : '銀'}のシャトルコイン</b>をゲット！</p>`;
+const COIN_TAG = k => `<p style="margin:2px 0 6px"><img src="badminton-coin-${k}.png" alt="" class="coinimg" style="display:block;margin:0 auto 2px"><b style="color:${k === 'gold' ? '#d39b1f' : '#7d8ea3'}">${k === 'gold' ? '金' : '銀'}のシャトルコイン</b>をゲット！</p>`;
 GAMES.badminton = root => {
   const g = shell(root, '雲の部屋で、5点先取の試合', '指を左右に動かして移動。ジャンプは、上にスワイプ・2回タップ・ジャンプボタン（パソコンはクリックかスペース）。高いところで当てるとスマッシュ！ ネットの近くで打つとドロップショット。勝つと、次のステージへ。');
   const { ctx, W, H, cv, pt } = mkCanvas(g.stage, 640, 340);
@@ -811,9 +851,11 @@ GAMES.badminton = root => {
   // ステージ3のあとは「チャレンジ」が3つ。速さだけを上げると、相手も追いつけなくなってつまらないので、
   // シャトルの数をふやして、そのぶんゆっくりにする。チャレンジ3をクリアしたら「完全制覇」で、金のコイン
   const LAST = STAGES.length - 1, CSKY = [['#cfd6f2', '#eef1fb'], ['#d8f0e4', '#f3fbf6'], ['#fde2e8', '#fff5f7'], ['#e9e3d6', '#faf7f0']];
-  const CHALLENGES = [{ balls: 2, speed: 1.35 }, { balls: 3, speed: .9 }, { balls: 4, speed: .85 }];
+  // チャレンジ1：シャトル1こで、相手は最大限強い（お試し）／チャレンジ2：シャトル2こ／チャレンジ3：シャトル4こ
+  const CHALLENGES = [{ balls: 1, speed: 1.45, max: true }, { balls: 2, speed: 1.35 }, { balls: 4, speed: .85 }];
   const challengePlan = n => CHALLENGES[Math.min(n, CHALLENGES.length) - 1];
   function stageDef(k){ if (k <= LAST) return STAGES[k]; const n = k - LAST, c = challengePlan(n);
+    if (c.max) return { name: `チャレンジ${n}　シャトル1こ・最強の相手`, speed: c.speed, cpu: 1.95, balls: 1, miss: .05, whiff: 0, smash: 1, chain: 1, guard: true, kaeshi: .6, sky: CSKY[(n - 1) % CSKY.length] };
     return { name: `チャレンジ${n}　シャトル${c.balls}こ${c.speed < 1 ? '・ゆっくり' : ''}`, speed: c.speed,
       // 相手は、シャトルが多いほど・速いほど、それに負けないくらい動けるようにする
       cpu: Math.max(1.3, c.speed * 1.15) + (c.balls - 2) * .15, balls: c.balls, miss: Math.max(.12, .22 - .02 * n), whiff: .02,
@@ -852,6 +894,14 @@ GAMES.badminton = root => {
     if (state !== 'play' || paused) return;
     if (p.y === 0 && p.vy <= 0){ p.vy = JUMP_V * ST().speed; // 速いステージでは、ジャンプも同じ高さのまま速くなる
       soft(523, .12, .08); soft(784, .12, .06); puffs.push({ x: p.x, a: 1 }); dent(p.x, -.6); return; }
+    // 空中でもう一度おすと、急降下
+    dive(p);
+  }
+  // 急降下：スマッシュのあと、スマッシュ返しに間に合うように、すとんと地面にもどる（自分も相手も同じ）
+  function dive(p){
+    if (state !== 'play' || paused || p.y <= 12 || p.dive) return;
+    p.dive = true; p.vy = Math.min(p.vy, -170 * ST().speed);
+    soft(880, .06, .05); soft(587, .1, .05); pops.push({ x: p.x, y: racketY(p) - 46, a: .8, txt: 'すとん！', c: p === me ? '#2e7fd0' : '#e4362b', size: 14 });
   }
   // ネットには近づきすぎない（タッチネットは反則）
   const MARGIN = 46;
@@ -879,12 +929,13 @@ GAMES.badminton = root => {
   onKey((e, d) => {
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight'){ keys[e.key] = d; e.preventDefault(); }
     if ((e.key === ' ' || e.key === 'ArrowUp') && d && !e.repeat){ e.preventDefault(); jump(me); }
+    if (e.key === 'ArrowDown' && d && !e.repeat){ e.preventDefault(); dive(me); }
     if ((e.key === 'p' || e.key === 'P') && d && !e.repeat && state === 'play'){ paused = !paused; Object.keys(keys).forEach(k => keys[k] = false); }
   });
   function hit(p, dir){
     const incoming = (sh.smash || sh.fast) && sh.by === -dir; // 相手のスマッシュを打ち返すところ
     // スマッシュ返し：スマッシュを、ジャンプしながら受けたとき（地面で受けたらブロック）。ネットすれすれの速い球で打ち返す。あなたも、相手も同じルール
-    if (incoming && p.y > 0){ const d = counterShot(dir); if (d){
+    if (incoming && p.y > 0 && !p.airBlock){ const d = counterShot(dir); if (d){
       sh.vx = d[0]; sh.vy = d[1]; sh.smash = false; sh.fast = true; sh.by = dir; sh.serve = false; sh.read = false;
       if (dir > 0){ // あなたのスマッシュ返し：相手は、スマッシュを受けたときと同じように、ミスしたり、さらにスマッシュ返ししたりする
         sh.cpuMiss = Math.random() < ST().miss; sh.cpuSmash = false; sh.cpuJumpMiss = false; sh.cpuKaeshi = !sh.cpuMiss && Math.random() < ST().kaeshi;
@@ -895,7 +946,7 @@ GAMES.badminton = root => {
     const offServe = dir > 0 && sh.serve && sh.by === -1; sh.serve = false; // 相手のサーブを、そのまま打ち返すところ
     // スマッシュ：当てたところから、まっすぐ飛ぶ（途中で向きは変わらない）。
     // ネットをこえてまっすぐ届く着地点のはんいを出して、はばがあるときは、うける人がいないところをねらう
-    let smash = p.y > SMASH_H && sh.y < NETTOP - 20, land = 0;
+    let smash = p.y > SMASH_H && sh.y < NETTOP - 20 && !p.airBlock, land = 0; // 空中ブロックは、スマッシュにしない
     if (smash){
       const dxn = Math.abs(NET - sh.x), dyn = NETTOP - 14 - sh.y, far = dir > 0 ? W - 36 - sh.x : sh.x - 36;
       const lo = Math.max(dxn + 50, dyn > 4 ? (FLOOR - 4 - sh.y) * dxn / dyn + 10 : Infinity);
@@ -996,10 +1047,12 @@ GAMES.badminton = root => {
       if (keys.ArrowLeft) target = clamp(target - 320 * mv * dt, 24, NET - MARGIN);
       if (keys.ArrowRight) target = clamp(target + 320 * mv * dt, 24, NET - MARGIN);
       me.x = clamp(me.x + clamp(target - me.x, -380 * mv * dt, 380 * mv * dt), 24, NET - MARGIN);
+      // 相手の急降下：空中にいるときに、速い球が自分より下を通りそうなら、すとんと落ちる（スマッシュ返しをねらう球はのぞく）
+      if (cpu.y > 12 && !cpu.dive && shs.some(s => s.by === 1 && (s.fast || s.smash) && s.vx > 0 && !s.cpuKaeshi && s.y > racketY(cpu) + 30)) dive(cpu);
       [me, cpu].forEach(p => {
         if (p.y > 0 || p.vy > 0){ p.vy -= JUMP_G * spd * spd * dt; p.y = Math.min(p.y + p.vy * dt, 210);
-          if (p.y <= 0){ const hitV = -p.vy; p.y = 0; p.dj = false; dent(p.x, Math.min(1.2, hitV / 380)); puffs.push({ x: p.x, a: .8 });
-            p.vy = hitV > 200 ? hitV * .2 : 0; if (p.vy > 0) p.y = .1; } }
+          if (p.y <= 0){ const hitV = -p.vy, dove = p.dive; p.y = 0; p.dj = false; p.dive = false; dent(p.x, Math.min(1.2, hitV / 380)); puffs.push({ x: p.x, a: .8 });
+            p.vy = !dove && hitV > 200 ? hitV * .2 : 0; if (p.vy > 0) p.y = .1; } }
         p.swing = Math.max(0, p.swing - dt); if (p.act) p.act.t += dt; });
       // 相手：スマッシュをねらうときは、少し高いところで合わせにいく
       // 相手：打たれた瞬間に落ちるところへ歩きだす。ゆっくり加速・減速して、打ったあとは歩いて真ん中へもどる
@@ -1050,12 +1103,15 @@ GAMES.badminton = root => {
         if (sh.x < WALL || sh.x > W - WALL){ const L = sh.x < WALL, strong = Math.abs(sh.vx) > 60; sh.x = L ? WALL : W - WALL; sh.vx = (L ? 1 : -1) * Math.min(70, Math.abs(sh.vx) * .3); sh.smash = false;
           if (sh.vy > 0) sh.vy *= .35; if (strong){ burst(sh.x, sh.y, 6); soft(660, .1, .06); pops.push({ x: sh.x + (L ? 34 : -34), y: sh.y - 10, a: .9, txt: 'ぽよん', c: '#2e7fd0', size: 13 }); } }
         if (sh.by !== 1 && sh.x < NET && (sh.vx < 80 || sh.x < 120) && near(me)) hit(me, 1);
+        else if (sh.by === -1 && sh.fast && sh.x < NET && me.y > 0 && Math.abs(sh.x - me.x) < 34 && sh.y > racketY(me) + 20 && sh.y < racketY(me) + 64){ me.airBlock = true; hit(me, 1); me.airBlock = false; }
         else if (sh.by !== -1 && sh.x > NET && (sh.vx > -80 || sh.x > W - 120) && !sh.whiff && (near(cpu) || (cpu.y > 0 && Math.abs(sh.x - cpu.x) < 60 && sh.y > racketY(cpu) - 50 && sh.y < racketY(cpu) + 40)
           // シャトルが2こ以上のステージでは、ふつうの球（スマッシュでない）は、少し遠くまでとどく
           || (ST().balls > 1 && !sh.smash && !sh.fast && sh.vy > 0 && Math.abs(sh.x - cpu.x) < 62 && Math.abs(sh.y - racketY(cpu)) < 36))){
           if (sh.cpuMiss || (cpu.y > 0 && sh.cpuJumpMiss)){ sh.whiff = true; cpu.swing = .25; pops.push({ x: cpu.x, y: racketY(cpu) - 30, a: 1, txt: sh.cpuMiss ? 'はやくて、とれない！' : 'ミス！', c: '#7a8aa0', size: 16 }); soft(330, .12, .07); }
           else hit(cpu, -1);
         }
+        // 相手の空中ブロック（自分と同じルール）
+        else if (sh.by === 1 && sh.fast && sh.x > NET && cpu.y > 0 && !sh.whiff && !sh.cpuMiss && Math.abs(sh.x - cpu.x) < 34 && sh.y > racketY(cpu) + 20 && sh.y < racketY(cpu) + 64){ cpu.airBlock = true; hit(cpu, -1); cpu.airBlock = false; }
         if (sh.y >= FLOOR - 4){ point(sh.x < NET ? 0 : 1); break; }
       }
       g.stat(`ラリー ${rally}　スマッシュ <b>${smashes}</b>`);
@@ -1068,7 +1124,7 @@ GAMES.badminton = root => {
     draw();
   });
   // クリアの演出（POCHÉ RUN と同じノリ）：白い光 → 光の輪が広がる → きらきらがはじける → 大きな「クリア！」
-  const clearDur = () => stage === FINAL ? 4 : 3.6; // コインが落ちてくるぶん長め
+  const clearDur = () => stage === FINAL ? 4 : stage === LAST ? 3.6 : 2.9; // コインが落ちてくるときは長め
   function startClear(){ state = 'clear'; clearT = 0; const X = me.x, Y = SY(floorAt(me.x) - me.y - 40), bits2 = [];
     for (let i = 0; i < 46; i++){ const an = Math.PI * 2 * i / 46 + Math.random() * .5, sp = 32 * (1.6 + Math.random() * 2.6);
       bits2.push({ a: an, vx: Math.cos(an) * sp, vy: Math.sin(an) * sp - 20, r: 32 * (.1 + Math.random() * .13), sp: Math.random() * .35, c: ['#FFC53D', '#7FD8FF', '#FFFFFF', '#F4795B'][i % 4], star: i % 3 === 0 }); }
@@ -1078,12 +1134,12 @@ GAMES.badminton = root => {
   function end(){ const win = score[0] > score[1]; if (win){ chord([0, 2, 4, 7], 2, .12); unlock(stage + 1); }
     const info = `<p>${score[0]} − ${score[1]}　一番長いラリー ${best}回　スマッシュ ${smashes}回</p>`;
     if (win && stage < LAST){ const nx = STAGES[stage + 1];
-      g.over(`<h5>${stageLabel()} クリア！</h5>${COIN_TAG('silver')}${info}<p>次は「${nx.name}」。${nx.balls > STAGES[stage].balls ? 'シャトルが2こになるよ！' : 'シャトルが速くなるよ！'}</p>`, '次のステージへ', () => play(stage + 1)); }
-    else if (win && stage === LAST) g.over(`<h5>全部のステージをクリア！</h5>${COIN_TAG('silver')}${info}<p>雲の部屋のチャンピオン！ <b>チャレンジ</b>が3つ開いたよ。3つともクリアすると「完全制覇」！</p>`, 'チャレンジモードへ', () => play(LAST + 1));
+      g.over(`<h5>${stageLabel()} クリア！</h5>${info}<p>次は「${nx.name}」。${nx.balls > STAGES[stage].balls ? 'シャトルが2こになるよ！' : 'シャトルが速くなるよ！'}</p>`, '次のステージへ', () => play(stage + 1)); }
+    else if (win && stage === LAST) g.over(`<h5>全部のステージをクリア！</h5>${COIN_TAG('silver')}<p>チャレンジが3つ開いたよ。3つともクリアすると「完全制覇」！</p>`, 'チャレンジモードへ', () => play(LAST + 1));
     else if (win && stage === FINAL){ coin = true; try { localStorage.setItem(SAVE_KEY + '-coin', '1'); } catch(e){}
-      g.over(`<h5>完全制覇！</h5>${COIN_TAG('gold')}${info}<p>全部のステージと、全部のチャレンジをクリアしました。<br><b style="color:#d39b1f">金のシャトルコイン</b>をゲット！</p>`, 'ステージを選ぶ', () => chooser('どのステージで遊ぶ？', ''));
+      g.over(`<h5>完全制覇！</h5>${COIN_TAG('gold')}<p>全部のステージと、全部のチャレンジをクリアしました。</p>`, 'ステージを選ぶ', () => chooser('どのステージで遊ぶ？', ''));
       return; }
-    else if (win) g.over(`<h5>${stageLabel()} クリア！</h5>${COIN_TAG('silver')}${info}<p>次は「${stageDef(stage + 1).name}」。${stageDef(stage + 1).balls > ST().balls ? `シャトルが${stageDef(stage + 1).balls}こになるよ！ そのかわり、ゆっくり。` : 'シャトルが、少し速くなるよ！'}</p>`, '次のチャレンジへ', () => play(stage + 1));
+    else if (win) g.over(`<h5>${stageLabel()} クリア！</h5>${info}<p>次は「${stageDef(stage + 1).name}」。${stageDef(stage + 1).balls > ST().balls ? `シャトルが${stageDef(stage + 1).balls}こになるよ！${stageDef(stage + 1).speed < 1 ? ' そのかわり、ゆっくり。' : ''}` : 'シャトルが、少し速くなるよ！'}</p>`, '次のチャレンジへ', () => play(stage + 1));
     else g.over(`<h5>相手の勝ち</h5>${info}<p>${smashes ? `おしい！ もう一度、${stageLabel()}に挑戦しよう。` : 'シャトルが上がったら、ジャンプして高いところで当ててみよう。'}</p>`, 'もう一度', () => play(stage));
     addChooseBtn(); }
   // 子どものキャラクター：走ると足が動き、ジャンプでひざをまげ、ラケットをかまえる
@@ -1329,7 +1385,7 @@ GAMES.badminton = root => {
     ctx.fillStyle = '#b98a58'; ctx.fillRect(DOOR.x, DOOR.y, w, DOOR.h); ctx.strokeStyle = '#8a6440'; ctx.lineWidth = 3; ctx.strokeRect(DOOR.x, DOOR.y, w, DOOR.h);
     if (w > 30){ ctx.fillStyle = '#d9eef9'; ctx.fillRect(DOOR.x + w * .2, DOOR.y + 22, w * .6, 54); ctx.fillStyle = '#7a5a3a'; ctx.fillRect(DOOR.x + w - 16, DOOR.y + 96, 6, 22); }
   }
-  // クリアのコイン：ふつうのステージは銀（雲）、完全制覇は金（シャトル）
+  // クリアのコイン：全部のステージをクリアしたら銀（雲）、完全制覇は金（シャトル）
   function drawCoin(x, y, r, spin, gold = true){ const sx = Math.max(.12, Math.abs(Math.cos(spin))), img = gold ? COIN_GOLD : COIN_SILVER;
     if (img.complete && img.naturalWidth > 0){ ctx.save(); ctx.translate(x, y); ctx.shadowColor = gold ? 'rgba(255,197,61,.7)' : 'rgba(200,225,255,.8)'; ctx.shadowBlur = 24; ctx.scale(sx, 1);
       if (Math.cos(spin) < 0) ctx.filter = 'brightness(.82)'; ctx.drawImage(img, -r, -r, r * 2, r * 2); ctx.restore(); return; }
@@ -1364,8 +1420,8 @@ GAMES.badminton = root => {
         ctx.shadowColor = 'rgba(255,197,61,.55)'; ctx.shadowBlur = 22; ctx.fillStyle = '#E8A317';
         ctx.fillText(stage === FINAL ? '完全制覇！' : stage === LAST ? '全部クリア！' : 'クリア！', 0, 0); }
       ctx.restore();
-      // コインが上から落ちてきて、くるくる回る（ふつうのステージは銀、完全制覇は金）
-      if (e > .7){ const k = Math.min(1, (e - .7) / .6), bounce = k < 1 ? 1 - Math.abs(Math.cos(k * Math.PI * 1.5)) * (1 - k) : 1;
+      // コインが上から落ちてきて、くるくる回る（全部のステージをクリアしたら銀、完全制覇は金。それ以外は出ない）
+      if ((stage === LAST || stage === FINAL) && e > .7){ const k = Math.min(1, (e - .7) / .6), bounce = k < 1 ? 1 - Math.abs(Math.cos(k * Math.PI * 1.5)) * (1 - k) : 1;
         const cy = -40 + (H * .42 + 86 + 40) * (k < 1 ? k * k * (3 - 2 * k) : 1) - (k < 1 ? (1 - bounce) * 18 : 0);
         drawCoin(W / 2, cy, stage === FINAL ? 46 : 40, e * 4, stage === FINAL); }
       ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic'; }
@@ -1394,6 +1450,9 @@ GAMES.badminton = root => {
 };
 
 /* --- 雲の上でおにごっこ（音楽つき） --- */
+// 雲の上でおにごっこの子どもたち：6人 × 12コマ（踊りながらにげる、右向き）。1コマ 120×150、足もと (60,144)
+// 0 赤いぼうし（おに）・1 青・2 緑・3 オレンジ・4 むらさき・5 黄色・6 赤いぼうしが走る（おにが動くとき）
+const CLOUD_KIDS = new Image(); CLOUD_KIDS.src = 'cloud-kids.png';
 GAMES.cloud = root => {
   const g = shell(root, '雲の上で、音楽にあわせておにごっこ', 'おしたところへ走って、にげる子にタッチ！');
   const { ctx, W, H, cv, pt } = mkCanvas(g.stage, 640, 360);
@@ -1411,7 +1470,7 @@ GAMES.cloud = root => {
   const deg = d => 261.63 * 2 ** ((Math.floor(d / 7) * 12 + [0, 2, 4, 5, 7, 9, 11][((d % 7) + 7) % 7]) / 12);
   let me, kids, t, tags, state = 'ready', target = null, beat = 0, beatT = 0, notes = [], pops = [], dance = 0;
   const keys = {};
-  function reset(){ me = { x: CX, y: CY }; kids = COLS.map((c, k) => ({ x: CX + Math.cos(k * 1.26) * 190, y: CY + Math.sin(k * 1.26) * 90, vx: 0, vy: 0, c, safe: 0, wa: rnd(0, 6) })); t = 30; tags = 0; notes = []; pops = []; }
+  function reset(){ me = { x: CX, y: CY, face: 1, moving: false }; kids = COLS.map((c, k) => ({ x: CX + Math.cos(k * 1.26) * 190, y: CY + Math.sin(k * 1.26) * 90, vx: 0, vy: 0, c, safe: 0, wa: rnd(0, 6) })); t = 30; tags = 0; notes = []; pops = []; }
   const aim = e => { target = pt(e); };
   cv.onpointerdown = e => { cv.setPointerCapture(e.pointerId); aim(e); };
   cv.onpointermove = e => { if (e.buttons || e.pointerType === 'mouse') aim(e); };
@@ -1430,7 +1489,7 @@ GAMES.cloud = root => {
       let ax = 0, ay = 0;
       if (target){ const dx = target[0] - me.x, dy = target[1] - me.y, d = Math.hypot(dx, dy); if (d > 5){ ax = dx / d; ay = dy / d; } }
       if (keys.ArrowLeft) ax = -1; if (keys.ArrowRight) ax = 1; if (keys.ArrowUp) ay = -1; if (keys.ArrowDown) ay = 1;
-      const n = Math.hypot(ax, ay) || 1; me.x += ax / n * 200 * dt; me.y += ay / n * 170 * dt; if (!inside(me.x, me.y, .97)) toEdge(me, .985);
+      const n = Math.hypot(ax, ay) || 1; me.x += ax / n * 200 * dt; me.y += ay / n * 170 * dt; me.moving = ax !== 0 || ay !== 0; if (Math.abs(ax) > .2) me.face = Math.sign(ax); if (me.moving) me.run = (me.run || 0) + dt * 16; if (!inside(me.x, me.y, .97)) toEdge(me, .985);
       kids.forEach(k => {
         const dx = k.x - me.x, dy = k.y - me.y, d = Math.hypot(dx, dy) || 1;
         k.wa += rnd(-2, 2) * dt; let fx = Math.cos(k.wa) * 45, fy = Math.sin(k.wa) * 45;
@@ -1440,7 +1499,8 @@ GAMES.cloud = root => {
         const s = Math.hypot(k.vx, k.vy), max = 115; if (s > max){ k.vx *= max / s; k.vy *= max / s; }
         k.x += k.vx * dt; k.y += k.vy * dt; if (!inside(k.x, k.y, .95)) toEdge(k, .97);
         k.safe = Math.max(0, k.safe - dt);
-        if (d < 24 && k.safe === 0){ tags++; k.safe = 1.5; chord([2, 4, 7], 2, .04); pops.push({ x: k.x, y: k.y - 50, a: 1 });
+        if (Math.abs(k.vx) > 12) k.face = Math.sign(k.vx);
+        if (d < 34 && k.safe === 0){ tags++; k.safe = 1.5; chord([2, 4, 7], 2, .04); pops.push({ x: k.x, y: k.y - 50, a: 1 });
           const a = rnd(0, 6.28); k.x = CX + Math.cos(a) * RX * .75; k.y = CY + Math.sin(a) * RY * .75; }
       });
       g.stat(`のこり <b>${Math.ceil(t)}</b>秒　タッチ <b>${tags}</b>回`);
@@ -1459,10 +1519,18 @@ GAMES.cloud = root => {
     ctx.fillStyle = '#f2f6fd'; ctx.beginPath(); ctx.ellipse(CX, CY + 16, RX * .78, RY * .66, 0, 0, 7); ctx.fill();
     ctx.font = '22px sans-serif'; notes.forEach(n => { ctx.globalAlpha = n.a; ctx.fillStyle = '#d4417f'; ctx.fillText(n.ch, n.x, n.y); }); ctx.globalAlpha = 1;
     if (!me) return;
+    const beats = dance / Math.PI, ok = CLOUD_KIDS.complete && CLOUD_KIDS.naturalWidth > 0;
+    // 絵の子ども：かげ → 12コマのどれか（1拍で3コマ、4拍で1周。左へ動くときは、左右を反転）
+    const kid = (row, f, x, y, face) => { ctx.fillStyle = 'rgba(110,130,190,.22)'; ctx.beginPath(); ctx.ellipse(x, y + 1, 24, 7, 0, 0, 7); ctx.fill();
+      ctx.save(); ctx.translate(x, y); if (face < 0) ctx.scale(-1, 1); ctx.drawImage(CLOUD_KIDS, f * 120, row * 150, 120, 150, -36, -86, 72, 90); ctx.restore(); };
     [...kids, { me: true, ...me }].sort((a, b) => a.y - b.y).forEach(o => {
-      if (o.me){ figure(ctx, o.x, o.y, '#ffffff', 1.5, '#e4362b'); ctx.fillStyle = '#e4362b'; ctx.font = '700 12px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.fillText('おに', o.x, o.y - 52); ctx.textAlign = 'left'; return; }
+      if (o.me){
+        if (ok){ if (o.moving && state === 'play') kid(6, Math.floor(o.run || 0) % 12, o.x, o.y, o.face); else kid(0, 0, o.x, o.y, o.face); } else figure(ctx, o.x, o.y, '#ffffff', 1.5, '#e4362b');
+        ctx.font = '900 13px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center'; const ly = o.y - (ok ? 98 : 52);
+        ctx.fillStyle = '#e4362b'; rr(ctx, o.x - 20, ly - 13, 40, 19, 9); ctx.fill(); ctx.fillStyle = '#fff'; ctx.fillText('おに', o.x, ly + 1); ctx.textAlign = 'left'; return; }
       if (o.safe > 0 && Math.floor(o.safe * 8) % 2) return;
-      dancer(ctx, o.x, o.y, o.c, 1.4, dance + COLS.indexOf(o.c) * .9, Math.hypot(o.vx, o.vy));
+      const ci = COLS.indexOf(o.c);
+      if (ok) kid(ci + 1, Math.floor(beats * 3 + ci * 2.5) % 12, o.x, o.y, o.face || 1); else dancer(ctx, o.x, o.y, o.c, 1.4, dance + ci * .9, Math.hypot(o.vx, o.vy));
     });
     ctx.font = '700 15px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center';
     pops.forEach(p => { ctx.globalAlpha = p.a; ctx.fillStyle = '#d4417f'; ctx.fillText('タッチ！', p.x, p.y); }); ctx.globalAlpha = 1; ctx.textAlign = 'left';
@@ -1749,7 +1817,7 @@ GAMES.glass = root => {
     }
   }
   reset(); draw();
-  g.over('<h5>ゆかがガラスの歩道橋</h5><img src="glass-ahead.jpg" alt="" style="width:100%;max-height:34vh;object-fit:cover;border-radius:12px;display:block;margin:4px 0 8px"><p>ガラスの上で立ち止まって、下の道路をのぞいてみよう。</p>', 'わたり始める', () => { state = 'play'; });
+  g.over('<h5>ゆかがガラスの歩道橋</h5><img src="glass-ahead.jpg" alt="" style="width:100%;height:max(64px,calc(100cqh - 190px));object-fit:cover;border-radius:12px;display:block;margin:2px 0"><p>ガラスの上で立ち止まって、下の道路をのぞいてみよう。</p>', 'わたり始める', () => { state = 'play'; });
 };
 
 /* --- 夜の暗い道も楽しく（光る石） --- */
@@ -1969,6 +2037,15 @@ GAMES.river = root => {
   ];
   let cam = [W / 2, H / 2], found = new Set(), flash = 0, miss = 0, hint = null, hintT = 0, msg = '', msgT = 0, done = false, t = 0;
   const board = document.createElement('div'); board.className = 'board'; root.appendChild(board);
+  // 写真が4段以上になるときは、たたんで1段目（新しい順）だけ見せる。スマホでアイデアシートまで行きやすいように
+  const foldBtn = document.createElement('button'); foldBtn.className = 'btn foldbtn'; foldBtn.hidden = true; root.appendChild(foldBtn);
+  let unfolded = false;
+  function fold(){ const posts = [...board.querySelectorAll('.post')], cols = Math.max(1, getComputedStyle(board).gridTemplateColumns.split(' ').length);
+    const many = Math.ceil(posts.length / cols) >= 4, shut = many && !unfolded;
+    posts.forEach((p, i) => p.style.display = shut && i >= cols ? 'none' : '');
+    foldBtn.hidden = !many; foldBtn.textContent = shut ? `ほかの写真も見る（あと${posts.length - cols}まい）` : '写真をたたむ'; }
+  foldBtn.onclick = () => { unfolded = !unfolded; fold(); if (!unfolded) board.scrollIntoView({ block: 'nearest' }); };
+  addEventListener('resize', fold); onClean(() => removeEventListener('resize', fold));
   board.innerHTML = '<p class="ghelp"><span style="white-space:nowrap">まだ写真がありません。</span><br><span style="white-space:nowrap">生き物をさがしてみよう。</span></p>';
   const posOf = l => [l.x, l.y];
   cv.onpointermove = e => { cam = pt(e); };
@@ -1983,8 +2060,8 @@ GAMES.river = root => {
     const post = document.createElement('div'); post.className = 'post';
     post.innerHTML = `<img src="river-p-${hitL.id}.jpg" alt="${hitL.name}の写真"><b>${hitL.name}</b><span>${hitL.fact}</span><button class="like" aria-label="いいね">♥ <i>${Math.floor(rnd(1, 9))}</i></button>`;
     post.querySelector('.like').onclick = ev => { const i = ev.currentTarget.querySelector('i'); i.textContent = +i.textContent + 1; tone(988, 0, .1, 'sine', .08); };
-    board.prepend(post);
-    if (found.size === LIFE.length && !done){ done = true; later(() => { chord([0, 2, 4, 7]); g.over(`<h5>全部見つけた！ 堤防ずかん 完成</h5><p>${LIFE.length}種類の写真が、みんなのボードにのりました。</p><p>生き物博士「よく見つけたね！ では、わたしから<b>クイズ</b>を出すよ。5問、答えてみてね」</p>`, 'クイズにちょうせん', quiz); }, 900); }
+    board.prepend(post); fold();
+    if (found.size === LIFE.length && !done){ done = true; later(() => { chord([0, 2, 4, 7]); g.over(`<h5>全部見つけた！ 堤防図鑑 完成</h5><p>${LIFE.length}種類の写真が、みんなのボードにのりました。</p><p>生き物博士「よく見つけたね！ では、わたしから<b>クイズ</b>を出すよ。5問、答えてみてね」</p>`, 'クイズにちょうせん', quiz); }, 900); }
   };
   // ヒント：まだ見つけていない生き物が、どのあたりにいるかを文で言う（丸はかかない）
   const hintBtn = g.button('ヒント', () => { const left = LIFE.filter(l => !found.has(l.id)); if (!left.length) return; hint = left[Math.floor(Math.random() * left.length)]; hintT = 3.5; msg = `ヒント：${hint.where}を見てみよう`; msgT = 3; tone(880, 0, .12, 'sine', .07); });
@@ -1999,7 +2076,7 @@ GAMES.river = root => {
     { q: 'カワセミは、どうやって魚をとる？', a: '水にとびこむ', o: ['足でつかむ', '口から水をすう'], id: 'kawasemi' , ex: 'カワセミは、枝などにとまって水の中を見つめ、魚を見つけると、頭から水にとびこんでくちばしでつかまえます。' },
     { q: 'カメは、川で何をしていた？', a: '水にうかんでいた', o: ['木にのぼっていた', '空をとんでいた'], id: 'kame' , ex: 'カメは、水面に顔を出してうかび、息をすったり、のんびり休んだりします。あたたかい日には、岩の上で甲らをかわかすこともあります。' },
     { q: 'スズメがひと休みしていたのは？', a: '木の枝', o: ['水の中の棒', '岩の上'], id: 'kotori' , ex: 'スズメは、人の家の近くの木や電線にとまって休みます。人のくらしの近くで、草の実や虫を食べてくらしています。' },
-    // 難しい問題（図かんにのっているような、少しくわしいこと）
+    // 難しい問題（図鑑にのっているような、少しくわしいこと）
     { q: 'カワセミが、たまごを産むすをつくる場所は？', a: '土のがけにほった、横あな', o: ['高い木の枝の上', '水草をあんだ、うき草の上'], id: 'kawasemi', hard: true , ex: 'カワセミは、川ぞいの土のがけに、くちばしで1mほどの横あなをほって、そのおくにたまごを産みます。' },
     { q: 'カワセミは、下のくちばしの色でオスとメスがわかる。下のくちばしがオレンジ色なのは？', a: 'メス', o: ['オス', 'オスもメスも同じ色'], id: 'kawasemi', hard: true , ex: 'オスはくちばしが上も下も黒く、メスは下のくちばしがオレンジ色です。くちばしを見ると、オスかメスかがわかります。' },
     { q: 'コサギが、浅い水の中で魚を追い出すときにすることは？', a: '足をふるわせて、水底をかきまわす', o: ['羽を広げて、くるくる回る', '頭を水に入れたまま、じっと待つ'], id: 'sagi', hard: true , ex: 'コサギは、足を水底でふるわせて、かくれている魚やエビをおどろかせます。にげ出したところを、すばやくつかまえます。' },
@@ -2020,10 +2097,10 @@ GAMES.river = root => {
     const ask = () => {
       const qz = list[n], opts = [qz.a, ...qz.o].sort(() => Math.random() - .5);
       g.over(`<p style="margin:0;color:var(--muted)">第${n + 1}問 / ${list.length}${qz.by ? '　（ワークショップの子が考えたクイズ）' : ''}${qz.hard ? '　<b style="color:#d4543a">難しい問題！</b>' : ''}</p>
-        <p style="margin:4px 0 0;color:#14958a;font-weight:700">生き物博士からの問題</p><h5>${qz.q}</h5><div class="choice">${opts.map(o => `<button class="btn qopt">${o}</button>`).join('')}</div><div class="qres"></div>`);
+        <p style="margin:4px 0 0;color:#14958a;font-weight:700">生き物博士からの問題</p><h5>${qz.q}</h5><div class="choice rqz">${opts.map(o => `<button class="btn qopt">${o}</button>`).join('')}</div><div class="qres"></div>`);
       root.querySelectorAll('.qopt').forEach(btn => btn.onclick = () => {
         const right = btn.textContent === qz.a; if (right) ok++;
-        root.querySelectorAll('.qopt').forEach(x => { x.disabled = true; if (x.textContent === qz.a) x.classList.add('primary'); });
+        root.querySelector('.rqz').hidden = true; root.querySelector('.rqz').style.display = 'none'; // 答えたら、ボタンをしまって、解説の場所をあける
         right ? chord([0, 4, 7], 2, .05) : tone(180, 0, .2, 'square', .05);
         const life = LIFE.find(l => l.id === qz.id), last = n === list.length - 1;
         root.querySelector('.qres').innerHTML = `<p><b style="color:${right ? '#14958a' : '#d4543a'}">${right ? '正解！' : `残念… 答えは「${qz.a}」`}</b></p>
