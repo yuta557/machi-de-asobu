@@ -114,42 +114,79 @@
 })();
 
 /* 写真のスライド：1枚ずつ、5秒ごとに切り替える。
-   矢印か点を押した時点で自動送りは止める。
+   前後に1枚ずつ複製を置いて、端でも同じ向きに流れて一周するようにしている。
+   複製まで動いたら、見た目を変えないまま本物の位置へ瞬間移動させる。
+   矢印・点・ドラッグのどれかを使った時点で、自動送りは止める。
    JavaScript が動かないときは、ただ横にスワイプできる並びとして残る。 */
 (function(){
   var box = document.querySelector('[data-shot]');
   if(!box) return;
   var track = box.querySelector('.shot-track');
   var imgs  = [].slice.call(track.querySelectorAll('img'));
-  if(imgs.length < 2) return;
+  var n = imgs.length;
+  if(n < 2) return;
   var cap  = box.querySelector('.shot-cap');
   var dots = box.querySelector('.shot-dots');
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   box.classList.add('js');
 
+  /* 前後の複製 */
+  var tail = imgs[n - 1].cloneNode(true), head = imgs[0].cloneNode(true);
+  [tail, head].forEach(function(c){
+    c.setAttribute('aria-hidden', 'true');
+    c.setAttribute('alt', '');
+    c.removeAttribute('data-cap');
+  });
+  track.insertBefore(tail, imgs[0]);
+  track.appendChild(head);
+
+  var all = [].slice.call(track.querySelectorAll('img'));
+  function step(){ return all.length > 1 ? (all[1].offsetLeft - all[0].offsetLeft) : 0; }
+  function setX(x, smooth){
+    track.scrollTo({ left: x, behavior: (smooth && !reduce) ? 'smooth' : 'auto' });
+  }
+
   var buttons = imgs.map(function(im, i){
     var b = document.createElement('button');
     b.type = 'button';
-    b.setAttribute('aria-label', (i+1) + '枚目を見る');
+    b.setAttribute('aria-label', (i + 1) + '枚目を見る');
     b.addEventListener('click', function(){ stop(); go(i); });
     dots.appendChild(b);
     return b;
   });
 
   var at = 0;
-  /* 幅ではなく、並んでいる画像そのものの位置を使う（幅が取れない場面があるため） */
-  function step(){ return imgs.length > 1 ? (imgs[1].offsetLeft - imgs[0].offsetLeft) : 0; }
-  function go(i){
-    at = (i + imgs.length) % imgs.length;
-    var x = imgs[at].offsetLeft - imgs[0].offsetLeft;
-    track.scrollTo({ left: x, behavior: reduce ? 'auto' : 'smooth' });
-    paint();
-  }
   function paint(){
     buttons.forEach(function(b, k){ b.setAttribute('aria-current', String(k === at)); });
     var c = imgs[at].getAttribute('data-cap');
     if(cap && c) cap.textContent = c;
   }
+  var guard = null;
+  function go(i, smooth){
+    var w = step();
+    if(!w) return;
+    smooth = (smooth !== false) && !reduce;
+    if(i < 0){ setX(0, smooth); at = n - 1; }
+    else if(i >= n){ setX((n + 1) * w, smooth); at = 0; }
+    else { setX((i + 1) * w, smooth); at = i; }
+    paint();
+    /* 端をまたいだときは、動きが終わるのを待って本物の位置へ移す。
+       scroll の通知が来ない場面もあるので、時間でも必ず拾う。 */
+    clearTimeout(guard);
+    guard = setTimeout(settle, smooth ? 700 : 30);
+  }
+  /* 動きが止まったところで、複製の上にいたら、見た目を変えずに本物へ移す */
+  function settle(){
+    clearTimeout(guard);
+    var w = step();
+    if(!w || dragging) return;
+    var raw = Math.round(track.scrollLeft / w);
+    if(raw <= 0){ setX(n * w, false); at = n - 1; paint(); return; }
+    if(raw >= n + 1){ setX(w, false); at = 0; paint(); return; }
+    var r = raw - 1;
+    if(r !== at){ at = r; paint(); }
+  }
+
   var tid = null;
   function stop(){ if(tid){ clearInterval(tid); tid = null; } }
   function start(){ if(!reduce && !tid) tid = setInterval(function(){ go(at + 1); }, 5000); }
@@ -159,34 +196,28 @@
 
   var t = null;
   track.addEventListener('scroll', function(){
+    if(dragging) return;
     clearTimeout(t);
-    t = setTimeout(function(){
-      var w = step();
-      if(!w) return;
-      var i = Math.max(0, Math.min(imgs.length - 1, Math.round(track.scrollLeft / w)));
-      if(i !== at){ at = i; paint(); }
-    }, 90);
+    t = setTimeout(settle, 140);
   });
+  track.addEventListener('scrollend', function(){ if(!dragging) settle(); });
   box.addEventListener('mouseenter', stop);
   box.addEventListener('mouseleave', start);
   box.addEventListener('focusin', stop);
 
-  /* マウスでつかんで左右に動かしても切り替わるようにする。
-     指でのスワイプは、ブラウザの横スクロールがそのまま効くので何もしない。 */
-  var dragging = false, startX = 0, startLeft = 0, moved = 0, atStart = 0;
+  /* マウスでつかんで左右に動かしても切り替わる。
+     指でのスワイプは、ブラウザの横スクロールがそのまま効く。 */
+  var dragging = false, startX = 0, atStart = 0;
   track.addEventListener('pointerdown', function(e){
     if(e.pointerType !== 'mouse' || e.button !== 0) return;
-    dragging = true; moved = 0;
-    startX = e.clientX; startLeft = track.scrollLeft; atStart = at;
+    dragging = true; startX = e.clientX; atStart = at;
     track.classList.add('drag');
-    track.setPointerCapture(e.pointerId);
+    if(track.setPointerCapture) track.setPointerCapture(e.pointerId);
     stop();
   });
   track.addEventListener('pointermove', function(e){
     if(!dragging) return;
-    var dx = e.clientX - startX;
-    if(Math.abs(dx) > moved) moved = Math.abs(dx);
-    track.scrollLeft = startLeft - dx;
+    track.scrollLeft = (atStart + 1) * step() - (e.clientX - startX);
     e.preventDefault();
   });
   function drop(e){
@@ -195,7 +226,6 @@
     track.classList.remove('drag');
     var w = step();
     if(!w) return;
-    /* 少し動かしただけでも、その向きの1枚に送る */
     var dx = (e && typeof e.clientX === 'number') ? e.clientX - startX : 0;
     if(Math.abs(dx) > w * 0.12) go(atStart + (dx < 0 ? 1 : -1));
     else go(atStart);
@@ -204,6 +234,8 @@
   track.addEventListener('pointercancel', drop);
   track.addEventListener('dragstart', function(e){ e.preventDefault(); });
 
-  paint();
-  start();
+  function place(){ var w = step(); if(w) setX((at + 1) * w, false); }
+  requestAnimationFrame(function(){ place(); paint(); start(); });
+  window.addEventListener('resize', place);
+  window.addEventListener('load', place);
 })();
