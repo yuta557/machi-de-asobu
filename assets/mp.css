@@ -12,7 +12,7 @@
 html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--ink);
   font-family:"Zen Kaku Gothic New",system-ui,sans-serif;font-size:16px;line-height:1.95;-webkit-font-smoothing:antialiased}
-img{max-width:100%;display:block}
+img{max-width:100%;display:block;-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 a{color:inherit}
 .wrap{max-width:1280px;margin:0 auto;padding:0 40px}
 @media(max-width:700px){ .wrap{padding:0 22px} }
@@ -495,8 +495,10 @@ figcaption{margin-top:12px;font-size:13px;color:var(--ink-soft);line-height:1.8}
 .shot-win{position:relative;border-radius:18px;overflow:hidden;background:#EDF5FB;
   aspect-ratio:3/2}
 .shot-track{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;
+  cursor:grab;touch-action:pan-y pinch-zoom;
   scrollbar-width:none;-ms-overflow-style:none}
 .shot-track::-webkit-scrollbar{display:none}
+.shot-track.drag{cursor:grabbing;scroll-snap-type:none;scroll-behavior:auto}
 .shot-track img{flex:0 0 100%;scroll-snap-align:center;display:block;
   width:100%;height:100%;object-fit:contain;background:#EDF5FB}
 .shot-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:2;
@@ -507,8 +509,8 @@ figcaption{margin-top:12px;font-size:13px;color:var(--ink-soft);line-height:1.8}
 .shot-nav:hover{background:#fff;transform:translateY(-50%) scale(1.07)}
 .shot-nav:focus-visible{outline:2px solid var(--ink-2);outline-offset:2px}
 .shot-nav svg{width:17px;height:17px}
-.shot-nav.prev{left:14px}
-.shot-nav.next{right:14px}
+.shot-nav.shot-prev{left:14px}
+.shot-nav.shot-next{right:14px}
 .shot-cap{margin:13px 0 0;font-size:13px;color:var(--ink-soft);line-height:1.8;min-height:1.8em}
 .shot-dots{display:flex;gap:10px;justify-content:center;margin-top:14px}
 .shot-dots button{width:9px;height:9px;padding:0;border:0;border-radius:50%;background:#CFE0EE;
@@ -519,7 +521,7 @@ figcaption{margin-top:12px;font-size:13px;color:var(--ink-soft);line-height:1.8}
 .shot:not(.js) .shot-nav,.shot:not(.js) .shot-dots{display:none}
 @media(max-width:700px){
   .shot-nav{width:38px;height:38px}
-  .shot-nav.prev{left:8px} .shot-nav.next{right:8px}
+  .shot-nav.shot-prev{left:8px} .shot-nav.shot-next{right:8px}
 }
 @media(prefers-reduced-motion:reduce){
   .shot-nav{transition:none}

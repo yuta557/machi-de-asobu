@@ -154,8 +154,8 @@
   function stop(){ if(tid){ clearInterval(tid); tid = null; } }
   function start(){ if(!reduce && !tid) tid = setInterval(function(){ go(at + 1); }, 5000); }
 
-  box.querySelector('.shot-nav.prev').addEventListener('click', function(){ stop(); go(at - 1); });
-  box.querySelector('.shot-nav.next').addEventListener('click', function(){ stop(); go(at + 1); });
+  box.querySelector('.shot-nav.shot-prev').addEventListener('click', function(){ stop(); go(at - 1); });
+  box.querySelector('.shot-nav.shot-next').addEventListener('click', function(){ stop(); go(at + 1); });
 
   var t = null;
   track.addEventListener('scroll', function(){
@@ -170,6 +170,39 @@
   box.addEventListener('mouseenter', stop);
   box.addEventListener('mouseleave', start);
   box.addEventListener('focusin', stop);
+
+  /* マウスでつかんで左右に動かしても切り替わるようにする。
+     指でのスワイプは、ブラウザの横スクロールがそのまま効くので何もしない。 */
+  var dragging = false, startX = 0, startLeft = 0, moved = 0, atStart = 0;
+  track.addEventListener('pointerdown', function(e){
+    if(e.pointerType !== 'mouse' || e.button !== 0) return;
+    dragging = true; moved = 0;
+    startX = e.clientX; startLeft = track.scrollLeft; atStart = at;
+    track.classList.add('drag');
+    track.setPointerCapture(e.pointerId);
+    stop();
+  });
+  track.addEventListener('pointermove', function(e){
+    if(!dragging) return;
+    var dx = e.clientX - startX;
+    if(Math.abs(dx) > moved) moved = Math.abs(dx);
+    track.scrollLeft = startLeft - dx;
+    e.preventDefault();
+  });
+  function drop(e){
+    if(!dragging) return;
+    dragging = false;
+    track.classList.remove('drag');
+    var w = step();
+    if(!w) return;
+    /* 少し動かしただけでも、その向きの1枚に送る */
+    var dx = (e && typeof e.clientX === 'number') ? e.clientX - startX : 0;
+    if(Math.abs(dx) > w * 0.12) go(atStart + (dx < 0 ? 1 : -1));
+    else go(atStart);
+  }
+  track.addEventListener('pointerup', drop);
+  track.addEventListener('pointercancel', drop);
+  track.addEventListener('dragstart', function(e){ e.preventDefault(); });
 
   paint();
   start();
