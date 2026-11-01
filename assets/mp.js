@@ -112,3 +112,65 @@
     el.removeAttribute('data-m');
   });
 })();
+
+/* 写真のスライド：1枚ずつ、5秒ごとに切り替える。
+   矢印か点を押した時点で自動送りは止める。
+   JavaScript が動かないときは、ただ横にスワイプできる並びとして残る。 */
+(function(){
+  var box = document.querySelector('[data-shot]');
+  if(!box) return;
+  var track = box.querySelector('.shot-track');
+  var imgs  = [].slice.call(track.querySelectorAll('img'));
+  if(imgs.length < 2) return;
+  var cap  = box.querySelector('.shot-cap');
+  var dots = box.querySelector('.shot-dots');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  box.classList.add('js');
+
+  var buttons = imgs.map(function(im, i){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', (i+1) + '枚目を見る');
+    b.addEventListener('click', function(){ stop(); go(i); });
+    dots.appendChild(b);
+    return b;
+  });
+
+  var at = 0;
+  /* 幅ではなく、並んでいる画像そのものの位置を使う（幅が取れない場面があるため） */
+  function step(){ return imgs.length > 1 ? (imgs[1].offsetLeft - imgs[0].offsetLeft) : 0; }
+  function go(i){
+    at = (i + imgs.length) % imgs.length;
+    var x = imgs[at].offsetLeft - imgs[0].offsetLeft;
+    track.scrollTo({ left: x, behavior: reduce ? 'auto' : 'smooth' });
+    paint();
+  }
+  function paint(){
+    buttons.forEach(function(b, k){ b.setAttribute('aria-current', String(k === at)); });
+    var c = imgs[at].getAttribute('data-cap');
+    if(cap && c) cap.textContent = c;
+  }
+  var tid = null;
+  function stop(){ if(tid){ clearInterval(tid); tid = null; } }
+  function start(){ if(!reduce && !tid) tid = setInterval(function(){ go(at + 1); }, 5000); }
+
+  box.querySelector('.shot-nav.prev').addEventListener('click', function(){ stop(); go(at - 1); });
+  box.querySelector('.shot-nav.next').addEventListener('click', function(){ stop(); go(at + 1); });
+
+  var t = null;
+  track.addEventListener('scroll', function(){
+    clearTimeout(t);
+    t = setTimeout(function(){
+      var w = step();
+      if(!w) return;
+      var i = Math.max(0, Math.min(imgs.length - 1, Math.round(track.scrollLeft / w)));
+      if(i !== at){ at = i; paint(); }
+    }, 90);
+  });
+  box.addEventListener('mouseenter', stop);
+  box.addEventListener('mouseleave', start);
+  box.addEventListener('focusin', stop);
+
+  paint();
+  start();
+})();

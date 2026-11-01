@@ -489,3 +489,39 @@ figcaption{margin-top:12px;font-size:13px;color:var(--ink-soft);line-height:1.8}
   text-decoration-thickness:1.5px;text-decoration-color:#AFD2EC;
   transition:text-decoration-color .2s ease}
 .col p a:hover{text-decoration-color:var(--ink-2)}
+
+/* ───────── 写真のスライド（1枚ずつ切り替わる） ───────── */
+.shot{max-width:1000px;margin:clamp(30px,3.2vw,52px) auto}
+.shot-win{position:relative;border-radius:18px;overflow:hidden;background:#EDF5FB;
+  aspect-ratio:3/2}
+.shot-track{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;
+  scrollbar-width:none;-ms-overflow-style:none}
+.shot-track::-webkit-scrollbar{display:none}
+.shot-track img{flex:0 0 100%;scroll-snap-align:center;display:block;
+  width:100%;height:100%;object-fit:contain;background:#EDF5FB}
+.shot-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:2;
+  width:46px;height:46px;padding:0;border:0;border-radius:50%;cursor:pointer;
+  background:rgba(255,255,255,.93);color:var(--ink);display:grid;place-items:center;
+  box-shadow:0 4px 16px rgba(18,62,124,.18);
+  transition:background .2s ease, transform .2s ease}
+.shot-nav:hover{background:#fff;transform:translateY(-50%) scale(1.07)}
+.shot-nav:focus-visible{outline:2px solid var(--ink-2);outline-offset:2px}
+.shot-nav svg{width:17px;height:17px}
+.shot-nav.prev{left:14px}
+.shot-nav.next{right:14px}
+.shot-cap{margin:13px 0 0;font-size:13px;color:var(--ink-soft);line-height:1.8;min-height:1.8em}
+.shot-dots{display:flex;gap:10px;justify-content:center;margin-top:14px}
+.shot-dots button{width:9px;height:9px;padding:0;border:0;border-radius:50%;background:#CFE0EE;
+  cursor:pointer;transition:background .2s ease, transform .2s ease}
+.shot-dots button[aria-current="true"]{background:var(--ink-2);transform:scale(1.3)}
+.shot-dots button:focus-visible{outline:2px solid var(--ink-2);outline-offset:3px}
+/* JavaScript が動かないときは、横にスワイプして見られる形のまま */
+.shot:not(.js) .shot-nav,.shot:not(.js) .shot-dots{display:none}
+@media(max-width:700px){
+  .shot-nav{width:38px;height:38px}
+  .shot-nav.prev{left:8px} .shot-nav.next{right:8px}
+}
+@media(prefers-reduced-motion:reduce){
+  .shot-nav{transition:none}
+  .shot-nav:hover{transform:translateY(-50%)}
+}
