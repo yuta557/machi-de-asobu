@@ -452,7 +452,7 @@ const IDEAS = [
    how:'上を歩いてみたり、写真を撮ったりすると、とても楽しい。', who:'仕事帰りでヘトヘトの人や部活帰りの人、遊んで帰ってくる人', nick:'ゆうな'},
   {id:'stairs', pic:[292,740,218,'idea-pics5.webp',1536,1024], pos:[1330,232], card:[1450,75], wish:'ふむと音がなる<br>かいだんが<br>あったらいいな', label:'音のかいだん', c:'#ee7a1c', a:[12.6,14.8,2.6], name:'かいだんをふんだらおとがなる', short:'ふむと、ドレミの曲ができるかいだん。', place:'かいだん', badge:'音',
    what:'ふんだら曲ができる。', how:'ふんであそぶ。', who:'みんな', nick:'はるの'},
-  {id:'river', pic:[772,740,218,'idea-pics5.webp',1536,1024], pos:[1060,580], card:[1175,740], wish:'堤防で見つけた生き物を<br>みんなで見せあえたら<br>いいな', label:'生き物交流', c:'#14958a', a:[16.6,13.3,1.8], name:'植物、生き物交流', short:'堤防で見つけた生き物を、みんなでシェア。', place:'茶づなの近くの堤防',
+  {id:'river', pic:[772,740,218,'idea-pics5.webp',1536,1024], pos:[1092,612], card:[1175,740], wish:'堤防で見つけた生き物を<br>みんなで見せあえたら<br>いいな', label:'生き物交流', c:'#14958a', a:[16.6,13.3,1.8], name:'植物、生き物交流', short:'堤防で見つけた生き物を、みんなでシェア。', place:'茶づなの近くの堤防',
    what:'堤防で見つけた様々なものを交流し合う。',
    how:'スマホでQRコードを読みこんで、サイトに写真をのせたり、クイズを出したりする。', who:'植物や生き物が好きな人', nick:'しおり'},
   {id:'badminton', pic:[772,250,218,'idea-pics5.webp',1536,1024], pos:[1425,485], card:[1690,640], wish:'雲みたいな部屋で<br>バドミントンが<br>できたらいいな', label:'雲でバドミントン', c:'#2a9fd3', a:[-0.5,6.4,7.4], name:'雲の上でバドミントン', short:'雲みたいな部屋で、ふわふわ試合。', place:'雲みたいにした部屋',
@@ -589,7 +589,7 @@ const bubbles = $('#bubbles');
 const MAPS = {
   old: { w: 1536, h: 1024, day: 'town.webp', night: 'town-night.webp', critter: [706, 392], light: k => { const x = 300 + k * 19; return [x, 500 + (x - 390) * .53 + 20 + (k % 2 ? 3 : -3)]; },
     at: { wall: [[470, 232], [640, 108]], glass: [[564, 562], [660, 700]], game: [[248, 530], [180, 372]], ar: [[752, 330], [1000, 190]], night: [[470, 563], [230, 650]],
-      stairs: [[1270, 263], [1360, 112]], river: [[905, 712], [1080, 885]], badminton: [[1408, 618], [1385, 705]], cloud: [[1496, 292], [1300, 410]] } },
+      stairs: [[1270, 263], [1360, 112]], river: [[930, 752], [1080, 885]], badminton: [[1408, 618], [1385, 705]], cloud: [[1496, 292], [1300, 410]] } },
   wide: { w: 1915, h: 821, day: 'town-wide-day.webp', night: 'town-wide-night.webp', critter: [905, 352], light: k => { const x = 520 + k * 11; return [x, 418 + (x - 520) * .4 + (k % 2 ? 2 : -2)]; },
     at: Object.fromEntries(IDEAS.map(i => [i.id, [i.pos, i.card]])) },
 };
@@ -893,15 +893,18 @@ GAMES.badminton = root => {
   let reach = 0, coin = false; try { reach = Math.max(0, parseInt(localStorage.getItem(SAVE_KEY) || '0', 10) || 0); coin = localStorage.getItem(SAVE_KEY + '-coin') === '1'; } catch(e){}
   reach = Math.min(reach, FINAL);
   const unlock = k => { k = Math.min(k, FINAL); if (k > reach){ reach = k; try { localStorage.setItem(SAVE_KEY, String(reach)); } catch(e){} } if (typeof pickBtn !== 'undefined' && state !== 'intro') pickBtn.hidden = false; };
-  function play(k){ stage = k; reset(); state = 'play'; g.hide(); }
+  function play(k){ stage = k; reset(); paused = picking = false; state = 'play'; g.hide(); }
   // ステージを選ぶカード
-  function chooser(title, note){ state = 'select';
+  function chooser(title, note, resume){ if (!resume) state = 'select';
     const btn = (k, label, cls = '') => `<button class="btn ${cls}" data-st="${k}" style="margin:3px">${label}</button>`;
     let html = '';
     for (let k = 0; k <= Math.min(reach, LAST); k++) html += btn(k, stageLabel(k), k === Math.min(reach, LAST) && reach <= LAST ? 'primary' : '');
     for (let k = LAST + 1; k <= reach; k++) html += btn(k, stageLabel(k), k === reach ? 'primary' : '');
-    g.over(`<h5>${title}</h5>${coin ? `<p style="display:flex;align-items:center;justify-content:center;gap:6px"><img src="badminton-coin-gold.png" alt="" style="width:36px;height:36px"><b style="color:#d39b1f">金のシャトルコイン</b>（完全制覇ずみ）</p>` : ''}${note ? `<p>${note}</p>` : ''}<div style="display:flex;flex-wrap:wrap;justify-content:center">${html}</div>`);
-    root.querySelectorAll('.gover [data-st]').forEach(b => b.onclick = () => play(+b.dataset.st)); }
+    g.over(`<h5>${title}</h5>${coin ? `<p style="display:flex;align-items:center;justify-content:center;gap:6px"><img src="badminton-coin-gold.png" alt="" style="width:36px;height:36px"><b style="color:#d39b1f">金のシャトルコイン</b>（完全制覇ずみ）</p>` : ''}${note ? `<p>${note}</p>` : ''}<div style="display:flex;flex-wrap:wrap;justify-content:center">${html}</div>${resume ? '<button class="btn primary" data-back style="margin-top:4px">試合に戻る</button>' : ''}`);
+    root.querySelectorAll('.gover [data-st]').forEach(b => b.onclick = () => play(+b.dataset.st));
+    if (resume) root.querySelector('.gover [data-back]').onclick = () => { paused = picking = false; g.hide(); }; }
+  // 試合中にステージの札をおしたとき：一時停止して選ぶ（試合に戻ることもできる）
+  function pickInGame(){ paused = picking = true; Object.keys(keys).forEach(k => keys[k] = false); chooser('どのステージにする？', '選ぶと、そのステージを最初からはじめるよ。', true); }
   function addChooseBtn(){ const card = root.querySelector('.gover .gcard'); if (!card || reach < 1) return;
     const b = document.createElement('button'); b.className = 'btn'; b.textContent = 'ステージを選ぶ'; b.style.marginTop = '4px';
     b.onclick = () => chooser('どのステージで遊ぶ？', reach > LAST ? 'ステージ3のあとは「チャレンジ」が3つ。3つともクリアすると完全制覇！' : ''); card.appendChild(b); }
@@ -941,6 +944,7 @@ GAMES.badminton = root => {
       if (up > 28 && up > Math.abs(x - touch.x) * 1.5){ touch.jumped = true; jump(me); } } };
   cv.onpointerdown = e => { if (state === 'intro'){ const [x, y] = pt(e); if (x > DOOR.x - 20 && x < DOOR.x + DOOR.w + 20 && y > DOOR.y - 60 && y < FLOOR) enter(); return; }
     { const [x, y] = pt(e);
+      if (state === 'play' && stageBox && x > stageBox.x - 6 && x < stageBox.x + stageBox.w + 2 && y < 44){ pickInGame(); return; }
       if (onBtn('P', x, y) || paused){ if (state === 'play' || paused) paused = !paused; return; }
       if (TOUCH && state === 'play'){ if (onBtn('L', x, y)){ btnPtr[e.pointerId] = 'ArrowLeft'; keys.ArrowLeft = true; target = me.x; return; }
         if (onBtn('R', x, y)){ btnPtr[e.pointerId] = 'ArrowRight'; keys.ArrowRight = true; target = me.x; return; }
@@ -955,7 +959,7 @@ GAMES.badminton = root => {
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight'){ keys[e.key] = d; e.preventDefault(); }
     if ((e.key === ' ' || e.key === 'ArrowUp') && d && !e.repeat){ e.preventDefault(); jump(me); }
     if (e.key === 'ArrowDown' && d && !e.repeat){ e.preventDefault(); dive(me); }
-    if ((e.key === 'p' || e.key === 'P') && d && !e.repeat && state === 'play'){ paused = !paused; Object.keys(keys).forEach(k => keys[k] = false); }
+    if ((e.key === 'p' || e.key === 'P') && d && !e.repeat && state === 'play' && !picking){ paused = !paused; Object.keys(keys).forEach(k => keys[k] = false); }
   });
   function hit(p, dir){
     const incoming = (sh.smash || sh.fast) && sh.by === -dir; // 相手のスマッシュを打ち返すところ
@@ -1276,7 +1280,7 @@ GAMES.badminton = root => {
     const mid = (BTN.L.x + BTN.R.x) / 2;
     if (y < BTN.L.y - BTN.L.r - 30 || x > BTN.R.x + BTN.R.r + 30) return false;
     return k === 'L' ? x < mid : x >= mid; };
-  let paused = false;
+  let paused = false, picking = false, stageBox = null;
   function pill(x, y, w, h){ ctx.save(); ctx.shadowColor = 'rgba(46,127,208,.25)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 2; ctx.fillStyle = 'rgba(255,255,255,.96)'; rr(ctx, x, y, w, h, h / 2); ctx.fill(); ctx.restore();
     ctx.strokeStyle = 'rgba(46,127,208,.18)'; ctx.lineWidth = 1; rr(ctx, x, y, w, h, h / 2); ctx.stroke(); }
   function roundBtn(b, held){ ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.beginPath(); ctx.arc(b.x, b.y, b.r + 5, 0, 7); ctx.fill();
@@ -1297,7 +1301,7 @@ GAMES.badminton = root => {
         ctx.fillStyle = '#fff'; ctx.font = '800 15px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center'; ctx.fillText(v, x, y + 1); }); }
     else { pill(cx - 96, 8, 192, 32); ctx.font = '800 15px "Zen Maru Gothic", sans-serif'; ctx.fillStyle = '#2e7fd0'; ctx.textAlign = 'center'; ctx.fillText(`あなた ${score[0]} − ${score[1]} 相手`, cx, 24); }
     // ステージと一時停止
-    const lab = stageLabel(); ctx.font = '800 12px "Zen Maru Gothic", sans-serif'; const lw = ctx.measureText(lab).width + 26;
+    const lab = `${stageLabel()} ▾`; ctx.font = '800 12px "Zen Maru Gothic", sans-serif'; const lw = ctx.measureText(lab).width + 26; stageBox = { x: W - 48 - lw, w: lw };
     pill(W - 48 - lw, 10, lw, 28); ctx.fillStyle = '#2e7fd0'; ctx.textAlign = 'center'; ctx.fillText(lab, W - 48 - lw / 2, 24);
     if (hudOk('pause') && !paused) ctx.drawImage(HUD_IMG.pause, BTN.P.x - 17, BTN.P.y - 17, 34, 34);
     else { ctx.fillStyle = 'rgba(255,255,255,.95)'; ctx.beginPath(); ctx.arc(BTN.P.x, BTN.P.y, BTN.P.r, 0, 7); ctx.fill(); ctx.strokeStyle = '#2e7fd0'; ctx.lineWidth = 2; ctx.stroke(); }
