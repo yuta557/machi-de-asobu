@@ -114,30 +114,43 @@ a{color:inherit}
 .closing p{margin:0;font-size:clamp(14.5px,1.14vw,18px);line-height:2;font-weight:700;color:var(--ink)}
 .closing p + p{margin-top:.35em;font-weight:500;color:#2F5E92;font-size:clamp(13.5px,1.03vw,16.5px)}
 
-/* スマホ：全画面の絵を、スクロールにつれて現れては消す */
+/* スマホ：全画面の絵を、スクロールにつれて入れ替える */
 .panels{display:none}
 /* 画面の狭い端末だけ、下の文章を3枚のパネルに差し替える
    （それより広い画面では、ヒーローはスマホ版のまま、下はパソコン版の組みを使う） */
 @media(max-width:560px){
   .intro{display:none}
-  .panels{display:block;background:#fff}
-  /* 3枚を同じ場所に重ねる。絵は貼りついたまま動かず、スクロール量で入れ替わる */
-  .panels{position:relative}
+  /* 3枚を同じ場所に重ねる。絵は貼りついたまま動かず、スクロール量で入れ替わる。
+     --h は絵の高さ（ヘッダー64pxの下いっぱい）、--d は1枚ぶんのスクロール量。
+     全体の高さを「絵1枚ぶん＋3枚ぶんのスクロール」にしておくと、
+     3枚目まで見終わった絵が、消えるのではなくそのまま上へ流れて次の帯につながる。 */
+  .panels{display:block;position:relative;background:#fff;
+    --h:max(calc(100svh - 64px),430px);
+    --d:max(86svh,400px);
+    height:calc(var(--h) + 3 * var(--d))}
   /* ヘッダー（64px）の下に貼りつける */
-  .stage{position:sticky;top:64px;height:calc(100svh - 64px);min-height:430px;overflow:hidden;
-    margin-bottom:calc(64px - 100svh)}
-  .trig{display:block;height:calc(100svh - 64px);min-height:430px}
-  /* 3枚目を見終えたら、絵をすっと消すための余り */
-  .trig-out{height:60svh;min-height:260px}
+  .stage{position:sticky;top:64px;height:var(--h);overflow:hidden}
+  /* 入れ替えの目印。高さを食わないように浮かせて、画面の真ん中を横切らせる。
+     上端を 50svh - 64px ずらしておくと、絵が貼りついた所がちょうど1枚目になる */
+  .trigs{position:absolute;left:0;top:calc(50svh - 64px);width:1px;pointer-events:none}
+  .trig{display:block;height:var(--d)}
   .slide{position:absolute;inset:0;display:grid;place-items:center}
   /* 枠は絵にぴったり沿わせる。この中なら、見出しの位置が絵と合う */
   .p-wrap{position:relative;display:inline-grid;max-width:100%;max-height:100%}
   /* 絵の形がどれでも、画面の幅と高さの両方に収める */
-  .p-wrap .p-bg{display:block;width:auto;height:auto;max-width:100vw;max-height:calc(100svh - 64px)}
+  .p-wrap .p-bg{display:block;width:auto;height:auto;max-width:100vw;max-height:var(--h)}
   .p-wrap .p-ttl{position:absolute;z-index:2;left:6.5%;top:7%;width:85%;height:auto;display:block}
-  /* 切り替わりは、その場でゆっくり入れ替わる */
-  .panels.js .slide{opacity:0;transition:opacity .45s ease}
-  .panels.js .slide.on{opacity:1}
+  /* 切り替わり：次の絵を前の絵の上に重ねて出す。
+     前の絵は消えるのを少し待たせるので、あいだに白が透けない。
+     transform は、完全に隠れてから（0.75秒後に）戻す。 */
+  .panels.js .slide{opacity:0;transform:translateY(10px);z-index:1;
+    transition:opacity .45s ease .28s, transform .01s linear .75s}
+  .panels.js .slide.on{opacity:1;transform:none;z-index:2;
+    transition:opacity .5s cubic-bezier(.22,.61,.36,1), transform .6s cubic-bezier(.22,.61,.36,1)}
+}
+@media(max-width:560px) and (prefers-reduced-motion: reduce){
+  .panels.js .slide{transform:none;transition:opacity .2s linear .1s}
+  .panels.js .slide.on{transition:opacity .2s linear}
 }
 
 @media(max-width:860px){
