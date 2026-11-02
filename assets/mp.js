@@ -34,7 +34,12 @@
   var trigs  = [].slice.call(box.querySelectorAll('.trig'));
   if(slides.length < 2 || trigs.length < slides.length) return;
   box.classList.add('js');
-  function show(i){ slides.forEach(function(el, k){ el.classList.toggle('on', k === i); }); }
+  function show(i){
+    /* 最後の目印まで来たら、絵ごとすっと消す。うしろで待っている内容が、上から出る */
+    if(i >= slides.length){ box.classList.add('out'); return; }
+    box.classList.remove('out');
+    slides.forEach(function(el, k){ el.classList.toggle('on', k === i); });
+  }
   var io = new IntersectionObserver(function(list){
     list.forEach(function(e){ if(e.isIntersecting) show(trigs.indexOf(e.target)); });
   }, { rootMargin: '-50% 0px -50% 0px', threshold: 0 });
