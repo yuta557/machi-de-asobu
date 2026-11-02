@@ -902,7 +902,7 @@ GAMES.badminton = root => {
   // はじめてチャレンジに入るとき：急降下の解放を知らせて、動きを見せる
   function diveIntro(k){ diveSeen = true; try { localStorage.setItem(SAVE_KEY + '-dive', '1'); } catch(e){}
     root.querySelector('.gover').onclick = null;
-    g.over(`<h5>チャレンジモード</h5><p class="divelead">今からのチャレンジでは、<b>急降下</b>を解放します！</p><canvas class="divedemo" width="240" height="120"></canvas><p>ジャンプ中に、${TOUCH ? '↓ボタン' : '下キーかクリック'}で、すとんと下りられるよ。相手も使ってくるよ。</p>`, `チャレンジ${k - LAST}へ`, () => play(k));
+    g.over(`<h5>チャレンジモード</h5><p class="divelead">今からのチャレンジでは、<b>急降下</b>を解放します！</p><canvas class="divedemo" width="240" height="120"></canvas><p>ジャンプ中に、${TOUCH ? 'もう一度ジャンプボタン' : '下キーかクリック'}で、すとんと下りられるよ。相手も使ってくるよ。</p>`, `チャレンジ${k - LAST}へ`, () => play(k));
     demo = { x: root.querySelector('.divedemo').getContext('2d'), t: 0 }; chord([0, 4, 7]); later(() => { soft(880, .06, .06); soft(587, .12, .06); }, 420); }
   // 解放のカードの中で、青い子がジャンプして、すとんと下りる（くりかえし）
   function drawDemo(dt){ const d = demo, x = d.x, FL = 112; d.t = (d.t + dt) % 1.9; const t = d.t; let h = 0, fi = 19, drop = false;
@@ -956,24 +956,23 @@ GAMES.badminton = root => {
   // スマホ：タップしただけでは跳ばない。上にスワイプ・2回タップ（とジャンプボタン）でジャンプ。マウスはクリックでジャンプ
   let touch = null, lastTap = { t: 0, x: 0, y: 0 };
   const btnPtr = {}; // ボタンをおしている指
-  cv.onpointermove = e => { if (btnPtr[e.pointerId]) return; aim(e);
+  cv.onpointermove = e => { usedPointer(e); if (btnPtr[e.pointerId]) return; aim(e);
     if (touch && e.pointerId === touch.id && !touch.jumped){ const [x, y] = pt(e), up = touch.y - y; // 上むきにスワイプしたときだけ（横や下、ななめの動きではジャンプしない）
       if (up > 28 && up > Math.abs(x - touch.x) * 1.5){ touch.jumped = true; jump(me); } } };
-  cv.onpointerdown = e => { if (state === 'intro'){ const [x, y] = pt(e); if (x > DOOR.x - 20 && x < DOOR.x + DOOR.w + 20 && y > DOOR.y - 60 && y < FLOOR) enter(); return; }
+  cv.onpointerdown = e => { usedPointer(e); if (state === 'intro'){ const [x, y] = pt(e); if (x > DOOR.x - 20 && x < DOOR.x + DOOR.w + 20 && y > DOOR.y - 60 && y < FLOOR) enter(); return; }
     { const [x, y] = pt(e);
       if (state === 'play' && stageBox && x > stageBox.x - 6 && x < stageBox.x + stageBox.w + 2 && y < 44){ pickInGame(); return; }
       if (onBtn('P', x, y) || paused){ if (state === 'play' || paused) paused = !paused; return; }
       if (TOUCH && state === 'play'){ if (onBtn('L', x, y)){ btnPtr[e.pointerId] = 'ArrowLeft'; keys.ArrowLeft = true; target = me.x; return; }
         if (onBtn('R', x, y)){ btnPtr[e.pointerId] = 'ArrowRight'; keys.ArrowRight = true; target = me.x; return; }
-        if (canDive() && onBtn('D', x, y)){ dive(me); return; }
-        if (onBtn('J', x, y)){ jump(me); return; } } }
+        if (onBtn('J', x, y)){ if (me.y > 0) dive(me); else jump(me); return; } } } // ジャンプボタンは、空中でおすと急降下
     aim(e);
     if (e.pointerType === 'mouse'){ if (me.y > 0) dive(me); else jump(me); return; }
     const [x, y] = pt(e), now = performance.now();
     touch = { id: e.pointerId, x, y, jumped: false };
     if (now - lastTap.t < 320 && Math.hypot(x - lastTap.x, y - lastTap.y) < 60){ touch.jumped = true; jump(me); lastTap.t = 0; } else lastTap = { t: now, x, y }; };
   cv.onpointerup = cv.onpointercancel = e => { if (btnPtr[e.pointerId]){ keys[btnPtr[e.pointerId]] = false; delete btnPtr[e.pointerId]; } if (touch && e.pointerId === touch.id) touch = null; };
-  onKey((e, d) => {
+  onKey((e, d) => { TOUCH = false;
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight'){ keys[e.key] = d; e.preventDefault(); }
     if ((e.key === ' ' || e.key === 'ArrowUp') && d && !e.repeat){ e.preventDefault(); jump(me); }
     if (e.key === 'ArrowDown' && d && !e.repeat){ e.preventDefault(); dive(me); }
@@ -1302,13 +1301,14 @@ GAMES.badminton = root => {
   const useImg = () => roomImg.complete && roomImg.naturalWidth > 0;
   let KY = 1, FS = FLOOR;
   const SY = y => FS - (FLOOR - y) * KY;
-  const TOUCH = matchMedia('(pointer: coarse)').matches;
-  const BTN = { L: { x: 46, y: H - 42, r: 24 }, R: { x: 104, y: H - 42, r: 24 }, J: { x: W - 48, y: H - 42, r: 27 }, D: { x: W - 118, y: H - 38, r: 24 }, P: { x: W - 24, y: 24, r: 15 } };
+  // タッチの画面かどうか。さいごに使ったもので切りかえる（タッチパネルつきのパソコンでも、マウスやキーなら矢印を出さない）
+  let TOUCH = matchMedia('(pointer: coarse)').matches;
+  const usedPointer = e => { if (e.pointerType) TOUCH = e.pointerType !== 'mouse'; };
+  const BTN = { L: { x: 46, y: H - 42, r: 24 }, R: { x: 104, y: H - 42, r: 24 }, J: { x: W - 48, y: H - 42, r: 27 }, P: { x: W - 24, y: 24, r: 15 } };
   // ボタンの見た目はそのまま、さわれるはんいは広く（左右は2つのまん中で分ける）
   const onBtn = (k, x, y) => { const b = BTN[k];
     if (k === 'P') return Math.hypot(x - b.x, y - b.y) < b.r + 10;
-    if (k === 'D') return x > b.x - b.r - 24 && x <= BTN.D.x + 35 && y > b.y - b.r - 34;
-    if (k === 'J') return x > (canDive() ? BTN.D.x + 35 : b.x - b.r - 34) && y > b.y - b.r - 34;
+    if (k === 'J') return x > b.x - b.r - 34 && y > b.y - b.r - 34;
     const mid = (BTN.L.x + BTN.R.x) / 2;
     if (y < BTN.L.y - BTN.L.r - 30 || x > BTN.R.x + BTN.R.r + 30) return false;
     return k === 'L' ? x < mid : x >= mid; };
@@ -1340,9 +1340,8 @@ GAMES.badminton = root => {
     ctx.fillStyle = '#2e7fd0'; if (hudOk('pause') && !paused){} else if (paused){ ctx.beginPath(); ctx.moveTo(BTN.P.x - 4, BTN.P.y - 6); ctx.lineTo(BTN.P.x + 6, BTN.P.y); ctx.lineTo(BTN.P.x - 4, BTN.P.y + 6); ctx.closePath(); ctx.fill(); }
     else { rr(ctx, BTN.P.x - 5.5, BTN.P.y - 6, 4, 12, 1.5); ctx.fill(); rr(ctx, BTN.P.x + 1.5, BTN.P.y - 6, 4, 12, 1.5); ctx.fill(); }
     // スマホ：左右と、ジャンプのボタン
-    if (TOUCH && state === 'play'){ roundBtn(BTN.L, keys.ArrowLeft); arrow(BTN.L.x, BTN.L.y, Math.PI); roundBtn(BTN.R, keys.ArrowRight); arrow(BTN.R.x, BTN.R.y, 0); roundBtn(BTN.J, me.y > 0); arrow(BTN.J.x, BTN.J.y, -Math.PI / 2);
-      if (canDive()){ ctx.globalAlpha = me.y > 12 ? 1 : .55; roundBtn(BTN.D, me.dive); arrow(BTN.D.x, BTN.D.y, Math.PI / 2); ctx.globalAlpha = 1;
-        if (stageT < 7){ ctx.globalAlpha = Math.min(1, (7 - stageT) * 1.5); pill(BTN.D.x - 62, BTN.D.y - 62, 124, 22); ctx.fillStyle = '#2e7fd0'; ctx.textAlign = 'center'; ctx.font = '800 11px "Zen Maru Gothic", sans-serif'; ctx.fillText('空中でおすと急降下', BTN.D.x, BTN.D.y - 47); ctx.textAlign = 'left'; ctx.globalAlpha = 1; } } }
+    if (TOUCH && state === 'play'){ roundBtn(BTN.L, keys.ArrowLeft); arrow(BTN.L.x, BTN.L.y, Math.PI); roundBtn(BTN.R, keys.ArrowRight); arrow(BTN.R.x, BTN.R.y, 0); roundBtn(BTN.J, me.y > 0); arrow(BTN.J.x, BTN.J.y, canDive() && me.y > 12 ? Math.PI / 2 : -Math.PI / 2); // 急降下できるあいだは、下向きの矢印
+      if (canDive() && stageT < 7){ ctx.globalAlpha = Math.min(1, (7 - stageT) * 1.5); pill(W - 176, BTN.J.y - 66, 164, 22); ctx.fillStyle = '#2e7fd0'; ctx.textAlign = 'center'; ctx.font = '800 11px "Zen Maru Gothic", sans-serif'; ctx.fillText('空中でもう一度おすと急降下', W - 94, BTN.J.y - 51); ctx.textAlign = 'left'; ctx.globalAlpha = 1; } }
     // パソコン：さいしょだけ、操作のしかた
     if (!TOUCH && state === 'play' && (stageT < 7 || paused)){ ctx.globalAlpha = paused ? 1 : Math.min(1, (7 - stageT) * 1.5);
       const py = H - 33; pill(10, py - 13, canDive() ? 436 : 300, 28); ctx.fillStyle = '#2e7fd0'; ctx.textAlign = 'left';
