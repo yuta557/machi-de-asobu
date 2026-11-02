@@ -881,8 +881,8 @@ GAMES.badminton = root => {
   // ステージ3のあとは「チャレンジ」が3つ。速さだけを上げると、相手も追いつけなくなってつまらないので、
   // シャトルの数をふやして、そのぶんゆっくりにする。チャレンジ3をクリアしたら「完全制覇」で、金のコイン
   const LAST = STAGES.length - 1, CSKY = [['#cfd6f2', '#eef1fb'], ['#d8f0e4', '#f3fbf6'], ['#fde2e8', '#fff5f7'], ['#e9e3d6', '#faf7f0']];
-  // チャレンジ1：シャトル4こ（ゆっくり）／チャレンジ2：シャトル1こ／チャレンジ3：シャトル2こで、相手は最大限強い
-  const CHALLENGES = [{ balls: 4, speed: .85 }, { balls: 1, speed: 1.45 }, { balls: 2, speed: 1.35, max: true }];
+  // チャレンジ1：シャトル4こ（ゆっくり）／チャレンジ2：シャトル2こで、相手は最大限強い／チャレンジ3：シャトル1こ
+  const CHALLENGES = [{ balls: 4, speed: .85 }, { balls: 2, speed: 1.35, max: true }, { balls: 1, speed: 1.45 }];
   const challengePlan = n => CHALLENGES[Math.min(n, CHALLENGES.length) - 1];
   function stageDef(k){ if (k <= LAST) return STAGES[k]; const n = k - LAST, c = challengePlan(n);
     if (c.max) return { name: `チャレンジ${n}　シャトル${c.balls}こ・最強の相手`, speed: c.speed, strong: true, cpu: 1.95, balls: c.balls, miss: .05, whiff: 0, smash: 1, chain: 1, guard: true, kaeshi: .6, sky: CSKY[(n - 1) % CSKY.length] };
