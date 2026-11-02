@@ -197,6 +197,10 @@ canvas.wb{width:100%;height:210px;background:#fff;border:2px solid #cfc8c2;borde
 .tagunit{font-size:clamp(20px,9cqh,28px);color:#7a1740}
 .tagres.done .tagnum{animation:tagbump .35s ease}
 @keyframes tagbump{40%{transform:scale(1.15)}}
+.gcard p.divelead{font-size:15px;font-weight:900}
+.gcard p.divelead b{color:#e4362b;font-size:19px}
+.divedemo{display:block;width:clamp(190px,52cqh,240px);height:auto}
+.gcard:has(.divedemo){animation:cardpop .3s ease-out}
 .gcard p.tagrank{font-size:15px;font-weight:900;color:var(--c)}
 .gcard p b{color:var(--c);font-size:16px}
 .ghelp{font-size:12.5px;color:var(--muted);margin:0;line-height:1.6}
@@ -854,6 +858,7 @@ const HUD_SCORE = {"w":346,"h":55,"blue":[126.0,27.5,20.5,[64,151,220]],"red":[2
 const hudOk = k => HUD_IMG[k].complete && HUD_IMG[k].naturalWidth > 0;
 const COIN_SILVER = new Image(); COIN_SILVER.src = 'badminton-coin-silver.png';
 const COIN_GOLD = new Image(); COIN_GOLD.src = 'badminton-coin-gold.png';
+const COIN_BACK = new Image(); COIN_BACK.src = 'badminton-coin-back.png'; // 金のシャトルコインの裏
 const COIN_TAG = k => `<p style="margin:2px 0 6px"><img src="badminton-coin-${k}.png" alt="" class="coinimg" style="display:block;margin:0 auto 2px"><b style="color:${k === 'gold' ? '#d39b1f' : '#7d8ea3'}">${k === 'gold' ? '金のシャトルコイン' : '雲の部屋メダル'}</b>をゲット！</p>`;
 GAMES.badminton = root => {
   const g = shell(root, '雲の部屋で、5点先取の試合', '指を左右に動かして移動。ジャンプは、上にスワイプ・2回タップ・ジャンプボタン（パソコンはクリックかスペース）。高いところで当てるとスマッシュ！ ネットの近くで打つとドロップショット。勝つと、次のステージへ。');
@@ -876,24 +881,36 @@ GAMES.badminton = root => {
   // ステージ3のあとは「チャレンジ」が3つ。速さだけを上げると、相手も追いつけなくなってつまらないので、
   // シャトルの数をふやして、そのぶんゆっくりにする。チャレンジ3をクリアしたら「完全制覇」で、金のコイン
   const LAST = STAGES.length - 1, CSKY = [['#cfd6f2', '#eef1fb'], ['#d8f0e4', '#f3fbf6'], ['#fde2e8', '#fff5f7'], ['#e9e3d6', '#faf7f0']];
-  // チャレンジ1：シャトル1こで、相手は最大限強い（お試し）／チャレンジ2：シャトル2こ／チャレンジ3：シャトル4こ
-  const CHALLENGES = [{ balls: 1, speed: 1.45, max: true }, { balls: 2, speed: 1.35 }, { balls: 4, speed: .85 }];
+  // チャレンジ1：シャトル4こ（ゆっくり）／チャレンジ2：シャトル1こ／チャレンジ3：シャトル2こで、相手は最大限強い
+  const CHALLENGES = [{ balls: 4, speed: .85 }, { balls: 1, speed: 1.45 }, { balls: 2, speed: 1.35, max: true }];
   const challengePlan = n => CHALLENGES[Math.min(n, CHALLENGES.length) - 1];
   function stageDef(k){ if (k <= LAST) return STAGES[k]; const n = k - LAST, c = challengePlan(n);
-    if (c.max) return { name: `チャレンジ${n}　シャトル1こ・最強の相手`, speed: c.speed, cpu: 1.95, balls: 1, miss: .05, whiff: 0, smash: 1, chain: 1, guard: true, kaeshi: .6, sky: CSKY[(n - 1) % CSKY.length] };
+    if (c.max) return { name: `チャレンジ${n}　シャトル${c.balls}こ・最強の相手`, speed: c.speed, strong: true, cpu: 1.95, balls: c.balls, miss: .05, whiff: 0, smash: 1, chain: 1, guard: true, kaeshi: .6, sky: CSKY[(n - 1) % CSKY.length] };
     return { name: `チャレンジ${n}　シャトル${c.balls}こ${c.speed < 1 ? '・ゆっくり' : ''}`, speed: c.speed,
       // 相手は、シャトルが多いほど・速いほど、それに負けないくらい動けるようにする
-      cpu: Math.max(1.3, c.speed * 1.15) + (c.balls - 2) * .15, balls: c.balls, miss: Math.max(.12, .22 - .02 * n), whiff: .02,
-      smash: .85, chain: .9, guard: true, kaeshi: Math.min(.45, .3 + .02 * n), sky: CSKY[(n - 1) % CSKY.length] }; }
+      cpu: Math.max(1.3, c.speed * 1.15) + (c.balls - 2) * .15, balls: c.balls, miss: c.balls > 2 ? .15 : .08, whiff: .02,
+      smash: .85, chain: .9, guard: true, kaeshi: c.balls > 2 ? .3 : .45, sky: CSKY[(n - 1) % CSKY.length] }; }
   const ST = () => stageDef(stage);
   const FINAL = LAST + CHALLENGES.length; // チャレンジ3
   const stageLabel = (k = stage) => k <= LAST ? `ステージ${k + 1}` : `チャレンジ${k - LAST}`;
   // どこまで進んだかを、この端末におぼえておく（毎回ステージ1からにならないように）
   const SAVE_KEY = 'uji-badminton-reach';
-  let reach = 0, coin = false; try { reach = Math.max(0, parseInt(localStorage.getItem(SAVE_KEY) || '0', 10) || 0); coin = localStorage.getItem(SAVE_KEY + '-coin') === '1'; } catch(e){}
+  let reach = 0, coin = false, diveSeen = false, demo = null; try { diveSeen = localStorage.getItem(SAVE_KEY + '-dive') === '1'; reach = Math.max(0, parseInt(localStorage.getItem(SAVE_KEY) || '0', 10) || 0); coin = localStorage.getItem(SAVE_KEY + '-coin') === '1'; } catch(e){}
   reach = Math.min(reach, FINAL);
   const unlock = k => { k = Math.min(k, FINAL); if (k > reach){ reach = k; try { localStorage.setItem(SAVE_KEY, String(reach)); } catch(e){} } if (typeof pickBtn !== 'undefined' && state !== 'intro') pickBtn.hidden = false; };
-  function play(k){ stage = k; reset(); paused = picking = false; state = 'play'; g.hide(); }
+  function play(k){ if (k > LAST && !diveSeen) return diveIntro(k); demo = null; stage = k; reset(); paused = picking = false; state = 'play'; root.querySelector('.gover').onclick = null; g.hide(); }
+  // はじめてチャレンジに入るとき：急降下の解放を知らせて、動きを見せる
+  function diveIntro(k){ diveSeen = true; try { localStorage.setItem(SAVE_KEY + '-dive', '1'); } catch(e){}
+    root.querySelector('.gover').onclick = null;
+    g.over(`<h5>チャレンジモード</h5><p class="divelead">今からのチャレンジでは、<b>急降下</b>を解放します！</p><canvas class="divedemo" width="240" height="120"></canvas><p>ジャンプ中に、${TOUCH ? '↓ボタン' : '下キーかクリック'}で、すとんと下りられるよ。相手も使ってくるよ。</p>`, `チャレンジ${k - LAST}へ`, () => play(k));
+    demo = { x: root.querySelector('.divedemo').getContext('2d'), t: 0 }; chord([0, 4, 7]); later(() => { soft(880, .06, .06); soft(587, .12, .06); }, 420); }
+  // 解放のカードの中で、青い子がジャンプして、すとんと下りる（くりかえし）
+  function drawDemo(dt){ const d = demo, x = d.x, FL = 112; d.t = (d.t + dt) % 1.9; const t = d.t; let h = 0, fi = 19, drop = false;
+    if (t > .35 && t < .8){ const k = (t - .35) / .45; h = 38 * (1 - (1 - k) ** 2); fi = 9; } else if (t >= .8 && t < .95){ h = 38 * (1 - (t - .8) / .15); fi = 10; drop = true; }
+    x.clearRect(0, 0, 240, 120); x.fillStyle = 'rgba(46,127,208,.18)'; x.beginPath(); x.ellipse(120, FL, 34 - h * .2, 5, 0, 0, 7); x.fill();
+    if (KID_IMG.complete && KID_IMG.naturalWidth){ const F = KID_FRAMES[fi], sc = .34; x.drawImage(KID_IMG, F[0], F[1], F[2], F[3], 120 - F[4] * sc, FL - h - F[3] * sc, F[2] * sc, F[3] * sc); }
+    if (drop){ x.strokeStyle = 'rgba(46,127,208,.5)'; x.lineWidth = 3; x.lineCap = 'round'; [86, 154].forEach(a => { x.beginPath(); x.moveTo(a, FL - h - 44); x.lineTo(a, FL - h - 16); x.stroke(); }); }
+    if (t >= .95 && t < 1.6){ x.globalAlpha = Math.min(1, (1.6 - t) * 3); x.fillStyle = '#2e7fd0'; x.font = '900 18px "Zen Maru Gothic", sans-serif'; x.textAlign = 'center'; x.fillText('すとん！', 186, 72); x.globalAlpha = 1; } }
   // ステージを選ぶカード
   function chooser(title, note, resume){ if (!resume) state = 'select';
     const btn = (k, label, cls = '') => `<button class="btn ${cls}" data-st="${k}" style="margin:3px">${label}</button>`;
@@ -902,7 +919,8 @@ GAMES.badminton = root => {
     for (let k = LAST + 1; k <= reach; k++) html += btn(k, stageLabel(k), k === reach ? 'primary' : '');
     g.over(`<h5>${title}</h5>${coin ? `<p style="display:flex;align-items:center;justify-content:center;gap:6px"><img src="badminton-coin-gold.png" alt="" style="width:36px;height:36px"><b style="color:#d39b1f">金のシャトルコイン</b>（完全制覇ずみ）</p>` : ''}${note ? `<p>${note}</p>` : ''}<div style="display:flex;flex-wrap:wrap;justify-content:center">${html}</div>${resume ? '<button class="btn primary" data-back style="margin-top:4px">試合に戻る</button>' : ''}`);
     root.querySelectorAll('.gover [data-st]').forEach(b => b.onclick = () => play(+b.dataset.st));
-    if (resume) root.querySelector('.gover [data-back]').onclick = () => { paused = picking = false; g.hide(); }; }
+    if (resume){ const o = root.querySelector('.gover'), back = () => { paused = picking = false; o.onclick = null; g.hide(); };
+      o.querySelector('[data-back]').onclick = back; o.onclick = e => { if (e.target === o) back(); }; } }  // カードの外をおしても、試合に戻る
   // 試合中にステージの札をおしたとき：一時停止して選ぶ（試合に戻ることもできる）
   function pickInGame(){ paused = picking = true; Object.keys(keys).forEach(k => keys[k] = false); chooser('どのステージにする？', '選ぶと、そのステージを最初からはじめるよ。', true); }
   function addChooseBtn(){ const card = root.querySelector('.gover .gcard'); if (!card || reach < 1) return;
@@ -918,16 +936,15 @@ GAMES.badminton = root => {
   const dent = (x, a) => dents.push({ x, a, t: 0 });
   const floorAt = x => FLOOR + dents.reduce((s, d) => s + d.a * Math.exp(-4 * d.t) * Math.cos(11 * d.t) * Math.exp(-(((x - d.x) / 56) ** 2)) * 10, 0);
   const burst = (x, y, n = 8, col = '#ffffff') => { for (let i = 0; i < n; i++){ const a = rnd(0, 6.28), v = rnd(40, 120); bits.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 30, r: rnd(5, 11), a: 1, col }); } };
+  const canDive = () => reach > LAST;
   function jump(p){
     if (state !== 'play' || paused) return;
     if (p.y === 0 && p.vy <= 0){ p.vy = JUMP_V * ST().speed; // 速いステージでは、ジャンプも同じ高さのまま速くなる
-      soft(523, .12, .08); soft(784, .12, .06); puffs.push({ x: p.x, a: 1 }); dent(p.x, -.6); return; }
-    // 空中でもう一度おすと、急降下
-    dive(p);
+      soft(523, .12, .08); soft(784, .12, .06); puffs.push({ x: p.x, a: 1 }); dent(p.x, -.6); }
   }
-  // 急降下：スマッシュのあと、スマッシュ返しに間に合うように、すとんと地面にもどる（自分も相手も同じ）
+  // 急降下：スマッシュのあと、スマッシュ返しに間に合うように、すとんと地面にもどる（ステージ3をクリアすると、自分も相手も使える）
   function dive(p){
-    if (state !== 'play' || paused || p.y <= 12 || p.dive) return;
+    if (!canDive() || state !== 'play' || paused || p.y <= 12 || p.dive) return;
     p.dive = true; p.vy = Math.min(p.vy, -170 * ST().speed);
     soft(880, .06, .05); soft(587, .1, .05); pops.push({ x: p.x, y: racketY(p) - 46, a: .8, txt: 'すとん！', c: p === me ? '#2e7fd0' : '#e4362b', size: 14 });
   }
@@ -948,9 +965,10 @@ GAMES.badminton = root => {
       if (onBtn('P', x, y) || paused){ if (state === 'play' || paused) paused = !paused; return; }
       if (TOUCH && state === 'play'){ if (onBtn('L', x, y)){ btnPtr[e.pointerId] = 'ArrowLeft'; keys.ArrowLeft = true; target = me.x; return; }
         if (onBtn('R', x, y)){ btnPtr[e.pointerId] = 'ArrowRight'; keys.ArrowRight = true; target = me.x; return; }
+        if (canDive() && onBtn('D', x, y)){ dive(me); return; }
         if (onBtn('J', x, y)){ jump(me); return; } } }
     aim(e);
-    if (e.pointerType === 'mouse'){ jump(me); return; }
+    if (e.pointerType === 'mouse'){ if (me.y > 0) dive(me); else jump(me); return; }
     const [x, y] = pt(e), now = performance.now();
     touch = { id: e.pointerId, x, y, jumped: false };
     if (now - lastTap.t < 320 && Math.hypot(x - lastTap.x, y - lastTap.y) < 60){ touch.jumped = true; jump(me); lastTap.t = 0; } else lastTap = { t: now, x, y }; };
@@ -962,12 +980,16 @@ GAMES.badminton = root => {
     if ((e.key === 'p' || e.key === 'P') && d && !e.repeat && state === 'play' && !picking){ paused = !paused; Object.keys(keys).forEach(k => keys[k] = false); }
   });
   function hit(p, dir){
+    if (p === cpu && p.y > 12){ p.hitAir = true; if (canDive() && Math.random() < .65) p.diveAt = clock + rnd(.1, .5); }
     const incoming = (sh.smash || sh.fast) && sh.by === -dir; // 相手のスマッシュを打ち返すところ
     // スマッシュ返し：スマッシュを、ジャンプしながら受けたとき（地面で受けたらブロック）。ネットすれすれの速い球で打ち返す。あなたも、相手も同じルール
     if (incoming && p.y > 0 && !p.airBlock){ const d = counterShot(dir); if (d){
       sh.vx = d[0]; sh.vy = d[1]; sh.smash = false; sh.fast = true; sh.by = dir; sh.serve = false; sh.read = false;
       if (dir > 0){ // あなたのスマッシュ返し：相手は、スマッシュを受けたときと同じように、ミスしたり、さらにスマッシュ返ししたりする
         sh.cpuMiss = Math.random() < ST().miss; sh.cpuSmash = false; sh.cpuJumpMiss = false; sh.cpuKaeshi = !sh.cpuMiss && Math.random() < ST().kaeshi;
+        // 相手が空中にいて、ふつうに落ちていては間に合わないときは、たいてい、すとんと下りて受ける
+        const spd = ST().speed, grav = JUMP_G * spd * spd, fall = (cpu.vy + Math.sqrt(cpu.vy * cpu.vy + 2 * grav * cpu.y)) / grav, reach2 = (cpu.x - sh.x) / (Math.max(1, sh.vx) * spd);
+        sh.cpuDive = canDive() && cpu.y > 12 && fall > reach2 - .1 && Math.random() < .8; if (sh.cpuDive) sh.cpuMiss = sh.cpuKaeshi = false;
         smashes++; cpuCombo = 0; celebrate(true, true, d[2]); }
       else { sh.cpuMiss = sh.cpuSmash = sh.cpuJumpMiss = sh.cpuKaeshi = false; blocks = 0; combo = 0;
         cpuCombo++; fx(2, '#e4362b', sh.x, sh.y); bigText(cpuCombo >= 2 ? `相手の${cpuCombo}連続スマッシュ！` : '相手のスマッシュ返し！', cpuCombo >= 2 ? 'スマッシュ返し！' : '', '#e4362b', 22, sh.x, sh.y - 30); }
@@ -978,7 +1000,9 @@ GAMES.badminton = root => {
     let smash = p.y > SMASH_H && sh.y < NETTOP - 20 && !p.airBlock, land = 0; // 空中ブロックは、スマッシュにしない
     if (smash){
       const dxn = Math.abs(NET - sh.x), dyn = NETTOP - 14 - sh.y, far = dir > 0 ? W - 36 - sh.x : sh.x - 36;
-      const lo = Math.max(dxn + 50, dyn > 4 ? (FLOOR - 4 - sh.y) * dxn / dyn + 10 : Infinity);
+      // 最強の相手には、ネットの近くの頂点で打ったときだけ、ネットぎわにつきさせる（するどいスマッシュ）
+      const noSharp = ST().strong && dir > 0 && !(dxn < 70 && p.y > 135);
+      const lo = Math.max(dxn + 50, dyn > 4 ? (FLOOR - 4 - sh.y) * dxn / dyn + 10 : Infinity, noSharp ? NET + 135 - sh.x : 0);
       if (lo > far) smash = false; // まっすぐではネットをこえられない → ふつうの返球
       else {
         const rx = dir > 0 ? cpu.x : me.x;
@@ -1065,6 +1089,7 @@ GAMES.badminton = root => {
     later(() => { burst(W / 2, 70, 14, side ? '#fff6c8' : '#ffffff'); pops.push({ x: W / 2, y: 76, a: 1.2, txt: side ? 'あなたに1点！' : '相手に1点', c: side ? '#2e7fd0' : '#e4362b', size: 20, cloud: true }); if (side) chord([0, 4, 7]); }, 250);
   }
   loop(dt => {
+    if (demo) drawDemo(dt);
     if (paused){ draw(); return; }
     clock += dt;
     dents.forEach(d => d.t += dt); dents = dents.filter(d => d.t < 1.6);
@@ -1076,11 +1101,14 @@ GAMES.badminton = root => {
       if (keys.ArrowLeft) target = clamp(target - 320 * mv * dt, 24, NET - MARGIN);
       if (keys.ArrowRight) target = clamp(target + 320 * mv * dt, 24, NET - MARGIN);
       me.x = clamp(me.x + clamp(target - me.x, -380 * mv * dt, 380 * mv * dt), 24, NET - MARGIN);
-      // 相手の急降下：空中にいるときに、速い球が自分より下を通りそうなら、すとんと落ちる（スマッシュ返しをねらう球はのぞく）
-      if (cpu.y > 12 && !cpu.dive && shs.some(s => s.by === 1 && (s.fast || s.smash) && s.vx > 0 && !s.cpuKaeshi && s.y > racketY(cpu) + 30)) dive(cpu);
+      // 相手の急降下（あそんだ人の使い方をまねしている）：ある程度とびきってから、落ちる時間をへらすために使う
+      // 空中で打ったら、0.1〜0.5秒後に下りる／打たないまま頂点まで来たら、やめて下りる／スマッシュ返しに、ふつうに落ちていては間に合わないときに下りる
+      if (canDive() && cpu.y > 140 && cpu.vy <= 0 && !cpu.diveRoll){ cpu.diveRoll = true; if (!cpu.hitAir && !shs.some(s => s.x > NET && s.by !== -1 && !s.wait) && Math.random() < .5) cpu.diveAt = clock + rnd(0, .2); }
+      const topped = cpu.vy < 130; if (cpu.diveAt && clock >= cpu.diveAt && cpu.y > 70 && topped) dive(cpu);
+      if (cpu.y > 12 && !cpu.dive && topped && shs.some(s => s.cpuDive && s.fast && s.by === 1 && s.vx > 0)) dive(cpu);
       [me, cpu].forEach(p => {
         if (p.y > 0 || p.vy > 0){ p.vy -= JUMP_G * spd * spd * dt; p.y = Math.min(p.y + p.vy * dt, 210);
-          if (p.y <= 0){ const hitV = -p.vy, dove = p.dive; p.y = 0; p.dj = false; p.dive = false; dent(p.x, Math.min(1.2, hitV / 380)); puffs.push({ x: p.x, a: .8 });
+          if (p.y <= 0){ const hitV = -p.vy, dove = p.dive; p.y = 0; p.dj = false; p.dive = false; p.diveAt = 0; p.diveRoll = p.hitAir = false; dent(p.x, Math.min(1.2, hitV / 380)); puffs.push({ x: p.x, a: .8 });
             p.vy = !dove && hitV > 200 ? hitV * .2 : 0; if (p.vy > 0) p.y = .1; } }
         p.swing = Math.max(0, p.swing - dt); if (p.act) p.act.t += dt; });
       // 相手：スマッシュをねらうときは、少し高いところで合わせにいく
@@ -1107,8 +1135,11 @@ GAMES.badminton = root => {
       const chase = pick ? pick.s : null, ready = ST().balls > 1;
       // ほかのシャトルが、もうすぐ打たないといけないところまで来ていたら、ジャンプはしない（とびあがると、そのシャトルをとりのがす）
       const busy = cands.some(c => c.s !== chase && c.t < 1.3);
+      // 最強の相手：空中にいるとき、ふつうに落ちていては間に合わないシャトルが来たら、すとんと下りる
+      if (ST().strong && canDive() && cpu.y > 12 && !cpu.dive && cpu.vy < 130){ const grav = JUMP_G * spd * spd, fall = (cpu.vy + Math.sqrt(cpu.vy * cpu.vy + 2 * grav * cpu.y)) / grav;
+        if (cands.some(c => (cpu.hitAir || c.s !== chase) && c.t < fall + .15)) dive(cpu); }
       // スマッシュをねらう位置に行くのは、ほかにいそぐシャトルがないときだけ
-      const want = pick ? (busy ? pick.lx : pick.lxS) : 470;
+      const want = pick ? (busy ? pick.lx : pick.lxS) : ST().strong ? 510 : 470; // 最強の相手は、奥のスマッシュに間に合うように少し下がって待つ
       // ダッシュしているあいだは、こまをおぼえておく（次のシャトルを打つまで）
       if (dash > 1) cpu.dashT = .6; cpu.dashT = Math.max(0, (cpu.dashT || 0) - dt); const dv = cpu.dashT > 0 ? 1.4 : 1;
       const maxV = (chase || ready ? 250 : 110) * ST().cpu * dv, desired = clamp((want - cpu.x) * 4, -maxV, maxV);
@@ -1272,11 +1303,12 @@ GAMES.badminton = root => {
   let KY = 1, FS = FLOOR;
   const SY = y => FS - (FLOOR - y) * KY;
   const TOUCH = matchMedia('(pointer: coarse)').matches;
-  const BTN = { L: { x: 46, y: H - 42, r: 24 }, R: { x: 104, y: H - 42, r: 24 }, J: { x: W - 48, y: H - 42, r: 27 }, P: { x: W - 24, y: 24, r: 15 } };
+  const BTN = { L: { x: 46, y: H - 42, r: 24 }, R: { x: 104, y: H - 42, r: 24 }, J: { x: W - 48, y: H - 42, r: 27 }, D: { x: W - 118, y: H - 38, r: 24 }, P: { x: W - 24, y: 24, r: 15 } };
   // ボタンの見た目はそのまま、さわれるはんいは広く（左右は2つのまん中で分ける）
   const onBtn = (k, x, y) => { const b = BTN[k];
     if (k === 'P') return Math.hypot(x - b.x, y - b.y) < b.r + 10;
-    if (k === 'J') return x > b.x - b.r - 34 && y > b.y - b.r - 34;
+    if (k === 'D') return x > b.x - b.r - 24 && x <= BTN.D.x + 35 && y > b.y - b.r - 34;
+    if (k === 'J') return x > (canDive() ? BTN.D.x + 35 : b.x - b.r - 34) && y > b.y - b.r - 34;
     const mid = (BTN.L.x + BTN.R.x) / 2;
     if (y < BTN.L.y - BTN.L.r - 30 || x > BTN.R.x + BTN.R.r + 30) return false;
     return k === 'L' ? x < mid : x >= mid; };
@@ -1308,14 +1340,19 @@ GAMES.badminton = root => {
     ctx.fillStyle = '#2e7fd0'; if (hudOk('pause') && !paused){} else if (paused){ ctx.beginPath(); ctx.moveTo(BTN.P.x - 4, BTN.P.y - 6); ctx.lineTo(BTN.P.x + 6, BTN.P.y); ctx.lineTo(BTN.P.x - 4, BTN.P.y + 6); ctx.closePath(); ctx.fill(); }
     else { rr(ctx, BTN.P.x - 5.5, BTN.P.y - 6, 4, 12, 1.5); ctx.fill(); rr(ctx, BTN.P.x + 1.5, BTN.P.y - 6, 4, 12, 1.5); ctx.fill(); }
     // スマホ：左右と、ジャンプのボタン
-    if (TOUCH && state === 'play'){ roundBtn(BTN.L, keys.ArrowLeft); arrow(BTN.L.x, BTN.L.y, Math.PI); roundBtn(BTN.R, keys.ArrowRight); arrow(BTN.R.x, BTN.R.y, 0); roundBtn(BTN.J, me.y > 0); arrow(BTN.J.x, BTN.J.y, -Math.PI / 2); }
+    if (TOUCH && state === 'play'){ roundBtn(BTN.L, keys.ArrowLeft); arrow(BTN.L.x, BTN.L.y, Math.PI); roundBtn(BTN.R, keys.ArrowRight); arrow(BTN.R.x, BTN.R.y, 0); roundBtn(BTN.J, me.y > 0); arrow(BTN.J.x, BTN.J.y, -Math.PI / 2);
+      if (canDive()){ ctx.globalAlpha = me.y > 12 ? 1 : .55; roundBtn(BTN.D, me.dive); arrow(BTN.D.x, BTN.D.y, Math.PI / 2); ctx.globalAlpha = 1;
+        if (stageT < 7){ ctx.globalAlpha = Math.min(1, (7 - stageT) * 1.5); pill(BTN.D.x - 62, BTN.D.y - 62, 124, 22); ctx.fillStyle = '#2e7fd0'; ctx.textAlign = 'center'; ctx.font = '800 11px "Zen Maru Gothic", sans-serif'; ctx.fillText('空中でおすと急降下', BTN.D.x, BTN.D.y - 47); ctx.textAlign = 'left'; ctx.globalAlpha = 1; } } }
     // パソコン：さいしょだけ、操作のしかた
     if (!TOUCH && state === 'play' && (stageT < 7 || paused)){ ctx.globalAlpha = paused ? 1 : Math.min(1, (7 - stageT) * 1.5);
-      const py = H - 33; pill(10, py - 13, 300, 28); ctx.fillStyle = '#2e7fd0'; ctx.textAlign = 'left';
+      const py = H - 33; pill(10, py - 13, canDive() ? 436 : 300, 28); ctx.fillStyle = '#2e7fd0'; ctx.textAlign = 'left';
       arrow(25, py + 1, Math.PI, '#2e7fd0'); arrow(43, py + 1, 0, '#2e7fd0'); ctx.font = '800 11px "Zen Maru Gothic", sans-serif'; ctx.fillText('左右に移動', 58, py - 3); ctx.font = '700 8px "Zen Maru Gothic", sans-serif'; ctx.fillStyle = '#5a7fa8'; ctx.fillText('マウス・キーボード', 58, py + 8);
       ctx.fillStyle = 'rgba(46,127,208,.25)'; ctx.fillRect(150, py - 8, 1, 18);
       ctx.fillStyle = '#2e7fd0'; ctx.beginPath(); ctx.arc(170, py + 1, 9.5, 0, 7); ctx.fill(); ctx.save(); ctx.translate(170, py + 1); ctx.scale(.55, .55); arrow(0, 0, -Math.PI / 2); ctx.restore();
-      ctx.fillStyle = '#2e7fd0'; ctx.font = '800 11px "Zen Maru Gothic", sans-serif'; ctx.fillText('ジャンプ', 186, py - 3); ctx.font = '700 8px "Zen Maru Gothic", sans-serif'; ctx.fillStyle = '#5a7fa8'; ctx.fillText('スペースキー・クリック', 186, py + 8); ctx.globalAlpha = 1; }
+      ctx.fillStyle = '#2e7fd0'; ctx.font = '800 11px "Zen Maru Gothic", sans-serif'; ctx.fillText('ジャンプ', 186, py - 3); ctx.font = '700 8px "Zen Maru Gothic", sans-serif'; ctx.fillStyle = '#5a7fa8'; ctx.fillText('スペースキー・クリック', 186, py + 8);
+      if (canDive()){ ctx.fillStyle = 'rgba(46,127,208,.25)'; ctx.fillRect(296, py - 8, 1, 18); ctx.fillStyle = '#2e7fd0'; ctx.beginPath(); ctx.arc(316, py + 1, 9.5, 0, 7); ctx.fill(); ctx.save(); ctx.translate(316, py + 1); ctx.scale(.55, .55); arrow(0, 0, Math.PI / 2); ctx.restore();
+        ctx.fillStyle = '#2e7fd0'; ctx.font = '800 11px "Zen Maru Gothic", sans-serif'; ctx.fillText('急降下', 332, py - 3); ctx.font = '700 8px "Zen Maru Gothic", sans-serif'; ctx.fillStyle = '#5a7fa8'; ctx.fillText('下キー・空中でクリック', 332, py + 8); }
+      ctx.globalAlpha = 1; }
     if (paused){ ctx.fillStyle = 'rgba(255,255,255,.55)'; ctx.fillRect(0, 44, W, H - 44); ctx.fillStyle = '#2e7fd0'; ctx.textAlign = 'center'; ctx.font = '900 26px "Zen Maru Gothic", sans-serif'; ctx.fillText('一時停止', W / 2, H / 2 - 10);
       ctx.font = '700 13px "Zen Maru Gothic", sans-serif'; ctx.fillText('もう一度 おすと、つづきから', W / 2, H / 2 + 18); }
     ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic'; }
@@ -1417,7 +1454,7 @@ GAMES.badminton = root => {
   // クリアのコイン：全部のステージをクリアしたら銀（雲）、完全制覇は金（シャトル）
   function drawCoin(x, y, r, spin, gold = true){ const sx = Math.max(.12, Math.abs(Math.cos(spin))), img = gold ? COIN_GOLD : COIN_SILVER;
     if (img.complete && img.naturalWidth > 0){ ctx.save(); ctx.translate(x, y); ctx.shadowColor = gold ? 'rgba(255,197,61,.7)' : 'rgba(200,225,255,.8)'; ctx.shadowBlur = 24; ctx.scale(sx, 1);
-      if (Math.cos(spin) < 0) ctx.filter = 'brightness(.82)'; ctx.drawImage(img, -r, -r, r * 2, r * 2); ctx.restore(); return; }
+      const back = Math.cos(spin) < 0, face = back && gold && COIN_BACK.complete && COIN_BACK.naturalWidth > 0 ? COIN_BACK : img; if (back) ctx.filter = 'brightness(.82)'; ctx.drawImage(face, -r, -r, r * 2, r * 2); ctx.restore(); return; }
     ctx.save(); ctx.translate(x, y); ctx.shadowColor = 'rgba(255,197,61,.7)'; ctx.shadowBlur = 24; ctx.scale(sx, 1);
     const gr = ctx.createLinearGradient(-r, -r, r, r); gr.addColorStop(0, '#fff1a8'); gr.addColorStop(.45, '#f6c945'); gr.addColorStop(1, '#d39b1f');
     ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(0, 0, r, 0, 7); ctx.fill(); ctx.shadowBlur = 0;
