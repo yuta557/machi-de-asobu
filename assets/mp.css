@@ -428,6 +428,29 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 .sites-sec{background:linear-gradient(180deg,#fff 0%,#F4FAFE 100%);padding-bottom:clamp(60px,6vw,100px)}
 @media(max-width:860px){ .sites{grid-template-columns:1fr;gap:18px} }
 
+/* 遊べるサイトへの帯。1枚だけ置いて、中で待っているものの名前を並べる */
+.play{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);
+  text-decoration:none;background:#fff;overflow:hidden;
+  border:1.5px solid #CFE3F3;border-radius:18px;
+  transition:transform .28s ease, box-shadow .28s ease, border-color .28s ease}
+.play img{width:100%;height:100%;min-height:100%;object-fit:cover;
+  transition:transform .5s cubic-bezier(.2,.7,.25,1)}
+.play .body{padding:clamp(24px,2.4vw,34px)}
+.play .lb{margin:0;font-weight:900;font-size:20px}
+.ideas{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.ideas li{font-size:13px;line-height:1.5;color:var(--ink-2);
+  background:var(--sky);border:1px solid var(--line);border-radius:999px;padding:5px 13px}
+.play .more{margin:20px 0 0;display:flex;align-items:center;gap:8px;
+  font-size:14.5px;font-weight:700;color:var(--ink-2)}
+.play .more span{display:inline-block;transition:transform .25s ease}
+.play:hover{transform:translateY(-5px);border-color:var(--ink-2);box-shadow:0 16px 34px rgba(18,62,124,.12)}
+.play:hover img{transform:scale(1.045)}
+.play:hover .more span{transform:translate(4px,-4px)}
+@media(max-width:860px){
+  .play{grid-template-columns:1fr}
+  .play img{height:auto;min-height:0;aspect-ratio:16/9}
+}
+
 /* ほかのサイトへのリンク。広い画面ではヘッダーの右に小さく常時出し、
    狭い画面ではメニューの中に入れる。ヘッダーは貼りついているので、
    ページのどこを見ていても押せる。 */
