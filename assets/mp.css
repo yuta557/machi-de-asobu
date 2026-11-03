@@ -445,6 +445,10 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 /* フッター */
 .foot-ttl{margin:0 0 14px;font-family:"Outfit",sans-serif;font-weight:700;
   letter-spacing:.14em;font-size:12px;color:var(--ink-2)}
+/* 連絡先の添え書き */
+.mail-note{font-size:12.5px;color:var(--ink-soft)}
+.form-note .mail{font-weight:700;white-space:nowrap}
+
 .foot-ext{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px}
 .foot-ext a{display:inline-flex;align-items:center;gap:10px;background:#fff;color:var(--ink);
   border:1.5px solid #CFE3F3;border-radius:999px;padding:10px 20px 10px 12px;

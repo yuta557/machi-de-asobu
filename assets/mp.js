@@ -3,7 +3,9 @@
    空のままのあいだは送信せず、メールでの連絡をうながす。 */
 (function(){
   var ENDPOINT = "https://formspree.io/f/mwllwjjr";
-  var MAIL = atob("eXV0YTEwOTAxMEBnbWFpbC5jb20=");
+  /* アドレスは、集めて回るプログラムに拾われないよう、@ を全角のままにしておく。
+     読む人には「＠を半角に」と添えて、手で直してもらう。 */
+  var MAIL = "yuta109010 ＠ gmail.com";
   var form = document.getElementById("contactForm");
   if(!form) return;
   var msg = document.getElementById("cf-msg");
@@ -11,7 +13,9 @@
   var sending = false;
 
   function show(kind, text){ msg.className = "form-msg " + kind; msg.textContent = text; }
-  function byMail(head){ show("ng", head + "お手数ですが " + MAIL + " までお送りください。"); }
+  function byMail(head){
+    show("ng", head + "お手数ですが " + MAIL + "（＠を半角の @ に）までお送りください。");
+  }
 
   form.addEventListener("submit", function(e){
     e.preventDefault();
@@ -133,24 +137,6 @@
   items.forEach(function(el){ io.observe(el); });
 })();
 
-
-/* メールアドレスは、集めて回るプログラムに拾われないよう、
-   読み込んだあとに組み立てて置く。JavaScript が動かないときは
-   「アットマーク」と書いた形のまま残る。 */
-(function(){
-  var list = document.querySelectorAll('.mail[data-m]');
-  if(!list.length) return;
-  [].slice.call(list).forEach(function(el){
-    var addr;
-    try { addr = atob(el.getAttribute('data-m')); } catch(e){ return; }
-    var a = document.createElement('a');
-    a.href = 'mail' + 'to:' + addr;
-    a.textContent = addr;
-    el.textContent = '';
-    el.appendChild(a);
-    el.removeAttribute('data-m');
-  });
-})();
 
 /* 写真のスライド：1枚ずつ、5秒ごとに切り替える。
    前後に1枚ずつ複製を置いて、端でも同じ向きに流れて一周するようにしている。
