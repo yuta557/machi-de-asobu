@@ -377,9 +377,9 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 /* 見出しの黄色。線は字の下に、きらめきは左上に */
 .ttl-mark{position:relative;display:inline-block}
 .ttl-line{position:absolute;left:-.6%;bottom:-.27em;width:53%;height:.26em}
-.ttl-spark{position:absolute;left:-.93em;top:-.55em;width:.97em;height:auto}
-/* 見出しは、しるしが入る大きさまで上げる */
-.head-art-sec h1{font-size:clamp(37px,4.6vw,54px)}
+.ttl-spark{position:absolute;left:-.93em;top:-.30em;width:.97em;height:auto}
+/* 見出しは、しるしが入る大きさまで上げる。パンくずとの間も、しるしのぶんだけ空ける */
+.head-art-sec h1{font-size:clamp(37px,4.6vw,54px);margin-top:.5em}
 
 /* 使い道の断り書き。細い線で本文と分けて、盾のしるしを添える */
 .page-head .privacy{display:flex;align-items:flex-start;gap:11px;
