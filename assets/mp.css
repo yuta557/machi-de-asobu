@@ -441,7 +441,8 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
   border:1.5px solid #CFE3F3;border-radius:999px;padding:10px 20px 10px 12px;
   text-decoration:none;font-weight:700;font-size:14px;
   transition:border-color .2s ease, transform .2s ease, box-shadow .2s ease}
-.foot-ext a img{width:28px;height:28px}
+/* ロゴは横長（385x259）。高さで合わせて、つぶさない */
+.foot-ext a img{width:auto;height:22px;flex:none}
 .foot-ext a span{display:inline-block;color:var(--ink-2);transition:transform .25s ease}
 .foot-ext a:hover{border-color:var(--ink-2);transform:translateY(-2px);box-shadow:0 8px 18px rgba(18,62,124,.08)}
 .foot-ext a:hover span{transform:translate(3px,-3px)}
