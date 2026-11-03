@@ -366,8 +366,8 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 .head-art-sec .wrap{position:relative;z-index:2}
 /* 空は文字より上で終わらせる。左は端を見せず、すっと消す */
 .head-sky{position:absolute;left:0;top:0;width:100%;height:clamp(96px,15.2vw,250px);z-index:0;
-  -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 14%);
-  mask-image:linear-gradient(90deg,transparent 0%,#000 14%)}
+  -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 26%);
+  mask-image:linear-gradient(90deg,transparent 0%,#000 26%)}
 .head-art{position:absolute;right:0;bottom:0;z-index:1;
   width:min(66%,1100px);height:auto;pointer-events:none;
   -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 38%);
