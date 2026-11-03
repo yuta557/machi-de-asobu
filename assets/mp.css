@@ -362,9 +362,12 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 /* 絵のある見出し。空の帯 → 絵 → 文字、の順に重ねる。
    絵は右の端まで出して、左へ向かって消えていく。文字の下には回り込まない */
 .head-art-sec{position:relative;overflow:hidden;background:#fff;
-  padding-bottom:clamp(30px,3.4vw,54px)}
+  padding-top:clamp(62px,6.9vw,118px);padding-bottom:clamp(30px,3.4vw,54px)}
 .head-art-sec .wrap{position:relative;z-index:2}
-.head-sky{position:absolute;left:0;top:0;width:100%;height:clamp(120px,15vw,220px);z-index:0}
+/* 空は文字より上で終わらせる。左は端を見せず、すっと消す */
+.head-sky{position:absolute;left:0;top:0;width:100%;height:clamp(56px,6.4vw,110px);z-index:0;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 22%);
+  mask-image:linear-gradient(90deg,transparent 0%,#000 22%)}
 .head-art{position:absolute;right:0;bottom:0;z-index:1;
   width:min(66%,1100px);height:auto;pointer-events:none;
   -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 38%);
