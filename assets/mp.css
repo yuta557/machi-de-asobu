@@ -169,9 +169,9 @@ a{color:inherit}
   .panels.js .slide.on{opacity:1;transform:none;z-index:2;
     transition:opacity .5s cubic-bezier(.22,.61,.36,1), transform .6s cubic-bezier(.22,.61,.36,1)}
 }
-/* 広い版は文字が上半分（53%）までなので、もっと切っても大丈夫 */
+/* 広い版は文字が上から56%までなので、もっと切っても大丈夫 */
 @media(max-width:560px) and (min-aspect-ratio:65/100){
-  .panels{--cap:1.75}
+  .panels{--cap:1.70}
 }
 
 @media(max-width:560px) and (prefers-reduced-motion: reduce){
