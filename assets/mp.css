@@ -358,6 +358,10 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
   border-radius:999px;padding:4px 12px;color:var(--ink-soft)}
 .page-head .lead{color:var(--ink-soft);max-width:42em;margin:18px 0 0}
 .page-narrow .wrap{max-width:860px}
+/* 読みもののページ。本文の幅ちょうどに段を立てて、ページの真ん中に置く。
+   見出しも名前もボタンも同じ左端から始まり、右だけが空く感じがなくなる */
+.page-essay .wrap{max-width:784px}
+.page-essay .who-solo{max-width:none}
 .nav-links a[aria-current="page"]{color:var(--ink-2);font-weight:700}
 
 /* 大きなボタン */
