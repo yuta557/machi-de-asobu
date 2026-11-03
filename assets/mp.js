@@ -2,7 +2,7 @@
    ENDPOINT に Formspree のURL（https://formspree.io/f/xxxxxxx）を入れると動きだす。
    空のままのあいだは送信せず、メールでの連絡をうながす。 */
 (function(){
-  var ENDPOINT = "";   /* ← ここに Formspree のURLを入れる */
+  var ENDPOINT = "https://formspree.io/f/mwllwjjr";
   var MAIL = atob("eXV0YTEwOTAxMEBnbWFpbC5jb20=");
   var form = document.getElementById("contactForm");
   if(!form) return;
