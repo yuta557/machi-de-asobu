@@ -173,6 +173,15 @@ a{color:inherit}
 @media(max-width:560px) and (min-aspect-ratio:65/100){
   .panels{--cap:1.70}
 }
+/* もっと横に広いときは、正方形に描いた版にする。
+   幅に合わせると縦が余るので、高さいっぱいに出して、はみ出したぶんの左右を同じだけ切る。
+   文字は中央の11%〜90%にあるので、切るのは片側9.5%（＝幅119%）まで。
+   それ以上は切らずに、下の余白を受け入れる。 */
+@media(max-width:560px) and (min-aspect-ratio:80/100){
+  .p-wrap .p-bg,.p-wrap .p-tx{
+    width:clamp(100%, var(--h), 119%);
+    max-height:none;justify-self:center}
+}
 
 @media(max-width:560px) and (prefers-reduced-motion: reduce){
   .panels.js .slide{transform:none;transition:opacity .2s linear .1s}
