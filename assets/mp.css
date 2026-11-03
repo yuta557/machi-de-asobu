@@ -400,7 +400,13 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
    見出しも名前もボタンも同じ左端から始まり、右だけが空く感じがなくなる */
 .page-essay .wrap{max-width:784px}
 .page-essay .who-solo{max-width:none}
-.nav-links a[aria-current="page"]{color:var(--ink-2);font-weight:700}
+/* 今いるページは、薄い青の丸みで示す。縦の余白は打ち消して、ヘッダーの高さは変えない */
+.nav-links a[aria-current="page"]{color:var(--ink-2);font-weight:700;
+  background:var(--sky);border-radius:999px;padding:8px 16px;margin:-8px -6px}
+@media(max-width:860px){
+  /* 畳んだメニューでは、丸めずに行ごと染める */
+  .nav-links a[aria-current="page"]{border-radius:0;padding:17px 22px;margin:0}
+}
 
 /* 大きなボタン */
 .btn{display:inline-flex;align-items:center;gap:12px;text-decoration:none;font-weight:700;font-size:15.5px;
