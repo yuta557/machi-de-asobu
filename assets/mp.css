@@ -458,6 +458,12 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
   .ideas .etc{display:block}
 }
 
+/* 2行になるときに、文の途中ではなく文の切れ目で折り返す。
+   一文ずつを塊にしておくと、入らない文がまるごと次の行へ落ちる。
+   狭い画面では3行以上になり、塊のままだと行末が大きく余るので、普通の折り返しに戻す */
+.bysent span{display:inline-block}
+@media(max-width:640px){ .bysent span{display:inline} }
+
 /* ほかのサイトへのリンク。広い画面ではヘッダーの右に小さく常時出し、
    狭い画面ではメニューの中に入れる。ヘッダーは貼りついているので、
    ページのどこを見ていても押せる。 */
