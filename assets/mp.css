@@ -127,6 +127,8 @@ a{color:inherit}
   .panels{display:block;position:relative;background:#fff;
     --h:max(calc(100svh - 64px),430px);
     --d:max(86svh,400px);
+    /* 下をどこまで切ってよいか。狭い版は文字が下（67%）まであるので控えめに */
+    --cap:1.40;
     height:calc(3 * var(--d))}
   /* ヘッダー（64px）の下に貼りつける。下の内容は、この白い面のうしろを上がってくる */
   .stage{position:sticky;top:64px;height:var(--h);overflow:hidden;background:#fff;
@@ -149,7 +151,7 @@ a{color:inherit}
      縦に余ったぶんは下が切れるが、文字は上半分にあるので切れない。
      極端に背の低い画面では、文字を守るために縮めて横に余白を戻す（1.45倍まで）。 */
   .p-wrap .p-bg,.p-wrap .p-tx{display:block;grid-area:1/1;
-    width:100%;height:auto;max-width:none;max-height:calc(var(--h) * 1.35);
+    width:100%;height:auto;max-width:none;max-height:calc(var(--h) * var(--cap));
     object-fit:contain}
   .p-wrap .p-tx{pointer-events:none}
   /* 文字は、絵が出たあと少し遅れて、下からすっと現れる。
@@ -167,6 +169,11 @@ a{color:inherit}
   .panels.js .slide.on{opacity:1;transform:none;z-index:2;
     transition:opacity .5s cubic-bezier(.22,.61,.36,1), transform .6s cubic-bezier(.22,.61,.36,1)}
 }
+/* 広い版は文字が上半分（53%）までなので、もっと切っても大丈夫 */
+@media(max-width:560px) and (min-aspect-ratio:65/100){
+  .panels{--cap:1.75}
+}
+
 @media(max-width:560px) and (prefers-reduced-motion: reduce){
   .panels.js .slide{transform:none;transition:opacity .2s linear .1s}
   .panels.js .slide.on{transition:opacity .2s linear}
