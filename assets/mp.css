@@ -358,6 +358,37 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
   border-radius:999px;padding:4px 12px;color:var(--ink-soft)}
 .page-head .lead{color:var(--ink-soft);max-width:42em;margin:18px 0 0}
 .page-narrow .wrap{max-width:860px}
+
+/* 絵のある見出し。空の帯 → 絵 → 文字、の順に重ねる。
+   絵は右の端まで出して、左へ向かって消えていく。文字の下には回り込まない */
+.head-art-sec{position:relative;overflow:hidden;background:#fff;
+  padding-bottom:clamp(30px,3.4vw,54px)}
+.head-art-sec .wrap{position:relative;z-index:2}
+.head-sky{position:absolute;left:0;top:0;width:100%;height:clamp(120px,15vw,220px);z-index:0}
+.head-art{position:absolute;right:0;bottom:0;z-index:1;
+  width:min(66%,1100px);height:auto;pointer-events:none;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 38%);
+  mask-image:linear-gradient(90deg,transparent 0%,#000 38%)}
+.head-art-sec .lead,.head-art-sec .privacy{max-width:min(42em,52%)}
+
+/* 見出しの黄色。線は字の下に、きらめきは左上に */
+.ttl-mark{position:relative;display:inline-block}
+.ttl-line{position:absolute;left:-1%;bottom:-.26em;width:103%;height:.3em}
+.ttl-spark{position:absolute;left:-.66em;top:-.46em;width:.8em;height:.8em}
+
+/* 使い道の断り書き。細い線で本文と分けて、盾のしるしを添える */
+.page-head .privacy{display:flex;align-items:flex-start;gap:11px;
+  margin:clamp(22px,2.4vw,34px) 0 0;padding-top:clamp(18px,2vw,26px);
+  border-top:1px solid var(--line);
+  color:var(--ink-soft);font-size:14.5px;line-height:1.85}
+.page-head .privacy svg{flex:none;width:22px;height:22px;margin-top:2px}
+
+@media(max-width:860px){
+  /* 絵は文字の下へ。雲が文章にかかるので、薄くして離す */
+  .head-art{width:min(96%,620px);opacity:.5}
+  .head-art-sec .lead,.head-art-sec .privacy{max-width:none}
+  .head-art-sec{padding-bottom:clamp(112px,36vw,200px)}
+}
 /* 読みもののページ。本文の幅ちょうどに段を立てて、ページの真ん中に置く。
    見出しも名前もボタンも同じ左端から始まり、右だけが空く感じがなくなる */
 .page-essay .wrap{max-width:784px}
