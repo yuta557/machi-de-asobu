@@ -1,28 +1,53 @@
 /* お問い合わせフォーム：ページを離れずに送信する。
-   ENDPOINT に送信先（Formspree か Google Apps Script のURL）を入れる。
+   ENDPOINT に Formspree のURL（https://formspree.io/f/xxxxxxx）を入れると動きだす。
    空のままのあいだは送信せず、メールでの連絡をうながす。 */
 (function(){
-  var ENDPOINT = "";   /* 例: https://formspree.io/f/xxxxxxx */
+  var ENDPOINT = "";   /* ← ここに Formspree のURLを入れる */
   var MAIL = atob("eXV0YTEwOTAxMEBnbWFpbC5jb20=");
   var form = document.getElementById("contactForm");
   if(!form) return;
   var msg = document.getElementById("cf-msg");
   var btn = form.querySelector(".submit");
+  var sending = false;
+
   function show(kind, text){ msg.className = "form-msg " + kind; msg.textContent = text; }
+  function byMail(head){ show("ng", head + "お手数ですが " + MAIL + " までお送りください。"); }
+
   form.addEventListener("submit", function(e){
     e.preventDefault();
+    if(sending) return;
     show("", "");
+
     var name = form.name.value.trim(), email = form.email.value.trim(), body = form.message.value.trim();
     if(!name || !email || !body){ show("ng","お名前・メールアドレス・内容を入力してください。"); return; }
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ show("ng","メールアドレスの形式をご確認ください。"); return; }
-    if(form._gotcha.value){ return; }
-    if(!ENDPOINT){ show("ng","ただいまフォームからの送信を準備中です。お手数ですが " + MAIL + " までお送りください。"); return; }
-    btn.disabled = true; btn.textContent = "送信中…";
-    fetch(ENDPOINT, { method:"POST", headers:{"Accept":"application/json"}, body:new FormData(form) })
-      .then(function(r){ if(!r.ok) throw new Error(r.status);
-        form.reset(); show("ok","送信しました。お返事までしばらくお待ちください。"); })
-      .catch(function(){ show("ng","送信できませんでした。お手数ですが " + MAIL + " までお送りください。"); })
-      .then(function(){ btn.disabled = false; btn.textContent = "送信する　→"; });
+    if(form._gotcha.value){ return; }            /* 人には見えない欄。埋まっていたら機械 */
+    if(!ENDPOINT){ byMail("ただいまフォームからの送信を準備中です。"); return; }
+
+    var data = new FormData(form);
+    data.append("_subject", "【MACHI PLAY】" + (form.topic.value || "お問い合わせ") + "／" + name + " 様");
+
+    sending = true; btn.disabled = true; btn.textContent = "送信中…";
+    fetch(ENDPOINT, { method:"POST", headers:{"Accept":"application/json"}, body:data })
+      .then(function(r){
+        if(r.ok){ return null; }
+        return r.json().then(function(j){                     /* 送信先が理由を返したら、それを出す */
+          var m = j && j.errors && j.errors.map(function(x){ return x.message; }).join("　");
+          var e = new Error(m || "");
+          e.fromServer = !!m;
+          throw e;
+        }, function(){ throw new Error(""); });
+      })
+      .then(function(){
+        form.reset();
+        show("ok","送信しました。お返事までしばらくお待ちください。");
+      })
+      .catch(function(err){
+        /* 送信先が返した理由だけを出す。通信そのものの失敗は、言い回しをそろえる */
+        if(err && err.fromServer && err.message){ byMail(err.message + "　"); }
+        else { byMail("送信できませんでした。"); }
+      })
+      .then(function(){ sending = false; btn.disabled = false; btn.textContent = "送信する　→"; });
   });
 })();
 
