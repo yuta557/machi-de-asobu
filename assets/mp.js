@@ -34,6 +34,15 @@
   var trigs  = [].slice.call(box.querySelectorAll('.trig'));
   if(slides.length < 2 || trigs.length < slides.length) return;
   box.classList.add('js');
+
+  /* パネルが画面に入ったら、1枚目の文字を出す合図を立てる */
+  var lit = new IntersectionObserver(function(list){
+    for(var i = 0; i < list.length; i++){
+      if(list[i].isIntersecting){ box.classList.add('lit'); lit.disconnect(); return; }
+    }
+  }, { rootMargin: '-20% 0px -20% 0px', threshold: 0 });
+  lit.observe(box);
+
   function show(i){
     /* 最後の目印まで来たら、絵ごとすっと消す。うしろで待っている内容が、上から出る */
     if(i >= slides.length){ box.classList.add('out'); return; }

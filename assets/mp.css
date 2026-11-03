@@ -145,8 +145,17 @@ a{color:inherit}
   .p-wrap{position:relative;display:inline-grid;max-width:100%;max-height:100%}
   /* 画面の形で絵を選ぶための <picture> は、枠として数えない */
   .p-wrap picture{display:contents}
-  /* 絵の形がどれでも、画面の幅と高さの両方に収める */
-  .p-wrap .p-bg{display:block;width:auto;height:auto;max-width:100vw;max-height:var(--h)}
+  /* 絵の形がどれでも、画面の幅と高さの両方に収める。
+     文字は別の一枚になっていて、絵のうえにぴったり重ねる */
+  .p-wrap .p-bg,.p-wrap .p-tx{display:block;grid-area:1/1;
+    width:auto;height:auto;max-width:100vw;max-height:var(--h)}
+  .p-wrap .p-tx{pointer-events:none}
+  /* 文字は、絵が出たあと少し遅れて、下からすっと現れる。
+     消えるときは動かさない（次の絵のうしろで、見えなくなってから元に戻す） */
+  .panels.js .p-tx{opacity:0;transform:translateY(14px);
+    transition:opacity .01s linear .8s, transform .01s linear .8s}
+  .panels.js.lit .slide.on .p-tx{opacity:1;transform:none;
+    transition:opacity .75s ease .2s, transform .85s cubic-bezier(.2,.7,.25,1) .2s}
   .p-wrap .p-ttl{position:absolute;z-index:2;left:6.5%;top:7%;width:85%;height:auto;display:block}
   /* 切り替わり：次の絵を前の絵の上に重ねて出す。
      前の絵は消えるのを少し待たせるので、あいだに白が透けない。
@@ -159,6 +168,8 @@ a{color:inherit}
 @media(max-width:560px) and (prefers-reduced-motion: reduce){
   .panels.js .slide{transform:none;transition:opacity .2s linear .1s}
   .panels.js .slide.on{transition:opacity .2s linear}
+  .panels.js .p-tx{transform:none;transition:opacity .01s linear .4s}
+  .panels.js.lit .slide.on .p-tx{transform:none;transition:opacity .25s linear}
 }
 
 @media(max-width:860px){
