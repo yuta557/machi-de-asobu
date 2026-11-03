@@ -366,13 +366,14 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 .head-art-sec .wrap{position:relative;z-index:2}
 /* 空は文字より上で終わらせる。左は端を見せず、すっと消す */
 .head-sky{position:absolute;left:0;top:0;width:100%;height:clamp(96px,15.2vw,250px);z-index:0;
-  -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 26%);
-  mask-image:linear-gradient(90deg,transparent 0%,#000 26%)}
+  -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 20%);
+  mask-image:linear-gradient(90deg,transparent 0%,#000 20%)}
 .head-art{position:absolute;right:0;bottom:0;z-index:1;
   width:min(66%,1100px);height:auto;pointer-events:none;
   -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 38%);
   mask-image:linear-gradient(90deg,transparent 0%,#000 38%)}
-.head-art-sec .lead,.head-art-sec .privacy{max-width:min(42em,52%)}
+.head-art-sec .lead-rule,.head-art-sec .privacy{max-width:min(42em,52%)}
+.head-art-sec .lead + .lead{margin-top:.95em}
 
 /* 見出しの黄色。線は字の下に、きらめきは左上に */
 .ttl-mark{position:relative;display:inline-block}
@@ -391,10 +392,14 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 @media(max-width:860px){
   /* 左の余白が狭いので、見出しだけ右へ寄せて、しるしの場所を作る */
   .head-art-sec h1{margin-left:.72em}
+  /* 本文は細い縦線で束ね、断り書きは盾と文を線で分ける */
+  .lead-rule{border-left:3px solid #BFDDF4;padding-left:18px}
+  .head-art-sec .privacy span{border-left:1.5px solid var(--line);padding-left:16px}
+  .head-art-sec .privacy{gap:14px}
   /* 絵は文字の下へ。左右にはみ出させて、濃さはそのまま */
   .head-art{width:min(118%,760px);right:-9%}
-  .head-art-sec .lead,.head-art-sec .privacy{max-width:none}
-  .head-art-sec{padding-bottom:clamp(150px,58vw,320px)}
+  .head-art-sec .lead-rule,.head-art-sec .privacy{max-width:none}
+  .head-art-sec{padding-bottom:clamp(140px,53vw,300px)}
 }
 /* 読みもののページ。本文の幅ちょうどに段を立てて、ページの真ん中に置く。
    見出しも名前もボタンも同じ左端から始まり、右だけが空く感じがなくなる */
