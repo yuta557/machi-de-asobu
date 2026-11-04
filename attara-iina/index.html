@@ -969,13 +969,20 @@ GAMES.badminton = root => {
       if (onBtn('P', x, y) || paused){ if (state === 'play' || paused) paused = !paused; return; }
       if (TOUCH && state === 'play'){ if (onBtn('L', x, y)){ btnPtr[e.pointerId] = 'ArrowLeft'; keys.ArrowLeft = true; target = me.x; return; }
         if (onBtn('R', x, y)){ btnPtr[e.pointerId] = 'ArrowRight'; keys.ArrowRight = true; target = me.x; return; }
-        if (onBtn('J', x, y)){ if (me.y > 0) dive(me); else jump(me); return; } } } // ジャンプボタンは、空中でおすと急降下
+        if (onBtn('J', x, y)){ btnPtr[e.pointerId] = 'J'; if (me.y > 0) dive(me); else jump(me); return; } } } // ジャンプボタンは、空中でおすと急降下（そのまま指をずらしても、右へは動かない）
     aim(e);
     if (e.pointerType === 'mouse'){ if (me.y > 0) dive(me); else jump(me); return; }
     const [x, y] = pt(e), now = performance.now();
     touch = { id: e.pointerId, x, y, jumped: false };
     if (now - lastTap.t < 320 && Math.hypot(x - lastTap.x, y - lastTap.y) < 60){ touch.jumped = true; jump(me); lastTap.t = 0; } else lastTap = { t: now, x, y }; };
   cv.onpointerup = cv.onpointercancel = e => { if (btnPtr[e.pointerId]){ keys[btnPtr[e.pointerId]] = false; delete btnPtr[e.pointerId]; } if (touch && e.pointerId === touch.id) touch = null; };
+  // スマホ：プレイ画面の外の左がわをおしても、左へ動く
+  const outDown = e => { if (e.pointerType === 'mouse' || state !== 'play' || paused || e.target === cv || e.target.closest('button, a, input, select, textarea')) return;
+      if (e.clientX >= cv.getBoundingClientRect().left) return;
+      usedPointer(e); btnPtr[e.pointerId] = 'ArrowLeft'; keys.ArrowLeft = true; target = me.x; },
+    outUp = e => { if (e.target !== cv && btnPtr[e.pointerId]){ keys[btnPtr[e.pointerId]] = false; delete btnPtr[e.pointerId]; } };
+  document.addEventListener('pointerdown', outDown); ['pointerup', 'pointercancel'].forEach(k => document.addEventListener(k, outUp));
+  onClean(() => { document.removeEventListener('pointerdown', outDown); ['pointerup', 'pointercancel'].forEach(k => document.removeEventListener(k, outUp)); });
   onKey((e, d) => { TOUCH = false;
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight'){ keys[e.key] = d; e.preventDefault(); }
     if ((e.key === ' ' || e.key === 'ArrowUp') && d && !e.repeat){ e.preventDefault(); jump(me); }
