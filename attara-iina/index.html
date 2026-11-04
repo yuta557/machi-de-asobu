@@ -1330,7 +1330,7 @@ GAMES.badminton = root => {
   // ボタンの見た目はそのまま、さわれるはんいは広く（左右は2つのまん中で分ける）
   const onBtn = (k, x, y) => { const b = BTN[k];
     if (k === 'P') return Math.hypot(x - b.x, y - b.y) < b.r + 10;
-    if (k === 'J') return x > b.x - b.r - 34 && y > b.y - b.r - 34;
+    if (k === 'J') return x >= W / 2; // 画面の右半分は、ぜんぶジャンプボタン
     const mid = (BTN.L.x + BTN.R.x) / 2;
     if (y < BTN.L.y - BTN.L.r - 30 || x > BTN.R.x + BTN.R.r + 30) return false;
     return k === 'L' ? x < mid : x >= mid; };
