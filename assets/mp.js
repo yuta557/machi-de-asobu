@@ -64,8 +64,27 @@
   if(slides.length < 2 || trigs.length < slides.length) return;
   box.classList.add('js');
 
+  /* 文字は3枚の絵に分かれている。そろう前に出すと、見出しだけ・しるしだけが
+     先に見えてしまうので、その絵の文字がそろってから動かす */
+  slides.forEach(function(sl){
+    var imgs = [].slice.call(sl.querySelectorAll('.p-tx'));
+    var left = imgs.length, done = false;
+    function ok(){ if(!done){ done = true; sl.classList.add('txok'); } }
+    function one(){ if(--left <= 0) ok(); }
+    if(!left){ ok(); return; }
+    imgs.forEach(function(im){
+      if(im.complete){ one(); return; }
+      im.addEventListener('load', one);
+      im.addEventListener('error', one);
+    });
+    setTimeout(ok, 8000);   /* 届かないときでも、待ちきりにしない */
+  });
+
   /* パネルが画面に入ったら、1枚目の文字を出す合図を立てる */
   var lit = new IntersectionObserver(function(list){
+    /* ヒーローから渡ってくる画面では、渡し終わってから合図を立てる（下を見よ）。
+       1枚目の動きが、絵がまだ薄いうちに終わってしまわないように */
+    if(box.__handoff) return;
     for(var i = 0; i < list.length; i++){
       if(list[i].isIntersecting){ box.classList.add('lit'); lit.disconnect(); return; }
     }
@@ -115,7 +134,8 @@
 
   function paint(){
     waiting = false;
-    if(!narrow.matches || reduce.matches){ hands_off(); return; }
+    if(!narrow.matches || reduce.matches){ panels.__handoff = false; hands_off(); return; }
+    panels.__handoff = true;
     /* 絵が画面の上に貼りつく位置。そこへ着くまでのあいだで、濃さを入れ替える */
     var pin = panels.getBoundingClientRect().top + window.pageYOffset - 64;
     var span = Math.max(innerHeight * 0.45, 180);
@@ -131,6 +151,8 @@
       /* 出来上がったら手を放す。3枚目のあとの消え方は、スタイル表にまかせる */
       stage.classList.remove('fading');
       stage.style.opacity = p >= 1 ? '' : '0';
+      /* 絵が出そろった所で、1枚目の文字を動かす */
+      if(p >= 1) panels.classList.add('lit');
     }
   }
   function later(){ if(!waiting){ waiting = true; requestAnimationFrame(paint); } }
@@ -170,7 +192,6 @@
     if(done) return;
     done = true;
     ttl.classList.remove('wait');
-    ttl.classList.add('ready');
   }
   function one(){ if(--left <= 0) show(); }
 
