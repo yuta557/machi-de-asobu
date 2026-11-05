@@ -86,7 +86,7 @@
        1枚目の動きが、絵がまだ薄いうちに終わってしまわないように */
     if(box.__handoff) return;
     for(var i = 0; i < list.length; i++){
-      if(list[i].isIntersecting){ box.classList.add('lit'); lit.disconnect(); return; }
+      if(list[i].isIntersecting){ box.classList.add('lit'); box.classList.add('set'); lit.disconnect(); return; }
     }
   }, { rootMargin: '-20% 0px -20% 0px', threshold: 0 });
   lit.observe(box);
@@ -143,6 +143,8 @@
     p = p < 0 ? 0 : (p > 1 ? 1 : p);
 
     hero.style.opacity = p > 0 ? String(1 - p) : '';
+    /* 絵が見えはじめたら、本文を出す */
+    if(p >= .3) panels.classList.add('lit');
     if(p > 0 && p < 1){
       /* ここはスクロールで直に濃さを決めるので、なめらかにする仕掛けは外す */
       stage.classList.add('fading');
@@ -151,8 +153,8 @@
       /* 出来上がったら手を放す。3枚目のあとの消え方は、スタイル表にまかせる */
       stage.classList.remove('fading');
       stage.style.opacity = p >= 1 ? '' : '0';
-      /* 絵が出そろった所で、1枚目の文字を動かす */
-      if(p >= 1) panels.classList.add('lit');
+      /* 渡し終わったところで、問いかけを動かす */
+      if(p >= 1) panels.classList.add('set');
     }
   }
   function later(){ if(!waiting){ waiting = true; requestAnimationFrame(paint); } }

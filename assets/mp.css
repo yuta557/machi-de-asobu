@@ -167,9 +167,10 @@ a{color:inherit}
      黄色い線は、問いかけが決まってから引く */
   .panels.js.lit .slide:nth-child(1).on.txok .p-txc{opacity:1;transform:none;
     transition:opacity .85s ease .14s, transform .9s cubic-bezier(.2,.7,.25,1) .14s}
-  .panels.js.lit .slide:nth-child(1).on.txok .p-txh{transform-origin:50% 22%;
-    animation:mp-ask 1.15s cubic-bezier(.2,.7,.25,1) .66s both}
-  .panels.js.lit .slide:nth-child(1).on.txok .p-txm{animation:mp-wipe .85s cubic-bezier(.3,.6,.3,1) 1.32s both}
+  /* 問いかけと線は、ヒーローから渡しきったところ（set）で動かす */
+  .panels.js.set .slide:nth-child(1).on.txok .p-txh{transform-origin:50% 22%;
+    animation:mp-ask 1.15s cubic-bezier(.2,.7,.25,1) .14s both}
+  .panels.js.set .slide:nth-child(1).on.txok .p-txm{animation:mp-wipe .85s cubic-bezier(.3,.6,.3,1) .8s both}
   /* 入れ替わりの途中、出ていく問いかけは、絵が消えきるまでそのまま */
   .panels.js .slide.was .p-txh,.panels.js .slide.was .p-txm{opacity:1;transform:none}
   .p-wrap .p-ttl{position:absolute;z-index:2;left:6.5%;top:7%;width:85%;height:auto;display:block}
@@ -202,7 +203,8 @@ a{color:inherit}
   .panels.js.lit .slide.on .p-tx{transform:none;transition:opacity .25s linear}
   /* 見出しとしるしの動きは外して、ただ現れるだけにする。
      :nth-child(n) は、どの枚にも当たり、上の指定と同じ強さにそろえるため */
-  .panels.js.lit .slide:nth-child(n).on.txok .p-tx{animation:none;transition:opacity .25s linear}
+  .panels.js.lit .slide:nth-child(n).on.txok .p-tx,
+  .panels.js.set .slide:nth-child(n).on.txok .p-tx{animation:none;transition:opacity .25s linear}
   .panels.js.lit .slide:nth-child(n).on.txok .p-txc{transition-delay:.12s}
 }
 
