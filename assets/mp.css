@@ -337,12 +337,36 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 .submit{transition:transform .15s ease, box-shadow .15s ease, filter .15s ease}
 .submit:hover{filter:saturate(1.08)}
 
+/* 下の階のページを開いたときに、上から順に現れる。
+   パンくず → 見出し → 本文 の順で、少しずつ遅らせる。
+   報告ページ（.article-head）は読みものなので、動かさない */
+.page-head:not(.article-head) .crumb{animation:mp-rise .7s cubic-bezier(.2,.7,.25,1) .05s both}
+.page-head:not(.article-head) h1{animation:mp-rise .85s cubic-bezier(.2,.7,.25,1) .18s both}
+.page-head:not(.article-head) > .wrap > .lead,
+.page-head:not(.article-head) > .wrap > .lead-rule{animation:mp-rise .85s cubic-bezier(.2,.7,.25,1) .34s both}
+.page-head:not(.article-head) > .wrap > .privacy{animation:mp-rise .85s cubic-bezier(.2,.7,.25,1) .48s both}
+
+/* 見出しの黄色い線は、左から右へ引かれる。きらめきは、そのあとに現れる */
+@keyframes mp-draw{from{stroke-dashoffset:210}to{stroke-dashoffset:0}}
+@keyframes mp-pop{from{opacity:0;transform:scale(.4) rotate(-16deg)}to{opacity:1;transform:none}}
+.ttl-line path{stroke-dasharray:210;animation:mp-draw .8s ease .46s both}
+.ttl-spark{animation:mp-pop .7s cubic-bezier(.2,.8,.3,1) .66s both}
+
+/* 空は上から下りてきて、まちの絵は少し遅れて浮かび上がる */
+@keyframes mp-sky{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}
+@keyframes mp-art{from{opacity:0;transform:translateY(18px) scale(1.03)}to{opacity:1;transform:none}}
+.head-sky{animation:mp-sky 1.1s cubic-bezier(.16,.72,.2,1) both}
+.head-art{animation:mp-art 1.5s cubic-bezier(.16,.72,.2,1) .3s both}
+
 /* 動きが苦手な人の設定を優先する */
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .hero-full img,.hero-ttl,.hero-go{animation:none}
   .rv,.rv.in{opacity:1;transform:none;transition:none}
   .pj,.pj img,.chip,.rep .side img,.rep .main img,.go span,.chip .arw{transition:none}
+  .page-head .crumb,.page-head h1,.page-head .lead,.page-head .lead-rule,
+  .page-head .privacy,.head-sky,.head-art,.ttl-spark{animation:none}
+  .ttl-line path{stroke-dasharray:none;animation:none}
   .pj:hover,.pj:hover img,.chip:hover,.go:hover span,.chip:hover .arw{transform:none}
 }
 

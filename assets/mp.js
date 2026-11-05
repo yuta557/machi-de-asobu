@@ -138,6 +138,61 @@
 })();
 
 
+/* 下の階のページ（プロジェクト・プロフィール・お問い合わせ）：
+   見出しの動きに続けて、下の内容も画面に入った順にふわっと出す。
+   開いた直後に見えているものは、見出しが出きるのを待ってから動かす。
+   報告ページは読みものなので、何も付けない。
+   JavaScript が動かないときは、そのまま全部見えたままになる。 */
+(function(){
+  if(!('IntersectionObserver' in window)) return;
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var head = document.querySelector('.page-head');
+  if(!head || head.classList.contains('article-head')) return;
+
+  /* [選ぶもの, 並んでいるものを少しずつ遅らせるか] */
+  var groups = [
+    ['.pjs > *',      true ],
+    ['.sec-head > *', true ],
+    ['.acts > *',     true ],
+    ['.play',         false],
+    ['.who-solo',     false],
+    ['.prose > *',    false],
+    ['.btns > *',     true ],
+    ['.contact .form',false]
+  ];
+
+  var items = [];
+  groups.forEach(function(g){
+    [].slice.call(document.querySelectorAll(g[0])).forEach(function(el){
+      if(items.indexOf(el) >= 0) return;
+      var wait = 0;
+      if(g[1]){
+        var p = el.parentNode;
+        if(!p.__rvN){ p.__rvN = 0; }
+        wait = Math.min(p.__rvN++ * 0.09, 0.45);
+      }
+      el.__rvWait = wait;
+      el.classList.add('rv');
+      items.push(el);
+    });
+  });
+  if(!items.length) return;
+
+  var opened = Date.now();
+  var io = new IntersectionObserver(function(list){
+    list.forEach(function(e){
+      if(!e.isIntersecting) return;
+      var el = e.target;
+      var wait = el.__rvWait + (Date.now() - opened < 600 ? 0.34 : 0);
+      if(wait > 0) el.style.transitionDelay = wait + 's';
+      el.classList.add('in');
+      io.unobserve(el);
+    });
+  }, { rootMargin: '0px 0px -12% 0px', threshold: 0 });
+
+  items.forEach(function(el){ io.observe(el); });
+})();
+
 /* 写真のスライド：1枚ずつ、5秒ごとに切り替える。
    前後に1枚ずつ複製を置いて、端でも同じ向きに流れて一周するようにしている。
    複製まで動いたら、見た目を変えないまま本物の位置へ瞬間移動させる。
