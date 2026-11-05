@@ -3,1693 +3,296 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>まちであそぶ、をつくる｜Playable City 入門ワークショップ</title>
-<meta name="description" content="まちを「遊び」の視点から見るオリジナルゲームで遊びながら、宇治のまちの遊び方を考える120分のワークショップ。2026年10月3日（土）10時〜12時・宇治市産業会館 多目的ホール、小学4年生〜中学生（保護者の同伴は任意）、参加無料。">
+<meta name="robots" content="noindex">
+<title>MACHI PLAY｜まちであそぶ、をつくる。</title>
+<meta name="description" content="いつもの道を、誰かと出会う場所に。まちで遊べる仕掛けやゲームを作り、人とまちのあいだに新しいつながりをつくる MACHI PLAY の活動サイトです。">
 <link rel="canonical" href="https://machi-play.com/">
 <meta property="og:url" content="https://machi-play.com/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="まちであそぶ、をつくる｜Playable City 入門ワークショップ">
-<meta property="og:description" content="宇治のまちを舞台に、遊びを通してまちとの新しい関わり方を考えるワークショップ。子どもたちのアイデアから、まちでできる新しい遊びをつくります。">
-<meta property="og:image" content="https://machi-play.com/assets/ogp.jpg">
+<meta property="og:title" content="MACHI PLAY｜まちであそぶ、をつくる。">
+<meta property="og:description" content="いつもの道を、誰かと出会う場所に。まちで遊べる仕掛けやゲームを作り、人とまちのあいだに新しいつながりをつくる MACHI PLAY の活動サイトです。">
+<meta property="og:image" content="https://machi-play.com/assets/ogp-play.jpg?v=2">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="ja_JP">
-<meta property="og:site_name" content="宇治NEXT">
+<meta property="og:site_name" content="MACHI PLAY">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#ffffff">
-<link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png?v=2">
-<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png?v=2">
-<link rel="apple-touch-icon" href="assets/icon-180.png?v=2">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/icon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/icon-192.png">
+<link rel="apple-touch-icon" href="/assets/icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600&family=Yomogi&family=Yusei+Magic&family=Zen+Kaku+Gothic+New:wght@400;500&family=Zen+Maru+Gothic:wght@500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg:#F8F4EA;
-  --card:#FFFFFF;
-  --ink:#123F63;
-  --ink-soft:#5A7E99;
-  --line:#D6E5EF;
-  --yellow:#FFD43B;
-  --blue:#2E86D6;
-  --coral:#F06B62;
-  --teal:#38A99B;
-  --teal-panel:#D7EBF6;
-  --wash-yellow:#FFF3CE;
-  --wash-teal:#DEEFEB;
-  --wash-blue:#E6F1FA;
-  --deep:#0E3A5C;
-  --r-lg:20px;
-  --r-md:14px;
-  --r-sm:8px;
-  --r-hero:26px;
-  --maxw:1140px;
-}
-*{box-sizing:border-box}
-html,body{margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{
-  background:var(--bg);color:var(--ink);
-  font-family:"Zen Kaku Gothic New",system-ui,sans-serif;
-  font-size:17px;line-height:1.9;-webkit-font-smoothing:antialiased;
-  /* overflow-x:hidden は body をスクロールコンテナにしてしまい、
-     iOS でヘッダーの position:sticky の基準がずれる。
-     clip はスクロールコンテナを作らないので sticky が正しく効く
-     （clip 非対応のブラウザは上段の hidden にフォールバック） */
-  overflow-x:hidden;
-  overflow-x:clip;
-}
-body.locked{overflow:hidden;height:100vh}
-/* 紙の目 */
-body::before{
-  content:"";position:fixed;inset:0;z-index:9998;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
-  mix-blend-mode:multiply;opacity:.15;
-}
-/* 紙の色ムラ */
-body::after{
-  content:"";position:fixed;inset:0;z-index:9997;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='900'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.006' numOctaves='4'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='900' height='900' filter='url(%23m)'/%3E%3C/svg%3E");
-  background-size:900px 900px;mix-blend-mode:multiply;opacity:.07;
-}
-a{color:inherit}
-/* 小学4年生までに習わない漢字のふりがな */
-/* iOS Safari はふりがなを「行の高さ」の上に置くため、本文の行間が広いほど
-   漢字から離れてしまう。ruby 自身の行間を1にして、その余白をなくす */
-/* ふりがな（小学4年生までに習わない漢字）
-   <ruby> はブラウザごとに位置の扱いが違い、Safari では行間ぶん漢字から離れてしまう。
-   ふりがなの箱には位置指定も効かないため、span で組んで位置を直接指定している。
-   読み（.rt）は読み上げの対象から外してある。
-   距離は実測で決定：パソコン +.09em（隙間7px）/ スマホ +.05em（隙間7px） */
-.rb{position:relative;display:inline-block;line-height:1;vertical-align:baseline}
-.rb>.rt{position:absolute;left:50%;transform:translateX(-50%);width:-webkit-max-content;width:max-content;bottom:calc(100% + .09em);
-  font-size:.5em;font-weight:500;line-height:1;letter-spacing:0;text-align:center;white-space:nowrap}
-@media(max-width:700px){.rb>.rt{bottom:calc(100% + .05em)}}
-.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
-.label{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.03em;color:var(--ink-soft)}
-.latin{font-family:"Outfit",system-ui,sans-serif;font-weight:600;letter-spacing:.02em}
-
-/* ---------- ヘッダー（計測値：モックアップ 2046x124 を基準） ---------- */
-:root{--navy:#1E608F;--navy-ink:#1A5C8C}
-/* iOS 26 の Safari は半透明のアドレスバーの裏まで本文を描き、ヘッダーはバーを除いた
-   「見えている領域」の上端に止まるため、バーの裏に本文が透けて見える。
-   ヘッダーと同じ背景を上へ延長してその部分を埋める。
-   position:fixed だと見えている領域の外側が切り取られて延長部分が描かれないので、
-   本文と同じ層で描かれる sticky にしている */
-:root{--nav-h:calc(clamp(58px,5.2vw,92px) + 1px)}
-html{scroll-padding-top:var(--nav-h)}
-/* 紙の目・色ムラ（body::before/after, z-index 9997-9998）は position:fixed のため iOS では
-   アドレスバーの裏に届かず、ヘッダーだけわずかに灰色がかって延長部分と色がずれる。
-   ヘッダーをその上に置き、延長部分と同じ真っ白にそろえる */
-.nav{position:sticky;top:0;z-index:9999;background:#fff;border-bottom:1px solid rgba(30,96,143,.10)}
-.nav::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:100vh;background:inherit;pointer-events:none}
-.nav-in{position:relative;z-index:1;max-width:none;margin:0;padding:0 3.4vw 0 4.7vw;height:5.2vw;min-height:58px;max-height:92px;
-  display:flex;align-items:center;gap:0}
-.mark{display:flex;align-items:center;text-decoration:none;
-  /* 旧ロゴ（アイコン＋宇治NEXT）と同じ幅を確保し、ナビ各項目の位置を動かさない */
-  min-width:clamp(117px,13.5vw,190px)}
-.mark-logo{height:clamp(38px,4.5vw,72px);width:auto;display:block}
-.nav-links{display:flex;gap:0;margin-left:5.4vw;font-size:clamp(11.5px,1.02vw,18px);font-weight:500}
-.nav-links a{font-family:"Zen Maru Gothic",sans-serif;font-weight:500;text-decoration:none;color:var(--navy);padding:.5vw 0;margin-right:2.9vw;border-bottom:2px solid transparent;white-space:nowrap}
-.nav-links a:last-child{margin-right:0}
-.nav-links a:hover{border-bottom-color:var(--yellow)}
-.pill{display:inline-flex;align-items:center;justify-content:center;gap:.8vw;border-radius:999px;padding:11px 22px;font-size:15px;text-decoration:none;border:1px solid transparent;cursor:pointer;font-family:inherit;transition:transform .15s,background .15s}
-.pill-key{background:var(--yellow);color:var(--ink);font-family:"Zen Maru Gothic",sans-serif;font-weight:700}
-.pill-key:hover{background:#ffdd63;transform:translateY(-1px)}
-.pill-line{background:transparent;border-color:var(--ink);color:var(--ink)}
-.pill-line:hover{background:rgba(27,26,22,.06)}
-.pill[aria-disabled="true"]{opacity:.6;cursor:default}
-.pill[aria-disabled="true"]:hover{transform:none}
-/* PC：参加するボタンと装飾を、元の位置から画面の右端までの 1/4 だけ右へ。
-   ナビの余白（右パディングを含む）を nav-links と末尾の空き要素で 1:3 に分け合う */
-@media(min-width:901px){
-  .nav-links{flex-grow:1}
-  .nav-in::after{content:"";flex-grow:3;margin-right:-3.4vw}
-}
-.nav .pill-key{margin-left:2.6vw;height:3.32vw;min-height:38px;max-height:58px;min-width:12vw;padding:0 2vw;
-  font-size:clamp(14px,1.42vw,25px);color:var(--navy-ink)}
-.arw-i{font-family:"Outfit",sans-serif;font-weight:500}
-.nav-sparks{width:clamp(18px,1.95vw,32px);height:auto;margin-left:1.1vw;flex:0 0 auto}
-.nav-sparks path{stroke:#2E86D6;stroke-width:24;stroke-linecap:round;fill:none}
-.burger{display:none;background:none;border:0;padding:0;cursor:pointer;margin-left:auto}
-.burger span{display:block;width:2.4vw;height:.19vw;background:var(--navy);margin:.55vw 0;border-radius:2px}
-.menu{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid var(--line);padding:6px 20px 12px;z-index:2}
-.menu a{display:block;padding:12px 0;border-top:1px solid var(--line);text-decoration:none;font-size:16px;color:var(--navy)}
-.menu a:first-child{border-top:0}
-.menu .menu-cta{display:flex;justify-content:center;gap:8px;width:100%;box-sizing:border-box;
-  margin:16px 0 6px;padding:16px 20px;border-top:0;background:var(--yellow);color:var(--ink);
-  font-family:"Zen Maru Gothic",sans-serif;font-weight:700;font-size:16px}
-.nav.open .menu{display:block}
-@media(max-width:1250px){
-  .nav-links{margin-left:3vw}
-  .nav-links a{margin-right:2vw}
-  }
-@media(max-width:900px){
-  :root{--nav-h:calc(max(58px,4.8vw + clamp(36px,10vw,58px)) + 1px)}
-  .nav-in{padding:0 4vw 0 4.6vw;height:max(58px,4.8vw + clamp(36px,10vw,58px));min-height:0;max-height:none}
-  .nav-links{display:none}
-    .burger{display:grid;place-content:center;gap:6px}
-  .mark{min-width:0}
-  .mark-logo{height:clamp(36px,10vw,58px)}
-  /* 参加するボタンはハンバーガーメニューの中へ移し、押し間違いを防ぐ */
-  .nav-in>.pill-key{display:none}
-  /* タップ領域を54x54pxまで拡大。上下の負マージンでナビの高さは変えない */
-  .burger{width:54px;height:54px;padding:0;margin:-8px -10px -8px auto;border-radius:10px;-webkit-tap-highlight-color:rgba(30,96,143,.12)}
-  .burger span{width:26px;height:2.5px;margin:0}
-  .burger:active{background:rgba(30,96,143,.08)}
-  .nav-sparks{display:none}
-}
-
-/* ---------- ヒーロー（イラスト背景＋文字はHTML。計測値：1672x940 を 100cqw 基準） ---------- */
-:root{--ink-navy:#12629E;--ink-navy-d:#0E5590}
-/* ヒーローは背景の一部として見せたいので、文字の選択も画像のドラッグ・長押し保存もさせない */
-.hero{padding:0;position:relative;-webkit-user-select:none;user-select:none}
-.hero img{-webkit-user-drag:none;user-drag:none;-webkit-touch-callout:none;pointer-events:none}
-.hero-photo{position:relative;width:100%;overflow:hidden;background:#F6FBFB;
-  /* ヒーローは「画面の高さ − ヘッダーの高さ」に収め、スクロールなしで
-     下の情報帯まで見えるようにする（上限はイラスト本来の高さ 56.22vw）。
-     縮めたぶんイラストは上が切れるので、上側の要素は下の --hero-crop で逃がす */
-  --hero-h:clamp(38vw,calc(100svh - clamp(58px,5.2vw,92px) - 1px),56.22vw);
-  height:var(--hero-h);container-type:inline-size}
-/* イラストの上が切れた量＋余白。タイトルと付箋はこれより上に来ないようにする */
-.hero-art{--hero-safe-top:calc(56.22cqw - var(--hero-h) + 1.2vw)}
-.hero-bg{position:absolute;left:0;right:0;bottom:0;top:auto;width:100%;height:auto;aspect-ratio:1672/940;object-fit:cover;object-position:center bottom}
-.veil,.wave,.spark.hs{display:none}
-.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
-.hero-art{position:absolute;left:0;right:0;bottom:0;top:auto;aspect-ratio:1672/940;z-index:2;color:var(--ink-navy)}
-.hero-art>*{position:absolute;margin:0}
-.hero-art picture{display:contents}
-/* タイトルの下端は、イラストに対して本来の位置（4.6 + 27.34 = 31.94cqw）より下げない。
-   横長の画面でイラストの上が切れて上端を押し下げたときは、そのぶん幅を縮めて
-   「Playable City 入門ワークショップ」が地図の絵や付箋にかぶらないようにする（縦横比 1.7077） */
-.title-img{position:absolute;left:5.26cqw;top:max(4.6cqw,var(--hero-safe-top));width:min(46.7cqw,calc(1.7077 * (31.94cqw - max(4.6cqw,var(--hero-safe-top)))));height:auto;display:block}
-.facts-tap{display:none}
-.facts-bg{left:0;top:40.2cqw;width:60cqw;height:18cqw;background:rgba(255,255,255,.93);border-radius:3cqw;filter:blur(16px);z-index:0}
-.facts-img{left:7.7cqw;top:43.55cqw;width:43.2cqw;height:auto;display:block;z-index:1}
-.hnote,.hnote p{font-family:"Yomogi","Zen Maru Gothic",cursive,sans-serif}
-.hnote{position:absolute;line-height:1.55}
-/* デモ体験の付箋（左右のアクセントも画像に含まれる）
-   付箋本体が旧レイアウトと同じ位置・同じ幅(14.9cqw)になるよう、
-   画像の余白ぶんを差し引いた値を指定 */
-.hnote-demo-img{position:absolute;left:61.94cqw;top:max(7.42cqw,var(--hero-safe-top));width:16.51cqw;height:auto;display:block}
-.hnote-map{left:44.06cqw;top:27.6cqw;width:5.4cqw;font-size:1.05cqw;line-height:1.45;color:#1D6F8B;text-align:center;transform:rotate(-15.6deg);transform-origin:50% 50%}
-
-/* イラスト上の情報帯 */
-.below{position:absolute;left:0;right:0;top:0;bottom:0;z-index:3;max-width:none;margin:0;padding:0;container-type:inline-size;pointer-events:none}
-.below *{pointer-events:auto}
-.keyfacts{display:none}
-.kf-grid{display:grid;grid-template-columns:16.8cqw 13cqw 14.4cqw 9.4cqw 11cqw;margin-left:0;padding:0}
-.kf{position:relative;text-align:center;padding:0}
-.kf+.kf::before{content:"";position:absolute;left:0;top:.6cqw;bottom:.6cqw;width:1px;background:rgba(30,96,143,.20)}
-.kf .ic{position:relative;display:block;width:5.4cqw;height:4.2cqw;margin:0 auto .5cqw}
-.kf .ic svg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
-.kf .blob{width:3.9cqw;height:3.9cqw;filter:none}
-.kf .glyph{width:2cqw;height:2cqw;margin-top:0}
-.kf .glyph path,.kf .glyph circle,.kf .glyph rect{stroke:var(--ink-navy-d);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.kf .spark{display:none}
-.kf .k{font-family:"Zen Maru Gothic",sans-serif;font-weight:500;font-size:.92cqw;letter-spacing:.14em;color:var(--ink-navy-d);margin:0;line-height:1.2}
-.kf .rulebar{display:none}
-.kf .v{font-family:"Zen Maru Gothic",sans-serif;font-weight:500;font-size:1.32cqw;line-height:1.35;margin:.85cqw 0 0;letter-spacing:.01em;color:var(--ink-navy-d)}
-.kf .vs{font-family:"Zen Maru Gothic",sans-serif;font-size:1.02cqw;color:var(--ink-navy-d);margin:.35cqw 0 0;line-height:1.4;font-weight:500}
-.kf .v2{margin-top:.35cqw}
-.kf .v-fit{font-size:1.32cqw;white-space:nowrap}
-.kf-note{font-size:.78cqw;line-height:1.7;color:rgba(18,98,158,.85);margin:1.1cqw 0 0 1.4cqw;max-width:60cqw}
-
-@media(max-width:560px){
-  /* モバイル：縦長のイラスト（940x1672）を横幅いっぱいに、そのままの大きさで見せる。
-     高さは画面に収めず、イラスト本来の高さ（画面幅の1.7787倍）をそのまま使う */
-  /* イラストは横幅いっぱいのまま、タイトルの上に空いた紙のぶん（114px相当）だけ
-     上を切って、余白を今までの2割に詰める（1672 - 114 = 1558） */
-  .hero-photo{background:#FBFBF6;height:auto;aspect-ratio:940/1558;container-type:inline-size}
-  .hero-bg,.hero-art{position:absolute;left:0;right:0;top:auto;bottom:0;
-    transform:none;width:100%;height:auto;aspect-ratio:940/1672}
-  .hero-bg{display:block;object-fit:cover;object-position:center bottom}
-  /* 位置と大きさはイラスト（.hero-art）に対する割合で指定する */
-  /* スマホは縦に組んだタイトル画像を使い、お手本と同じ位置・大きさに置く */
-  .title-img{left:7.66%;top:8.55%;width:77.7%;height:auto}
-  .facts-img{left:3.6%;top:auto;bottom:7.25%;width:92.8%}
-  /* 情報帯をタップしたら実施概要まで移動する（スマホのみ） */
-  .facts-tap{display:block;left:2%;right:2%;top:auto;bottom:4.5%;width:auto;height:20%;z-index:3;
-    -webkit-tap-highlight-color:rgba(30,96,143,.08)}
-  .facts-bg,.hnote-demo-img,.hnote-map,.below{display:none}
-}
-
-
-
-
-#about h2{max-width:none;font-size:clamp(16px,1.7vw,22px);line-height:1.6;margin-bottom:14px;color:var(--ink-soft);font-weight:500}
-.sec-head .sub-title,.sub-title{font-family:"Zen Maru Gothic",sans-serif;font-weight:500;font-size:clamp(25px,3.7vw,40px);line-height:1.5;color:var(--ink);margin:0;letter-spacing:.01em}
-.lead b{font-weight:500;background:linear-gradient(transparent 62%,rgba(255,212,59,.55) 62%)}
-#about .sec-head{max-width:900px}
-@media(max-width:700px){.mb-br{display:inline}}
-/* パソコン版だけで改行する（スマホは自然に折り返す） */
-.pc-br{display:none}
-@media(min-width:701px){.pc-br{display:inline}}
-.after-note{text-align:center;font-family:"Zen Maru Gothic",sans-serif;font-size:clamp(16px,1.6vw,20px);line-height:1.9;margin:40px auto 0;max-width:760px}
-.after-note-wide{max-width:820px}
-.lead{max-width:760px;margin:0 auto;font-size:16.5px;line-height:2.05}
-.lead p{margin:0 0 1.2em;color:var(--ink)}
-.lead p:last-child{margin-bottom:0}
-@media(max-width:640px){.lead{font-size:15px;line-height:1.95}}
-
-
-a.mark{text-decoration:none}
-
-/* セクション見出しの横のステップ表示 */
-.head-row{display:flex;align-items:center;justify-content:center;gap:clamp(10px,1.4vw,20px);flex-wrap:wrap;margin-bottom:18px}
-.head-row h2,.head-row .cs-name{margin:0}
-.step-chip{display:inline-flex;align-items:center;gap:8px;font-family:"Zen Maru Gothic",sans-serif;font-weight:500;
-  font-size:clamp(13px,1.15vw,16px);line-height:1;padding:6px 16px 6px 6px;border-radius:999px;background:var(--card);border:1px solid var(--line);white-space:nowrap}
-.step-chip .n{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-family:"IBM Plex Mono",monospace;font-size:13px;border:2px solid currentColor}
-.chip-know{color:var(--blue)}
-.chip-try{color:#2BB3B0}
-.chip-make{color:#FFC53D}
-.step-chip span:last-child{color:var(--ink)}
-@media(max-width:640px){.head-row{gap:8px}.step-chip{padding:5px 12px 5px 5px}.step-chip .n{width:22px;height:22px;font-size:12px}}
-
-
-/* ---------- 当日の進め方（縦のタイムライン） ---------- */
-.flow-head{max-width:900px;margin:0 auto 18px}
-.flow-head h2{position:relative;display:inline-block;margin:0 0 14px}
-.h-underline{position:absolute;left:-2%;bottom:-.26em;width:104%;height:.3em;overflow:visible}
-.h-underline path{fill:none;stroke-linecap:round;filter:url(#pencil-thin)}
-.h-underline .u1{stroke:#F5C21B;stroke-width:5}
-.h-underline .u2{display:none}
-.flow-head p{color:var(--ink-soft);font-size:15px;margin:0}
-.flow-list{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
-.fstep{position:relative;padding-left:50px}
-.fstep::after{content:"";position:absolute;left:79.5px;top:62%;height:calc(38% + 10px);width:3px;border-radius:2px;z-index:0;opacity:.8}
-.fstep:last-child::after{display:none}
-.s1::after{background:linear-gradient(#2E86D6,#2BB3B0)}
-.s2::after{background:linear-gradient(#2BB3B0,#FFC53D)}
-.s3::after{background:linear-gradient(#FFC53D,#F4795B)}
-.fnum{position:absolute;left:52px;top:50%;transform:translateY(-50%);z-index:2;
-  width:58px;height:58px;border-radius:50%;display:grid;place-items:center;color:#fff;
-  font-family:"Zen Maru Gothic",sans-serif;font-weight:700;font-size:24px;line-height:1;
-  position:absolute;isolation:isolate}
-.fnum::after{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'120\' height=\'120\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'3\'/%3E%3C/filter%3E%3Crect width=\'120\' height=\'120\' filter=\'url(%23n)\' opacity=\'0.55\'/%3E%3C/svg%3E");
-  mix-blend-mode:soft-light;opacity:.5}
-.s1 .fnum{background:#2E86D6}.s2 .fnum{background:#2BB3B0}.s3 .fnum{background:#FFC53D}.s4 .fnum{background:#F4795B}
-.fband{position:relative;z-index:1;border-radius:18px;padding:14px 170px 14px 98px;display:flex;align-items:center;gap:16px;min-height:84px}
-.s1 .fband{background:#DCEBF8}.s2 .fband{background:#D8F0EF}.s3 .fband{background:#FDF0CE}.s4 .fband{background:#FBE3DB}
-.ftext{flex:1}
-.ftext h3{font-family:"Zen Maru Gothic",sans-serif;font-weight:700;font-size:clamp(18px,1.7vw,22px);margin:0 0 3px;color:var(--ink)}
-.ftext p{margin:0;font-size:clamp(12.5px,1.05vw,14px);line-height:1.6;color:var(--ink)}
-.ftime{position:absolute;right:20px;top:14px;font-family:"IBM Plex Mono",monospace;font-size:clamp(11.5px,1.05vw,14px);letter-spacing:.05em;
-  color:#2E86D6;background:#fff;border-radius:999px;padding:7px 16px;margin:0;white-space:nowrap}
-.dur{display:flex;align-items:center;gap:12px;margin:18px auto 0;max-width:900px;color:var(--ink);font-size:13px;font-family:"Zen Maru Gothic",sans-serif}
-.dur .bar{position:relative;flex:1;height:12px;border-radius:8px;overflow:hidden;
-  background:linear-gradient(90deg,#2E86D6 0 26%,#2BB3B0 26% 44%,#FFC53D 44% 73%,#F4795B 73% 100%)}
-.dur .bar::after{content:"";position:absolute;inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'160\' height=\'20\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.75 0.25\' numOctaves=\'3\'/%3E%3C/filter%3E%3Crect width=\'160\' height=\'20\' filter=\'url(%23n)\' opacity=\'0.5\'/%3E%3C/svg%3E");
-  mix-blend-mode:soft-light;opacity:.55}
-@media(max-width:760px){
-  .fstep{padding-left:0}
-  .fnum{left:14px;width:56px;height:56px;font-size:25px}
-  .fstep::after{left:37px;top:66%;height:calc(34% + 22px);width:5px}
-  .fband{padding:38px 14px 16px 80px;min-height:104px;flex-direction:column;align-items:flex-start;gap:6px;border-radius:18px}
-  .ftime{position:absolute;top:10px;right:12px;font-size:11.5px;padding:5px 12px;letter-spacing:.04em}
-  .ftext h3{font-size:19px}
-  .flow-list{gap:16px}
-  .dur{gap:10px;font-size:13px}
-}
-
-
-/* 装飾（色鉛筆・らくがき） */
-#flow{position:relative;overflow:hidden}
-.deco{position:absolute;pointer-events:none;z-index:0}
-.deco-pencils{width:clamp(110px,13vw,190px);right:6%;top:34px;transform:rotate(-6deg)}
-.deco-scribble{opacity:.55}
-.deco-scribble path{fill:none;stroke-linecap:round}
-.sc-a{width:clamp(80px,9vw,130px);left:2%;top:72px;transform:rotate(-4deg)}
-.sc-b{width:clamp(90px,10vw,150px);left:1%;bottom:56px;transform:rotate(3deg)}
-.sc-c{width:clamp(100px,11vw,170px);right:2%;bottom:38px;transform:rotate(-2deg)}
-.flow-head,.flow-list,.dur{position:relative;z-index:1}
-@media(max-width:900px){.deco-pencils{width:96px;right:2%;top:14px}.sc-a,.sc-b,.sc-c{display:none}}
-
-
-@media(min-width:901px) and (max-height:820px){
-  #flow{padding-top:26px!important;padding-bottom:26px!important}
-  .flow-head{margin-bottom:14px}
-  .flow-list{gap:8px}
-  .fband{min-height:74px;padding:12px 160px 12px 92px;border-radius:16px}
-  .ftime{top:11px;right:18px}
-  .fnum{width:52px;height:52px;font-size:22px;left:48px}
-  .fstep::after{left:73.5px}
-  .ftext h3{font-size:19px;margin-bottom:2px}
-  .ftext p{font-size:13px;line-height:1.55}
-  .dur{margin-top:14px}
-}
-
-
-
-.fband-link{text-decoration:none;color:inherit;transition:transform .18s,box-shadow .18s}
-.fband-link:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(18,63,99,.10)}
-.fband-link::after{content:"→";position:absolute;right:18px;bottom:10px;font-family:"Outfit",sans-serif;font-size:15px;color:var(--navy);opacity:.5}
-.fband-link:hover::after{opacity:1}
-@media(max-width:760px){.fband-link::after{right:12px;bottom:8px;font-size:14px}}
-
-/* ---------- クレジット帯 ---------- */
-.credits{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--card)}
-.credits-in{max-width:1140px;margin:0 auto;padding:18px 24px;display:flex;flex-wrap:wrap;gap:10px 40px;align-items:baseline;justify-content:center}
-.credit{margin:0;font-size:15px;color:var(--ink)}
-.credit b{font-weight:500}
-.credit span{font-size:12.5px;color:var(--ink-soft);margin-right:8px}
-@media(max-width:640px){.credits-in{gap:6px 0;flex-direction:column;align-items:flex-start;padding:16px 20px}.credit{font-size:14px}}
-
-/* ---------- まちであそぶボード ---------- */
-.board-shell{max-width:1140px;margin:0 auto;padding:0 24px}
-.board-lead{max-width:760px;margin:0 auto 14px;text-align:center;font-size:15px;color:var(--ink-soft)}
-@media(max-width:900px){.board-shell{margin-top:34px;padding:0 16px}.board-shell+.board-foot,.board-foot{margin-top:16px}}
-.board{position:relative;border-radius:20px;border:1px solid var(--line);background:var(--card);overflow:hidden}
-.board-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--bg)}
-.dot{width:9px;height:9px;border-radius:50%;background:var(--line);flex:none;transition:background .2s}
-.board-title{font-size:13px;line-height:2.1;color:var(--ink-soft);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-/* 足あとの配色切り替え */
-.board-themes{margin-left:auto;display:flex;gap:6px;flex:none}
-.theme-pill{font:inherit;font-size:12px;font-weight:500;line-height:1;padding:7px 12px;border-radius:999px;cursor:pointer;
-  border:1px solid var(--line);background:#fff;color:var(--ink-soft);transition:background .15s,color .15s,border-color .15s}
-.theme-pill:hover{border-color:var(--ink-soft);color:var(--ink)}
-.theme-pill:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-.theme-pill[aria-pressed="true"]{color:#fff;border-color:transparent}
-.theme-pill[data-theme-pick="blue"][aria-pressed="true"]{background:#1E9BF0}
-.theme-pill[data-theme-pick="green"][aria-pressed="true"]{background:#2E9E6A}
-@media(hover:none) and (pointer:coarse){.theme-pill{padding:10px 14px}}
-/* まっさらにするボタン */
-.board-reset{flex:none;display:grid;place-items:center;width:32px;height:32px;padding:0;border-radius:999px;
-  border:1px solid var(--line);background:#fff;color:var(--ink-soft);cursor:pointer;
-  transition:color .15s,border-color .15s}
-.board-reset:hover{color:var(--ink);border-color:var(--ink-soft)}
-.board-reset:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-@media(hover:none) and (pointer:coarse){.board-reset{width:38px;height:38px}}
-.board-stage{position:relative;height:min(56vw,440px);min-height:300px;touch-action:none;background:#FDFCF7}
-#cscanvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:crosshair}
-.ring{position:absolute;inset:0;pointer-events:none}
-.board.hint .ring{animation:ringPulse 2.2s infinite}
-@keyframes ringPulse{
-  0%{box-shadow:inset 0 0 0 0 rgba(255,212,59,.95)}
-  70%{box-shadow:inset 0 0 0 16px rgba(255,212,59,0)}
-  100%{box-shadow:inset 0 0 0 16px rgba(255,212,59,0)}
-}
-.demo-cursor{position:absolute;width:32px;height:32px;margin:-4px 0 0 -4px;pointer-events:none;transition:opacity .25s}
-.demo-cursor::after{content:"";position:absolute;inset:-11px;border-radius:50%;background:radial-gradient(circle,rgba(255,212,59,.6),rgba(255,212,59,0) 68%)}
-.demo-cursor svg{position:relative;z-index:1}
-.tip{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);display:flex;align-items:center;gap:10px;
-  background:var(--yellow);color:var(--ink);border-radius:999px;padding:10px 18px;font-size:14px;line-height:1.4;
-  max-width:calc(100% - 32px);pointer-events:none}
-.board.hint .tip{animation:tipBreath 1.5s ease-in-out infinite}
-@keyframes tipBreath{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.045)}}
-.tip .pip{width:9px;height:9px;border-radius:50%;background:var(--ink);flex:0 0 auto;position:relative}
-.board.hint .tip .pip::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:2px solid var(--ink);animation:pip 1.5s infinite;opacity:0}
-@keyframes pip{0%{opacity:.7;transform:scale(.6)}100%{opacity:0;transform:scale(1.5)}}
-.board.touched .tip{background:rgba(255,253,248,.9);color:var(--ink-soft);font-size:13px}
-.board.touched .tip .pip{display:none}
-.board-foot{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;font-size:13.5px;color:var(--ink-soft);margin:14px 0 0}
-.tip-sp{display:none}
-@media(max-width:900px){.tip-pc{display:none}.tip-sp{display:inline}}
-@media(hover:none) and (pointer:coarse){.tip-pc{display:none}.tip-sp{display:inline}}
-/* スマホはボードが狭いので、なぞり始めてしばらくしたら案内を消す */
-@media(max-width:900px){.board.tip-done .tip{opacity:0;transform:translateX(-50%) translateY(8px);transition:opacity .5s ease,transform .5s ease}}
-@media(hover:none) and (pointer:coarse){.board.tip-done .tip{opacity:0;transform:translateX(-50%) translateY(8px);transition:opacity .5s ease,transform .5s ease}}
-/* ---------- セクション共通（復元） ---------- */
-.wrap{max-width:1140px;margin:0 auto;padding:0 24px}
-.sec{padding:64px 0}
-.sec-linked{padding:34px 0}
-.sec-head{max-width:700px;margin:0 auto 34px;text-align:center}
-h2{font-size:clamp(26px,3.7vw,38px);line-height:1.4;margin:0 0 12px}
-.sec-head p{color:var(--ink-soft);margin:0;font-size:16px}
-.breath{text-align:center;padding:72px 24px 60px}
-.breath p{font-family:"Zen Maru Gothic",sans-serif;font-size:clamp(20px,3vw,27px);margin:0;line-height:1.7}
-.breath .rule{display:block;margin:22px auto 0;width:120px;height:10px}
-.breath .rule path{stroke:#B9D4E4;stroke-width:2;fill:none;filter:url(#pencil)}
-.label{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.02em;color:var(--ink-soft)}
-.cs-name{text-align:center;margin-bottom:30px}
-.cs-name .latin{display:block;font-family:"Outfit",sans-serif;font-weight:600;font-size:clamp(28px,5.6vw,58px);line-height:1.05}
-.cs-name .jp{font-family:"Zen Maru Gothic",sans-serif;font-size:clamp(17px,2.4vw,23px);margin:10px 0 0;display:block}
-.kv{max-width:720px;margin:0 auto;display:block;width:100%;height:auto}
-#play .kv{margin-top:30px;border-radius:18px}
-@media(min-width:701px){#play .kv{max-width:900px}#play .sec-head{max-width:980px}}
-/* スマホ・タブレットでは、イラストとボードの説明文のあいだを詰める */
-@media(max-width:900px){#play{padding-bottom:22px}#play + .board-shell{margin-top:18px}}
-.kv-cap{text-align:left;font-size:13px;color:var(--ink-soft);margin:14px auto 0;max-width:720px}
-.seq{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:52px}
-.seq figure{margin:0}
-.seq img{width:100%;height:auto;display:block;border-radius:8px;background:var(--ink)}
-.seq .n{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink-soft);margin:12px 0 0}
-.seq h3{font-size:16.5px;margin:2px 0 4px;line-height:1.5}
-.seq p{margin:0;font-size:13.5px;line-height:1.7;color:var(--ink-soft)}
-@media(max-width:980px){.seq{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:620px){.seq{grid-template-columns:repeat(2,1fr);gap:12px}}
-@media(max-width:820px){.duo{grid-template-columns:1fr}}
-.slips{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-.slip{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:22px 20px;box-shadow:1px 3px 0 rgba(27,26,22,.06)}
-.slip:nth-child(1){transform:rotate(-1.1deg)}
-.slip{background:var(--card)}
-.slip:nth-child(2){transform:rotate(.7deg) translateY(7px)}
-.slip:nth-child(3){transform:rotate(-.6deg) translateY(-4px)}
-.slip:nth-child(4){transform:rotate(1.3deg) translateY(5px)}
-.slip .was{margin:0;font-size:14px;color:var(--ink-soft)}
-.slip .arw{display:block;margin:6px 0}
-.slip .arw path{stroke:#2C6C99;stroke-width:2;fill:none;stroke-linecap:round;filter:url(#pencil)}
-.slip .now{margin:0;font-family:"Zen Maru Gothic",sans-serif;font-size:18px;line-height:1.5}
-.slip .sub{margin:10px 0 0;font-size:13.5px;line-height:1.75;color:var(--ink-soft)}
-.slip .tick{display:inline-block;width:9px;height:9px;border-radius:50%;margin-bottom:10px}
-.t-blue{background:var(--blue)}.t-coral{background:var(--coral)}.t-teal{background:var(--teal)}.t-yellow{background:var(--yellow)}
-@media(max-width:900px){.slips{grid-template-columns:repeat(2,1fr)}}
-.info{background:var(--teal-panel);border-radius:20px;padding:32px 30px}
-.info dl{display:grid;grid-template-columns:132px 1fr;gap:0 20px;margin:0}
-.info dt{font-size:13.5px;color:#2C5E7E;padding:10px 0;border-top:1px solid rgba(27,26,22,.1)}
-.info dd{margin:0;padding:10px 0;border-top:1px solid rgba(27,26,22,.1);font-size:15.5px}
-.info dt:first-of-type,.info dd:first-of-type{border-top:0}
-.badge{display:inline-block;background:var(--yellow);border-radius:999px;font-size:12px;padding:1px 10px;margin-left:6px;vertical-align:2px}
-@media(max-width:600px){.info{padding:26px 20px}.info dl{grid-template-columns:1fr}.info dt{padding-bottom:0}.info dd{border-top:0;padding-top:2px}}
-.by{display:flex;flex-direction:column;gap:14px;align-items:flex-start;border-top:1px solid var(--line);padding:26px 0 0;max-width:760px;margin:0 auto}
-.by .av{width:52px;height:52px;border-radius:8px;background:var(--wash-yellow);display:grid;place-items:center;flex:0 0 auto}
-.by h3{font-size:18px;margin:2px 0 0}
-.by p{margin:6px 0 0;font-size:14.5px;color:var(--ink-soft);line-height:1.8}
-.faq{max-width:760px;margin:0 auto}
-.faq details{border-top:1px solid var(--line);padding:14px 0}
-.faq details:last-child{border-bottom:1px solid var(--line)}
-.faq summary{cursor:pointer;font-family:"Zen Maru Gothic",sans-serif;font-size:16.5px;list-style:none}
-.faq summary::-webkit-details-marker{display:none}
-.faq summary::before{content:"＋";margin-right:10px;color:var(--ink-soft)}
-.faq details[open] summary::before{content:"−"}
-.faq .a{margin:10px 0 0 26px;font-size:15px;color:var(--ink-soft);line-height:1.9}
-.hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:24px 0 0}
-footer{background:var(--deep);color:rgba(255,255,255,.66);margin-top:60px;padding:54px 0 38px;font-size:14.5px}
-.f-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:30px;max-width:1140px;margin:0 auto;padding:0 24px}
-footer h4{color:#fff;font-family:"Zen Maru Gothic",sans-serif;font-weight:500;font-size:15px;margin:0 0 12px}
-footer ul{list-style:none;margin:0;padding:0}
-footer li{margin-bottom:7px}
-footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.3)}
-.f-bottom{max-width:1140px;margin:34px auto 0;padding:20px 24px 0;border-top:1px solid rgba(255,255,255,.16);font-size:13px}
-@media(max-width:760px){.f-grid{grid-template-columns:1fr}}
-
-/* 当日の流れ */
-.stage.s-know .stage.s-make @media(max-width:820px){
-        }
-
-/* アイデアシート */
-.faq-note{margin:26px auto 0;max-width:700px;text-align:center;color:var(--ink-soft);font-size:16px}
-.sheet-example{max-width:960px;margin:36px auto 0}
-.sheet-example img{display:block;width:100%;height:auto;border-radius:16px}
-.sheet-example figcaption{margin-top:12px;text-align:center;font-size:14px;color:var(--ink-soft);letter-spacing:.04em}
-
-/* 開催概要（実用情報） */
-.info{background:var(--teal-panel);border-radius:var(--r-lg);padding:32px 30px}
-.info dl{display:grid;grid-template-columns:132px 1fr;gap:0 20px;margin:0}
-.info dt{font-size:13.5px;color:#2C5E7E;padding:10px 0;border-top:1px solid rgba(27,26,22,.1)}
-.info dd{margin:0;padding:10px 0;border-top:1px solid rgba(27,26,22,.1);font-size:15.5px}
-.info dt:first-of-type,.info dd:first-of-type{border-top:0}
-.badge{display:inline-block;background:var(--yellow);border-radius:999px;font-size:12px;padding:1px 10px;margin-left:6px;vertical-align:2px}
-@media(max-width:600px){.info{padding:26px 20px}.info dl{grid-template-columns:1fr}.info dt{padding-bottom:0}.info dd{border-top:0;padding-top:2px}}
-
-/* 企画者（補足） */
-.by{display:flex;flex-direction:column;gap:14px;align-items:flex-start;border-top:1px solid var(--line);padding:26px 0 0;max-width:760px;margin:0 auto}
-.by .av{width:52px;height:52px;border-radius:var(--r-sm);background:var(--wash-yellow);display:grid;place-items:center;flex:0 0 auto}
-.by h3{font-size:18px;margin:2px 0 0}
-.by p{margin:6px 0 0;font-size:14.5px;color:var(--ink-soft);line-height:1.8}
-
-/* CTA / フッター */
-footer{background:var(--deep);color:rgba(255,255,255,.66);margin-top:60px;padding:54px 0 38px;font-size:14.5px}
-.f-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:30px;max-width:var(--maxw);margin:0 auto;padding:0 24px}
-footer h4{color:#fff;font-family:"Zen Maru Gothic",sans-serif;font-weight:500;font-size:15px;margin:0 0 12px}
-footer ul{list-style:none;margin:0;padding:0}
-footer li{margin-bottom:7px}
-footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.3)}
-.f-bottom{max-width:var(--maxw);margin:34px auto 0;padding:20px 24px 0;border-top:1px solid rgba(255,255,255,.16);font-size:13px}
-@media(max-width:760px){.f-grid{grid-template-columns:1fr}}
-
-/* FAQ */
-.faq{max-width:820px;margin:0 auto}
-.faq details{background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);padding:0 20px;margin-bottom:10px}
-.faq summary{list-style:none;cursor:pointer;padding:16px 0;font-family:"Zen Maru Gothic",sans-serif;font-size:16.5px;
-  display:flex;align-items:flex-start;gap:12px}
-/* 質問文はひとつの塊として扱う。囲まないと <span class="rb"> ごとに flex の項目が分かれ、
-   ふりがな付きの語の前後に隙間ができて行が崩れる */
-.faq summary .q{flex:1 1 auto;min-width:0;line-height:2.05}  /* ふりがなの高さぶんを行間に含め、行の高さをそろえる */
-.faq summary::-webkit-details-marker{display:none}
-.faq summary::before{content:"Q";font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink-soft);margin-top:3px}
-.faq summary::after{content:"+";margin-left:auto;font-family:"IBM Plex Mono",monospace;color:var(--ink-soft);transition:transform .2s}
-.faq details[open] summary::after{transform:rotate(45deg)}
-.faq .a{margin:0;padding:0 0 18px 26px;font-size:15px;color:var(--ink-soft);line-height:1.85}
-
-/* CTA（E案） */
-.cta{position:relative;isolation:isolate;overflow:hidden;background:#0B3E66;color:#fff;
-  border-radius:var(--r-hero);margin:64px 24px 0;padding:0;text-align:left}
-.cta-waves{position:absolute;left:0;right:0;bottom:0;width:100%;height:auto;z-index:0;pointer-events:none}
-.cta-blob{position:absolute;left:1%;right:1%;top:2.5%;bottom:2.5%;z-index:0;pointer-events:none}
-.cta-blob svg{width:100%;height:100%;display:block}
-.cta-inner{position:relative;z-index:1;max-width:1200px;margin:0 auto;
-  display:grid;grid-template-columns:minmax(0,1.05fr) minmax(235px,40%);gap:clamp(18px,2.4vw,40px);
-  align-items:center;padding:clamp(64px,7vw,100px) clamp(34px,7.5vw,104px)}
-.cta h2{color:#fff;margin:0 0 24px;font-size:clamp(24px,2.85vw,44px);line-height:1.3;
-  display:flex;align-items:center;gap:clamp(10px,1.2vw,22px)}
-.cta-ttl{white-space:nowrap}
-.spark{flex:0 0 auto;width:clamp(24px,2.2vw,40px);height:auto}
-.spark path{stroke:#FFE658;stroke-width:5.5;stroke-linecap:round;fill:none}
-.spark-l{transform:scaleX(-1)}
-.cta p{color:rgba(255,255,255,.92);margin:0 0 32px;max-width:620px;
-  font-size:clamp(15px,1.15vw,17.5px);line-height:1.95}
-.cta-actions{display:flex;gap:14px;flex-wrap:wrap;margin:0}
-.cta .pill{padding:15px 30px;font-size:clamp(15px,1.1vw,17px)}
-.cta .pill-key{background:#FFE658}
-.cta .pill-line{background:transparent;border-color:rgba(255,255,255,.55);color:#fff}
-.cta .pill-line:hover{background:rgba(255,255,255,.12)}
-/* 宇治の風景も背景の一部なので、選択・ドラッグ・長押し保存をさせない */
-.cta-art{justify-self:end;width:100%;max-width:470px;-webkit-user-select:none;user-select:none}
-.cta-art img,.cta-art svg{width:100%;height:auto;display:block;
-  -webkit-user-drag:none;user-drag:none;-webkit-touch-callout:none;pointer-events:none}
-.brsp{display:none}
-@media(max-width:860px){
-  .cta{margin:52px 16px 0}
-  .cta-inner{grid-template-columns:1fr;padding:56px 30px 60px}
-  .cta-art{display:none}
-  .cta{background:#1F68A1}
-  .cta-blob,.cta-waves{display:none}
-  /* 2行になってもアクセントは見出し全体の高さの中央に置く */
-  .cta h2{font-size:clamp(28px,7.6vw,40px);margin-bottom:20px;align-items:center;gap:12px}
-  .cta-ttl{white-space:normal}
-  .brsp{display:inline}
-  .cta p{margin-bottom:28px;line-height:2}
-  .cta-actions{flex-direction:column;align-items:stretch}
-  .cta .pill{width:100%;padding:17px 24px}
-}
-
-/* 出現（控えめに） */
-.rv{opacity:0;transform:translateY(14px);transition:opacity .7s cubic-bezier(.2,.7,.3,1),transform .7s cubic-bezier(.2,.7,.3,1)}
-.rv.in{opacity:1;transform:none}
-.slip.rv{transition:opacity .6s cubic-bezier(.2,.7,.3,1),transform .6s cubic-bezier(.2,1.4,.4,1)}
-.slip.rv{transform:translateY(14px) rotate(0)}
-.slip.rv.in:nth-child(1){transform:rotate(-1.1deg)}
-.slip.rv.in:nth-child(2){transform:rotate(.7deg) translateY(7px)}
-.slip.rv.in:nth-child(3){transform:rotate(-.6deg) translateY(-4px)}
-.slip.rv.in:nth-child(4){transform:rotate(1.3deg) translateY(5px)}
-.note,.ready .ready .ready .ready @keyframes fadeIn{to{opacity:1}}
-.hero .rv1,.hero .rv2,.hero .rv3,.board-shell{opacity:0}
-.ready .fd{animation:fadeIn .8s forwards}
-.ready .fd2{animation-delay:.3s}
-.ready .fd3{animation-delay:.5s}
-.hero-bg{opacity:0}
-.ready .hero-bg{animation:kenburns 1.6s cubic-bezier(.2,.7,.3,1) forwards}
-@keyframes kenburns{to{opacity:1}}
-.ready .hero .rv1,.ready .hero .rv2,.ready .hero .rv3,.ready .board-shell{animation:up .8s cubic-bezier(.2,.7,.3,1) forwards}
-.ready .hero .rv1{animation-delay:.06s}
-.ready .hero .rv2{animation-delay:.24s}
-.ready .hero .rv3{animation-delay:.40s}
-.ready .board-shell{animation-delay:.56s}
-@keyframes up{to{opacity:1;transform:none}}
-
-/* オープニング */
-#opening{position:fixed;inset:0;z-index:10001;background:var(--bg);display:grid;place-items:center;
-  transform-origin:50% 100%;transition:transform .95s cubic-bezier(.7,0,.3,1),box-shadow .95s}
-#opening.lift{transform:translateY(-102%) rotate(-1.2deg);box-shadow:0 24px 40px rgba(27,26,22,.25)}
-#opening::after{content:"";position:absolute;left:0;right:0;bottom:-14px;height:14px;background:var(--bg);
-  clip-path:polygon(0 0,3% 70%,7% 20%,12% 80%,18% 25%,24% 75%,31% 15%,38% 80%,45% 25%,52% 70%,60% 20%,68% 78%,75% 22%,82% 74%,89% 18%,95% 72%,100% 25%,100% 0)}
-#opencv{position:absolute;inset:0;width:100%;height:100%;filter:saturate(1.55)}
-
-.op-in{position:relative;text-align:center;padding:0 24px}
-/* 足あとと色が近く重なると読めなくなるため、濃い文字色＋紙色のハロー */
-.op-eyebrow{font-size:13px;color:var(--ink);text-shadow:0 0 7px var(--bg),0 0 7px var(--bg),0 0 3px var(--bg);opacity:0;animation:up .6s .15s forwards}
-.op-title{font-family:"Zen Maru Gothic",sans-serif;font-weight:500;font-size:clamp(38px,7.4vw,78px);line-height:1.2;margin:10px 0 14px}
-.op-title span{display:inline-block;opacity:0;transform:translateY(22px)}
-.op-title .a{animation:up .62s .30s cubic-bezier(.2,.7,.3,1) forwards}
-.op-title .b{animation:up .62s .46s cubic-bezier(.2,.7,.3,1) forwards;position:relative}
-.op-title .c{animation:up .62s .62s cubic-bezier(.2,.7,.3,1) forwards}
-.op-title .b svg{position:absolute;left:-5%;bottom:1px;width:110%;height:.4em;z-index:-1;overflow:visible}
-.op-title .b .mk{stroke:var(--yellow);stroke-width:26;stroke-linecap:round;fill:none;filter:url(#pencil);
-  stroke-dasharray:520;stroke-dashoffset:520;animation:mark .5s .78s cubic-bezier(.4,0,.2,1) forwards}
-#skip{position:fixed;right:20px;bottom:18px;z-index:10002;background:none;border:0;color:var(--ink-soft);
-  font-family:inherit;font-size:13.5px;cursor:pointer;opacity:0;animation:fadeIn .5s 1.4s forwards;padding:8px 12px}
-#skip:hover{color:var(--ink)}
-
-@media (prefers-reduced-motion: reduce){
-  html{scroll-behavior:auto}
-  .rv{opacity:1;transform:none;transition:none}
-  .slip.rv:nth-child(1){transform:rotate(-1.1deg)}
-  .slip.rv:nth-child(2){transform:rotate(.7deg) translateY(7px)}
-  .slip.rv:nth-child(3){transform:rotate(-.6deg) translateY(-4px)}
-  .slip.rv:nth-child(4){transform:rotate(1.3deg) translateY(5px)}
-  .note,  .hero .rv1,.hero .rv2,.hero .rv3,.board-shell{opacity:1;transform:none;animation:none!important}
-  .hero-bg{opacity:1;transform:none;animation:none!important}
-  .mk1 .mk,  .board.hint .tip,.board.hint .ring,.board.hint .tip .pip::after{animation:none!important}
-}
-/* スマホは本文の行間を3px広げる（em は各要素の文字サイズ基準なので、
-   もとの行間の比率を保ったまま3pxだけ足せる） */
-@media(max-width:700px){
-  .sec p,.sec li,.sec dt,.sec dd,.credit,.kv-cap,.after-note,.faq-note,.board-foot,
-  footer p,footer li{line-height:calc(1.9em + 3px)}
-  .lead,.lead p{line-height:calc(1.95em + 3px)}
-  .ftext p{line-height:calc(1.6em + 3px)}
-  .seq p{line-height:calc(1.7em + 3px)}
-  .slip .sub{line-height:calc(1.75em + 3px)}
-  .by p{line-height:calc(1.8em + 3px)}
-  .faq .a{line-height:calc(1.85em + 3px)}
-  .faq summary .q{line-height:calc(2.05em + 3px)}
-  .cta p{line-height:calc(2em + 3px)}
-}
-:focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:4px}
-</style>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Event",
-  "name": "まちであそぶ、をつくる｜Playable City 入門ワークショップ",
-  "description": "宇治のまちを舞台に、遊びを通してまちとの新しい関わり方を考えるワークショップ。子どもたちのアイデアから、まちでできる新しい遊びをつくります。",
-  "startDate": "2026-10-03T10:00:00+09:00",
-  "endDate": "2026-10-03T12:00:00+09:00",
-  "eventStatus": "https://schema.org/EventScheduled",
-  "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-  "location": {
-    "@type": "Place",
-    "name": "宇治市産業会館 多目的ホール",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "宇治市",
-      "addressRegion": "京都府",
-      "addressCountry": "JP"
-    }
-  },
-  "image": ["https://machi-play.com/assets/ogp.jpg"],
-  "url": "https://machi-play.com/",
-  "isAccessibleForFree": true,
-  "inLanguage": "ja",
-  "typicalAgeRange": "9-15",
-  "maximumAttendeeCapacity": 20,
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "JPY",
-    "availability": "https://schema.org/InStock",
-    "url": "https://docs.google.com/forms/d/e/1FAIpQLSe6rLWtzkLh0r8n9YfXnDI3aGaVXqjveMzL0JJP8LgcYHRtpQ/viewform?usp=header",
-    "validFrom": "2026-09-01T00:00:00+09:00",
-    "validThrough": "2026-10-02T23:59:00+09:00"
-  },
-  "organizer": {
-    "@type": "Organization",
-    "name": "宇治NEXT（宇治市・宇治商工会議所）"
-  }
-}
-</script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/mp.css?v=61">
 </head>
-<body class="locked">
-
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <filter id="pencil" filterUnits="userSpaceOnUse" x="-20" y="-20" width="600" height="100">
-    <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="3" seed="7" result="n"/>
-    <feDisplacementMap in="SourceGraphic" in2="n" scale="4.5" xChannelSelector="R" yChannelSelector="G"/>
-  </filter>
-  <filter id="pencil-thin" filterUnits="userSpaceOnUse" x="-20" y="-20" width="600" height="100">
-    <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="4" result="n"/>
-    <feDisplacementMap in="SourceGraphic" in2="n" scale="1.6" xChannelSelector="R" yChannelSelector="G"/>
-  </filter>
-</svg>
-
-<!-- オープニング -->
-<div id="opening" aria-hidden="true">
-  <canvas id="opencv"></canvas>
-  <div class="op-in">
-    <p class="op-eyebrow">宇治NEXT ｜ Playable City 入門ワークショップ</p>
-    <p class="op-title"><span class="a">まちで</span><span class="b">あそぶ<svg viewBox="0 0 520 40" preserveAspectRatio="none"><path class="mk" d="M14,24 C150,10 370,34 506,18"/></svg></span><span class="c">、をつくる</span></p>
-  </div>
-</div>
-<button id="skip" type="button">スキップ</button>
-
-<nav class="nav" id="nav">
+<body>
+<header class="nav">
   <div class="nav-in">
-    <a class="mark" href="./" aria-label="MACHI PLAY トップへ（ページを読み込み直します）">
-      <img class="mark-logo" src="assets/logo.webp" alt="MACHI PLAY" width="520" height="341" decoding="async">
-    </a>
-    <div class="nav-links">
-      <a href="#about">はじめに</a>
-      <a href="#flow">当日の進め方</a>
-      <a href="#change">Playable City</a>
-      <a href="#play">体験する</a>
-      <a href="#info">実施概要</a>
-      <a href="#faq">FAQ</a>
-    </div>
-    <button class="burger" type="button" aria-label="メニュー" aria-expanded="false" id="burger"><span></span><span></span><span></span></button>
-    <a class="pill pill-key" href="https://docs.google.com/forms/d/e/1FAIpQLSe6rLWtzkLh0r8n9YfXnDI3aGaVXqjveMzL0JJP8LgcYHRtpQ/viewform?usp=header" target="_blank" rel="noopener noreferrer">参加する <span class="arw-i">→</span></a>
-    <svg class="nav-sparks" viewBox="0 0 176 256" aria-hidden="true"><path d="M15 81 L110 16 M28 140 L158 128 M32 186 L138 240"/></svg>
+    <a class="brand" href="/"><img src="/assets/logo-mark.webp" alt=""><b>MACHI PLAY</b></a>
+    <button class="burger" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="navlinks">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav-links" id="navlinks">
+      <a href="/projects/">プロジェクト</a>
+      <a href="/about/">プロフィール</a>
+      <a href="/contact/">お問い合わせ</a>
+      <a class="nav-ext" href="/workshop/">ワークショップ<i>のサイト</i><span class="ext-i"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 9L9 3M9 3H4.4M9 3v4.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a class="nav-ext" href="/attara-iina/"><i>子どもたちの</i>アイデア展<span class="ext-i"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 9L9 3M9 3H4.4M9 3v4.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+    </nav>
   </div>
-  <div class="menu" id="menu">
-    <a href="#about">はじめに</a>
-      <a href="#flow">当日の進め方</a>
-    <a href="#change">Playable City</a>
-    <a href="#play">体験する</a>
-    <a href="#info">実施概要</a>
-    <a href="#faq">FAQ</a>
-    <a class="pill menu-cta" href="https://docs.google.com/forms/d/e/1FAIpQLSe6rLWtzkLh0r8n9YfXnDI3aGaVXqjveMzL0JJP8LgcYHRtpQ/viewform?usp=header" target="_blank" rel="noopener noreferrer">参加する <span class="arw-i">→</span></a>
-  </div>
-</nav>
-
-<header class="hero" id="top">
-  <div class="hero-photo">
-    <picture>
-      <source media="(max-width:560px)" srcset="assets/hero-illustration-sp.webp" width="940" height="1672">
-      <img class="hero-bg" width="1672" height="940" fetchpriority="high" src="assets/hero-illustration.webp" alt="宇治のまちの地図を広げて、みんなで遊び方を描き込んでいるようすのイラスト。まちであそぶ、をつくる — Playable City 入門ワークショップ（宇治NEXT）" decoding="async">
-    </picture>
-    <div class="hero-art">
-      <picture>
-        <source media="(max-width:560px)" srcset="assets/hero-title-sp.webp?v=4" width="779" height="615">
-        <img class="title-img" width="625" height="366" src="assets/hero-title.webp?v=4" alt="まちで遊ぶことは まちを好きになること／まちであそぶ、をつくる — Playable City 入門ワークショップ" decoding="async">
-      </picture>
-      <span class="facts-bg" aria-hidden="true"></span>
-      <img class="facts-img" width="1200" height="328" src="assets/hero-facts.webp?v=5" alt="DATE 2026年10月3日（土）10時〜12時／PLACE 宇治市産業会館 多目的ホール／WHO 小学4年生〜中学生（保護者の同伴は任意）／FEE 無料／TIME 120分" decoding="async">
-      <a class="facts-tap" href="#info"><span class="sr-only">実施概要へ移動</span></a>
-      <img class="hnote-demo-img" src="assets/hero-note-hs.webp" width="800" height="704" alt="" aria-hidden="true" decoding="async">
-      <p class="hnote hnote-map" aria-hidden="true">こんな<br>まちに<br>したい！</p>
-    </div>
-    <div class="hero-copy sr-only">
-      <h1>まちであそぶ、をつくる</h1>
-      <p>Playable City 入門ワークショップ（宇治NEXT）／まちで遊ぶことは、まちを好きになること</p>
-    </div>
-  </div>
-    <div class="below">
-      <div class="keyfacts rv3">
-        <div class="kf-grid">
-        <div class="kf">
-          <span class="ic"><svg class="blob" viewBox="0 0 76 66" aria-hidden="true"><path d="M40 6 C58 2 76 16 72 32 C69 48 56 66 36 63 C16 60 0 48 4 30 C7 14 22 9 40 6 Z" fill="rgba(255,212,59,.42)" opacity=".5" transform="rotate(16 38 33) scale(1.06) translate(-2 -2)"/><path d="M38 3 C55 1 74 12 73 28 C72 45 60 63 39 64 C19 65 3 51 3 32 C3 15 18 5 38 3 Z" fill="rgba(255,212,59,.42)"/></svg><svg class="glyph" viewBox="0 0 34 34"><rect x="5" y="8" width="24" height="21" rx="3"/><path d="M5 14 H29 M11 4 V9 M23 4 V9 M17 18 V25 M13.5 21.5 H20.5"/></svg></span>
-          <p class="k">DATE</p>
-          <p class="v">2026年10月3日（土）</p>
-          <p class="vs">10時〜12時</p>
-        </div>
-        <div class="kf">
-          <span class="ic"><svg class="blob" viewBox="0 0 76 66" aria-hidden="true"><path d="M40 6 C58 2 76 16 72 32 C69 48 56 66 36 63 C16 60 0 48 4 30 C7 14 22 9 40 6 Z" fill="rgba(240,107,98,.30)" opacity=".5" transform="rotate(16 38 33) scale(1.06) translate(-2 -2)"/><path d="M38 3 C55 1 74 12 73 28 C72 45 60 63 39 64 C19 65 3 51 3 32 C3 15 18 5 38 3 Z" fill="rgba(240,107,98,.30)"/></svg><svg class="glyph" viewBox="0 0 34 34"><path d="M17 30 C17 30 27 21 27 14 A10 10 0 0 0 7 14 C7 21 17 30 17 30 Z"/><circle cx="17" cy="14" r="3.6"/></svg></span>
-          <p class="k">PLACE</p>
-          <p class="v v-fit">宇治市産業会館</p>
-          <p class="vs">多目的ホール</p>
-        </div>
-        <div class="kf">
-          <span class="ic"><svg class="blob" viewBox="0 0 76 66" aria-hidden="true"><path d="M40 6 C58 2 76 16 72 32 C69 48 56 66 36 63 C16 60 0 48 4 30 C7 14 22 9 40 6 Z" fill="rgba(56,169,155,.34)" opacity=".5" transform="rotate(16 38 33) scale(1.06) translate(-2 -2)"/><path d="M38 3 C55 1 74 12 73 28 C72 45 60 63 39 64 C19 65 3 51 3 32 C3 15 18 5 38 3 Z" fill="rgba(56,169,155,.34)"/></svg><svg class="glyph" viewBox="0 0 34 34"><circle cx="14" cy="12" r="4.4"/><path d="M6 27 C6 21 10 18.5 14 18.5 C18 18.5 22 21 22 27"/><circle cx="24" cy="13.5" r="3.4"/><path d="M22.5 19 C26 19 29 21.5 29 27"/></svg></span>
-          <p class="k">WHO</p>
-          <p class="v v-fit">小学4年生〜中学生</p>
-          <p class="vs"><span class="rb">保護者<span class="rt" aria-hidden="true">ほごしゃ</span></span>の<span class="rb">同伴<span class="rt" aria-hidden="true">どうはん</span></span>は<span class="rb">任意<span class="rt" aria-hidden="true">にんい</span></span></p>
-        </div>
-        <div class="kf">
-          <span class="ic"><svg class="blob" viewBox="0 0 76 66" aria-hidden="true"><path d="M40 6 C58 2 76 16 72 32 C69 48 56 66 36 63 C16 60 0 48 4 30 C7 14 22 9 40 6 Z" fill="rgba(79,99,232,.24)" opacity=".5" transform="rotate(16 38 33) scale(1.06) translate(-2 -2)"/><path d="M38 3 C55 1 74 12 73 28 C72 45 60 63 39 64 C19 65 3 51 3 32 C3 15 18 5 38 3 Z" fill="rgba(79,99,232,.24)"/></svg><svg class="glyph" viewBox="0 0 34 34"><circle cx="17" cy="17" r="10.5"/><path d="M12 11 L17 17.5 L22 11 M12.5 19 H21.5 M12.5 22.5 H21.5 M17 17.5 V25"/></svg></span>
-          <p class="k">FEE</p>
-          <p class="v">無料</p>
-          <p class="vs">（予定）</p>
-        </div>
-        <div class="kf">
-          <span class="ic"><svg class="blob" viewBox="0 0 76 66" aria-hidden="true"><path d="M40 6 C58 2 76 16 72 32 C69 48 56 66 36 63 C16 60 0 48 4 30 C7 14 22 9 40 6 Z" fill="rgba(46,134,214,.24)" opacity=".5" transform="rotate(16 38 33) scale(1.06) translate(-2 -2)"/><path d="M38 3 C55 1 74 12 73 28 C72 45 60 63 39 64 C19 65 3 51 3 32 C3 15 18 5 38 3 Z" fill="rgba(46,134,214,.24)"/></svg><svg class="glyph" viewBox="0 0 34 34"><circle cx="17" cy="17" r="11"/><path d="M17 10 V17.5 L22.5 21"/></svg></span>
-          <p class="k">TIME</p>
-          <p class="v">120分</p>
-        </div>
-        </div>
-        <p class="kf-note">* 学年が<span class="rb">対象<span class="rt" aria-hidden="true">たいしょう</span></span>外のかたもご相談ください。学年や人数に<span class="rb">応<span class="rt" aria-hidden="true">おう</span></span>じて参加いただけるか<span class="rb">検討<span class="rt" aria-hidden="true">けんとう</span></span>します。</p>
-      </div>
-    </div>
 </header>
 
-
-<div class="credits" style="margin-top:0">
-  <div class="credits-in">
-    <p class="credit"><span><span class="rb">主催<span class="rt" aria-hidden="true">しゅさい</span></span></span><b>宇治NEXT（宇治市・宇治商工会議所）</b></p>
-    <p class="credit"><span><span class="rb">運営<span class="rt" aria-hidden="true">うんえい</span></span>協力</span><b>株式会社taliki</b></p>
-    <p class="credit"><span><span class="rb">企画<span class="rt" aria-hidden="true">きかく</span></span>・開発</span><b>野寺悠太（灘高校）</b></p>
+<section class="hero" id="top">
+  <div class="hero-full">
+    <picture>
+      <source media="(max-width:860px)" width="940" height="1550" sizes="100vw"
+        srcset="/assets/hero-town-sp.webp?v=2 940w,
+                /assets/hero-town-sp-1400.webp 1400w,
+                /assets/hero-town-sp-1880.webp 1880w">
+      <img src="/assets/hero-town.webp?v=2" width="2400" height="1394" fetchpriority="high" sizes="100vw"
+        srcset="/assets/hero-town-1646.webp 1646w,
+                /assets/hero-town.webp?v=2 2400w,
+                /assets/hero-town-3292.webp 3292w"
+        alt="海辺のまち。学校や公園、桟橋のまわりで子どもたちが遊んだり集まったりしているようすを描いたイラスト">
+    </picture>
+    <svg class="hero-wave" viewBox="0 0 1440 110" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 110 L0 52 C 160 96, 330 110, 520 88 C 688 68, 830 96, 1006 74
+               C 1168 54, 1292 70, 1440 32 L1440 110 Z" fill="#fff"/>
+    </svg>
+    <div class="hero-ttl">
+      <h1><picture>
+        <source media="(max-width:860px)" srcset="/assets/play-title-sp.webp?v=7">
+        <img src="/assets/play-title.webp?v=7" width="1571" height="660" fetchpriority="high"
+          alt="まちであそぶ、をつくる。">
+      </picture></h1>
+      <p class="hero-tag"><img src="/assets/play-tagline.webp" width="604" height="150"
+        fetchpriority="high" alt="人とまちのあいだに、新しいきっかけを。"></p>
+    </div>
+    <a class="go hero-go" href="#about">活動を見る　<span>→</span></a>
   </div>
-</div>
+</section>
 
-<!-- イントロ -->
+<section class="intro">
+  <svg class="blob blob-l" viewBox="0 0 620 480" aria-hidden="true">
+    <path d="M22 152 C 58 70, 152 24, 252 40 C 320 50, 352 104, 418 128
+             C 494 156, 588 172, 598 238 C 608 306, 526 340, 450 364
+             C 370 390, 298 432, 210 428 C 126 424, 46 390, 22 320
+             C 4 268, 0 212, 22 152 Z" fill="#EFF9FD"/>
+  </svg>
+  <svg class="blob blob-r" viewBox="0 0 460 420" aria-hidden="true">
+    <path d="M30 170 C 46 96, 128 38, 212 52 C 278 64, 308 120, 362 152
+             C 420 186, 454 234, 436 286 C 416 342, 346 368, 280 376
+             C 204 384, 116 388, 64 346 C 18 308, 14 236, 30 170 Z" fill="#F3FAFD"/>
+  </svg>
+  <div class="wrap q-row">
+    <h2 class="q"><img src="/assets/q-heading.webp" width="596" height="308" loading="lazy"
+      alt="毎日歩くその道で、最後に足を止めたのはいつですか？"></h2>
+    <div class="q-body">
+      <p>まちには、目的地へ向かうための道や、<br class="pc">
+        ただ通り過ぎるだけの広場があります。<br class="pc">
+        そこでは、多くの人が同じ場所を利用していても、<br class="pc">
+        互いを知ったり、関わったりする機会は<br class="pc">
+        そう多くありません。</p>
+      <p class="n">けれど、そんな公共空間にも、<br class="pc">
+        人と人が出会い、お互いを知るきっかけが<br class="pc">
+        眠っています。</p>
+    </div>
+    <img class="q-art" src="/assets/scene-street.webp" width="1855" height="848"
+      loading="lazy" alt="" aria-hidden="true">
+  </div>
+
+  <div class="band">
+    <svg class="band-bg" viewBox="0 0 1440 560" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 96 C 150 44, 286 26, 452 52 C 626 80, 806 14, 1004 40
+               C 1174 62, 1312 26, 1440 68
+               L1440 470 C 1304 528, 1158 498, 992 518 C 800 542, 652 498, 436 520
+               C 258 538, 122 510, 0 478 Z" fill="#EAF7FD"/>
+    </svg>
+    <div class="wrap band-in">
+      <img class="band-art" src="/assets/scene-play.webp" width="1849" height="851"
+        loading="lazy" alt="" aria-hidden="true">
+      <div class="band-txt">
+        <p class="lead">MACHI PLAYは、公共空間に眠る、<br class="pc">
+          そんな人と人との新たな関わりの可能性を、<br class="pc">
+          遊びの力で切り拓いていく取り組みです。</p>
+        <p class="sub">その中で大事にしているのは、<br class="pc">
+          一人ひとりの「好き」を大切にすること、<br class="pc">
+          そして、人と一緒に何かを楽しむことです。</p>
+        <p class="sub">誰かと一緒に楽しみ、その人の好きなものや人柄を知る。<br class="pc">
+          そんな出会いを通して、その人が暮らすまちも<br class="pc">
+          少しずつ身近になっていきます。</p>
+      </div>
+      <img class="hand-art" src="/assets/hand-lettering.webp" width="1486" height="970"
+        loading="lazy" alt="つながる、あそぶ、まちが変わる">
+    </div>
+  </div>
+
+  <div class="wrap closing">
+    <img class="sparkle" src="/assets/spark-3.webp" width="68" height="112"
+      loading="lazy" alt="" aria-hidden="true">
+    <img class="closing-art" src="/assets/scene-river.webp" width="2000" height="668"
+      loading="lazy" alt="" aria-hidden="true">
+    <div class="closing-txt">
+      <p>いつもの道や広場に、思いがけない出会いや楽しみをつくる。</p>
+      <p>そんな夢に向かって、「楽しい」と「好き」を大切にしながら、<br class="pc">これからも活動を続けていきます。</p>
+    </div>
+    <img class="sparkle sparkle-r" src="/assets/spark-2.webp" width="59" height="68"
+      loading="lazy" alt="" aria-hidden="true">
+    <img class="closing-sky" src="/assets/scene-sky.webp" width="2000" height="668"
+      loading="lazy" alt="" aria-hidden="true">
+  </div>
+</section>
+
+<section class="panels" id="story">
+  <div class="stage">
+    <div class="slide on">
+      <div class="p-wrap"><picture><source media="(max-width:560px) and (min-aspect-ratio:80/100)" srcset="/assets/sp-panel-1s-bg.webp" width="1254" height="1254"><source media="(max-width:560px) and (min-aspect-ratio:65/100)" srcset="/assets/sp-panel-1w-bg.webp?v=2" width="1122" height="1402"><img class="p-bg" src="/assets/sp-panel-1-bg.webp" width="992" height="1474"
+        alt="毎日歩くその道で、最後に足を止めたのはいつですか？ まちには、目的地へ向かうための道や、ただ通り過ぎるだけの広場があります。そこでは、多くの人が同じ場所を利用していても、互いを知ったり、関わったりする機会はそう多くありません。けれど、そんな公共空間にも、人と人が出会い、お互いを知るきっかけが眠っています。"></picture><picture><source media="(max-width:560px) and (min-aspect-ratio:80/100)" srcset="/assets/sp-panel-1s-txh.webp?v=2" width="1254" height="1254"><source media="(max-width:560px) and (min-aspect-ratio:65/100)" srcset="/assets/sp-panel-1w-txh.webp?v=2" width="1122" height="1402"><img class="p-tx p-txh" src="/assets/sp-panel-1-txh.webp?v=2" width="992" height="1474" decoding="async" alt="" aria-hidden="true"></picture><picture><source media="(max-width:560px) and (min-aspect-ratio:80/100)" srcset="/assets/sp-panel-1s-txm.webp?v=2" width="1254" height="1254"><source media="(max-width:560px) and (min-aspect-ratio:65/100)" srcset="/assets/sp-panel-1w-txm.webp?v=2" width="1122" height="1402"><img class="p-tx p-txm" src="/assets/sp-panel-1-txm.webp?v=2" width="992" height="1474" decoding="async" alt="" aria-hidden="true"></picture><picture><source media="(max-width:560px) and (min-aspect-ratio:80/100)" srcset="/assets/sp-panel-1s-txc.webp" width="1254" height="1254"><source media="(max-width:560px) and (min-aspect-ratio:65/100)" srcset="/assets/sp-panel-1w-txc.webp" width="1122" height="1402"><img class="p-tx p-txc" src="/assets/sp-panel-1-txc.webp" width="992" height="1474" decoding="async" alt="" aria-hidden="true"></picture></div>
+    </div>
+    <div class="slide">
+      <div class="p-wrap"><picture><source media="(max-width:560px) and (min-aspect-ratio:80/100)" srcset="/assets/sp-panel-2s-bg.webp" width="1254" height="1254"><source media="(max-width:560px) and (min-aspect-ratio:65/100)" srcset="/assets/sp-panel-2w-bg.webp" width="1122" height="1402"><img class="p-bg" src="/assets/sp-panel-2-bg.webp" width="992" height="1475" loading="lazy"
+        alt="MACHI PLAYは、公共空間に眠る、そんな人と人との新たな関わりの可能性を、遊びの力で切り拓いていく取り組みです。その中で大事にしているのは、一人ひとりの「好き」を大切にすること、そして、人と一緒に何かを楽しむことです。誰かと一緒に楽しみ、その人の好きなものや人柄を知る。そんな出会いを通して、その人が暮らすまちも少しずつ身近になっていきます。"></picture><picture><source media="(max-width:560px) and (min-aspect-ratio:80/100)" srcset="/assets/sp-panel-2s-tx.webp" width="1254" height="1254"><source media="(max-width:560px) and (min-aspect-ratio:65/100)" srcset="/assets/sp-panel-2w-tx.webp" width="1122" height="1402"><img class="p-tx" src="/assets/sp-panel-2-tx.webp" width="992" height="1475" loading="lazy" decoding="async" alt="" aria-hidden="true"></picture></div>
+    </div>
+    <div class="slide">
+      <div class="p-wrap"><picture><source media="(max-width:560px) and (min-aspect-ratio:80/100)" srcset="/assets/sp-panel-3s-bg.webp" width="1254" height="1254"><source media="(max-width:560px) and (min-aspect-ratio:65/100)" srcset="/assets/sp-panel-3w-bg.webp?v=3" width="1122" height="1402"><img class="p-bg" src="/assets/sp-panel-3-bg.webp" width="941" height="1506" loading="lazy"
+        alt="いつもの道や広場に、思いがけない出会いや楽しみをつくる。そんな夢に向かって、「楽しい」と「好き」を大切にしながら、これからも活動を続けていきます。"></picture><picture><source media="(max-width:560px) and (min-aspect-ratio:80/100)" srcset="/assets/sp-panel-3s-tx.webp" width="1254" height="1254"><source media="(max-width:560px) and (min-aspect-ratio:65/100)" srcset="/assets/sp-panel-3w-tx.webp" width="1122" height="1402"><img class="p-tx" src="/assets/sp-panel-3-tx.webp" width="941" height="1506" loading="lazy" decoding="async" alt="" aria-hidden="true"></picture></div>
+    </div>
+  </div>
+  <div class="trigs"><i class="trig"></i><i class="trig"></i><i class="trig"></i><i class="trig"></i></div>
+</section>
+
 <section class="sec" id="about">
   <div class="wrap">
-    <div class="sec-head rv">
-      <h2>Playable City 入門ワークショップとは</h2>
-      <p class="sub-title">「通り過ぎるまち」を、<br>「関わりたくなるまち」へ。</p>
+    <div class="sec-head">
+      <p class="kick">ABOUT</p>
+      <h2>いつもの道を、誰かと出会う場所に。</h2>
+      <p>通学路も、階段も、バス停も。毎日通り過ぎている場所に、小さな遊びを一つ置いてみる。それだけで、普段は交わらない人同士が一緒に笑い、見慣れた風景が少し違って見えてきます。そのきっかけを、まちの中に作っています。</p>
     </div>
-    <div class="lead rv">
-      <p><span class="rb">私<span class="rt" aria-hidden="true">わたし</span></span>たちは毎日、まちの中を歩いています。けれど、道や広場を「目的地へ向かうための場所」として、ただ通り<span class="rb">過<span class="rt" aria-hidden="true">す</span></span>ぎてしまうことも少なくありません。</p>
-      <p>Playable City は、そんなまちを「遊び」という<span class="rb">視点<span class="rt" aria-hidden="true">してん</span></span>から<span class="rb">捉<span class="rt" aria-hidden="true">とら</span></span>え直し、人が立ち止まったり、<span class="rb">誰<span class="rt" aria-hidden="true">だれ</span></span>かと関わったりするきっかけをつくる考え方です。</p>
-      <p>このワークショップでは、そんな Playable City の考え方に<span class="rb">触<span class="rt" aria-hidden="true">ふ</span></span>れながら、<b>「宇治のまちに、こんな遊びがあったら面白そう」</b>を<span class="rb">一緒<span class="rt" aria-hidden="true">いっしょ</span></span>に考えます。</p>
-      <p>いつものまちを、ただ通り<span class="rb">過<span class="rt" aria-hidden="true">す</span></span>ぎる場所から、少し関わってみたくなる場所へ。そんな新しいまちの見方を、<span class="rb">一緒<span class="rt" aria-hidden="true">いっしょ</span></span>につくってみませんか？</p>
+    <div class="acts">
+      <article class="act"><p class="no">01</p><h3>作る</h3><p>まちを舞台にしたゲームや、思わず誰かと関わりたくなる仕掛けを企画・開発する。</p></article>
+      <article class="act"><p class="no">02</p><h3>開く</h3><p>子どもも大人も、通りかかった人も一緒に遊べる場を開く。</p></article>
+      <article class="act"><p class="no">03</p><h3>伝える</h3><p>生まれたアイデアとつながりを展示し、記録に残して次のまちへ渡す。</p></article>
     </div>
   </div>
 </section>
 
-<!-- 当日の進め方 -->
-<section class="sec" id="flow" style="padding-top:34px;padding-bottom:34px">
-    <svg class="deco deco-pencils" viewBox="0 0 200 150" aria-hidden="true">
-      <g transform="rotate(-24 100 75)">
-        <g transform="translate(52,18)">
-          <rect x="0" y="0" width="20" height="88" rx="4" fill="#FFC53D"/><rect x="6" y="0" width="6" height="88" fill="#FFDD7A" opacity=".7"/>
-          <path d="M0 88 L10 112 L20 88 Z" fill="#F0D9A8"/><path d="M5 100 L10 112 L15 100 Z" fill="#2B4B63"/>
-        </g>
-        <g transform="translate(80,10)">
-          <rect x="0" y="0" width="20" height="88" rx="4" fill="#2BB3B0"/><rect x="6" y="0" width="6" height="88" fill="#7FD6D2" opacity=".7"/>
-          <path d="M0 88 L10 112 L20 88 Z" fill="#F0D9A8"/><path d="M5 100 L10 112 L15 100 Z" fill="#2B4B63"/>
-        </g>
-        <g transform="translate(108,20)">
-          <rect x="0" y="0" width="20" height="88" rx="4" fill="#2E86D6"/><rect x="6" y="0" width="6" height="88" fill="#7FB8EC" opacity=".7"/>
-          <path d="M0 88 L10 112 L20 88 Z" fill="#F0D9A8"/><path d="M5 100 L10 112 L15 100 Z" fill="#2B4B63"/>
-        </g>
-      </g>
-      <g stroke="#FFD43B" stroke-width="5" stroke-linecap="round" fill="none">
-        <path d="M14 46 L36 40"/><path d="M18 66 L40 66"/><path d="M170 96 L190 88"/><path d="M166 118 L186 118"/>
-      </g>
-    </svg>
-    <svg class="deco deco-scribble sc-a" viewBox="0 0 120 70" aria-hidden="true"><path stroke="#7FB8EC" stroke-width="4" d="M6 16 C40 6 80 22 114 10 M8 30 C42 20 82 36 116 24 M4 46 C38 36 78 52 112 40"/></svg>
-    <svg class="deco deco-scribble sc-b" viewBox="0 0 140 80" aria-hidden="true"><path stroke="#8ED1A6" stroke-width="4" d="M6 18 C46 6 96 26 134 12 M8 36 C48 24 98 44 136 30"/><path stroke="#7FB8EC" stroke-width="4" d="M4 58 C44 46 94 66 132 52"/></svg>
-    <svg class="deco deco-scribble sc-c" viewBox="0 0 160 80" aria-hidden="true"><path stroke="#FFD97A" stroke-width="4" d="M6 20 C56 6 116 28 154 14 M8 40 C58 26 118 48 156 34 M6 60 C56 46 116 66 152 54"/></svg>
+<section class="sec" style="padding-top:0">
   <div class="wrap">
-    <div class="flow-head rv">
-      <h2>当日の進め方<svg class="h-underline" viewBox="0 0 300 12" preserveAspectRatio="none" aria-hidden="true"><path class="u1" d="M5,7 C70,2 150,10 230,4 C260,2 280,5 295,4"/></svg></h2>
-      <p>120分のワークショップは、<br>知る → 体験する → つくる → 共有する<br>という順番で進みます。</p>
+    <div class="sec-head">
+      <p class="kick">PROJECTS</p>
+      <h2>これまでの活動</h2>
+      <p>いつものまちに、新しい楽しみ方を。人と一緒に考え、形にしてきた活動を紹介します。</p>
     </div>
-    <div class="flow-list">
-      <div class="fstep s1 rv">
-        <span class="fnum">1</span>
-        <a class="fband fband-link" href="#change">
-          <div class="ftext">
-            <h3>知る</h3>
-            <p>宇治のまちの話を聞く<br>Playable City の事例を知る</p>
-          </div>
-          <span class="ftime">10:00 – 10:30</span>
-        </a>
-      </div>
-      <div class="fstep s2 rv">
-        <span class="fnum">2</span>
-        <a class="fband fband-link" href="#play">
-          <div class="ftext">
-            <h3>体験する</h3>
-            <p>まちを「遊び」の<span class="rb">視点<span class="rt" aria-hidden="true">してん</span></span>から見るオリジナルゲームで遊ぶ</p>
-          </div>
-          <span class="ftime">10:30 – 10:50</span>
-        </a>
-      </div>
-      <div class="fstep s3 rv">
-        <span class="fnum">3</span>
-        <a class="fband fband-link" href="#sheets">
-          <div class="ftext">
-            <h3>つくる</h3>
-            <p>「遊びたい」をアイデアシートにまとめる</p>
-          </div>
-          <span class="ftime">10:50 – 11:25</span>
-        </a>
-      </div>
-      <div class="fstep s4 rv">
-        <span class="fnum">4</span>
-        <div class="fband">
-          <div class="ftext">
-            <h3>共有する</h3>
-            <p>発表して、みんなと共有<br>アンケート・まとめ</p>
-          </div>
-          <span class="ftime">11:25 – 12:00</span>
+    <div class="pjs">
+      <a class="pj" href="/projects/workshop/">
+        <img src="/assets/photos/ws-draw.webp?v=2" width="1920" height="1080" alt="" loading="lazy">
+        <div class="body">
+          <div class="tags"><span class="tag">子ども向けワークショップ</span><span class="tag">2026.10.03</span></div>
+          <h3>まちであそぶ、をつくる</h3>
+          <p>宇治のまちを「遊び」の視点から見つめ直す、小学4年生〜中学生向けのワークショップを開催しました。ゲームや対話を通して、いつものまちに隠れた可能性を考えました。</p>
+          <p class="more">活動報告を見る →</p>
         </div>
-      </div>
+      </a>
+      <a class="pj" href="/projects/ideas/">
+        <img src="/assets/photos/ex-boards-card.webp" width="1440" height="810" alt="" loading="lazy">
+        <div class="body">
+          <div class="tags"><span class="tag">展示</span><span class="tag">2026.10.20–23</span></div>
+          <h3>子どもたちのアイデア展</h3>
+          <p>ワークショップで生まれた9つのアイデアを、宇治市役所で展示しました。子どもたちが考えた、まちにあったら面白い“もの”を、地域の人々にも紹介しました。</p>
+          <p class="more">活動報告を見る →</p>
+        </div>
+      </a>
     </div>
-    <div class="dur rv"><span>0分</span><span class="bar"></span><span>120分</span></div>
+    <div class="btns">
+      <a class="btn alt" href="/projects/">プロジェクトの一覧へ　<span>→</span></a>
+    </div>
   </div>
 </section>
 
-<!-- 間 -->
-<div class="breath">
-  <p>そして、まちを考える。</p>
-  <svg class="rule" viewBox="0 0 120 10" aria-hidden="true"><path d="M4,6 C34,2 86,9 116,4"/></svg>
-</div>
-
-<!-- Playable City について -->
-<section id="change" style="padding-top:0">
+<section class="sec sites-sec" style="padding-top:0">
   <div class="wrap">
-    <div class="sec-head rv">
-      <div class="head-row"><span class="step-chip chip-know"><span class="n">1</span><span>知る</span></span><h2>Playable City について</h2></div>
-      <p>Playable City は、イギリス・ブリストルで始まった、遊びやテクノロジーを通して、人とまちとの新しい関わり方をつくる取り組みです。人の<span class="rb">好奇心<span class="rt" aria-hidden="true">こうきしん</span></span>や<span class="rb">想像<span class="rt" aria-hidden="true">そうぞう</span></span>力を生かし、まちに小さな<span class="rb">仕掛<span class="rt" aria-hidden="true">しか</span></span>けを加えることで、立ち止まる・気づく・楽しむといった新しいまちの体験を生み出します。</p>
+    <div class="sec-head">
+      <p class="kick">PLAY</p>
+      <h2>子どもたちが考えた遊びで、遊べます。</h2>
+      <p class="bysent"><span>ワークショップで生まれた9つのアイデアをまちのイラストの中に散りばめました。</span><span>まちのあちこちにある遊びを、ぜひ体験してみてください。</span></p>
     </div>
-    <div class="slips">
-      <div class="slip rv">
-        <span class="tick t-blue"></span>
-        <p class="was">ただの道</p>
-        <svg class="arw" width="26" height="16" viewBox="0 0 26 16" aria-hidden="true"><path d="M3 4 V12 M3 12 H22 M17 7 L23 12 L17 16"/></svg>
-        <p class="now">少し遊びたくなる道</p>
-        <p class="sub">通り道が、<span class="rb">寄<span class="rt" aria-hidden="true">よ</span></span>り道したくなる場所に変わる。</p>
+    <a class="play" href="/attara-iina/">
+      <img src="/assets/ogp-attara.jpg?v=3" width="1200" height="630" alt="" loading="lazy">
+      <div class="body">
+        <p class="lb">あったらいいなのまち</p>
+        <ul class="ideas">
+          <li>雲の上でバドミントン</li>
+          <li>ガラスの歩道橋</li>
+          <li>かいだんをふんだらおとがなる</li>
+          <li>学校のかべが全面ホワイトボード</li>
+          <li>夜の暗い道も楽しく!!</li>
+          <li>AR市役所City</li>
+          <li>植物、生き物交流</li>
+          <li>まちゲーム</li>
+          <li>くもの上でおにごっこしながら音楽がながれる</li>
+          <li class="etc">などなど</li>
+        </ul>
+        <p class="more">まちへ行ってみる<span class="ext-i"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 9L9 3M9 3H4.4M9 3v4.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></p>
       </div>
-      <div class="slip rv">
-        <span class="tick t-coral"></span>
-        <p class="was">待つだけの場所</p>
-        <svg class="arw" width="26" height="16" viewBox="0 0 26 16" aria-hidden="true"><path d="M3 4 V12 M3 12 H22 M17 7 L23 12 L17 16"/></svg>
-        <p class="now">誰かと遊べる場所</p>
-        <p class="sub">バス<span class="rb">停<span class="rt" aria-hidden="true">てい</span></span>や信号待ちの数分が、待ち時間ではなくなる。</p>
-      </div>
-      <div class="slip rv">
-        <span class="tick t-teal"></span>
-        <p class="was">ただの<span class="rb">階段<span class="rt" aria-hidden="true">かいだん</span></span></p>
-        <svg class="arw" width="26" height="16" viewBox="0 0 26 16" aria-hidden="true"><path d="M3 4 V12 M3 12 H22 M17 7 L23 12 L17 16"/></svg>
-        <p class="now">挑戦が生まれる場所</p>
-        <p class="sub">上るだけだった<span class="rb">段差<span class="rt" aria-hidden="true">だんさ</span></span>が、遊びの<span class="rb">装置<span class="rt" aria-hidden="true">そうち</span></span>になる。</p>
-      </div>
-      <div class="slip rv">
-        <span class="tick t-yellow"></span>
-        <p class="was">すれ<span class="rb">違<span class="rt" aria-hidden="true">ちが</span></span>うだけの場所</p>
-        <svg class="arw" width="26" height="16" viewBox="0 0 26 16" aria-hidden="true"><path d="M3 4 V12 M3 12 H22 M17 7 L23 12 L17 16"/></svg>
-        <p class="now">気配を感じる場所</p>
-        <p class="sub">さっき歩いた人の足あとが、次の人の体験を変える。</p>
-      </div>
-    </div>
-    </div>
-    <p class="after-note rv">今回のワークショップでは、Playable City の例から宇治のまちを考えます。</p>
+    </a>
   </div>
 </section>
 
-<!-- 体験する -->
-<section class="sec" id="play">
+<section class="sec" style="padding-top:0">
   <div class="wrap">
-    <div class="sec-head rv">
-      <div class="head-row"><span class="step-chip chip-try"><span class="n">2</span><span>体験する</span></span><h2>いつものまちを、あそびの目で見る。</h2></div>
-      <p>まちを「遊び」の<span class="rb">視点<span class="rt" aria-hidden="true">してん</span></span>からとらえ直した、オリジナルゲームで遊びます。<br class="pc-br">見<span class="rb">慣<span class="rt" aria-hidden="true">な</span></span>れた宇治の建物や道も、ゲームを通して見ると、いつもとは少し<span class="rb">違<span class="rt" aria-hidden="true">ちが</span></span>って見えるかもしれません。<br class="pc-br">どんなゲームなのかは、当日のお楽しみ。ぜひ、遊びながら宇治のまちを見つめ直してみてください。</p>
+    <div class="sec-head">
+      <p class="kick">PROFILE</p>
+      <h2>プロフィール</h2>
     </div>
-    <picture>
-      <source media="(min-width:701px)" srcset="assets/play-kv-wide.webp" width="1774" height="887">
-      <img class="kv rv" src="assets/play-kv.webp" width="1214" height="832" loading="lazy" decoding="async"
-        alt="スマホやタブレットを持った子どもたちのまわりに、木・ベンチ・信号・階段・建物・足あとなどのアイコンが浮かんでいるイラスト">
-    </picture>
-  </div>
-</section>
-
-<!-- ボード -->
-<div class="board-shell">
-  <p class="board-lead">画面の上をなぞってみてください。なぞったあとが重なって、少しずつ何かが見えてきます。<br>（更新するたびに何かが変わります。何が変わったのか、見つけてみてください。）</p>
-  <div class="board hint" id="board">
-    <div class="board-bar">
-      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-      <span class="board-title">まちであそぶボード</span>
-      <span class="board-themes" role="group" aria-label="足あとの配色">
-        <button type="button" class="theme-pill" data-theme-pick="blue" aria-pressed="true">ブルー</button>
-        <button type="button" class="theme-pill" data-theme-pick="green" aria-pressed="false">グリーン</button>
-        <button type="button" class="board-reset" id="boardreset" title="まっさらにする" aria-label="ボードをまっさらにする">
-          <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" focusable="false">
-            <path d="M3.4 12a8.6 8.6 0 1 0 2.9-6.4L3.4 8" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>
-            <path d="M3.4 4.3V8h3.7" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
-      </span>
-    </div>
-    <div class="board-stage" id="stage" role="img" aria-label="なぞると色鉛筆の足あとが描かれ、重なったところに「あそべるまち」の文字や、木・ベンチ・信号・階段・建物・足あとのマークが浮かぶ体験ボード">
-      <canvas id="cscanvas"></canvas>
-      <div class="ring"></div>
-      <div class="demo-cursor" id="democursor" aria-hidden="true">
-        <svg width="26" height="26" viewBox="0 0 26 26"><path d="M4 2 L20 12 L12.5 13.5 L9.5 21 Z" fill="#1B1A16" stroke="#FFFDF8" stroke-width="1.4" stroke-linejoin="round"/></svg>
-      </div>
-      <div class="tip"><span class="pip"></span><span class="tip-pc">マウスでこの上をなぞってみてください</span><span class="tip-sp">指でこの上をなぞってみてください</span></div>
-    </div>
-  </div>
-  <p class="board-foot"><span>ゲームの例です。当日はこれ以外のゲームも登場します。</span></p>
-</div>
-
-<!-- アイデアシート -->
-<section class="sec" id="sheets">
-  <div class="wrap">
-    <div class="sec-head rv" >
-      <div class="head-row"><span class="step-chip chip-make"><span class="n">3</span><span>つくる</span></span><h2>アイデアシートをつくる</h2></div>
-      <p>文章より絵が中心。<span class="rb">実現<span class="rt" aria-hidden="true">じつげん</span></span>できるかどうかは、いったん置いておいて<span class="rb">大丈夫<span class="rt" aria-hidden="true">だいじょうぶ</span></span>です。</p>
-    </div>
-    <figure class="sheet-example rv">
-      <img src="assets/sheet-example.webp?v=2" width="1600" height="900" loading="lazy" decoding="async"
-        alt="アイデアシートの記入例。① どこで？駅の階段、② だれと？友だちと！、③ どんな仕組みで？音が鳴る、④ 名前は？リズムステップ。右側には、色とりどりの丸が描かれた階段を子どもたちがかけ上がり、音符が鳴っている絵が描かれている。">
-      <figcaption>アイデアシート記入例</figcaption>
-    </figure>
-    <p class="after-note after-note-wide rv">場所、相手、仕組み、名前。<br>4つが決まると、頭の中の「面白そう」が、人に話せる１つのアイデアになります。</p>
-  </div>
-</section>
-
-<!-- 開催概要 -->
-<section class="sec" id="info">
-  <div class="wrap">
-    <div class="sec-head rv"><h2>実施概要</h2></div>
-    <div class="info rv">
-      <dl>
-        <dt><span class="rb">名称<span class="rt" aria-hidden="true">めいしょう</span></span></dt><dd>まちであそぶ、をつくる：Playable City 入門ワークショップ</dd>
-        <dt><span class="rb">日程<span class="rt" aria-hidden="true">にってい</span></span></dt><dd>2026年10月3日（土）10時〜12時</dd>
-        <dt>会場</dt><dd>宇治市産業会館 多目的ホール（京都府宇治市）</dd>
-        <dt><span class="rb">対象<span class="rt" aria-hidden="true">たいしょう</span></span></dt><dd>小学4年生〜中学生（<span class="rb">保護者<span class="rt" aria-hidden="true">ほごしゃ</span></span>の<span class="rb">同伴<span class="rt" aria-hidden="true">どうはん</span></span>は<span class="rb">任意<span class="rt" aria-hidden="true">にんい</span></span>）<br><span style="font-size:13px;color:#2C5E7E">* 学年が<span class="rb">対象<span class="rt" aria-hidden="true">たいしょう</span></span>外のかたもご相談ください。学年や人数に<span class="rb">応<span class="rt" aria-hidden="true">おう</span></span>じて参加いただけるか<span class="rb">検討<span class="rt" aria-hidden="true">けんとう</span></span>します。</span></dd>
-        <dt>定員</dt><dd>約20名</dd>
-        <dt>所要時間</dt><dd>120分</dd>
-        <dt>参加<span class="rb">費<span class="rt" aria-hidden="true">ひ</span></span></dt><dd>無料</dd>
-        <dt>持ち物</dt><dd>筆記用具（お持ちのかたは、スマホやタブレットもご持参ください）</dd>
-        <dt>申込<span class="rb">締切<span class="rt" aria-hidden="true">しめきり</span></span></dt><dd>2026年10月2日（金）23:59<br><span style="font-size:13px;color:#2C5E7E">* <span class="rb">定員<span class="rt" aria-hidden="true">ていいん</span></span>に達し次第、受付を終了します。</span></dd>
-        <dt><span class="rb">申込<span class="rt" aria-hidden="true">もうしこみ</span></span>方法</dt><dd>下記の申込フォームからお申し込みください。<br><a href="https://docs.google.com/forms/d/e/1FAIpQLSe6rLWtzkLh0r8n9YfXnDI3aGaVXqjveMzL0JJP8LgcYHRtpQ/viewform?usp=header" target="_blank" rel="noopener noreferrer">参加申し込みフォーム</a></dd>
-        <dt>お問い合わせ</dt><dd>株式会社taliki 中西／<a href="mailto:incubation@taliki.co.jp">incubation@taliki.co.jp</a></dd>
-      </dl>
-    </div>
-
-    <div class="by rv" style="margin-top:52px">
-      <span class="av"><svg width="26" height="26" viewBox="0 0 20 20" aria-hidden="true"><ellipse cx="9" cy="7.4" rx="5" ry="6" fill="#1B1A16"/><ellipse cx="10.4" cy="16" rx="3" ry="2.6" fill="#1B1A16"/></svg></span>
+    <div class="who who-solo">
       <div>
-        <p class="label" style="margin:0">企画・開発</p>
-        <h3>野寺悠太（灘高校）</h3>
-        <p>いつもの道をもっと面白くしたいと思い、まちで遊べる<span class="rb">仕掛<span class="rt" aria-hidden="true">しか</span></span>けやゲームをつくっています。このワークショップでは、<span class="rb">企画<span class="rt" aria-hidden="true">きかく</span></span>・当日の<span class="rb">運営<span class="rt" aria-hidden="true">うんえい</span></span>・ゲームの開発を<span class="rb">担当<span class="rt" aria-hidden="true">たんとう</span></span>します。</p>
+        <h3>野寺 悠太（灘高校2年）</h3>
+        <p>高校生の視点から、まちに新しい楽しさや人とのつながりを生み出す仕掛けを考え、形にしています。</p>
+        <div class="btns"><a class="btn alt" href="/about/">くわしく見る　<span>→</span></a></div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="sec-linked" id="faq">
+<section class="sec contact">
   <div class="wrap">
-    <div class="sec-head rv"><h2>よくある質問</h2></div>
-    <div class="faq rv">
-      <details><summary><span class="q">持ち物は必要ですか？</span></summary><p class="a">筆記用具をお持ちください。お持ちのかたは、スマホやタブレットもご持参ください。動きやすい靴で来ていただけると、体験パートが楽しめます。</p></details>
-      <details><summary><span class="q"><span class="rb">保護者<span class="rt" aria-hidden="true">ほごしゃ</span></span>の<span class="rb">同伴<span class="rt" aria-hidden="true">どうはん</span></span>は必要ですか？</span></summary><p class="a">必須ではありません。お子さんだけでも参加できます。保護者のかたがご一緒の場合は、お子さんと一緒にアイデアを考えていただいても、後ろで見ていていただいても構いません。</p></details>
-      <details><summary><span class="q"><span class="rb">対象<span class="rt" aria-hidden="true">たいしょう</span></span>の学年ではないのですが、参加できますか？</span></summary><p class="a">主な対象は小学4年生〜中学生ですが、それ以外のかたもご相談ください。学年や人数に応じて、参加いただけるか検討します。</p></details>
-      <details><summary><span class="q">絵が苦手でも<span class="rb">大丈夫<span class="rt" aria-hidden="true">だいじょうぶ</span></span>ですか？</span></summary><p class="a">大丈夫です。大切なのは、きれいに描くことではなく「こんな遊びがあったら楽しそう！」というアイデアを形にすること。簡単な図や言葉だけでもOKです。</p></details>
-      <details><summary><span class="q">雨の日はどうなりますか？</span></summary><p class="a">屋内で実施するため、雨天でも予定どおり開催します。中止する場合は、申込時の連絡先へご連絡します。</p></details>
-      <details><summary><span class="q">写真<span class="rb">撮影<span class="rt" aria-hidden="true">さつえい</span></span>はありますか？</span></summary><p class="a">記録と広報のために撮影する予定です。写りたくない場合は当日スタッフにお伝えください。その旨に配慮して撮影します。</p></details>
+    <div class="sec-head">
+      <p class="kick">CONTACT</p>
+      <h2>お問い合わせ</h2>
+      <p>ワークショップの開催や取材のご相談、まちや施設での新しい取り組みについてなど、幅広くお問い合わせを受け付けています。地域や施設での取り組みをお考えの方はもちろん、高校生・大学生で一緒に活動してみたい方からのご連絡も大歓迎です。</p>
     </div>
-    <p class="faq-note rv">ほかに気になることがあれば、下の<span class="rb">連絡<span class="rt" aria-hidden="true">れんらく</span></span>先までお気軽にどうぞ。</p>
+    <div class="btns" style="margin-top:0">
+      <a class="btn" href="/contact/">お問い合わせへ　<span>→</span></a>
+    </div>
   </div>
 </section>
-
-<div class="cta rv">
-  <svg class="cta-waves" viewBox="0 0 1440 170" preserveAspectRatio="none" aria-hidden="true">
-    <path d="M0 96 C180 72 360 120 540 104 C720 88 900 128 1080 112 C1220 100 1340 108 1440 100" stroke="#1E6BA8" stroke-width="3" fill="none" opacity=".55"/>
-    <path d="M0 130 C200 110 380 150 560 136 C760 120 940 156 1120 144 C1260 134 1360 140 1440 134" stroke="#1E6BA8" stroke-width="2.5" fill="none" opacity=".38"/>
-  </svg>
-  <div class="cta-blob" aria-hidden="true">
-    <svg viewBox="0 0 1200 540" preserveAspectRatio="none">
-      <path d="M40 270 C20 130 130 30 300 26 C450 22 500 78 600 78 C700 78 750 18 900 26 C1070 34 1180 130 1160 270 C1142 410 1050 514 900 512 C750 510 700 456 600 456 C500 456 450 512 300 508 C130 502 58 410 40 270 Z" fill="#1F68A1"/>
-    </svg>
-  </div>
-  <div class="cta-inner">
-    <div class="cta-copy">
-      <h2><svg class="spark spark-l" viewBox="0 0 40 54" aria-hidden="true"><path d="M10 18 L34 4 M6 29 L36 27 M12 40 L34 50"/></svg><span class="cta-ttl">まちで、<br class="brsp">あそんでみる</span><svg class="spark spark-r" viewBox="0 0 40 54" aria-hidden="true"><path d="M10 18 L34 4 M6 29 L36 27 M12 40 L34 50"/></svg></h2>
-      <p>宇治のまちを、いつもとは少し<span class="rb">違<span class="rt" aria-hidden="true">ちが</span></span>う<span class="rb">視点<span class="rt" aria-hidden="true">してん</span></span>から見てみませんか？<br>参加をご希望の方は、下のフォームからお申し<span class="rb">込<span class="rt" aria-hidden="true">こ</span></span>みください。</p>
-      <div class="cta-actions">
-        <a class="pill pill-key" href="https://docs.google.com/forms/d/e/1FAIpQLSe6rLWtzkLh0r8n9YfXnDI3aGaVXqjveMzL0JJP8LgcYHRtpQ/viewform?usp=header" target="_blank" rel="noopener noreferrer">参加申し込みフォーム <span class="arw-i">→</span></a>
-        <a class="pill pill-line" href="#top">もう一度ながめる</a>
-      </div>
-    </div>
-    <div class="cta-art" aria-hidden="true">
-      <img src="assets/cta-uji.webp" alt="" width="567" height="355" loading="lazy" decoding="async">
-    </div>
-  </div>
-</div>
 
 <footer>
-  <div class="f-grid">
-    <div>
-      <h4>まちであそぶ、をつくる</h4>
-      <p style="margin:0">Playable City 入門ワークショップ<br>2026年10月3日（土）・宇治市産業会館 多目的ホールで開催</p>
+  <div class="wrap">
+    <p class="foot-ttl">関連ページ・SNS</p>
+    <div class="foot-ext">
+      <a href="/workshop/"><img src="/assets/logo-mark.webp" alt="" width="42" height="28">ワークショップのサイト<span class="ext-i"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 9L9 3M9 3H4.4M9 3v4.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a href="/attara-iina/"><img src="/assets/logo-mark.webp" alt="" width="42" height="28">子どもたちのアイデア展<span class="ext-i"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 9L9 3M9 3H4.4M9 3v4.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <a class="ig" href="https://www.instagram.com/machi_play/" target="_blank" rel="noopener">
+        <svg class="ig-i" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="5.2" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="12" cy="12" r="4.1" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="17.3" cy="6.7" r="1.35" fill="currentColor"/>
+        </svg>@machi_play<span class="ext-i"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 9L9 3M9 3H4.4M9 3v4.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
     </div>
-    <div>
-      <h4>主催・運営</h4>
-      <ul>
-        <li>主催：宇治NEXT（宇治市・宇治商工会議所）</li>
-        <li>運営協力：株式会社taliki</li>
-        <li>企画・開発：野寺悠太（灘高校）</li>
-      </ul>
-    </div>
-    <div>
-      <h4>お問い合わせ</h4>
-      <ul>
-        <li>株式会社taliki　中西</li>
-        <li><a href="mailto:incubation@taliki.co.jp">incubation@taliki.co.jp</a></li>
-      </ul>
+    <div class="foot-in">
+      <div>© 2026 MACHI PLAY</div>
+      <nav class="foot-links">
+        <a href="/projects/">プロジェクト</a>
+        <a href="/about/">プロフィール</a>
+        <a href="/contact/">お問い合わせ</a>
+      </nav>
     </div>
   </div>
 </footer>
 
-<script>
-(function(){
-"use strict";
-var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-/* オープニングの負荷調整：狭い画面・非力な端末では線の本数と歩数を減らし、
-   遅い回線や省データ、極端に非力な端末、読み込みが長引いた場合はそもそも出さない */
-var narrowScreen = Math.min(window.innerWidth||1024, window.innerHeight||768) < 700;
-var cores = navigator.hardwareConcurrency || 4, mem = navigator.deviceMemory || 4;
-var conn = navigator.connection || {};
-var heavyPage = performance.now() > 2500;
-var skipIntro = conn.saveData || /(^|-)2g$/.test(conn.effectiveType || "")
-  || mem <= 2 || cores <= 2 || heavyPage || document.hidden;
-try{ if(sessionStorage.getItem("mp-intro-seen")) skipIntro = true; }catch(e){}
-var FOOT_STROKES = (narrowScreen || cores <= 4) ? 150 : 260;
-
-var PIG = [[255,212,59],[240,107,98],[79,99,232],[56,169,155]];
-function pigment(t){
-  var n=PIG.length, x=(((t%1)+1)%1)*n, i=Math.floor(x), f=x-i;
-  var a=PIG[i%n], b=PIG[(i+1)%n];
-  return Math.round(a[0]+(b[0]-a[0])*f)+","+Math.round(a[1]+(b[1]-a[1])*f)+","+Math.round(a[2]+(b[2]-a[2])*f);
-}
-function dpr(){ return Math.min(window.devicePixelRatio||1, 2); }
-
-/* ===== オープニング ===== */
-var opening=document.getElementById("opening"), skipBtn=document.getElementById("skip");
-function footPath(c,u){
-  /* 靴底のシルエット：つま先が広く、土踏まずでくびれ、かかとは小さめ */
-  var w=0.30*u;
-  c.moveTo(0,-0.62*u);
-  c.bezierCurveTo( 0.66*w,-0.62*u,  1.00*w,-0.40*u,  0.97*w,-0.18*u);
-  c.bezierCurveTo( 0.94*w, 0.00*u,  0.46*w, 0.04*u,  0.42*w, 0.18*u);
-  c.bezierCurveTo( 0.38*w, 0.32*u,  0.64*w, 0.34*u,  0.61*w, 0.46*u);
-  c.bezierCurveTo( 0.58*w, 0.58*u,  0.30*w, 0.62*u,  0,      0.62*u);
-  c.bezierCurveTo(-0.30*w, 0.62*u, -0.58*w, 0.58*u, -0.61*w, 0.46*u);
-  c.bezierCurveTo(-0.64*w, 0.34*u, -0.38*w, 0.32*u, -0.42*w, 0.18*u);
-  c.bezierCurveTo(-0.46*w, 0.04*u, -0.94*w, 0.00*u, -0.97*w,-0.18*u);
-  c.bezierCurveTo(-1.00*w,-0.40*u, -0.66*w,-0.62*u,  0,     -0.62*u);
-  c.closePath();
-}
-function drawFoot(c,x,y,ang,s,t,flip){
-  c.save(); c.translate(x,y); c.rotate(ang); c.scale(flip,1);
-  c.beginPath(); footPath(c,s); c.clip();
-  var narrow=window.innerWidth<700, boost=narrow?0.68:1;
-  c.globalCompositeOperation="multiply"; c.lineCap="round"; c.lineWidth=1.25;
-  for(var i=0;i<FOOT_STROKES;i++){
-    var px=(Math.random()-0.5)*s*0.64, py=(Math.random()-0.44)*s*1.32;
-    var a=Math.PI/2+(Math.random()-0.5)*0.30, len=s*(0.13+Math.random()*0.16);
-    c.strokeStyle="rgba("+pigment(t+(Math.random()-0.5)*0.07)+","+((0.105+Math.random()*0.055)*boost).toFixed(3)+")";
-    c.beginPath();
-    c.moveTo(px-Math.cos(a)*len/2, py-Math.sin(a)*len/2);
-    c.lineTo(px+Math.cos(a)*len/2, py+Math.sin(a)*len/2);
-    c.stroke();
-  }
-  c.restore();
-}
-function runOpening(done){
-  var cvo=document.getElementById("opencv"), c=cvo.getContext("2d");
-  var tries=0;
-  /* レイアウトが未確定のうちは innerWidth/Height が 0 になることがあり、
-     そのままだとキャンバスが 0px になって足あとが1つも描かれない。確定を待ってから始める。
-     rAF はページが描画されていないあいだ止まるので、ここは setTimeout で待つ */
-  (function waitForLayout(){
-    var w=window.innerWidth||document.documentElement.clientWidth||0;
-    var h=window.innerHeight||document.documentElement.clientHeight||0;
-    if((!w||!h)&&tries++<24){ setTimeout(waitForLayout,25); return; }
-    begin(w||1024, h||768);
-  })();
-
-  function begin(W,H){
-  var R=Math.min(window.devicePixelRatio||1,2);
-  cvo.width=W*R; cvo.height=H*R; c.setTransform(R,0,0,R,0,0);
-  var x0=W*0.13,y0=H*0.94,x1=W*0.87,y1=H*0.12, dx=x1-x0, dy=y1-y0, L=Math.hypot(dx,dy);
-  var ang=Math.atan2(dy,dx)+Math.PI/2, nx=-dy/L, ny=dx/L;
-  var STEPS=narrowScreen?7:9, size=Math.min(W,H)*0.105, gap=Math.min(W,H)*0.030, placed=0;
-  var DEADLINE=performance.now()+(narrowScreen?2000:2400); /* ここまでで必ず切り上げる */
-  var INTERVAL=135, ended=false, rafId=null, endTimer=null, capTimer=null, watchdog=0, lastProgress=performance.now();
-
-  function end(){
-    if(ended) return; ended=true;
-    if(watchdog){ clearInterval(watchdog); watchdog=0; }
-    if(rafId){ cancelAnimationFrame(rafId); rafId=null; }  /* 終わったあとに描き続けない */
-    clearTimeout(capTimer);
-    opening.classList.add("lift");
-    if(skipBtn) skipBtn.remove();
-    setTimeout(function(){ opening.remove(); document.body.classList.remove("locked"); },1000);
-    done();
-  }
-  function placeFoot(i){
-    var p=(i+0.5)/STEPS, side=(i%2===0)?1:-1;
-    drawFoot(c, x0+dx*p+nx*gap*side, y0+dy*p+ny*gap*side, ang+side*0.09, size, i*0.10, side);
-  }
-  /* 描画フレームに同期させて1フレームにつき1歩ずつ置く。
-     タイマーだけで進めると、読み込みが重い端末では画面が描かれないうちに
-     9歩ぶんが終わってしまい、オープニングを見られないまま消えていた。
-     requestAnimationFrame は描画が止まっているあいだ呼ばれないので、
-     実際に見えているコマだけで進む。前の足あとから INTERVAL 以上あける。 */
-  var last=0, started=false;
-  function tick(now){
-    if(ended) return;
-    if(!started){ started=true; last=now+160-INTERVAL; }
-    if(now-last>=INTERVAL){ placeFoot(placed); placed++; last=now; lastProgress=performance.now(); }
-    if(now>DEADLINE){ end(); return; }   /* 読み込みで待たされた場合は途中で切り上げる */
-    if(placed<STEPS) rafId=requestAnimationFrame(tick);
-    else endTimer=setTimeout(end,820);
-  }
-  rafId=requestAnimationFrame(tick);
-
-  /* 0.9秒のあいだ1歩も進まなければ、読み込みで詰まっているとみなして切り上げる */
-  watchdog=setInterval(function(){ if(placed<STEPS && performance.now()-lastProgress>900) end(); },200);
-  capTimer=setTimeout(end,3000); /* 保険：描画が止まっていても3秒で切り上げる */
-  function bail(){ if(rafId) cancelAnimationFrame(rafId); clearTimeout(endTimer); clearTimeout(capTimer); if(watchdog) clearInterval(watchdog); end(); }
-  window.addEventListener("keydown",bail,{once:true});
-  window.addEventListener("wheel",bail,{once:true,passive:true});
-  opening.addEventListener("click",bail,{once:true});
-  if(skipBtn) skipBtn.addEventListener("click",bail);
-  setTimeout(function(){ if(!ended){ opening.remove(); document.body.classList.remove("locked"); done(); } },4500);
-  }
-}
-function startMain(){ document.body.classList.add("ready"); }
-try{ sessionStorage.setItem("mp-intro-seen","1"); }catch(e){}
-if(reduce || skipIntro){ opening.remove(); if(skipBtn) skipBtn.remove(); document.body.classList.remove("locked"); startMain(); }
-else{ runOpening(startMain); }
-
-/* ===== スクロール出現 ===== */
-var rvs=[].slice.call(document.querySelectorAll(".rv"));
-if(!reduce && "IntersectionObserver" in window){
-  var io=new IntersectionObserver(function(es){
-    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
-  },{threshold:0.12, rootMargin:"0px 0px -8% 0px"});
-  rvs.forEach(function(el){ io.observe(el); });
-  setTimeout(function(){ rvs.forEach(function(el){ el.classList.add("in"); }); },4000);
-}else{ rvs.forEach(function(el){ el.classList.add("in"); }); }
-
-
-/* ===== ページ内リンクは JS でスクロール（iframe内でも外部遷移にならないように） ===== */
-(function(){
-  function navH(){ var n=document.getElementById("nav"); return n? n.getBoundingClientRect().height : 0; }
-  document.addEventListener("click", function(e){
-    var a=e.target.closest ? e.target.closest('a[href^="#"]') : null;
-    if(!a) return;
-    var id=a.getAttribute("href").slice(1);
-    if(!id) return;
-    var t=document.getElementById(id);
-    if(!t) return;
-    e.preventDefault();
-    var y=t.getBoundingClientRect().top+window.scrollY-navH()-12;
-    var reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    window.scrollTo({top:Math.max(0,y), behavior:reduce?"auto":"smooth"});
-    if(history.replaceState) history.replaceState(null,"","#"+id);
-    var nav=document.getElementById("nav");
-    if(nav){ nav.classList.remove("open"); var bg=document.getElementById("burger"); if(bg) bg.setAttribute("aria-expanded","false"); }
-  }, true);
-})();
-
-
-/* ===== ナビ：スクロールで紙色に ===== */
-var navEl=document.getElementById("nav");
-if(navEl){
-  var onScroll=function(){ navEl.classList.toggle("solid", window.scrollY>70); };
-  onScroll(); window.addEventListener("scroll",onScroll,{passive:true});
-  var burger=document.getElementById("burger"), menu=document.getElementById("menu");
-  if(burger&&menu){
-    burger.addEventListener("click",function(){
-      var open=navEl.classList.toggle("open");
-      burger.setAttribute("aria-expanded",open?"true":"false");
-    });
-    menu.querySelectorAll("a").forEach(function(a){ a.addEventListener("click",function(){ navEl.classList.remove("open"); burger.setAttribute("aria-expanded","false"); }); });
-  }
-}
-
-/* ===== まちであそぶボード ===== */
-(function(){
-  var board=document.getElementById("board"), stage=document.getElementById("stage");
-  var cv=document.getElementById("cscanvas"), cursor=document.getElementById("democursor");
-  if(!board || !stage || !cv) return;
-
-  var TAU=Math.PI*2;
-  var HID="あそべるまち";
-  var STROKES=48;
-  var ALPHA=0.10;       /* 下地の淡い線（乗算で重ねる） */
-  var ALPHA_INK=0.24;   /* 文字の中に浮かぶ鮮やかな線 */
-  var GOAL=36;          /* これだけ歩いたらお手本の動きを止める */
-
-  /* ---------- 配色 ---------- */
-  var THEMES={
-    blue:  { bg:["#F7EDB0","#B6ECF2","#A9DDF7","#BCCBFA","#D2C6F6"],
-             ink:["#FFC93C","#1FC4D8","#1E9BF0","#3F6BFF","#6A5CF0","#9A5BE8"] },
-    green: { bg:["#F6EFA8","#CFEFA8","#B8EBC4","#A9E3DA","#B6DDF0"],
-             ink:["#F2C230","#9CCB3B","#3DB872","#1FA89A","#27A9C9","#3A8BD8"] }
-  };
-  function rgbList(hexes){
-    return hexes.map(function(h){ var n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; });
-  }
-  var themeKey="blue";
-  try{ var saved=localStorage.getItem("csw-theme"); if(saved && THEMES[saved]) themeKey=saved; }catch(err){}
-  var BG=rgbList(THEMES[themeKey].bg), INKB=rgbList(THEMES[themeKey].ink);
-
-  function pigmentOf(band,t){
-    var last=band.length-1, m=last*2, r=((t%m)+m)%m;
-    var u=r>last ? m-r : r, i=Math.floor(u), f=u-i;
-    if(i>=last){ i=last-1; f=1; }
-    var a=band[i], b=band[i+1];
-    return (a[0]+(b[0]-a[0])*f|0)+","+(a[1]+(b[1]-a[1])*f|0)+","+(a[2]+(b[2]-a[2])*f|0);
-  }
-  /* 歩く向きと速さで色が移り変わる */
-  function bandFor(heading,pace){
-    return 0.50 + Math.sin(heading)*0.26 + Math.sin(heading*2+0.90)*0.13 + (pace-0.5)*0.20;
-  }
-  var vx=1, vy=0, pace=0.5;
-  function bandFromWalk(){ return bandFor(Math.atan2(vy,vx), pace); }
-
-  var ctx=cv.getContext("2d");
-  function mk(){ return document.createElement("canvas"); }
-  var user=mk(), demo=mk(), comp=mk(), glyph=mk(), cross=mk(), art=mk(), artM=mk();
-  var uc=user.getContext("2d"), dc=demo.getContext("2d"), xc=cross.getContext("2d");
-  var cc=comp.getContext("2d"), gc=glyph.getContext("2d");
-  var ac=art.getContext("2d"), amc=artM.getContext("2d");
-
-  var W=0, H=0, PW=0, PH=0, dpr=1, fs=0;
-  var painted=0, drawing=false, lastX=0, lastY=0, carry=0;
-  var lastMove=0, dt=0, demoTrail=[], demoStopped=false, dirty=true;
-  var raf=0, prev=0;
-  var reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var canFilter=(function(){ var c=mk().getContext("2d"); c.filter="saturate(2)"; return c.filter!=="none"; })();
-
-  /* ---------- 紙の目：同じ場所に塗り重ねるほど色が乗りにくくなる ---------- */
-  var GW=96, GH=54, FILL_MAX=0.20, DENS_LO=0.05, DENS_HI=0.14;
-  var fillMap=new Float32Array(GW*GH), tick=0;
-  var grid=mk(); grid.width=GW; grid.height=GH;
-  var gg=grid.getContext("2d",{willReadFrequently:true});
-  var densC=mk(); densC.width=GW; densC.height=GH;
-  var dens=densC.getContext("2d"), densImg=dens.createImageData(GW,GH);
-
-  function sampleTooth(){
-    if(!PW) return;
-    gg.globalCompositeOperation="source-over";
-    gg.fillStyle="#fff"; gg.fillRect(0,0,GW,GH);
-    gg.drawImage(user,0,0,GW,GH);
-    var d=gg.getImageData(0,0,GW,GH).data, m=densImg.data;
-    for(var i=0,k=0;i<fillMap.length;i++,k+=4){
-      var f=1-(d[k]+d[k+1]+d[k+2])/765;
-      fillMap[i]=f;
-      var g=(f-DENS_LO)/(DENS_HI-DENS_LO);
-      g=g<0?0:(g>1?1:g);
-      m[k+3]=(g*g*255)|0;
-    }
-    dens.putImageData(densImg,0,0);
-  }
-  function cellOf(x,y){
-    var cx=x/(W||1)*GW|0, cy=y/(H||1)*GH|0;
-    if(cx<0)cx=0; if(cx>GW-1)cx=GW-1; if(cy<0)cy=0; if(cy>GH-1)cy=GH-1;
-    return cy*GW+cx;
-  }
-  function bite(x,y){
-    var m=(FILL_MAX-fillMap[cellOf(x,y)])/(FILL_MAX*0.5);
-    return m<0?0:(m>1?1:m);
-  }
-  function bumpTooth(x,y,r,mul){
-    var cw=(W||1)/GW, ch=(H||1)/GH;
-    var x0=((x-r)/cw)|0, x1=((x+r)/cw)|0, y0=((y-r)/ch)|0, y1=((y+r)/ch)|0;
-    for(var cy=Math.max(0,y0);cy<=Math.min(GH-1,y1);cy++){
-      for(var cx=Math.max(0,x0);cx<=Math.min(GW-1,x1);cx++){
-        var dx=(cx+0.5)*cw-x, dy=(cy+0.5)*ch-y, t=1-Math.hypot(dx,dy)/r;
-        if(t<=0) continue;
-        var i=cy*GW+cx, v=fillMap[i]+0.028*mul*t;
-        fillMap[i]=v>1?1:v;
-      }
-    }
-  }
-
-  /* ---------- 足あと1つ＝色鉛筆の線48本 ---------- */
-  var HATCH=-0.44, CROSS=1.05;
-  function hatchAt(x,y){ return HATCH+Math.sin(x/(W||1)*2.10+y/(H||1)*1.60)*0.28; }
-  function blob(c,x,y,r,base,dir,mul,band,vivid){
-    var at=base*(band.length-1), alpha=vivid?ALPHA_INK:ALPHA;
-    c.save();
-    c.globalCompositeOperation=vivid?"source-over":"multiply";
-    c.lineCap="round";
-    for(var i=0;i<STROKES;i++){
-      var ang=Math.random()*TAU, rad=Math.sqrt(Math.random())*r;
-      var px=x+Math.cos(ang)*rad, py=y+Math.sin(ang)*rad;
-      var a=alpha*(1-(rad/r)*0.70)*mul;
-      var q=Math.random(), off, s=Math.random()<0.5?-1:1, w=vivid?1.45:1;
-      if(q<(vivid?0.46:0.58))      off=(Math.random()-0.5)*0.70*w;
-      else if(q<(vivid?0.76:0.86)) off=s*(0.45+Math.random()*0.55)*w;
-      else if(q<(vivid?0.93:0.97)) off=s*(1.00+Math.random()*0.70)*w;
-      else                         off=s*(1.90+Math.random()*0.90)*w;
-      c.strokeStyle="rgba("+pigmentOf(band,at+off)+","+a.toFixed(4)+")";
-      c.lineWidth=vivid?0.8+Math.random()*1.3:0.6+Math.random()*1.1;
-      var len=r*(0.55+Math.random()*1.05), d=dir+(Math.random()-0.5)*0.42;
-      var ex=px+Math.cos(d)*len, ey=py+Math.sin(d)*len, bow=(Math.random()-0.5)*len*0.10;
-      c.beginPath();
-      c.moveTo(px-Math.cos(d)*len*0.5, py-Math.sin(d)*len*0.5);
-      c.quadraticCurveTo((px+ex)/2+Math.cos(d+Math.PI/2)*bow, (py+ey)/2+Math.sin(d+Math.PI/2)*bow, ex, ey);
-      c.stroke();
-    }
-    c.restore();
-  }
-  function radius(){ return Math.min(W,H)*0.075; }
-  function step(x,y){
-    var base=bandFromWalk(), r=radius(), mul=bite(x,y);
-    if(mul>0.02){
-      blob(uc,x,y,r,base,hatchAt(x,y),mul,BG,false);
-      bumpTooth(x,y,r,mul);
-    }
-    blob(xc,x,y,r,base,hatchAt(x,y)+CROSS,1,INKB,true);
-    dirty=true; painted++;
-    if(painted>=GOAL) demoStopped=true;
-  }
-
-  /* ---------- ポインター ---------- */
-  function pos(e){ var r=cv.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
-  function walk(x,y,dtms){
-    var dx=x-lastX, dy=y-lastY, dist=Math.hypot(dx,dy), gap=radius()*0.45;
-    if(dist<0.0001) return;
-    var k=0.20;
-    vx+=(dx/dist-vx)*k; vy+=(dy/dist-vy)*k;
-    var n=Math.hypot(vx,vy)||1; vx/=n; vy/=n;
-    var v=dist/Math.max(dtms,8)/(radius()*0.055);
-    pace+=(Math.min(1,v)-pace)*0.14;
-    carry+=dist;
-    while(carry>=gap){
-      var back=dist-(carry-gap);
-      step(lastX+dx*(back/dist), lastY+dy*(back/dist));
-      carry-=gap;
-    }
-    lastX=x; lastY=y;
-  }
-  var touchDown=false, tipTimer=0;
-  function begin(p){
-    drawing=true; lastX=p.x; lastY=p.y; carry=0;
-    var a=Math.random()*TAU; vx=Math.cos(a); vy=Math.sin(a);
-    lastMove=performance.now();
-    board.classList.remove("hint"); board.classList.add("touched");
-    if(!tipTimer) tipTimer=setTimeout(function(){ board.classList.add("tip-done"); },2500);
-    demoTrail.length=0; clearDemo();
-    if(painted===0) pickIcons();
-    step(p.x,p.y);
-  }
-  stage.addEventListener("pointerdown",function(e){
-    lastMove=performance.now();
-    if(e.pointerType!=="touch"){ if(!drawing) begin(pos(e)); return; }
-    touchDown=true;
-    begin(pos(e));
-    if(stage.setPointerCapture) try{ stage.setPointerCapture(e.pointerId); }catch(err){}
-    e.preventDefault();
-  });
-  stage.addEventListener("pointermove",function(e){
-    var now=performance.now(), dtms=now-lastMove;
-    lastMove=now;
-    if(e.pointerType==="touch" && !touchDown) return;
-    var p=pos(e);
-    if(!drawing){ begin(p); return; }
-    walk(p.x,p.y,dtms);
-  });
-  function endTouch(e){
-    if(e.pointerType==="touch"){ touchDown=false; drawing=false; }
-    lastMove=performance.now();
-  }
-  stage.addEventListener("pointerup",endTouch);
-  stage.addEventListener("pointercancel",endTouch);
-  stage.addEventListener("pointerleave",function(e){
-    if(e.pointerType!=="touch") drawing=false;
-    lastMove=performance.now();
-  });
-
-  function clearBoard(){
-    uc.save(); uc.setTransform(1,0,0,1,0,0); uc.clearRect(0,0,PW,PH); uc.restore();
-    xc.save(); xc.setTransform(1,0,0,1,0,0); xc.clearRect(0,0,PW,PH); xc.restore();
-    painted=0; demoStopped=false; dirty=true;
-    fillMap.fill(0);
-    pickIcons();
-    demoTrail.length=0; clearDemo();
-  }
-
-  /* ---------- 配色の切り替え ---------- */
-  var pills=board.querySelectorAll("[data-theme-pick]"), dots=board.querySelectorAll(".board-bar .dot");
-  function paintThemeUI(){
-    var t=THEMES[themeKey];
-    [].forEach.call(pills,function(b){ b.setAttribute("aria-pressed", b.getAttribute("data-theme-pick")===themeKey ? "true" : "false"); });
-    [t.ink[1],t.ink[3],t.ink[5]].forEach(function(c,i){ if(dots[i]) dots[i].style.background=c; });
-  }
-  [].forEach.call(pills,function(b){
-    b.addEventListener("click",function(){
-      var k=b.getAttribute("data-theme-pick");
-      if(!THEMES[k] || k===themeKey) return;
-      themeKey=k; BG=rgbList(THEMES[k].bg); INKB=rgbList(THEMES[k].ink);
-      try{ localStorage.setItem("csw-theme",k); }catch(err){}
-      paintThemeUI(); clearBoard();
-    });
-  });
-  paintThemeUI();
-
-  /* まっさらにする */
-  var resetBtn=document.getElementById("boardreset");
-  if(resetBtn) resetBtn.addEventListener("click",function(){
-    clearBoard();
-    drawing=false; touchDown=false;
-    if(tipTimer){ clearTimeout(tipTimer); tipTimer=0; }
-    board.classList.remove("touched","tip-done");
-    board.classList.add("hint");
-    lastMove=performance.now();
-  });
-
-  /* ---------- 触る前のお手本 ---------- */
-  function clearDemo(){ dc.save(); dc.setTransform(1,0,0,1,0,0); dc.clearRect(0,0,PW,PH); dc.restore(); dirty=true; }
-  function demoPos(t){ return { x:(0.5+0.36*Math.sin(t*0.55))*W, y:(0.5+0.26*Math.sin(t*0.83+1.1))*H }; }
-  function redrawDemo(){
-    dc.save(); dc.setTransform(1,0,0,1,0,0); dc.clearRect(0,0,PW,PH); dc.restore();
-    for(var i=0;i<demoTrail.length;i++){
-      var p=demoTrail[i], age=(i+1)/demoTrail.length;
-      blob(dc,p.x,p.y,radius()*0.9,p.t,hatchAt(p.x,p.y),0.5*age,BG,false);
-    }
-    dirty=true;
-  }
-
-  /* ---------- 合成 ---------- */
-  function render(){
-    ctx.setTransform(1,0,0,1,0,0);
-    ctx.globalAlpha=1; ctx.globalCompositeOperation="source-over"; ctx.filter="none";
-    ctx.clearRect(0,0,PW,PH);
-    if(canFilter) ctx.filter="saturate(1.15)";
-    ctx.drawImage(user,0,0);
-    ctx.filter="none";
-    if(painted>0 && fs>0){
-      cc.setTransform(1,0,0,1,0,0);
-      cc.globalAlpha=1; cc.globalCompositeOperation="source-over";
-      cc.clearRect(0,0,PW,PH);
-      cc.drawImage(cross,0,0);
-      cc.globalCompositeOperation="destination-in";
-      cc.drawImage(glyph,0,0);
-      cc.drawImage(densC,0,0,PW,PH);
-      if(canFilter) ctx.filter="saturate(1.25)";
-      ctx.drawImage(comp,0,0);
-      ctx.globalAlpha=0.55;
-      ctx.drawImage(comp,0,0);
-      ctx.filter="none"; ctx.globalAlpha=1;
-    }
-    if(painted>0 && artImg.complete && artImg.naturalWidth){
-      amc.setTransform(1,0,0,1,0,0);
-      amc.globalAlpha=1; amc.globalCompositeOperation="source-over";
-      amc.clearRect(0,0,PW,PH);
-      amc.drawImage(art,0,0);
-      amc.globalCompositeOperation="destination-in";
-      amc.drawImage(densC,0,0,PW,PH);
-      ctx.drawImage(artM,0,0);
-    }
-    ctx.drawImage(demo,0,0);
-  }
-  /* ---------- なぞると出てくるまちのアイコン（水彩の絵をスプライトで持つ） ----------
-     24種類の中から12個を選んで並べる。選ぶ絵も置き場所も毎回変わり、
-     同じ種類（木・家・足あとなど）は1回の配置で1つまでにしている */
-  var artImg=new Image(); artImg.decoding="async";
-  /* 画像はボードが画面に入ってから読み込む */
-  function loadArt(){ if(!artImg.src) artImg.src="assets/board-icons.webp"; }
-  var CELL=256, ACOLS=6;
-  var ART=[{i:0,c:"tree"},{i:1,c:"feet"},{i:2,c:"torii"},{i:3,c:"tree"},{i:4,c:"town"},{i:5,c:"house"},
-           {i:6,c:"star"},{i:7,c:"feet"},{i:8,c:"bridge"},{i:9,c:"spark"},{i:10,c:"park"},{i:11,c:"house"},
-           {i:12,c:"shop"},{i:13,c:"slide"},{i:14,c:"swing"},{i:15,c:"bike"},{i:16,c:"park"},{i:17,c:"fountain"},
-           {i:18,c:"lantern"},{i:19,c:"shop"},{i:20,c:"kite"},{i:21,c:"ball"},{i:22,c:"flower"},{i:23,c:"bridge"},
-           {i:24,c:"town"},{i:25,c:"slide"},{i:26,c:"swing"},{i:27,c:"bike"},{i:28,c:"sign"},{i:29,c:"map"},
-           {i:30,c:"tent"},{i:31,c:"binocular"},{i:32,c:"plane"},{i:33,c:"shop"},{i:34,c:"people"},{i:35,c:"fountain"},
-           {i:36,c:"kids"},{i:37,c:"search"},{i:38,c:"treehouse"},{i:39,c:"watergun"}];
-  var ICON_SIZE=.29, MAX_SLOTS=12, slots=[], picked=[];
-  /* 板の幅に対してアイコンが何個並ぶかを決める。
-     1つぶんの幅に少し余裕（1.3倍）を持たせ、重ならない数にする */
-  /* 置くアイコン1つぶんの大きさ。板が細いときは小さくして数を確保する */
-  function iconW(){ return Math.min(Math.min(W,H)*ICON_SIZE, W*0.17); }
-  function layoutSlots(){
-    if(!W || !H){ slots=[]; return; }
-    var w=iconW();
-    var cols=Math.floor(W/(w*1.30));
-    if(cols<2) cols=2;
-    if(cols>MAX_SLOTS/2) cols=MAX_SLOTS/2;
-    slots=[];
-    for(var r=0;r<2;r++){
-      for(var c=0;c<cols;c++){
-        slots.push({x:(c+0.5)/cols, y:r===0?.165:.840});
-      }
-    }
-  }
-  function pickIcons(){
-    var pool=ART.slice();
-    for(var i=pool.length-1;i>0;i--){ var j=Math.random()*(i+1)|0, t=pool[i]; pool[i]=pool[j]; pool[j]=t; }
-    var used={}, out=[];
-    for(var k=0;k<pool.length && out.length<MAX_SLOTS;k++){
-      if(used[pool[k].c]) continue;
-      used[pool[k].c]=1; out.push(pool[k].i);
-    }
-    picked=out;
-    buildArt();
-  }
-  function buildArt(){
-    if(!W || !H || !PW) return;
-    ac.setTransform(1,0,0,1,0,0);
-    ac.clearRect(0,0,PW,PH);
-    if(!artImg.complete || !artImg.naturalWidth || !picked.length) return;
-    ac.save(); ac.scale(dpr,dpr);
-    var w=iconW();
-    for(var n=0;n<picked.length && n<slots.length;n++){
-      var sx=(picked[n]%ACOLS)*CELL, sy=((picked[n]/ACOLS)|0)*CELL, sl=slots[n];
-      ac.drawImage(artImg,sx,sy,CELL,CELL, sl.x*W-w/2, sl.y*H-w/2, w, w);
-    }
-    ac.restore();
-    dirty=true;
-  }
-  artImg.onload=function(){ buildArt(); };
-  pickIcons();
-  function buildText(){
-    if(!W || !H) return;
-    fs=Math.min(H*0.34, W*0.80/HID.length);
-    gc.setTransform(1,0,0,1,0,0);
-    gc.clearRect(0,0,PW,PH);
-    gc.save(); gc.scale(dpr,dpr);
-    gc.font='900 '+fs+'px "Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif';
-    gc.textAlign="center"; gc.textBaseline="middle"; gc.fillStyle="#000";
-    gc.fillText(HID,W/2,H/2);
-    gc.restore();
-    dirty=true;
-  }
-
-  /* ---------- サイズ（描いた絵は保ったまま） ---------- */
-  function resize(){
-    var r=stage.getBoundingClientRect();
-    var w=Math.max(1,Math.round(r.width)), h=Math.max(1,Math.round(r.height));
-    dpr=Math.min(window.devicePixelRatio||1,2);
-    if(w===W && h===H) return;
-    function snap(src){ var k=mk(); k.width=PW; k.height=PH; k.getContext("2d").drawImage(src,0,0); return k; }
-    function restore(c,k){ c.save(); c.setTransform(1,0,0,1,0,0); c.drawImage(k,0,0,k.width,k.height,0,0,PW,PH); c.restore(); }
-    var keepU=null, keepX=null;
-    if(PW && painted>0){ keepU=snap(user); keepX=snap(cross); }
-    W=w; H=h; PW=Math.round(w*dpr); PH=Math.round(h*dpr);
-    [cv,user,cross,demo,comp,glyph,art,artM].forEach(function(c){ c.width=PW; c.height=PH; });
-    uc.setTransform(dpr,0,0,dpr,0,0); xc.setTransform(dpr,0,0,dpr,0,0); dc.setTransform(dpr,0,0,dpr,0,0);
-    if(keepU){ restore(uc,keepU); restore(xc,keepX); }
-    buildText(); layoutSlots(); buildArt(); sampleTooth();
-    demoTrail.length=0; dirty=true;
-  }
-
-  /* ---------- ループ（画面に入っているときだけ） ---------- */
-  cursor.style.opacity="0";
-  function frame(now){
-    raf=requestAnimationFrame(frame);
-    var dtms=prev ? Math.min(now-prev,100) : 16;
-    prev=now;
-    var idle=!touchDown && !demoStopped && !reduced && (now-lastMove > (drawing ? 4000 : 1500));
-    if(idle){
-      dt+=dtms/1000;
-      var p=demoPos(dt), last=demoTrail[demoTrail.length-1];
-      if(!last || Math.hypot(p.x-last.x,p.y-last.y)>=radius()*0.55){
-        var d=last ? Math.atan2(p.y-last.y,p.x-last.x) : 0;
-        demoTrail.push({x:p.x,y:p.y,t:bandFor(d,0.5)});
-        if(demoTrail.length>6) demoTrail.shift();
-        redrawDemo();
-      }
-      cursor.style.left=p.x+"px"; cursor.style.top=p.y+"px"; cursor.style.opacity="1";
-    }else{
-      cursor.style.opacity="0";
-      if(demoTrail.length){ demoTrail.length=0; clearDemo(); }
-    }
-    tick++;
-    if((dirty || drawing) && tick%5===0) sampleTooth();
-    if(dirty){ render(); dirty=false; }
-  }
-  function start(){ if(!raf){ prev=0; raf=requestAnimationFrame(frame); } }
-  function stop(){ if(raf){ cancelAnimationFrame(raf); raf=0; } }
-
-  if("ResizeObserver" in window){ new ResizeObserver(function(){ resize(); }).observe(stage); }
-  else{ window.addEventListener("resize",resize); }
-  if("IntersectionObserver" in window){
-    new IntersectionObserver(function(es){
-      if(es[0].isIntersecting){ loadArt(); lastMove=performance.now(); start(); } else stop();
-    },{threshold:0.02}).observe(stage);
-  }else{ loadArt(); start(); }
-  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(buildText); }
-
-  resize();
-  lastMove=performance.now();
-})();
-})();
-</script>
+<script src="/assets/mp.js?v=35" defer></script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c351ef734eb54b488d820041ba2f7e84"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
