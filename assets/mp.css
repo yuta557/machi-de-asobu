@@ -666,7 +666,13 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 figure{margin:clamp(30px,3.2vw,52px) 0}
 figure img{width:100%;height:auto;border-radius:14px;display:block}
 figcaption{margin-top:12px;font-size:13px;color:var(--ink-soft);line-height:1.8}
-.fig-wide{max-width:1000px;margin-left:auto;margin-right:auto}
+/* 写真は、本文の段と同じ幅にそろえる */
+.fig-wide{max-width:720px;margin-left:auto;margin-right:auto}
+/* 写真のまとまりと本文のあいだに、ひと呼吸おく */
+.article .fig-2,.article .fig-3{margin:clamp(30px,3.2vw,48px) auto}
+/* 写真のすぐ下の説明。写真に寄せて置く */
+.article .fig-2 .cap,.article .fig-3 .cap{grid-column:1/-1;margin:2px 0 0;
+  font-size:13px;line-height:1.8;color:var(--ink-soft)}
 .fig-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .fig-2 img{height:100%;object-fit:cover}
 .fig-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
@@ -709,7 +715,7 @@ figcaption{margin-top:12px;font-size:13px;color:var(--ink-soft);line-height:1.8}
 .col p a:hover{text-decoration-color:var(--ink-2)}
 
 /* ───────── 写真のスライド（1枚ずつ切り替わる） ───────── */
-.shot{max-width:1000px;margin:clamp(30px,3.2vw,52px) auto}
+.shot{max-width:720px;margin:clamp(30px,3.2vw,52px) auto}
 .shot-win{position:relative;border-radius:18px;overflow:hidden;background:#EDF5FB;
   aspect-ratio:3/2}
 .shot-track{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;
