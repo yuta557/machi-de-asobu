@@ -257,11 +257,9 @@
   if(!head || head.classList.contains('article-head')) return;
 
   /* [選ぶもの, 並んでいるものを少しずつ遅らせるか] */
+  /* 「取り組んでいる分野」と「遊べます」の帯は、動かさない */
   var groups = [
     ['.pjs > *',      true ],
-    ['.sec-head > *', true ],
-    ['.acts > *',     true ],
-    ['.play',         false],
     ['.who-solo',     false],
     ['.prose > *',    false],
     ['.btns > *',     true ],
