@@ -705,7 +705,14 @@ figcaption{margin-top:12px;font-size:13px;color:var(--ink-soft);line-height:1.8}
 .endcard .btns{margin-top:0}
 
 /* 書き出しの見出し部分 */
-.article-head .meta{margin-top:18px}
+/* 記事の見出しは、本文の段と同じ幅にして、中央にそろえる。
+   字の大きさは、2行目が段に収まるところまで下げる */
+.article-head{text-align:center}
+.article-head .wrap{max-width:800px}
+.article-head h1{font-size:clamp(22px,2.85vw,35px)}
+/* 狭い画面では、字の途中ではなく文の切れ目で折り返す */
+.article-head h1 span{display:inline-block}
+.article-head .meta{margin-top:18px;justify-content:center}
 .lede{font-size:clamp(15.5px,1.2vw,18px);line-height:2;color:var(--ink);font-weight:500}
 
 /* 本文の中のリンク */
