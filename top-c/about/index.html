@@ -24,7 +24,691 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/mp.css?v=59">
+<style>
+:root{
+  --bg:#FFFFFF;
+  --band:#FBF8EF;        /* 下の帯のクリーム */
+  --ink:#123E7C;         /* ネイビー */
+  --ink-2:#1E5FA8;
+  --ink-soft:#5B7CA6;
+  --line:#DCE7F2;
+  --sky:#EAF4FC;
+  --g:#46B07A; --o:#F0714A; --b:#3D7BD6;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Zen Kaku Gothic New",system-ui,sans-serif;font-size:16px;line-height:1.95;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block;-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
+a{color:inherit}
+.wrap{max-width:1280px;margin:0 auto;padding:0 40px}
+@media(max-width:700px){ .wrap{padding:0 22px} }
+
+/* ヘッダー */
+.nav{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+  border-bottom:1px solid #EAF1F7}
+.nav-in{max-width:1280px;margin:0 auto;padding:0 40px;height:78px;display:flex;align-items:center}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none}
+.brand img{height:48px;width:auto}
+.brand b{font-family:"Outfit",sans-serif;font-weight:700;font-size:22px;letter-spacing:.1em}
+.nav-links{margin-left:auto;display:flex;align-items:center;gap:34px;font-size:14.5px}
+.nav-links a{text-decoration:none;color:var(--ink)}
+.nav-links a:hover{color:var(--ink-2)}
+/* 狭い画面のメニュー（三本線） */
+.burger{display:none;margin-left:auto;width:48px;height:48px;padding:0;border:0;background:none;
+  cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:8px}
+.burger span{display:block;width:34px;height:3.5px;border-radius:3px;background:var(--ink);transition:.2s}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(11.5px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-11.5px) rotate(-45deg)}
+@media(max-width:860px){
+  .nav-in{padding:0 20px;height:64px} .brand img{height:42px} .brand b{font-size:20px}
+  .brand{gap:13px}
+  .burger{display:flex}
+  .nav-links{position:fixed;left:0;right:0;top:64px;margin:0;z-index:59;
+    flex-direction:column;align-items:stretch;gap:0;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);
+    border-top:1px solid var(--line);font-size:15.5px;
+    max-height:0;overflow:hidden;transition:max-height .25s ease}
+  .nav-links.open{max-height:60svh}
+  .nav-links a{padding:17px 22px;border-bottom:1px solid var(--line);font-weight:700}
+}
+
+/* ヒーロー：イラストはそのまま全面に置き、文字を上にのせる */
+.hero{position:relative;overflow:hidden;background:#fff}
+/* 「活動を見る」までを1画面に入れるため、絵は画面の高さに合わせて上を少し切る */
+.hero-full{position:relative;line-height:0;height:calc(100svh - 78px);min-height:360px;overflow:hidden}
+.hero-full img{width:100%;height:100%;display:block;object-fit:cover;object-position:50% 85%}
+/* 絵の下のふちを、白でゆるく波の形に切る */
+.hero-wave{position:absolute;left:0;right:0;bottom:-1px;width:100%;
+  height:clamp(42px,6.2vw,104px);display:block;z-index:1}
+.hero-ttl{position:absolute;left:5.6%;top:8%;z-index:2;width:clamp(290px,34vw,580px)}
+.hero-ttl h1{margin:0;line-height:0}
+/* キャッチコピーは別の画像。左右・上下の位置はここで決める */
+.hero-tag{position:relative;margin:2.6% 0 0 32%;width:37.7%;line-height:0}
+/* 文字のまわりに、うすい白のもや */
+.hero-ttl::before{content:"";position:absolute;z-index:-1;pointer-events:none;
+  left:-19%;right:-15%;top:-24%;bottom:-18%;
+  background:radial-gradient(58% 58% at 47% 50%,rgba(255,255,255,.78) 0%,
+    rgba(255,255,255,.55) 44%,rgba(255,255,255,0) 78%)}
+.hero-ttl img{width:100%;height:auto}
+.hero-go{position:absolute;left:8.2%;bottom:7.5%;z-index:2;min-width:clamp(150px,13vw,210px)}
+
+/* 2枚目：問いかけと本文 */
+/* 端からはみ出す飾りで横スクロールが出ないよう、ここで切る */
+.intro{position:relative;overflow:hidden;background:#fff;padding:clamp(48px,5.4vw,92px) 0 clamp(40px,4vw,64px)}
+.intro .wrap{position:relative;z-index:1;max-width:1280px;margin:0 auto;padding:0 40px}
+/* 左右から入ってくる、うすい水色のかたまり。まるではなく、ふちが何度かうねる形 */
+.blob{position:absolute;z-index:0;height:auto;display:block;pointer-events:none}
+.blob-l{left:-20%;top:clamp(10px,2vw,44px);width:27%}
+.blob-r{right:-12%;top:clamp(40px,6vw,120px);width:17%}
+.q-row{display:grid;grid-template-columns:minmax(0,.84fr) minmax(0,1.2fr) minmax(0,.92fr);
+  gap:clamp(18px,2vw,34px);align-items:center}
+.q-body{padding-left:clamp(10px,2.6vw,48px)}
+.q-art{width:100%;height:auto;display:block}
+.q{margin:0;line-height:0}
+.q img{width:100%;height:auto;max-width:min(100%,520px)}
+.pc{display:inline}
+.q-body p + p{margin-top:1.6em}
+.q-body p{margin:0;font-size:clamp(14px,1.07vw,17px);line-height:1.95;font-weight:500;color:#2F5E92}
+
+/* うすい水色の帯。上下のふちはゆるい曲線 */
+.band{position:relative;margin:clamp(34px,4vw,70px) 0 0;padding:clamp(56px,6.6vw,118px) 0 clamp(60px,7vw,124px)}
+.band-bg{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block}
+.band-in{position:relative;z-index:1;display:grid;align-items:center;
+  grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr) auto;gap:clamp(22px,2.8vw,52px)}
+.band-txt{padding-left:clamp(10px,2.6vw,48px)}
+.band-art{width:100%;height:auto;display:block}
+.band .lead{margin:0;font-size:clamp(15px,1.2vw,19px);font-weight:700;line-height:1.95;color:var(--ink)}
+.band .sub + .sub{margin-top:1.4em}
+.band .sub{margin:clamp(14px,1.5vw,24px) 0 0;font-size:clamp(14px,1.07vw,17px);
+  line-height:1.95;font-weight:500;color:#2F5E92}
+.hand-art{width:100%;height:auto;max-width:clamp(150px,17vw,260px);display:block}
+.closing{position:relative}
+/* きらめきは、川の絵と文章のあいだの上に置く */
+.closing .sparkle{position:absolute;z-index:2;top:-26%;
+  left:calc(clamp(170px,21vw,320px) + clamp(16px,3.4vw,70px));
+  width:clamp(22px,2.1vw,36px);height:auto}
+/* 右下にもうひとつ */
+.closing .sparkle-r{top:auto;bottom:-6%;left:auto;
+  right:calc(clamp(150px,19vw,300px) + clamp(44px,5.4vw,96px));
+  width:clamp(18px,1.7vw,30px)}
+.intro .closing{margin-top:clamp(26px,3vw,48px);display:grid;align-items:center;
+  grid-template-columns:clamp(170px,21vw,320px) minmax(0,1fr) clamp(150px,19vw,300px);
+  gap:clamp(16px,2vw,36px)}
+.closing-txt{padding-left:clamp(10px,2.6vw,48px)}
+.closing-sky{width:100%;height:auto}
+.closing-art{width:100%;height:auto}
+.closing p{margin:0;font-size:clamp(14.5px,1.14vw,18px);line-height:2;font-weight:700;color:var(--ink)}
+.closing p + p{margin-top:.35em;font-weight:500;color:#2F5E92;font-size:clamp(13.5px,1.03vw,16.5px)}
+
+/* スマホ：全画面の絵を、スクロールにつれて入れ替える */
+.panels{display:none}
+/* 画面の狭い端末だけ、下の文章を3枚のパネルに差し替える
+   （それより広い画面では、ヒーローはスマホ版のまま、下はパソコン版の組みを使う） */
+@media(max-width:560px){
+  .intro{display:none}
+  /* 3枚を同じ場所に重ねる。絵は貼りついたまま動かず、スクロール量で入れ替わる。
+     --h は絵の高さ（ヘッダー64pxの下いっぱい）、--d は1枚ぶんのスクロール量。
+     高さを「3枚ぶんのスクロール」ちょうどにして、絵は場所を取らない（margin で相殺）。
+     こうすると、3枚目が消える所で、次の内容の上端がちょうど画面の一番上に来る。 */
+  .panels{display:block;position:relative;background:#fff;
+    --h:max(calc(100svh - 64px),430px);
+    --d:max(86svh,400px);
+    /* 下をどこまで切ってよいか。狭い版は文字が下（67%）まであるので控えめに */
+    --cap:1.40;
+    height:calc(3 * var(--d))}
+  /* ヘッダー（64px）の下に貼りつける。下の内容は、この白い面のうしろを上がってくる */
+  .stage{position:sticky;top:64px;height:var(--h);overflow:hidden;background:#fff;
+    margin-bottom:calc(-1 * var(--h))}
+  /* 3枚目のあと、絵ごとすっと消して、うしろで待っている内容を見せる */
+  .panels.js .stage{transition:opacity .5s ease}
+  .panels.js.out .stage{opacity:0}
+  /* 消えたあとは、すぐ内容が始まる */
+  .panels + .sec{padding-top:clamp(18px,5vw,30px)}
+  /* 入れ替えの目印。高さを食わないように浮かせて、画面の真ん中を横切らせる。
+     上端を 50svh - 64px ずらしておくと、絵が貼りついた所がちょうど1枚目になる */
+  .trigs{position:absolute;left:0;top:calc(50svh - 64px);width:1px;pointer-events:none}
+  .trig{display:block;height:var(--d)}
+  /* 入りきらないときは上に寄せる（下を切る）。入るときは真ん中 */
+  .slide{position:absolute;inset:0;display:grid;align-items:center;align-items:safe center}
+  .p-wrap{position:relative;display:grid;width:100%}
+  /* 画面の形で絵を選ぶための <picture> は、枠として数えない */
+  .p-wrap picture{display:contents}
+  /* 絵は、いつも画面の幅いっぱい。3枚の幅がそろうので、切り替わっても動かない。
+     縦に余ったぶんは下が切れるが、文字は上半分にあるので切れない。
+     極端に背の低い画面では、文字を守るために縮めて横に余白を戻す（1.45倍まで）。 */
+  .p-wrap .p-bg,.p-wrap .p-tx{display:block;grid-area:1/1;
+    width:100%;height:auto;max-width:none;max-height:calc(var(--h) * var(--cap));
+    object-fit:contain}
+  .p-wrap .p-tx{pointer-events:none}
+  /* 文字は、絵が出たあと少し遅れて、下からすっと現れる。
+     消えるときは動かさない（次の絵のうしろで、見えなくなってから元に戻す） */
+  .panels.js .p-tx{opacity:0;transform:translateY(14px);
+    transition:opacity .01s linear .8s, transform .01s linear .8s}
+  .panels.js.lit .slide.on .p-tx{opacity:1;transform:none;
+    transition:opacity .75s ease .2s, transform .85s cubic-bezier(.2,.7,.25,1) .2s}
+  .p-wrap .p-ttl{position:absolute;z-index:2;left:6.5%;top:7%;width:85%;height:auto;display:block}
+  /* 切り替わり：次の絵を前の絵の上に重ねて出す。
+     前の絵は消えるのを少し待たせるので、あいだに白が透けない。
+     transform は、完全に隠れてから（0.75秒後に）戻す。 */
+  .panels.js .slide{opacity:0;transform:translateY(10px);z-index:1;
+    transition:opacity .45s ease .28s, transform .01s linear .75s}
+  .panels.js .slide.on{opacity:1;transform:none;z-index:2;
+    transition:opacity .5s cubic-bezier(.22,.61,.36,1), transform .6s cubic-bezier(.22,.61,.36,1)}
+}
+/* 広い版は文字が上から56%までなので、もっと切っても大丈夫 */
+@media(max-width:560px) and (min-aspect-ratio:65/100){
+  .panels{--cap:1.70}
+}
+/* もっと横に広いときは、正方形に描いた版にする。
+   幅に合わせると縦が余るので、高さいっぱいに出して、はみ出したぶんの左右を同じだけ切る。
+   文字は中央の11%〜90%にあるので、切るのは片側9.5%（＝幅119%）まで。
+   それ以上は切らずに、下の余白を受け入れる。 */
+@media(max-width:560px) and (min-aspect-ratio:80/100){
+  .p-wrap .p-bg,.p-wrap .p-tx{
+    width:clamp(100%, var(--h), 119%);
+    max-height:none;justify-self:center}
+}
+
+@media(max-width:560px) and (prefers-reduced-motion: reduce){
+  .panels.js .slide{transform:none;transition:opacity .2s linear .1s}
+  .panels.js .slide.on{transition:opacity .2s linear}
+  .panels.js .p-tx{transform:none;transition:opacity .01s linear .4s}
+  .panels.js.lit .slide.on .p-tx{transform:none;transition:opacity .25s linear}
+}
+
+@media(max-width:860px){
+  /* 絵の上に文字を置かず、絵の下に順番に並べる */
+  /* 絵を画面いっぱいに出し、その上に文字を置く */
+  .hero-full{height:calc(100svh - 64px)}
+  .hero-full img{object-position:50% 50%}
+  /* 題字は空のところに収める。スマホ幅では今までどおり画面の84%、
+     それより広い画面では大きくなりすぎないように、絵の空の高さに収まる幅で止める */
+  .hero-ttl{left:6%;top:10%;width:min(84%,max(360px,44vw))}
+  .hero-ttl::before{left:-16%;right:-12%;top:-18%;bottom:-14%}
+  .hero-go{left:7%;bottom:7%;min-width:160px}
+  .hero-wave{height:clamp(30px,8vw,56px)}
+  .intro{padding:36px 0 40px}
+  .intro .wrap{padding:0 22px}
+  .band{padding:38px 0 42px}
+  .band-in{grid-template-columns:1fr;gap:20px}
+  .q-body,.band-txt,.closing-txt{padding-left:0}
+  .pc{display:none}
+  .q-row{grid-template-columns:1fr}
+  .band-art{max-width:420px}
+  .blob{display:none}
+  .intro .closing{grid-template-columns:1fr;gap:16px}
+  .closing-art{max-width:280px}
+  .closing-sky{display:none}
+  .hand-art{max-width:220px}
+}
+
+/* プロジェクトの帯 */
+.pbar{background:var(--band);border-top:1px solid #F0E9D8}
+.pbar-in{max-width:1280px;margin:0 auto;padding:26px 40px;display:flex;align-items:center;gap:26px;flex-wrap:wrap}
+.pbar .ttl{font-family:"Outfit",sans-serif;font-weight:700;letter-spacing:.18em;font-size:16px}
+.pbar .ja{font-size:14px;color:var(--ink-soft)}
+.pbar .chips{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
+.chip{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:10px;
+  padding:12px 16px;font-size:14px;text-decoration:none;min-width:230px}
+.chip .dot{width:9px;height:9px;border-radius:50%;flex:none}
+.chip .arw{margin-left:auto;font-family:"Outfit",sans-serif;color:var(--ink-soft)}
+.chip:hover{border-color:var(--ink-2)}
+@media(max-width:1100px){ .pbar .chips{margin-left:0;width:100%} .chip{flex:1 1 220px;min-width:0} }
+@media(max-width:700px){ .pbar-in{padding:20px 22px;gap:14px} }
+
+/* セクション共通 */
+.sec{padding:92px 0}
+.sec-head{margin-bottom:40px}
+.kick{font-family:"Outfit",sans-serif;font-weight:700;letter-spacing:.18em;font-size:13px;color:var(--ink-2)}
+h2{font-weight:900;font-size:clamp(26px,3.4vw,40px);line-height:1.45;margin:8px 0 0}
+.sec-head p{color:var(--ink-soft);max-width:44em;margin:16px 0 0}
+
+/* 活動 3つ */
+.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.act{border-top:2px solid var(--ink);padding-top:18px}
+.act .no{font-family:"Outfit",sans-serif;font-weight:700;color:var(--ink-2);font-size:14px}
+.act h3{font-weight:900;font-size:21px;margin:6px 0 10px}
+.act p{margin:0;color:var(--ink-soft);font-size:14.5px}
+@media(max-width:860px){ .acts{grid-template-columns:1fr;gap:22px} }
+
+/* プロジェクト */
+.pjs{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.pj{border:1px solid var(--line);border-radius:18px;overflow:hidden;text-decoration:none;background:#fff;display:flex;flex-direction:column}
+.pj img{aspect-ratio:16/9;object-fit:cover;width:100%;height:auto}
+.pj .body{padding:22px 24px 26px}
+.pj .tags{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.pj .tag{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--ink-soft)}
+.pj h3{font-weight:900;font-size:20px;margin:0 0 8px}
+.pj p{margin:0;color:var(--ink-soft);font-size:14.5px}
+.pj .more{margin-top:14px;font-size:14px;color:var(--ink-2);font-weight:700}
+@media(max-width:860px){ .pjs{grid-template-columns:1fr} }
+
+/* 記録 */
+.rep{display:grid;grid-template-columns:1.3fr 1fr;gap:22px;align-items:start}
+.rep .main{border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.rep .main img{width:100%;aspect-ratio:3/2;object-fit:cover}
+.rep .main .cap{padding:20px 22px 24px}
+.rep .main h3{font-weight:900;font-size:19px;margin:0 0 8px}
+.rep .main p{margin:0;color:var(--ink-soft);font-size:14.5px}
+.rep .side{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rep .side img{width:100%;aspect-ratio:1;object-fit:cover;border:1px solid var(--line);border-radius:12px}
+@media(max-width:900px){ .rep{grid-template-columns:1fr} }
+
+/* プロフィール */
+.who{display:grid;grid-template-columns:240px 1fr;gap:34px;align-items:center}
+/* 顔写真を置かないとき。写真を足すときは .who-solo を外して .ph の枠を戻す */
+.who-solo{grid-template-columns:1fr;max-width:46em}
+.who .ph{aspect-ratio:1;border-radius:18px;background:var(--sky);display:grid;place-items:center;color:var(--ink-soft);font-size:13px}
+.who h3{font-weight:900;font-size:24px;margin:6px 0 10px}
+.who p{color:var(--ink-soft);margin:0;font-size:15px}
+@media(max-width:800px){ .who{grid-template-columns:1fr} }
+
+
+/* お問い合わせフォーム */
+.contact{background:var(--band);border-top:1px solid #F0E9D8}
+.contact .wrap{max-width:860px}
+.form{display:grid;gap:18px;margin-top:30px}
+.field{display:grid;gap:7px}
+.field label{font-size:14px;font-weight:700}
+.field .req{color:var(--o);font-size:12px;margin-left:6px;font-weight:700}
+.field input,.field select,.field textarea{
+  font:inherit;font-size:15.5px;color:var(--ink);background:#fff;
+  border:1px solid var(--line);border-radius:10px;padding:13px 14px;width:100%}
+.field textarea{min-height:150px;resize:vertical;line-height:1.8}
+.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--ink-2);outline-offset:1px;border-color:transparent}
+.field .hint{font-size:12.5px;color:var(--ink-soft)}
+.form .row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.submit{display:inline-flex;align-items:center;gap:10px;background:var(--o);color:#fff;border:0;
+  border-radius:999px;padding:15px 30px;font:inherit;font-weight:700;font-size:15.5px;cursor:pointer;
+  box-shadow:0 6px 0 rgba(0,0,0,.08)}
+.submit:hover{transform:translateY(1px);box-shadow:0 5px 0 rgba(0,0,0,.08)}
+.submit[disabled]{opacity:.6;cursor:default;transform:none}
+.form-note{font-size:13.5px;color:var(--ink-soft);margin:16px 0 0}
+.form-msg{margin:18px 0 0;padding:16px 18px;border-radius:12px;font-size:15px;display:none}
+.form-msg.ok{display:block;background:#E8F6EE;color:#1F6B45}
+.form-msg.ng{display:block;background:#FCECE6;color:#9A3A14}
+@media(max-width:700px){ .form .row{grid-template-columns:1fr} }
+
+footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;color:var(--ink-soft);font-size:13.5px}
+.foot-in{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+/* ───────── 動き ───────── */
+/* 開いたときに、絵がゆっくり落ち着き、文字が下から浮かび上がる */
+@keyframes mp-rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes mp-settle{
+  from{transform:scale(1.09);opacity:0}
+  28% {opacity:1}
+  to  {transform:scale(1);opacity:1}}
+.hero-full img{animation:mp-settle 2.8s cubic-bezier(.16,.72,.2,1) both}
+.hero-ttl{animation:mp-rise 1s cubic-bezier(.2,.7,.25,1) .15s both}
+.hero-go{animation:mp-rise .9s cubic-bezier(.2,.7,.25,1) .7s both}
+
+/* スクロールして画面に入ったら、ふわっと出す */
+.rv{opacity:0;transform:translateY(26px);
+  transition:opacity .8s ease, transform .8s cubic-bezier(.2,.7,.25,1)}
+.rv.in{opacity:1;transform:none}
+
+/* 触れたときの小さな反応 */
+.go span,.chip .arw{display:inline-block;transition:transform .25s ease}
+.go:hover span,.chip:hover .arw{transform:translateX(6px)}
+.chip{transition:border-color .2s ease, transform .2s ease, box-shadow .2s ease}
+.chip:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(18,62,124,.07)}
+.pj{transition:transform .28s ease, box-shadow .28s ease, border-color .28s ease}
+.pj img{transition:transform .5s cubic-bezier(.2,.7,.25,1)}
+.pj:hover{transform:translateY(-5px);border-color:#C6DBEF;box-shadow:0 16px 34px rgba(18,62,124,.10)}
+.pj:hover img{transform:scale(1.045)}
+.rep .side img,.rep .main img{transition:transform .5s cubic-bezier(.2,.7,.25,1)}
+.rep .side img:hover,.rep .main img:hover{transform:scale(1.03)}
+.submit{transition:transform .15s ease, box-shadow .15s ease, filter .15s ease}
+.submit:hover{filter:saturate(1.08)}
+
+/* 動きが苦手な人の設定を優先する */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .hero-full img,.hero-ttl,.hero-go{animation:none}
+  .rv,.rv.in{opacity:1;transform:none;transition:none}
+  .pj,.pj img,.chip,.rep .side img,.rep .main img,.go span,.chip .arw{transition:none}
+  .pj:hover,.pj:hover img,.chip:hover,.go:hover span,.chip:hover .arw{transform:none}
+}
+
+/* 開いたときに、パンくず → 見出し の順で浮かび上がる */
+.page-head .crumb{animation:mp-rise .7s cubic-bezier(.2,.7,.25,1) .05s both}
+.page-head h1{animation:mp-rise .85s cubic-bezier(.2,.7,.25,1) .18s both}
+@media(prefers-reduced-motion:reduce){
+  .page-head .crumb,.page-head h1{animation:none}
+}
+
+/* ───────── 下層ページ ───────── */
+.page-head{background:linear-gradient(180deg,#F1F8FD 0%,#fff 100%);
+  padding:clamp(40px,4.6vw,76px) 0 clamp(26px,3vw,46px)}
+.crumb{margin:0;font-size:13px;color:var(--ink-soft)}
+.crumb a{text-decoration:none}
+.crumb a:hover{color:var(--ink-2)}
+.page-head h1{font-weight:900;font-size:clamp(26px,3.5vw,42px);line-height:1.45;margin:12px 0 0}
+.page-head .meta{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 0}
+.page-head .meta span{font-size:12.5px;border:1px solid var(--line);background:#fff;
+  border-radius:999px;padding:4px 12px;color:var(--ink-soft)}
+.page-head .lead{color:var(--ink-soft);max-width:42em;margin:18px 0 0}
+.page-narrow .wrap{max-width:860px}
+
+/* 絵のある見出し。空の帯 → 絵 → 文字、の順に重ねる。
+   絵は右の端まで出して、左へ向かって消えていく。文字の下には回り込まない */
+.head-art-sec{position:relative;overflow:hidden;background:#fff;
+  padding-top:clamp(62px,6.9vw,118px);padding-bottom:clamp(30px,3.4vw,54px)}
+.head-art-sec .wrap{position:relative;z-index:2}
+/* 空は文字より上で終わらせる。左は端を見せず、すっと消す */
+.head-sky{position:absolute;left:0;top:0;width:100%;height:clamp(96px,15.2vw,250px);z-index:0;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 20%);
+  mask-image:linear-gradient(90deg,transparent 0%,#000 20%)}
+.head-art{position:absolute;right:0;bottom:0;z-index:1;
+  width:min(66%,1100px);height:auto;pointer-events:none;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 38%);
+  mask-image:linear-gradient(90deg,transparent 0%,#000 38%)}
+.head-art-sec .lead-rule,.head-art-sec .privacy{max-width:min(42em,52%)}
+.head-art-sec .lead + .lead{margin-top:.95em}
+
+/* 見出しの黄色。線は字の下に、きらめきは左上に */
+.ttl-mark{position:relative;display:inline-block}
+.ttl-line{position:absolute;left:-.6%;bottom:-.27em;width:53%;height:.26em}
+.ttl-spark{position:absolute;left:-.93em;top:-.30em;width:.97em;height:auto}
+/* 見出しは、しるしが入る大きさまで上げる。パンくずとの間も、しるしのぶんだけ空ける */
+.head-art-sec h1{font-size:clamp(37px,4.6vw,54px);margin-top:.5em}
+
+/* 使い道の断り書き。細い線で本文と分けて、盾のしるしを添える */
+.page-head .privacy{display:flex;align-items:flex-start;gap:11px;
+  margin:clamp(22px,2.4vw,34px) 0 0;padding-top:clamp(18px,2vw,26px);
+  border-top:1px solid var(--line);
+  color:var(--ink-soft);font-size:14.5px;line-height:1.85}
+.page-head .privacy svg{flex:none;width:22px;height:22px;margin-top:2px}
+
+@media(max-width:860px){
+  /* 左の余白が狭いので、見出しだけ右へ寄せて、しるしの場所を作る */
+  .head-art-sec h1{margin-left:.72em}
+  /* 本文は細い縦線で束ね、断り書きは盾と文を線で分ける */
+  .lead-rule{border-left:3px solid #BFDDF4;padding-left:18px}
+  .head-art-sec .privacy span{border-left:1.5px solid var(--line);padding-left:16px}
+  .head-art-sec .privacy{gap:14px}
+  /* 絵は文字の下へ。左右にはみ出させて、濃さはそのまま */
+  .head-art{width:min(118%,760px);right:-9%}
+  .head-art-sec .lead-rule,.head-art-sec .privacy{max-width:none}
+  .head-art-sec{padding-bottom:clamp(140px,53vw,300px)}
+}
+/* 読みもののページ。本文の幅ちょうどに段を立てて、ページの真ん中に置く。
+   見出しも名前もボタンも同じ左端から始まり、右だけが空く感じがなくなる */
+.page-essay .wrap{max-width:784px}
+.page-essay .who-solo{max-width:none}
+/* 今いるページは、薄い青の丸みで示す。縦の余白は打ち消して、ヘッダーの高さは変えない */
+.nav-links a[aria-current="page"]{color:var(--ink-2);font-weight:700;
+  background:var(--sky);border-radius:999px;padding:8px 16px;margin:-8px -6px}
+@media(max-width:860px){
+  /* 畳んだメニューでは、しるしを付けない */
+  .nav-links a[aria-current="page"]{background:none;border-radius:0;padding:17px 22px;margin:0}
+}
+
+/* 大きなボタン */
+.btn{display:inline-flex;align-items:center;gap:12px;text-decoration:none;font-weight:700;font-size:15.5px;
+  background:var(--ink);color:#fff;border-radius:999px;padding:15px 28px;
+  transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease}
+.btn span{display:inline-block;transition:transform .25s ease}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(18,62,124,.18)}
+.btn:hover span{transform:translateX(5px)}
+.btn.alt{background:#fff;color:var(--ink);border:1.5px solid var(--line);box-shadow:none}
+.btn.alt:hover{border-color:var(--ink-2);box-shadow:0 10px 22px rgba(18,62,124,.08)}
+.btns{display:flex;gap:14px;flex-wrap:wrap;margin-top:clamp(22px,2.6vw,36px)}
+
+/* 本文 */
+.prose{max-width:44em}
+.prose p{margin:0 0 1.5em;color:#2F5E92;font-size:clamp(14.5px,1.08vw,16.5px);line-height:1.95}
+.prose p:last-child{margin-bottom:0}
+.prose h3{font-weight:900;font-size:clamp(18px,1.6vw,22px);margin:0 0 12px}
+
+/* 写真を並べる */
+.gal{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:clamp(22px,2.6vw,36px)}
+.gal img{width:100%;aspect-ratio:1;object-fit:cover;border:1px solid var(--line);border-radius:14px;
+  transition:transform .5s cubic-bezier(.2,.7,.25,1)}
+.gal img:hover{transform:scale(1.03)}
+@media(max-width:700px){ .gal{grid-template-columns:1fr 1fr;gap:10px} }
+
+/* 次に見るもの */
+.next{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:clamp(36px,4vw,64px)}
+.next a{display:flex;align-items:center;gap:14px;text-decoration:none;background:#fff;
+  border:1px solid var(--line);border-radius:16px;padding:20px 24px;
+  transition:border-color .2s ease, transform .2s ease, box-shadow .2s ease}
+.next a:hover{border-color:var(--ink-2);transform:translateY(-2px);box-shadow:0 10px 22px rgba(18,62,124,.07)}
+.next .lb{display:block;font-size:12.5px;color:var(--ink-soft)}
+.next .tt{display:block;font-weight:900;margin-top:3px}
+.next .arw{margin-left:auto;color:var(--ink-2);font-family:"Outfit",sans-serif}
+.next a:hover .arw{color:var(--ink-2)}
+@media(max-width:700px){ .next{grid-template-columns:1fr} }
+
+/* フッター */
+.foot-links{display:flex;gap:10px 20px;flex-wrap:wrap}
+.foot-links a{text-decoration:none}
+.foot-links a:hover{color:var(--ink-2)}
+
+/* 動きの設定を優先する人のために、新しい分も止める */
+@media(prefers-reduced-motion:reduce){
+  .btn,.btn span,.gal img,.next a{transition:none}
+  .btn:hover,.btn:hover span,.gal img:hover,.next a:hover{transform:none}
+}
+
+/* ───────── ほかのサイトへの入口 ───────── */
+.sites{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.site{display:flex;flex-direction:column;text-decoration:none;background:#fff;overflow:hidden;
+  border:1.5px solid #CFE3F3;border-radius:18px;
+  transition:transform .28s ease, box-shadow .28s ease, border-color .28s ease}
+.site img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;
+  transition:transform .5s cubic-bezier(.2,.7,.25,1)}
+.site .body{padding:22px 24px 26px}
+.site .lb{margin:0;font-family:"Outfit",sans-serif;font-weight:700;font-size:12.5px;
+  letter-spacing:.08em;color:var(--ink-2)}
+.site h3{font-weight:900;font-size:20px;margin:7px 0 8px}
+.site .dsc{margin:0;color:var(--ink-soft);font-size:14.5px}
+.site .more{margin:16px 0 0;display:flex;align-items:center;gap:8px;
+  font-size:14.5px;font-weight:700;color:var(--ink-2)}
+.site .more span{display:inline-block;transition:transform .25s ease}
+.site:hover{transform:translateY(-5px);border-color:var(--ink-2);box-shadow:0 16px 34px rgba(18,62,124,.12)}
+.site:hover img{transform:scale(1.045)}
+.site:hover .more span{transform:translate(4px,-4px)}
+.sites-sec{background:linear-gradient(180deg,#fff 0%,#F4FAFE 100%);padding-bottom:clamp(60px,6vw,100px)}
+@media(max-width:860px){ .sites{grid-template-columns:1fr;gap:18px} }
+
+/* 遊べるサイトへの帯。1枚だけ置いて、中で待っているものの名前を並べる */
+.play{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);
+  text-decoration:none;background:#fff;overflow:hidden;
+  border:1.5px solid #CFE3F3;border-radius:18px;
+  transition:transform .28s ease, box-shadow .28s ease, border-color .28s ease}
+.play img{width:100%;height:100%;min-height:100%;object-fit:cover;
+  transition:transform .5s cubic-bezier(.2,.7,.25,1)}
+.play .body{padding:clamp(24px,2.4vw,34px)}
+.play .lb{margin:0;font-weight:900;font-size:20px}
+.ideas{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.ideas li{font-size:13px;line-height:1.5;color:var(--ink-2);
+  background:var(--sky);border:1px solid var(--line);border-radius:999px;padding:5px 13px}
+/* 「などなど」は札に見えないよう、字だけにする。広い画面では9つ全部出す */
+.ideas .etc{display:none;background:none;border-color:transparent;color:var(--ink-soft)}
+.play .more{margin:20px 0 0;display:flex;align-items:center;gap:8px;
+  font-size:14.5px;font-weight:700;color:var(--ink-2)}
+.play .more span{display:inline-block;transition:transform .25s ease}
+.play:hover{transform:translateY(-5px);border-color:var(--ink-2);box-shadow:0 16px 34px rgba(18,62,124,.12)}
+.play:hover img{transform:scale(1.045)}
+.play:hover .more span{transform:translate(4px,-4px)}
+@media(max-width:860px){
+  .play{grid-template-columns:1fr}
+  .play img{height:auto;min-height:0;aspect-ratio:16/9}
+}
+/* 縦長の画面では、9つ並べると長くなりすぎる。3つだけ見せて、あとはまとめる */
+@media(max-width:640px){
+  .ideas li:nth-child(n+4):not(.etc){display:none}
+  .ideas .etc{display:block}
+}
+
+/* 2行になるときに、文の途中ではなく文の切れ目で折り返す。
+   一文ずつを塊にしておくと、入らない文がまるごと次の行へ落ちる。
+   狭い画面では3行以上になり、塊のままだと行末が大きく余るので、普通の折り返しに戻す */
+.bysent span{display:inline-block}
+@media(max-width:640px){ .bysent span{display:inline} }
+
+/* ほかのサイトへのリンク。広い画面ではヘッダーの右に小さく常時出し、
+   狭い画面ではメニューの中に入れる。ヘッダーは貼りついているので、
+   ページのどこを見ていても押せる。 */
+.nav-ext{display:none}
+.nav-ext i{font-style:normal}
+@media(min-width:1040px){
+  .nav-links{gap:26px}
+  .nav-ext{display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
+    border:1.5px solid #CFE3F3;border-radius:999px;background:#F5FAFE;
+    padding:8px 14px;font-size:13.5px;font-weight:700;color:var(--ink-2);
+    transition:border-color .2s ease, background .2s ease, transform .2s ease}
+  .nav-ext i{display:none}
+  .nav-ext span{font-size:12px;transition:transform .2s ease}
+  .nav-links .nav-ext:first-of-type{margin-left:10px}
+  .nav-links .nav-ext + .nav-ext{margin-left:-18px}
+  .nav-ext:hover{border-color:var(--ink-2);background:#fff;transform:translateY(-1px)}
+  .nav-ext:hover span{transform:translate(2px,-2px)}
+}
+@media(max-width:860px){
+  .nav-ext{display:flex;align-items:center;gap:8px;background:#F4FAFE;color:var(--ink-2)!important}
+  .nav-ext span{margin-left:auto}
+}
+
+/* フッター */
+.foot-ttl{margin:0 0 14px;font-family:"Outfit",sans-serif;font-weight:700;
+  letter-spacing:.14em;font-size:12px;color:var(--ink-2)}
+/* 連絡先の添え書き */
+.mail-note{font-size:12.5px;color:var(--ink-soft)}
+.form-note .mail{font-weight:700;white-space:nowrap}
+
+.foot-ext{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px}
+.foot-ext a{display:inline-flex;align-items:center;gap:10px;background:#fff;color:var(--ink);
+  border:1.5px solid #CFE3F3;border-radius:999px;padding:10px 20px 10px 12px;
+  text-decoration:none;font-weight:700;font-size:14px;
+  transition:border-color .2s ease, transform .2s ease, box-shadow .2s ease}
+/* ロゴは横長（385x259）。高さで合わせて、つぶさない */
+.foot-ext a img{width:auto;height:22px;flex:none}
+.foot-ext a span{display:inline-block;color:var(--ink-2);transition:transform .25s ease}
+.foot-ext a:hover{border-color:var(--ink-2);transform:translateY(-2px);box-shadow:0 8px 18px rgba(18,62,124,.08)}
+.foot-ext a:hover span{transform:translate(3px,-3px)}
+@media(max-width:700px){ .foot-ext{gap:10px} .foot-ext a{width:100%} }
+
+@media(prefers-reduced-motion:reduce){
+  .site,.site img,.site .more span,.foot-ext a,.foot-ext a span{transition:none}
+  .site:hover,.site:hover img,.site:hover .more span,
+  .foot-ext a:hover,.foot-ext a:hover span{transform:none}
+}
+
+/* 外部リンクの矢印（フォントに無い文字を使わず、線で描く） */
+.ext-i{display:inline-flex;align-items:center;justify-content:center}
+.ext-i svg{width:1em;height:1em;display:block}
+.nav-ext .ext-i svg{width:12px;height:12px}
+.foot-ext a .ext-i svg{width:13px;height:13px}
+.site .more .ext-i svg{width:14px;height:14px}
+
+/* Instagram */
+.foot-ext a.ig{padding-left:14px}
+.ig-i{width:21px;height:21px;display:block;color:var(--ink-2)}
+.foot-ext a.ig:hover .ig-i{color:var(--ink-2)}
+
+/* ───────── 活動報告（記事ページ） ───────── */
+.article{padding:clamp(34px,3.6vw,56px) 0 clamp(60px,6vw,100px)}
+.article .wrap{max-width:1180px}
+.col{max-width:720px;margin:0 auto}
+.col > p{margin:0 0 1.75em;color:#2F5E92;font-size:clamp(15px,1.12vw,17px);line-height:2.05}
+.col > p:last-child{margin-bottom:0}
+.col h2{font-weight:900;font-size:clamp(21px,2.1vw,28px);line-height:1.6;
+  margin:clamp(48px,5vw,80px) 0 22px;padding-top:clamp(20px,2vw,28px);border-top:2px solid var(--ink)}
+.col h3{font-weight:900;font-size:clamp(17px,1.5vw,20px);margin:2.2em 0 .8em}
+.col strong{font-weight:700;color:var(--ink)}
+.col ul{margin:0 0 1.75em;padding-left:1.25em;color:#2F5E92;font-size:clamp(14.5px,1.08vw,16.5px);line-height:2}
+.col li{margin:0 0 .5em}
+
+/* 記事の中の写真 */
+figure{margin:clamp(30px,3.2vw,52px) 0}
+figure img{width:100%;height:auto;border-radius:14px;display:block}
+figcaption{margin-top:12px;font-size:13px;color:var(--ink-soft);line-height:1.8}
+.fig-wide{max-width:1000px;margin-left:auto;margin-right:auto}
+.fig-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.fig-2 img{height:100%;object-fit:cover}
+.fig-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.fig-3 figcaption{margin-top:9px;font-size:12.5px}
+.fig-3 > div > img{border:1px solid var(--line)}
+@media(max-width:700px){ .fig-2,.fig-3{grid-template-columns:1fr} }
+
+/* ひとこと（引用のように見せる） */
+.pull{margin:clamp(34px,3.6vw,56px) auto;max-width:720px;padding:clamp(24px,2.6vw,38px) clamp(24px,3vw,44px);
+  background:var(--sky);border-radius:18px}
+.pull p{margin:0;font-weight:700;font-size:clamp(16px,1.35vw,20px);line-height:1.9;color:var(--ink)}
+.pull .by{margin-top:14px;font-weight:500;font-size:13.5px;color:var(--ink-soft)}
+
+/* 数字 */
+.stat{display:grid;grid-template-columns:auto 1fr;gap:clamp(18px,2.4vw,36px);align-items:center;
+  margin:clamp(30px,3.2vw,50px) auto;max-width:720px;
+  padding:clamp(24px,2.6vw,36px);border:1.5px solid var(--line);border-radius:18px;background:#fff}
+.stat .n{font-family:"Outfit",sans-serif;font-weight:700;color:var(--ink-2);line-height:1;
+  font-size:clamp(40px,5vw,64px);white-space:nowrap}
+.stat .n small{font-size:.42em;font-weight:600;margin-left:4px}
+.stat p{margin:0;color:var(--ink-soft);font-size:14.5px;line-height:1.9}
+.stat p b{display:block;color:var(--ink);font-weight:900;font-size:16.5px;margin-bottom:5px}
+@media(max-width:560px){ .stat{grid-template-columns:1fr;gap:12px} }
+
+/* 記事の最後の案内 */
+.endcard{max-width:720px;margin:clamp(40px,4.4vw,70px) auto 0;
+  padding:clamp(26px,3vw,40px);border-radius:20px;background:linear-gradient(180deg,#F4FAFE,#fff);
+  border:1.5px solid #CFE3F3}
+.endcard p{margin:0 0 18px;color:var(--ink-soft);font-size:14.5px;line-height:1.95}
+.endcard .btns{margin-top:0}
+
+/* 書き出しの見出し部分 */
+.article-head .meta{margin-top:18px}
+.lede{font-size:clamp(15.5px,1.2vw,18px);line-height:2;color:var(--ink);font-weight:500}
+
+/* 本文の中のリンク */
+.col p a{color:var(--ink-2);text-decoration:underline;text-underline-offset:3px;
+  text-decoration-thickness:1.5px;text-decoration-color:#AFD2EC;
+  transition:text-decoration-color .2s ease}
+.col p a:hover{text-decoration-color:var(--ink-2)}
+
+/* ───────── 写真のスライド（1枚ずつ切り替わる） ───────── */
+.shot{max-width:1000px;margin:clamp(30px,3.2vw,52px) auto}
+.shot-win{position:relative;border-radius:18px;overflow:hidden;background:#EDF5FB;
+  aspect-ratio:3/2}
+.shot-track{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;
+  cursor:grab;touch-action:pan-y pinch-zoom;
+  scrollbar-width:none;-ms-overflow-style:none}
+.shot-track::-webkit-scrollbar{display:none}
+.shot-track.drag{cursor:grabbing;scroll-snap-type:none;scroll-behavior:auto}
+.shot-track img{flex:0 0 100%;scroll-snap-align:center;display:block;
+  width:100%;height:100%;object-fit:contain;background:#EDF5FB}
+.shot-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:2;
+  width:46px;height:46px;padding:0;border:0;border-radius:50%;cursor:pointer;
+  background:rgba(255,255,255,.93);color:var(--ink);display:grid;place-items:center;
+  box-shadow:0 4px 16px rgba(18,62,124,.18);
+  transition:background .2s ease, transform .2s ease}
+.shot-nav:hover{background:#fff;transform:translateY(-50%) scale(1.07)}
+.shot-nav:focus-visible{outline:2px solid var(--ink-2);outline-offset:2px}
+.shot-nav svg{width:17px;height:17px}
+.shot-nav.shot-prev{left:14px}
+.shot-nav.shot-next{right:14px}
+.shot-cap{margin:13px 0 0;font-size:13px;color:var(--ink-soft);line-height:1.8;min-height:1.8em}
+.shot-dots{display:flex;gap:10px;justify-content:center;margin-top:14px}
+.shot-dots button{width:9px;height:9px;padding:0;border:0;border-radius:50%;background:#CFE0EE;
+  cursor:pointer;transition:background .2s ease, transform .2s ease}
+.shot-dots button[aria-current="true"]{background:var(--ink-2);transform:scale(1.3)}
+.shot-dots button:focus-visible{outline:2px solid var(--ink-2);outline-offset:3px}
+/* JavaScript が動かないときは、横にスワイプして見られる形のまま */
+.shot:not(.js) .shot-nav,.shot:not(.js) .shot-dots{display:none}
+@media(max-width:700px){
+  .shot-nav{width:38px;height:38px}
+  .shot-nav.shot-prev{left:8px} .shot-nav.shot-next{right:8px}
+}
+@media(prefers-reduced-motion:reduce){
+  .shot-nav{transition:none}
+  .shot-nav:hover{transform:translateY(-50%)}
+}
+
+</style>
 </head>
 <body>
 <header class="nav">
@@ -106,7 +790,268 @@
   </div>
 </footer>
 
-<script src="/assets/mp.js?v=33" defer></script>
+
+<!-- ===== MOCK: ③ 色が混ざる — 花の輪 ===== -->
+<style>
+body{position:relative}
+.nav,.sec,footer{position:relative;z-index:2}
+.page-head{position:relative;z-index:1}
+.sec.page-essay,footer{background:transparent}
+
+/* final picture */
+.finale{position:relative;margin-top:clamp(40px,5vw,72px);margin-bottom:clamp(44px,5vw,64px);padding-top:420px;text-align:center}
+.finale-msg{opacity:0}
+.finale-msg.on{opacity:1}
+.prose .finale-msg p{margin:0;color:var(--ink);opacity:0;transform:translateY(10px);transition:opacity 1s ease, transform 1s ease}
+.finale-msg.on p{opacity:1;transform:none}
+/* 1. 違う色が重なって… (medium) */
+.prose .finale-msg .m1{font-size:clamp(16px,1.75vw,22px);line-height:2;letter-spacing:.16em;font-weight:500;transition-delay:.1s}
+/* 2. 人と人との出会いや… (small) */
+.prose .finale-msg .m2{font-size:clamp(12.5px,1.05vw,14px);line-height:2.05;letter-spacing:.06em;color:#2F5E92;
+  max-width:32em;margin:clamp(10px,1.2vw,16px) auto 0;transition-delay:.8s}
+@media(max-width:599px){.finale-msg .br-pc{display:none}}
+/* 3. 人の行動が重なる、そんな街をつくる。 (large) */
+.prose .finale-msg .m3{font-size:clamp(21px,2.7vw,34px);line-height:1.75;letter-spacing:.2em;font-weight:700;
+  margin-top:clamp(36px,4.6vw,60px);transition-delay:1.5s}
+.prose .finale-msg .finale-dots{margin:clamp(30px,3.4vw,44px) 0 0;display:flex;justify-content:center;gap:clamp(12px,1.6vw,20px)}
+.finale-dots i{width:clamp(11px,1.1vw,14px);height:clamp(11px,1.1vw,14px);border-radius:50%;
+  opacity:0;transform:scale(.4);transition:opacity .6s ease, transform .6s ease}
+.finale-msg.on .finale-dots i{opacity:1;transform:none;transition-delay:2.3s}
+.finale-msg.on .finale-dots i:nth-child(2){transition-delay:2.38s}.finale-msg.on .finale-dots i:nth-child(3){transition-delay:2.46s}
+.finale-msg.on .finale-dots i:nth-child(4){transition-delay:2.54s}.finale-msg.on .finale-dots i:nth-child(5){transition-delay:2.62s}
+@media(max-width:420px){.prose .finale-msg .m3{letter-spacing:.14em}.prose .finale-msg .m1{letter-spacing:.1em}}
+.sec.page-essay .btns{justify-content:center}
+
+/* the colour layer: white where empty, multiplied onto the page so it never hides anything */
+#colorArt{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;mix-blend-mode:multiply}
+
+/* colour marks before the headings */
+.mp-hues{display:inline-flex;align-items:center;vertical-align:middle;margin-right:0;transition:margin .45s ease}
+.mp-hues:has(.on){margin-right:.6em}
+.mp-hue{display:block;flex:none;width:0;height:13px;border-radius:50%;opacity:0;
+  transition:width .45s cubic-bezier(.3,1.4,.5,1), margin .45s ease, opacity .3s ease}
+.mp-hue.on{width:13px;opacity:1}
+.mp-hue.on + .mp-hue.on{margin-left:-4px}
+</style>
+
+<canvas id="colorArt" aria-hidden="true"></canvas>
+
+<script>
+(() => {
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const ease = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+const back = x => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const lerp = (a, b, t) => a + (b - a) * t;
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---- colour patterns ----
+   petals: b = top, y = upper right, s = lower right, g = bottom, o = lower left, p = upper left
+   mult: how strongly overlaps deepen (0 = stays light, 1 = full multiply) */
+const mixW = (hex, k) => { const n = parseInt(hex.slice(1), 16), c = [n >> 16, n >> 8 & 255, n & 255].map(v => Math.round(v + (255 - v) * k));
+  return '#' + c.map(v => v.toString(16).padStart(2, '0')).join(''); };
+const deepen = (hex, k) => { const n = parseInt(hex.slice(1), 16), c = [n >> 16, n >> 8 & 255, n & 255];
+  const m = Math.max(...c); const o = c.map(v => Math.round(v - (m - v) * k * 1.4 - (255 - m) * 0 - 18 * k));
+  return '#' + o.map(v => clamp(v, 0, 255).toString(16).padStart(2, '0')).join(''); };
+const site = { b: '#78A9E5', y: '#FFD875', o: '#F49B79', g: '#65BD99', s: '#80C6E8', p: '#F3AFC1' };
+const PALETTES = [
+  // left/right brightness balanced so the ring reads as symmetric (pink/orange a touch lighter, yellow/sky a touch deeper)
+  { name: '参考画像', petals: { b: '#B9DBF8', y: '#FEEBB3', o: '#FED6C0', g: '#B5E7CF', s: '#B9E5FB', p: '#FEDAE3' }, mult: .42 },
+  { name: 'サイトの色', petals: Object.fromEntries(Object.entries(site).map(([k, v]) => [k, mixW(v, .45)])), mult: .45 },
+  { name: 'ふんわり淡め', petals: { b: '#D3E8FB', y: '#FFF4D3', o: '#FEDDCB', g: '#D2F0E2', s: '#D8F0FC', p: '#FEDFE7' }, mult: .5 },
+  { name: 'くすみ', petals: { b: '#B8CBE4', y: '#EFE2B8', o: '#EBC6B1', g: '#BCD7C6', s: '#BEDBE5', p: '#E9C6CF' }, mult: .38 },
+  { name: 'あざやか', petals: { b: '#9DCAF6', y: '#FFE38F', o: '#FFB592', g: '#93DDBA', s: '#A2DDF8', p: '#FFB7CA' }, mult: .4 },
+];
+PALETTES.forEach(P => { const d = {}; for (const k in P.petals) d[k] = deepen(P.petals[k], .35); P.deep = d;
+  const l = {}; for (const k in P.petals) l[k] = deepen(P.petals[k], .12); P.dot = l; });
+let PAL = PALETTES[0]; // 参考画像（固定）
+
+const prose = $('.prose');
+const h3s = $$('.prose h3');
+const finale = document.createElement('div');
+finale.className = 'finale';
+finale.innerHTML = '<div class="finale-msg">' +
+  '<p class="m1">違う色が重なって、<br>一つの模様を描くように。</p>' +
+  '<p class="m2">一人ひとりの個性や行動が重なり、<br>新しい出会いやつながりが生まれていく。</p>' +
+  '<p class="m3">人と人とがつながる、<br>そんな街をつくる。</p>' +
+  '<p class="finale-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></p></div>';
+prose.appendChild(finale);
+const cap = $('.finale-msg', finale);
+
+/* petals. sec = section that brings it in; x,y,r = place in the margin while reading;
+   a = angle in the finished flower (clockwise from the top) */
+const petals = [
+  { k: 'b', sec: 0, x: .86, y: .34, side: 'R', f: .58, r: 1.00, a: 0 },
+  { k: 'y', sec: 1, x: .93, y: .54, side: 'L', f: .22, r: .84,  a: 60 },
+  { k: 'o', sec: 2, x: .10, y: .40, side: 'R', f: .12, r: .92,  a: 240 },
+  { k: 'g', sec: 2, x: .04, y: .64, side: 'L', f: .86, r: .66,  a: 180 },
+  { k: 's', sec: 3, x: .90, y: .80, side: 'R', f: .74, r: .62,  a: 120 },
+  { k: 'p', sec: 3, x: .14, y: .17, side: 'L', f: .30, r: .54,  a: 300 },
+];
+/* flower geometry, in units of S: petal radius = ring radius, a round hole in the middle */
+const RING = .235, PETAL = .235, HOLE = .094;
+/* dots that pop in after the flower is complete: [x, y, r, colour] */
+const dots = [[-.413, -.349, .0215, 's'], [.413, -.380, .027, 'y'], [.561, -.193, .020, 'p'],
+              [-.565, -.048, .034, 's'], [-.493, .079, .013, 'y'], [.517, .063, .034, 'g'],
+              [-.464, .357, .027, 'y'], [.458, .372, .027, 'p'], [.302, .451, .020, 'g']];
+
+/* heading colour marks */
+$$('.mp-hues').forEach(c => c.remove());
+const chipKeys = [['b'], ['y'], ['o', 'g'], ['s', 'p'], ['y', 's', 'p']];
+const chips = h3s.map((h, i) => { const w = document.createElement('span'); w.className = 'mp-hues';
+  const g = (chipKeys[i] || []).map(k => { const s = document.createElement('span'); s.className = 'mp-hue';
+    s.dataset.k = k; w.appendChild(s); return s; });
+  h.prepend(w); return g; });
+
+/* canvases */
+const cv = $('#colorArt'), ctx = cv.getContext('2d');
+const mk = () => { const c = document.createElement('canvas'); return [c, c.getContext('2d')]; };
+const [cM, xM] = mk(), [cD, xD] = mk();
+let W = 0, H = 0, dpr = 1;
+function resize() {
+  dpr = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight;
+  for (const c of [cv, cM, cD]) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); }
+  const S = flowerS(); finale.style.paddingTop = Math.round(S * 1.02 + 24) + 'px';
+}
+const flowerS = () => Math.min((Math.min(innerWidth, 1280) - 32) / 1.2, 560);
+
+/* side circles while reading.
+   The text column is narrowed until every side circle shows at least 30% of its area.
+   If that would make the text narrower than 70% of the screen, the text keeps its normal width
+   and the circles sit faintly behind it instead (D). */
+const MIN_SHOW = .30, MIN_TEXT = .70;
+let GAP = 16;  // space kept between a circle and the text
+const HEAD_PAD = 28; // no circle beside a heading: keep this much clear above/below it
+const petalBase = w => clamp(w * .12, 60, 170);
+// visible area fraction of a circle of radius r whose visible width is h
+const segFrac = (h, r) => { if (h >= 2 * r) return 1; if (h <= 0) return 0;
+  const d = r - h; return (r * r * Math.acos(d / r) - d * Math.sqrt(Math.max(0, r * r - d * d))) / (Math.PI * r * r); };
+const needWidth = r => { let lo = 0, hi = 2 * r; for (let k = 0; k < 30; k++) { const m = (lo + hi) / 2; segFrac(m, r) < MIN_SHOW ? lo = m : hi = m; } return hi; };
+const wrapEl = $('.sec.page-essay .wrap');
+let LAYOUT = { mode: 'side', margin: 0, textPct: 1 };
+function layout() {
+  GAP = clamp(document.documentElement.clientWidth * .04, 15, 36);
+  wrapEl.style.paddingLeft = wrapEl.style.paddingRight = '';
+  const w = document.documentElement.clientWidth;
+  const pr = prose.getBoundingClientRect();
+  const natural = pr.width;                                       // current text width
+  const m0 = Math.min(pr.left, w - pr.right);                     // current side margin
+  const rMax = petalBase(w) * Math.max(...petals.map(b => b.r));
+  const need = needWidth(rMax) + GAP;
+  if (m0 >= need) LAYOUT = { mode: 'side', margin: m0, textPct: natural / w };
+  else if (w - 2 * need >= MIN_TEXT * w) {
+    const padNow = parseFloat(getComputedStyle(wrapEl).paddingLeft);
+    const extra = need - m0;
+    wrapEl.style.paddingLeft = wrapEl.style.paddingRight = (padNow + extra) + 'px';
+    LAYOUT = { mode: 'narrow', margin: need, textPct: (w - 2 * need) / w };
+  } else LAYOUT = { mode: 'faint', margin: m0, textPct: natural / w };
+  // anchor every petal inside its section's paragraph, clear of the headings
+  const base = petalBase(w);
+  petals.forEach(b => {
+    const h = h3s[b.sec], next = h3s[b.sec + 1] || finale;
+    const top = h.getBoundingClientRect().bottom + scrollY + HEAD_PAD;
+    const bottom = next.getBoundingClientRect().top + scrollY - HEAD_PAD;
+    const span = Math.max(0, bottom - top);
+    let r = base * b.r;
+    if (span > 520) r *= .85;                 // long text: a little smaller
+    r = Math.min(r, span / 2);                // always fits between the headings
+    b.R = r; b.Y = top + r + (span - 2 * r) * b.f;
+  });
+}
+const docY = e => e.getBoundingClientRect().top + scrollY;
+const target = () => (scrollY + innerHeight >= document.documentElement.scrollHeight - 4) ? Infinity : scrollY + innerHeight * .62;
+const disc = (x, cx, cy, r) => { if (r <= 0) return; x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.fill(); };
+
+let doneAt = null;
+function draw(time) {
+  const t = target(), narrow = W < 900;
+  const base = petalBase(W), faint = LAYOUT.mode === 'faint';
+  const prog = [1, ...h3s.map(h => clamp((t - docY(h)) / (H * .45)))];
+  const fr = finale.getBoundingClientRect();
+  const S = flowerS(), artH = S * 1.02;  // the flower area at the top of .finale
+  const fp = reduce ? (t > docY(finale) + artH * .5 ? 1 : 0)
+                    : ease(clamp((t - (fr.top + scrollY - H * .15)) / (artH * .5 + H * .25)));
+  const fcx = fr.left + fr.width / 2, fcy = fr.top + S * .5;
+  const tm = reduce ? 0 : time / 1000;
+  const first = clamp(scrollY / (H * .6));
+  if (fp >= .97 && doneAt === null) doneAt = time;
+  if (fp < .9) doneAt = null;
+  const since = doneAt === null ? -1 : time - doneAt;
+
+  for (const [c, x, op] of [[cM, xM, 'multiply'], [cD, xD, 'darken']]) {
+    x.setTransform(1, 0, 0, 1, 0, 0); x.globalCompositeOperation = 'source-over'; x.globalAlpha = 1;
+    x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height);
+    x.setTransform(dpr, 0, 0, dpr, 0, 0); x.globalCompositeOperation = op;
+  }
+  petals.forEach((b, i) => {
+    const ang = (b.a - 90) * Math.PI / 180;
+    // exact positions once settled: no drift, so the ring is perfectly symmetric
+    const ex = fcx + Math.cos(ang) * RING * S, ey = fcy + Math.sin(ang) * RING * S;
+    let a, sx0, sy0, R0;
+    if (LAYOUT.mode === 'side') {
+      // PC (wide margins): circles float in the margins, whole circles, kept GAP away from the text
+      a = b.sec === 0 ? lerp(.22, 1, Math.max(first, prog[1])) : ease(prog[b.sec] ?? 0);
+      const dx = Math.sin(tm * .35 + i * 1.7) * 10, dy = Math.cos(tm * .3 + i * 2.3) * 12;
+      R0 = base * b.r; const left = b.x < .5;
+      const inner = LAYOUT.margin - GAP;
+      sx0 = (left ? inner - R0 : W - inner + R0) + dx; sy0 = b.y * H + dy;
+    } else {
+      // phone / tablet: page-anchored rhythm, centre off-screen, at most a half circle visible
+      const yv = b.Y - scrollY;
+      a = ease(clamp((H * .92 - yv) / (H * .32)));
+      R0 = b.R || base * b.r; const left = b.side === 'L';
+      const show = faint ? R0 * .9 : Math.min(R0, Math.max(0, LAYOUT.margin - GAP));
+      sx0 = left ? show - R0 : W - show + R0; sy0 = yv + Math.cos(tm * .3 + i * 2.3) * 6;
+    }
+    const cx = lerp(sx0, ex, fp), cy = lerp(sy0, ey, fp);
+    const r = lerp(R0 * a, PETAL * S, fp);
+    const alpha = Math.max(a, fp) * lerp(faint ? .32 : 1, 1, fp);
+    for (const x of [xM, xD]) { x.globalAlpha = alpha; x.fillStyle = PAL.petals[b.k]; disc(x, cx, cy, r); }
+  });
+
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+  ctx.drawImage(cD, 0, 0);
+  ctx.globalAlpha = PAL.mult; ctx.drawImage(cM, 0, 0);
+  ctx.globalAlpha = 1; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  // the centre is quietly carved out, then the dots pop in
+  const hp = since < 0 ? 0 : (reduce ? 1 : ease(clamp((since - 150) / 1100)));
+  ctx.fillStyle = '#fff'; disc(ctx, fcx, fcy, HOLE * S * hp);
+  dots.forEach(([x, y, r, c], i) => {
+    const p = since < 0 ? 0 : (reduce ? 1 : clamp((since - 900 - i * 110) / 520));
+    if (p <= 0) return;
+    const dx = Math.sin(tm * .5 + i * 2.1) * 3, dy = Math.cos(tm * .45 + i * 1.3) * 4;
+    ctx.globalAlpha = clamp(p * 2); ctx.fillStyle = PAL.dot[c];
+    disc(ctx, fcx + x * S + dx, fcy + y * S + dy, r * S * back(p));
+  });
+  ctx.globalAlpha = 1;
+
+  chips.forEach((g, i) => g.forEach((c, j) => c.classList.toggle('on', prog[i + 1] > .05 + j * .25)));
+  // the message waits until the ring is finished (centre carved out)
+  cap.classList.toggle('on', since >= (reduce ? 0 : 1350));
+}
+function applyPalette(i) {
+  PAL = PALETTES[i] || PALETTES[0];
+  $$('.mp-hue').forEach(s => s.style.background = PAL.deep[s.dataset.k]);
+  $$('.finale-dots i').forEach((e, j) => e.style.background = PAL.deep['bsgyp'[j]]);
+}
+/* 色は参考画像のものに決め打ち */
+applyPalette(0);
+
+function loop(time) { draw(time || 0); requestAnimationFrame(loop); }
+addEventListener('resize', () => { layout(); resize(); });
+layout(); resize(); requestAnimationFrame(loop);
+document.fonts && document.fonts.ready.then(() => { layout(); resize(); });
+addEventListener("load", () => { layout(); resize(); });
+
+const burger = $('.burger'), links = $('#navlinks');
+burger && burger.addEventListener('click', () => { const o = links.classList.toggle('open'); burger.setAttribute('aria-expanded', o); });
+})();
+</script>
+<!-- ===== /MOCK ===== -->
+
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c351ef734eb54b488d820041ba2f7e84"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
