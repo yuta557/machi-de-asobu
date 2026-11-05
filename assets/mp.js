@@ -76,13 +76,71 @@
     /* 最後の目印まで来たら、絵ごとすっと消す。うしろで待っている内容が、上から出る */
     if(i >= slides.length){ box.classList.add('out'); return; }
     box.classList.remove('out');
-    slides.forEach(function(el, k){ el.classList.toggle('on', k === i); });
+    slides.forEach(function(el, k){
+      var now = (k === i);
+      /* 出ていく絵の見出しは、絵が消えきるまで置いたままにする。
+         動きを外したとたんに消えると、切り替わりの途中で字だけ先に消えてしまう */
+      if(!now && el.classList.contains('on')){
+        el.classList.add('was');
+        clearTimeout(el.__was);
+        el.__was = setTimeout(function(){ el.classList.remove('was'); }, 900);
+      }
+      if(now){ clearTimeout(el.__was); el.classList.remove('was'); }
+      el.classList.toggle('on', now);
+    });
   }
   var io = new IntersectionObserver(function(list){
     list.forEach(function(e){ if(e.isIntersecting) show(trigs.indexOf(e.target)); });
   }, { rootMargin: '-50% 0px -50% 0px', threshold: 0 });
   trigs.forEach(function(t){ io.observe(t); });
 })();
+/* スマホ：ヒーローから1枚目の絵へ、うつり変わるところ。
+   そのまま上がってくると固いので、ヒーローを薄くしながら、1枚目を濃くして渡す。
+   スクロールした量に合わせて、少しずつ入れ替える。 */
+(function(){
+  var hero = document.querySelector('.hero-full');
+  var panels = document.querySelector('.panels');
+  if(!hero || !panels) return;
+  var stage = panels.querySelector('.stage');
+  if(!stage) return;
+  var narrow = window.matchMedia('(max-width:560px)');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var waiting = false;
+
+  function hands_off(){
+    hero.style.opacity = '';
+    stage.style.opacity = '';
+    stage.classList.remove('fading');
+  }
+
+  function paint(){
+    waiting = false;
+    if(!narrow.matches || reduce.matches){ hands_off(); return; }
+    /* 絵が画面の上に貼りつく位置。そこへ着くまでのあいだで、濃さを入れ替える */
+    var pin = panels.getBoundingClientRect().top + window.pageYOffset - 64;
+    var span = Math.max(innerHeight * 0.45, 180);
+    var p = (window.pageYOffset - (pin - span)) / span;
+    p = p < 0 ? 0 : (p > 1 ? 1 : p);
+
+    hero.style.opacity = p > 0 ? String(1 - p) : '';
+    if(p > 0 && p < 1){
+      /* ここはスクロールで直に濃さを決めるので、なめらかにする仕掛けは外す */
+      stage.classList.add('fading');
+      stage.style.opacity = String(p);
+    }else{
+      /* 出来上がったら手を放す。3枚目のあとの消え方は、スタイル表にまかせる */
+      stage.classList.remove('fading');
+      stage.style.opacity = p >= 1 ? '' : '0';
+    }
+  }
+  function later(){ if(!waiting){ waiting = true; requestAnimationFrame(paint); } }
+
+  addEventListener('scroll', later, { passive:true });
+  addEventListener('resize', later);
+  addEventListener('orientationchange', later);
+  paint();
+})();
+
 /* 狭い画面のメニュー開閉 */
 (function(){
   var b = document.querySelector('.burger'), n = document.getElementById('navlinks');
@@ -95,6 +153,34 @@
   });
   n.addEventListener('click', function(e){ if(e.target.tagName === 'A') close(); });
   addEventListener('resize', function(){ if(innerWidth > 860) close(); });
+})();
+
+/* 題字は、絵がそろってから出す。
+   通信が細いと、字が途中までしか描かれていない絵が見えてしまう。
+   JavaScript が動かないときは、今までどおりそのまま出る。 */
+(function(){
+  var ttl = document.querySelector('.hero-ttl');
+  if(!ttl) return;
+  var imgs = [].slice.call(ttl.querySelectorAll('img')).filter(function(im){ return !im.complete; });
+  if(!imgs.length) return;
+
+  ttl.classList.add('wait');
+  var left = imgs.length, done = false;
+  function show(){
+    if(done) return;
+    done = true;
+    ttl.classList.remove('wait');
+    ttl.classList.add('ready');
+  }
+  function one(){ if(--left <= 0) show(); }
+
+  imgs.forEach(function(im){
+    /* decode() は、絵を描ける形にし終えたところで知らせてくれる */
+    if(im.decode){ im.decode().then(one, one); }
+    else { im.addEventListener('load', one); im.addEventListener('error', one); }
+  });
+  /* 合図が来ないときでも、待ちすぎない。出せないときは、代わりの文字を見せる */
+  setTimeout(show, 6000);
 })();
 
 /* スクロールして画面に入った所から、順番にふわっと出す。
