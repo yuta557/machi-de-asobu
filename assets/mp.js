@@ -162,6 +162,10 @@
   addEventListener('scroll', later, { passive:true });
   addEventListener('resize', later);
   addEventListener('orientationchange', later);
+  /* 別のアプリに移って戻ってきたときや、戻るボタンで開き直したときにも、
+     濃さを決め直す。描画が止まっているあいだは合図が来ないため */
+  addEventListener('visibilitychange', function(){ if(!document.hidden) later(); });
+  addEventListener('pageshow', later);
   paint();
 })();
 

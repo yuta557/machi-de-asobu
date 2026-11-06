@@ -9,7 +9,8 @@
   --g:#46B07A; --o:#F0714A; --b:#3D7BD6;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+/* iPhone を横向きにしたときに、文字が勝手に拡大されるのを止める */
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);
   font-family:"Zen Kaku Gothic New",system-ui,sans-serif;font-size:16px;line-height:1.95;-webkit-font-smoothing:antialiased}
 img{max-width:100%;display:block;-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
@@ -150,8 +151,10 @@ a{color:inherit}
   /* 消えたあとは、すぐ内容が始まる */
   .panels + .sec{padding-top:clamp(18px,5vw,30px)}
   /* 入れ替えの目印。高さを食わないように浮かせて、画面の真ん中を横切らせる。
-     上端を 50svh - 64px ずらしておくと、絵が貼りついた所がちょうど1枚目になる */
-  .trigs{position:absolute;left:0;top:calc(50svh - 64px);width:1px;pointer-events:none}
+     上端を画面の半分ぶんずらしておくと、絵が貼りついた所がちょうど1枚目になる。
+     ここは絵の面（lvh）と同じ基準にそろえる。svh のままだと、URLバーが縮んだとき
+     に目印と画面の中央が45pxほどずれ、切り替わりが早まる */
+  .trigs{position:absolute;left:0;top:calc(50lvh - 64px);width:1px;pointer-events:none}
   .trig{display:block;height:var(--d)}
   /* 絵はいつもヘッダーのすぐ下から。余るぶんは下に置く。
      （真ん中ぞろえだと、URLバーが出ているときに絵が下へ押し下げられてしまう） */
@@ -315,7 +318,8 @@ h2{font-weight:900;font-size:clamp(26px,3.4vw,40px);line-height:1.45;margin:8px 
 .field label{font-size:14px;font-weight:700}
 .field .req{color:var(--o);font-size:12px;margin-left:6px;font-weight:700}
 .field input,.field select,.field textarea{
-  font:inherit;font-size:15.5px;color:var(--ink);background:#fff;
+  /* 16px を下回ると、iPhone は入力欄に触れた瞬間に画面を拡大してしまう */
+  font:inherit;font-size:16px;color:var(--ink);background:#fff;
   border:1px solid var(--line);border-radius:10px;padding:13px 14px;width:100%}
 .field textarea{min-height:150px;resize:vertical;line-height:1.8}
 .field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--ink-2);outline-offset:1px;border-color:transparent}
