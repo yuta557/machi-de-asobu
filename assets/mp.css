@@ -723,12 +723,19 @@ figcaption{margin-top:12px;font-size:13px;color:var(--ink-soft);line-height:1.8}
    字の大きさは、2行目が段に収まるところまで下げる */
 .article-head{text-align:center}
 .article-head .wrap{max-width:800px}
+/* 「活動報告」は丸い枠に入れて目印にし、副題はその下に置く。
+   字間のぶん右が空いて見えるので、左右の余白は少しずらす */
+.article-head .kick{margin-top:clamp(14px,1.6vw,22px)}
+.article-head .kick b{display:inline-block;font-weight:700;
+  border:1.5px solid #BFDDF4;border-radius:999px;padding:8px 20px 8px 24px}
+.article-head .kick-sub{margin:clamp(11px,1.2vw,15px) 0 0;font-weight:700;
+  font-size:clamp(14px,1.15vw,16px);color:var(--ink-2);line-height:1.7}
 .article-head h1{font-size:clamp(22px,2.85vw,35px)}
 /* 狭い画面では、字の途中ではなく文の切れ目で折り返す */
 .article-head h1 span{display:inline-block}
 /* 狭い画面では、札は4つまで（2行）に収める */
 @media(max-width:700px){
-  .article-head .meta span:nth-child(n+5){display:none}
+  .article-head .meta span:nth-child(n+4){display:none}
 }
 .article-head .meta{margin-top:18px;justify-content:center}
 .lede{font-size:clamp(15.5px,1.2vw,18px);line-height:2;color:var(--ink);font-weight:500}
