@@ -69,7 +69,7 @@ a{color:inherit}
     flex-direction:column;align-items:stretch;gap:0;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);
     border-top:1px solid var(--line);font-size:15.5px;
     max-height:0;overflow:hidden;transition:max-height .25s ease}
-  .nav-links.open{max-height:60svh}
+  .nav-links.open{max-height:calc(100svh - 64px);overflow-y:auto}
   .nav-links a{padding:17px 22px;border-bottom:1px solid var(--line);font-weight:700}
 }
 
@@ -794,7 +794,10 @@ figcaption{margin-top:12px;font-size:13px;color:var(--ink-soft);line-height:1.8}
 <!-- ===== MOCK: ③ 色が混ざる — 花の輪 ===== -->
 <style>
 body{position:relative}
-.nav,.sec,footer{position:relative;z-index:2}
+.sec,footer{position:relative;z-index:2}
+/* ヘッダーと、開いたメニューは、本文より上に重ねる
+   （ここに .nav を入れると本文と同じ高さになり、メニューが透けて見える） */
+.nav{z-index:60}
 .page-head{position:relative;z-index:1}
 .sec.page-essay,footer{background:transparent}
 
