@@ -118,10 +118,15 @@ html{scroll-padding-top:var(--nav-h)}
 .pill-key:hover{background:#ffdd63;transform:translateY(-1px)}
 .pill-line{background:transparent;border-color:var(--ink);color:var(--ink)}
 /* 活動報告への案内。ヒーローのすぐ下に置く */
-.report-cta{max-width:var(--maxw);margin:clamp(18px,2.2vw,30px) auto 0;padding:0 clamp(16px,4vw,24px)}
+/* 帯はヘッダーの下に貼りつき、少しついてきてから静かに消える */
+.report-cta{max-width:var(--maxw);margin:clamp(18px,2.2vw,30px) auto 0;padding:0 clamp(16px,4vw,24px);
+  position:sticky;top:calc(var(--nav-h) + clamp(8px,1.2vw,16px));z-index:40;
+  will-change:opacity;transition:opacity .18s linear}
+.report-cta[data-gone="1"]{pointer-events:none}
 .report-in{display:flex;align-items:center;gap:clamp(14px,2vw,26px);
   background:var(--card);border:1.5px solid var(--line);border-radius:var(--r-lg);
-  padding:clamp(16px,2vw,24px) clamp(18px,2.4vw,30px)}
+  padding:clamp(16px,2vw,24px) clamp(18px,2.4vw,30px);
+  box-shadow:0 10px 26px rgba(18,63,99,.07)}
 .report-ico{flex:none;width:clamp(44px,4.4vw,60px);height:auto}
 .report-txt{flex:1;min-width:0}
 .report-ttl .sp{display:none}
@@ -1726,6 +1731,42 @@ if(navEl){
   resize();
   lastMove=performance.now();
 })();
+})();
+</script>
+<script>
+/* 活動報告の帯：ヘッダーの下についてきて、少し進んだら静かに消える。
+   一度消えたら、上に戻っても出てこない（出るのは開き直したときだけ）。 */
+(() => {
+  const cta = document.querySelector('.report-cta');
+  if (!cta) return;
+  const HOLD = 240;   // この距離まではそのまま
+  const FADE = 300;   // ここで消えきる
+  let home = 0, waiting = false, far = 0, done = false;
+
+  const measure = () => {
+    const keep = cta.style.position;
+    cta.style.position = 'static';          // 貼りつく前の場所を測る
+    home = cta.getBoundingClientRect().top + scrollY;
+    cta.style.position = keep;
+  };
+  const paint = () => {
+    waiting = false;
+    if (done) return;
+    const stickAt = home - (parseFloat(getComputedStyle(cta).top) || 0);
+    /* いちばん下まで進んだ所を覚えておく。戻っても濃くならない（出るのは開き直したときだけ） */
+    far = Math.max(far, scrollY - stickAt);
+    let v = 1;
+    if (far > HOLD) v = Math.max(0, 1 - (far - HOLD) / FADE);
+    cta.style.opacity = v;
+    if (v < .05) { cta.dataset.gone = '1'; done = true; }
+  };
+  const later = () => { if (!waiting) { waiting = true; requestAnimationFrame(paint); } };
+
+  addEventListener('scroll', later, { passive: true });
+  addEventListener('resize', () => { measure(); later(); });
+  addEventListener('visibilitychange', () => { if (!document.hidden) later(); });
+  addEventListener('load', () => { measure(); later(); });
+  measure(); paint();
 })();
 </script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c351ef734eb54b488d820041ba2f7e84"}'></script><!-- End Cloudflare Web Analytics -->
