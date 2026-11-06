@@ -740,7 +740,8 @@ figcaption{margin-top:12px;font-size:13px;color:var(--ink-soft);line-height:1.8}
 .shot-win{position:relative;border-radius:18px;overflow:hidden;background:#EDF5FB;
   aspect-ratio:3/2}
 .shot-track{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;
-  cursor:grab;touch-action:pan-y pinch-zoom;
+  /* 指で横にはらって写真を送れるように、横方向も許す */
+  cursor:grab;touch-action:pan-x pan-y pinch-zoom;
   scrollbar-width:none;-ms-overflow-style:none}
 .shot-track::-webkit-scrollbar{display:none}
 .shot-track.drag{cursor:grabbing;scroll-snap-type:none;scroll-behavior:auto}

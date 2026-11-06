@@ -342,6 +342,23 @@
     return b;
   });
 
+  /* 説明は1行のものと2行のものがある。そのままだと写真を送るたびに
+     下の点が上下するので、いちばん高いものに合わせて場所を取っておく */
+  function capRoom(){
+    if(!cap) return;
+    var keep = cap.textContent, h = 0;
+    cap.style.minHeight = '0px';
+    imgs.forEach(function(im){
+      var c = im.getAttribute('data-cap');
+      if(!c) return;
+      cap.textContent = c;
+      var v = cap.getBoundingClientRect().height;
+      if(v > h) h = v;
+    });
+    cap.textContent = keep;
+    cap.style.minHeight = Math.ceil(h) + 'px';
+  }
+
   var at = 0;
   function paint(){
     buttons.forEach(function(b, k){ b.setAttribute('aria-current', String(k === at)); });
@@ -396,11 +413,12 @@
      指でのスワイプは、ブラウザの横スクロールがそのまま効く。 */
   var dragging = false, startX = 0, atStart = 0;
   track.addEventListener('pointerdown', function(e){
+    /* 指で触れたときも、自動送りは止める */
+    stop();
     if(e.pointerType !== 'mouse' || e.button !== 0) return;
     dragging = true; startX = e.clientX; atStart = at;
     track.classList.add('drag');
     if(track.setPointerCapture) track.setPointerCapture(e.pointerId);
-    stop();
   });
   track.addEventListener('pointermove', function(e){
     if(!dragging) return;
@@ -422,7 +440,9 @@
   track.addEventListener('dragstart', function(e){ e.preventDefault(); });
 
   function place(){ var w = step(); if(w) setX((at + 1) * w, false); }
-  requestAnimationFrame(function(){ place(); paint(); start(); });
-  window.addEventListener('resize', place);
-  window.addEventListener('load', place);
+  requestAnimationFrame(function(){ capRoom(); place(); paint(); start(); });
+  window.addEventListener('resize', function(){ capRoom(); place(); });
+  window.addEventListener('load', function(){ capRoom(); place(); });
+  /* 字が入れ替わると高さも変わるので、そろってからもう一度測る */
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(capRoom);
 })();
