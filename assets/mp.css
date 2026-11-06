@@ -30,9 +30,13 @@ a{color:inherit}
 /* 狭い画面のメニュー（三本線） */
 .burger{display:none;margin-left:auto;width:48px;height:48px;padding:0;border:0;background:none;
   cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:8px}
-.burger span{display:block;width:34px;height:3.5px;border-radius:3px;background:var(--ink);transition:.2s}
+.burger span{display:block;width:34px;height:3.5px;border-radius:3px;background:var(--ink);
+  /* ぼかしの下に古い絵が残ることがあるので、棒は別の面として描かせる */
+  transform:translateZ(0);will-change:transform,opacity;
+  transition:transform .2s ease, opacity .14s ease}
 .burger[aria-expanded="true"] span:nth-child(1){transform:translateY(11.5px) rotate(45deg)}
-.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+/* 真ん中の棒は、薄くするだけでなく幅もつぶす（残像が出ても見えない） */
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0;transform:scaleX(0)}
 .burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-11.5px) rotate(-45deg)}
 @media(max-width:860px){
   .nav-in{padding:0 20px;height:64px} .brand img{height:42px} .brand b{font-size:20px}
@@ -42,7 +46,9 @@ a{color:inherit}
     flex-direction:column;align-items:stretch;gap:0;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);
     border-top:1px solid var(--line);font-size:15.5px;
     max-height:0;overflow:hidden;transition:max-height .25s ease}
-  .nav-links.open{max-height:60svh}
+  /* 画面が低い機種でも、5項目が切れないように。
+     それでも入らないときは、中で動かせるようにしておく */
+  .nav-links.open{max-height:calc(100svh - 64px);overflow-y:auto}
   .nav-links a{padding:17px 22px;border-bottom:1px solid var(--line);font-weight:700}
 }
 
