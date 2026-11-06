@@ -117,6 +117,27 @@ html{scroll-padding-top:var(--nav-h)}
 .pill-key{background:var(--yellow);color:var(--ink);font-family:"Zen Maru Gothic",sans-serif;font-weight:700}
 .pill-key:hover{background:#ffdd63;transform:translateY(-1px)}
 .pill-line{background:transparent;border-color:var(--ink);color:var(--ink)}
+/* 活動報告への案内。ヒーローのすぐ下に置く */
+.report-cta{max-width:var(--maxw);margin:clamp(18px,2.2vw,30px) auto 0;padding:0 clamp(16px,4vw,24px)}
+.report-in{display:flex;align-items:center;gap:clamp(14px,2vw,26px);
+  background:var(--card);border:1.5px solid var(--line);border-radius:var(--r-lg);
+  padding:clamp(16px,2vw,24px) clamp(18px,2.4vw,30px)}
+.report-ico{flex:none;width:clamp(44px,4.4vw,60px);height:auto}
+.report-txt{flex:1;min-width:0}
+.report-ttl .sp{display:none}
+.report-ttl{margin:0;font-family:"Zen Maru Gothic",sans-serif;font-weight:700;
+  font-size:clamp(16px,1.5vw,20px);line-height:1.6;color:var(--ink)}
+.report-sub{margin:6px 0 0;font-size:clamp(13px,1.05vw,15px);line-height:1.8;color:var(--ink-soft)}
+.report-btn{flex:none;font-size:clamp(14px,1.2vw,17px);padding:14px 26px}
+@media(max-width:760px){
+  .report-in{flex-wrap:wrap;justify-content:center;text-align:center}
+  .report-txt{flex:1 1 100%;order:2}
+  .report-ico{order:1}
+  .report-btn{order:3;flex:1 1 100%}
+  .report-sub .pc{display:none}
+  /* 狭い画面では、字の途中ではなく言葉の切れ目で折り返す */
+  .report-ttl .sp{display:inline}
+}
 .pill-line:hover{background:rgba(27,26,22,.06)}
 .pill[aria-disabled="true"]{opacity:.6;cursor:default}
 .pill[aria-disabled="true"]:hover{transform:none}
@@ -803,6 +824,23 @@ footer a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,25
       </div>
     </div>
 </header>
+
+<!-- 開催を終えたので、いちばん上で活動報告へ案内する -->
+<div class="report-cta">
+  <div class="report-in">
+    <svg class="report-ico" viewBox="0 0 64 56" aria-hidden="true">
+      <path d="M38 10 14 20H8a4 4 0 0 0-4 4v8a4 4 0 0 0 4 4h6l24 10z" fill="#E6F1FA" stroke="#2E86D6" stroke-width="2.6" stroke-linejoin="round"/>
+      <path d="M14 20v16" stroke="#2E86D6" stroke-width="2.6"/>
+      <path d="M18 36v8a4 4 0 0 0 8 0v-5" fill="none" stroke="#2E86D6" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M48 16c3 3 3 11 0 14M54 10c5 6 5 20 0 26" fill="none" stroke="#FFD43B" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <div class="report-txt">
+      <p class="report-ttl">過去のワークショップの<br class="sp">様子を紹介しています！</p>
+      <p class="report-sub">子どもたちと一緒に行ったワークショップの活動内容や、<br class="pc">まちでのアイデアをぜひご覧ください。</p>
+    </div>
+    <a class="pill pill-key report-btn" href="/projects/workshop/">活動報告を見る <span class="arw-i">→</span></a>
+  </div>
+</div>
 
 
 <div class="credits" style="margin-top:0">
