@@ -228,12 +228,18 @@ const cv = $('#colorArt'), ctx = cv.getContext('2d');
 const mk = () => { const c = document.createElement('canvas'); return [c, c.getContext('2d')]; };
 const [cM, xM] = mk(), [cD, xD] = mk();
 let W = 0, H = 0, dpr = 1;
+/* 実際に描かれている面の大きさ。innerHeight ではなく、この箱に合わせる。
+   スマホはURLバーの出入りで画面の高さが変わり、その知らせが来ないことがある。
+   ずれたまま描くと、絵が引き伸ばされて円が楕円になり、場所もずれる */
+const boxSize = () => { const b = cv.getBoundingClientRect();
+  return [Math.round(b.width) || innerWidth, Math.round(b.height) || innerHeight]; };
 function resize() {
-  dpr = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight;
+  dpr = Math.min(devicePixelRatio || 1, 2);
+  const v = boxSize(); W = v[0]; H = v[1];
   for (const c of [cv, cM, cD]) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); }
   const S = flowerS(); finale.style.paddingTop = Math.round(S * 1.02 + 24) + 'px';
 }
-const flowerS = () => Math.min((Math.min(innerWidth, 1280) - 32) / 1.2, 560);
+const flowerS = () => Math.min((Math.min(W || innerWidth, 1280) - 32) / 1.2, 560);
 
 /* side circles while reading.
    The text column is narrowed until every side circle shows at least 30% of its area.
@@ -284,6 +290,9 @@ const disc = (x, cx, cy, r) => { if (r <= 0) return; x.beginPath(); x.arc(cx, cy
 
 let doneAt = null;
 function draw(time) {
+  /* 大きさが変わっていたら、描く前にそろえ直す */
+  const now = boxSize();
+  if (now[0] !== W || now[1] !== H) { layout(); resize(); }
   const t = target(), narrow = W < 900;
   const base = petalBase(W), faint = LAYOUT.mode === 'faint';
   const prog = [1, ...h3s.map(h => clamp((t - docY(h)) / (H * .45)))];
@@ -361,6 +370,9 @@ applyPalette(0);
 
 function loop(time) { draw(time || 0); requestAnimationFrame(loop); }
 addEventListener('resize', () => { layout(); resize(); });
+/* 指で広げて拡大したときは、こちらが知らせてくれる */
+if (window.visualViewport) visualViewport.addEventListener('resize', () => { layout(); resize(); });
+addEventListener('orientationchange', () => { layout(); resize(); });
 layout(); resize(); requestAnimationFrame(loop);
 document.fonts && document.fonts.ready.then(() => { layout(); resize(); });
 addEventListener("load", () => { layout(); resize(); });
