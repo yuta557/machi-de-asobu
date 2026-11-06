@@ -125,7 +125,10 @@ a{color:inherit}
      高さを「3枚ぶんのスクロール」ちょうどにして、絵は場所を取らない（margin で相殺）。
      こうすると、3枚目が消える所で、次の内容の上端がちょうど画面の一番上に来る。 */
   .panels{display:block;position:relative;background:#fff;
-    --h:max(calc(100svh - 64px),430px);
+    /* 絵の大きさは、URLバーが隠れて画面がいちばん広くなったときに合わせる。
+       バーが出ているあいだは、そのぶん下が隠れるだけ（文字は上半分にある）。
+       逆にすると、バーが隠れたときに下から次の内容がのぞいてしまう */
+    --h:max(calc(100lvh - 64px),430px);
     --d:max(86svh,400px);
     /* 下をどこまで切ってよいか。狭い版は文字が下（67%）まであるので控えめに */
     --cap:1.40;
@@ -145,7 +148,8 @@ a{color:inherit}
   .trigs{position:absolute;left:0;top:calc(50svh - 64px);width:1px;pointer-events:none}
   .trig{display:block;height:var(--d)}
   /* 入りきらないときは上に寄せる（下を切る）。入るときは真ん中 */
-  .slide{position:absolute;inset:0;display:grid;align-items:center;align-items:safe center}
+  .slide{position:absolute;left:0;right:0;top:0;height:var(--h);
+    display:grid;align-items:center;align-items:safe center}
   .p-wrap{position:relative;display:grid;width:100%}
   /* 画面の形で絵を選ぶための <picture> は、枠として数えない */
   .p-wrap picture{display:contents}
