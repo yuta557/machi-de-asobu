@@ -500,6 +500,8 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
   background:var(--ink);color:#fff;border-radius:999px;padding:15px 28px;
   transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease}
 .btn span{display:inline-block;transition:transform .25s ease}
+/* 狭い画面では、2行に折り返すくらいなら添え書きは出さない */
+@media(max-width:700px){ .btn .btn-sub{display:none} }
 .btn:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(18,62,124,.18)}
 .btn:hover span{transform:translateX(5px)}
 .btn.alt{background:#fff;color:var(--ink);border:1.5px solid var(--line);box-shadow:none}
