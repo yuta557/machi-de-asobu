@@ -215,6 +215,13 @@ canvas.wb{width:100%;height:210px;background:#fff;border:2px solid #cfc8c2;borde
 .album{display:flex;gap:6px;flex-wrap:wrap}
 .album:empty{display:none}
 .album img{width:calc(25% - 5px);min-width:90px;border-radius:6px;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.album img{cursor:zoom-in}
+/* 写真を大きく見る */
+.photobox{position:fixed;inset:0;z-index:1000;background:rgba(25,30,25,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px}
+.photobox img{max-width:min(96vw,1100px);max-height:calc(100dvh - 130px);border-radius:10px;border:4px solid #fff;box-shadow:0 8px 30px rgba(0,0,0,.4);-webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto}
+.photobox .row{justify-content:center}
+.photobox .btn{font-size:16px;padding:10px 26px;--c:#3f9a4f}
+.photobox .phint{margin:0;color:#fff;font-size:12px;opacity:.85}
 .board{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
 .post{background:#fff;border-radius:10px;padding:6px;display:flex;flex-direction:column;gap:2px;font-size:12px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
 .post img{width:100%;border-radius:6px;display:block}
@@ -2737,6 +2744,21 @@ GAMES.wall = root => {
     if (b.dataset.color){ color = b.dataset.color; tools.querySelectorAll('.sw').forEach(s => s.setAttribute('aria-pressed', s === b)); }
     if (b.dataset.tool){ tool = b.dataset.tool; tools.querySelectorAll('.tool').forEach(s => s.setAttribute('aria-pressed', s === b)); } };
   const gallery = document.createElement('div'); gallery.className = 'album'; root.appendChild(gallery);
+  // 写真をおすと、大きく見られる。「保存する」で、スマホの写真にも保存できる
+  gallery.onclick = e => { const im = e.target.closest('img'); if (im) showPhoto(im.src); };
+  function showPhoto(src){
+    const box = document.createElement('div'); box.className = 'photobox'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-label', '教室のかべの写真');
+    box.innerHTML = `<img src="${src}" alt="教室のかべの写真"><div class="row"><button class="btn primary psave">保存する</button><button class="btn pclose">とじる</button></div><p class="phint">保存できないときは、写真を長おしして保存してね</p>`;
+    const close = () => { box.remove(); document.removeEventListener('keydown', esc); }, esc = e => { if (e.key === 'Escape') close(); };
+    box.onclick = e => { if (e.target === box || e.target.closest('.pclose')) close(); };
+    box.querySelector('.psave').onclick = async () => {
+      const name = `kyoshitsu-${new Date().toISOString().slice(0, 19).replace(/[-:T]/g, '')}.jpg`;
+      try { const file = new File([await (await fetch(src)).blob()], name, { type: 'image/jpeg' });
+        // スマホ：共有メニューから「画像を保存」を選べる
+        if (navigator.canShare && navigator.canShare({ files: [file] })){ await navigator.share({ files: [file] }); return; } } catch (err){ if (err && err.name === 'AbortError') return; }
+      const a = document.createElement('a'); a.href = src; a.download = name; document.body.appendChild(a); a.click(); a.remove(); };
+    document.addEventListener('keydown', esc); document.body.appendChild(box); box.querySelector('.psave').focus(); onClean(close);
+  }
 
   // いまの画面：'room'（教室を見わたす）か、かべの名前
   let view = 'room', anim = null, hover = null, auto = null;
