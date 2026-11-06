@@ -492,8 +492,9 @@ footer{border-top:1px solid var(--line);margin-top:30px;padding:36px 0 56px;colo
 .nav-links a[aria-current="page"]{color:var(--ink-2);font-weight:700;
   background:var(--sky);border-radius:999px;padding:8px 16px;margin:-8px -6px}
 @media(max-width:860px){
-  /* 畳んだメニューでは、しるしを付けない */
-  .nav-links a[aria-current="page"]{background:none;border-radius:0;padding:17px 22px;margin:0}
+  /* 畳んだメニューでは、しるしを付けない（色もほかの項目とそろえる） */
+  .nav-links a[aria-current="page"]{background:none;border-radius:0;padding:17px 22px;margin:0;
+    color:var(--ink)}
 }
 
 /* 大きなボタン */
