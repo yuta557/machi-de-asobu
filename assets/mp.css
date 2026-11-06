@@ -153,9 +153,10 @@ a{color:inherit}
      上端を 50svh - 64px ずらしておくと、絵が貼りついた所がちょうど1枚目になる */
   .trigs{position:absolute;left:0;top:calc(50svh - 64px);width:1px;pointer-events:none}
   .trig{display:block;height:var(--d)}
-  /* 入りきらないときは上に寄せる（下を切る）。入るときは真ん中 */
+  /* 絵はいつもヘッダーのすぐ下から。余るぶんは下に置く。
+     （真ん中ぞろえだと、URLバーが出ているときに絵が下へ押し下げられてしまう） */
   .slide{position:absolute;left:0;right:0;top:0;height:var(--h);
-    display:grid;align-items:center;align-items:safe center}
+    display:grid;align-items:start}
   .p-wrap{position:relative;display:grid;width:100%}
   /* 画面の形で絵を選ぶための <picture> は、枠として数えない */
   .p-wrap picture{display:contents}
