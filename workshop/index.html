@@ -203,7 +203,7 @@ html{scroll-padding-top:var(--nav-h)}
   /* ヒーローは「画面の高さ − ヘッダーの高さ」に収め、スクロールなしで
      下の情報帯まで見えるようにする（上限はイラスト本来の高さ 56.22vw）。
      縮めたぶんイラストは上が切れるので、上側の要素は下の --hero-crop で逃がす */
-  --hero-h:clamp(38vw,calc(100svh - clamp(58px,5.2vw,92px) - 1px),56.22vw);
+  --hero-h:clamp(38vw,calc(100lvh - clamp(58px,5.2vw,92px) - 1px),56.22vw);
   height:var(--hero-h);container-type:inline-size}
 /* イラストの上が切れた量＋余白。タイトルと付箋はこれより上に来ないようにする */
 .hero-art{--hero-safe-top:calc(56.22cqw - var(--hero-h) + 1.2vw)}

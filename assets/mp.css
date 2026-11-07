@@ -228,13 +228,17 @@ a{color:inherit}
 @media(max-width:860px){
   /* 絵の上に文字を置かず、絵の下に順番に並べる */
   /* 絵を画面いっぱいに出し、その上に文字を置く */
-  .hero-full{height:calc(100svh - 64px)}
+  /* 絵は、URLバーが隠れて画面がいちばん広くなったときに合わせる。
+     svh（バーが出ているとき）に合わせると、バーが縮んだ瞬間に
+     下へ白い帯が出てしまう。バーが出ているあいだは、下が少し隠れるだけ */
+  .hero-full{height:calc(100lvh - 64px)}
   .hero-full > picture img{object-position:50% 50%}
   /* 題字は空のところに収める。スマホ幅では今までどおり画面の84%、
      それより広い画面では大きくなりすぎないように、絵の空の高さに収まる幅で止める */
   .hero-ttl{left:6%;top:10%;width:min(84%,max(360px,44vw))}
   .hero-ttl::before{left:-16%;right:-12%;top:-18%;bottom:-14%}
-  .hero-go{left:7%;bottom:7%;min-width:160px}
+  /* 「活動を見る」は、バーが出ていても見えるように、隠れるぶんだけ上へ逃がす */
+  .hero-go{left:7%;bottom:calc(7% + 100lvh - 100svh);min-width:160px}
   .hero-wave{height:clamp(30px,8vw,56px)}
   .intro{padding:36px 0 40px}
   .intro .wrap{padding:0 22px}
