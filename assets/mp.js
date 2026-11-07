@@ -80,6 +80,23 @@
     setTimeout(ok, 8000);   /* 届かないときでも、待ちきりにしない */
   });
 
+  /* 開き直したときに、ブラウザは前の場所へ戻す。そこが2枚目や3枚目の途中だと、
+     1枚目から順に切り替わってしまい、絵がちらついて見える。
+     最初の描画より前に、いまの場所の絵を直に当てておく。
+     その絵の写真も、待たせずにすぐ読み込ませる。 */
+  (function(){
+    var mid = innerHeight / 2, at = -1;
+    for(var k = 0; k < trigs.length; k++){
+      if(trigs[k].getBoundingClientRect().top <= mid) at = k;
+    }
+    if(at <= 0) return;                       /* 1枚目から始まるなら、何もしない */
+    if(at >= slides.length){ box.classList.add('out'); at = slides.length - 1; }
+    else { slides.forEach(function(el, k){ el.classList.toggle('on', k === at); }); }
+    [].slice.call(slides[at].querySelectorAll('img')).forEach(function(im){
+      if(im.loading === 'lazy') im.loading = 'eager';
+    });
+  })();
+
   /* パネルが画面に入ったら、1枚目の文字を出す合図を立てる */
   var lit = new IntersectionObserver(function(list){
     /* ヒーローから渡ってくる画面では、渡し終わってから合図を立てる（下を見よ）。
