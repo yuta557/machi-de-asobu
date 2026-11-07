@@ -139,14 +139,16 @@ a{color:inherit}
     /* 白い面だけは、絵よりずっと下まで伸ばしておく。
        アプリ内ブラウザでは、下のバーのうしろにも中身が描かれることがあり、
        ぴったりだと、そこからうしろのAboutがのぞいてしまう。
-       ここは、どの環境でも同じに解釈される vh で測る */
-    --cover:calc(var(--h) + 60vh);
+       画面の高さの解釈はアプリによって違うので、ここは画面に頼らず、
+       そのままの長さ（px）で大きく伸ばす */
+    --cover:calc(var(--h) + 800px);
     --d:max(86svh,400px);
     /* 下をどこまで切ってよいか。狭い版は文字が下（67%）まであるので控えめに */
     --cap:1.40;
     height:calc(3 * var(--d))}
   /* ヘッダー（64px）の下に貼りつける。下の内容は、この白い面のうしろを上がってくる */
-  .stage{position:sticky;top:64px;height:var(--cover);overflow:hidden;background:#fff;
+  /* z-index は、あとに続くAboutより前に出すための保険（ヘッダーの60より下） */
+  .stage{position:sticky;top:64px;z-index:2;height:var(--cover);overflow:hidden;background:#fff;
     margin-bottom:calc(-1 * var(--cover))}
   /* 3枚目のあと。白い面ごと薄くすると、そのあいだ後ろのAboutが透けて、
      スクロール中は文字が動いて見える。
