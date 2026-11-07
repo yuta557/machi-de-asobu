@@ -80,13 +80,18 @@
     setTimeout(ok, 8000);   /* 届かないときでも、待ちきりにしない */
   });
 
-  /* 白い面は画面に貼りついているので、パネルの箱から離れたら引っ込める */
+  /* 白い面は画面に貼りついているので、パネルの箱から離れたら引っ込める。
+     スクロールのたびに位置を測ると、速く動かしたときに描画の足を引っぱって、
+     面の作り直しがおくれる。合図は1コマに1回だけに間引く */
+  var pend = false;
   function away(){
+    pend = false;
     var r = box.getBoundingClientRect();
     box.classList.toggle('away', r.bottom <= 64 || r.top >= innerHeight);
   }
-  addEventListener('scroll', away, { passive:true });
-  addEventListener('resize', away);
+  function away_soon(){ if(!pend){ pend = true; requestAnimationFrame(away); } }
+  addEventListener('scroll', away_soon, { passive:true });
+  addEventListener('resize', away_soon);
   away();
 
   /* 開き直したときに、ブラウザは前の場所へ戻す。そこが2枚目や3枚目の途中だと、

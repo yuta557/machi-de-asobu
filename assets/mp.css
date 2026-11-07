@@ -144,8 +144,14 @@ a{color:inherit}
      高さを計算で出すと、アプリ内ブラウザでは下のバーのうしろに届かず、
      そこからうしろのAboutがのぞいてしまう。
      上下を画面の縁で留めれば、どの環境でも必ず画面いっぱいを覆う。
+     さらに、上下とも画面の外まではみ出させておく。
+     速くスクロールするとURLバーが引っ込んで画面が広くなるが、
+     貼りついた面の作り直しはひと呼吸おくれるので、その隙に下の端から
+     うしろの文章がのぞく。はみ出させておけば、おくれても隙ができない。
+     上はヘッダー（z-index 60）がかぶるので、0 まで伸ばしても見た目は変わらない。
      中身は絵だけなので、指の操作は下へ通す（pointer-events:none） */
-  .stage{position:fixed;left:0;right:0;top:64px;bottom:0;z-index:2;
+  .stage{position:fixed;left:0;right:0;top:0;
+    bottom:calc(100svh - 100lvh - 25vh);z-index:2;
     overflow:hidden;background:#fff;pointer-events:none}
   /* パネルの箱が画面から外れているあいだは、白い面を出さない。
      合図が来ない環境でも消えないよう、既定は「出す」側にしてある */
@@ -171,7 +177,7 @@ a{color:inherit}
   .trig{display:block;height:var(--d)}
   /* 絵はいつもヘッダーのすぐ下から。余るぶんは下に置く。
      （真ん中ぞろえだと、URLバーが出ているときに絵が下へ押し下げられてしまう） */
-  .slide{position:absolute;left:0;right:0;top:0;height:var(--h);
+  .slide{position:absolute;left:0;right:0;top:64px;height:var(--h);
     display:grid;align-items:start}
   .p-wrap{position:relative;display:grid;width:100%}
   /* 画面の形で絵を選ぶための <picture> は、枠として数えない */
