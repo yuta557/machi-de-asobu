@@ -147,11 +147,14 @@ a{color:inherit}
   /* ヘッダー（64px）の下に貼りつける。下の内容は、この白い面のうしろを上がってくる */
   .stage{position:sticky;top:64px;height:var(--cover);overflow:hidden;background:#fff;
     margin-bottom:calc(-1 * var(--cover))}
-  /* 3枚目のあと、絵ごとすっと消して、うしろで待っている内容を見せる */
-  .panels.js .stage{transition:opacity .5s ease}
+  /* 3枚目のあと。白い面ごと薄くすると、そのあいだ後ろのAboutが透けて、
+     スクロール中は文字が動いて見える。
+     そこで、まず絵だけを白い面の上で消し、白い面はそのあと一息で引く。
+     戻るときは逆に、白い面を先に戻してから絵を出すので、透けない */
+  .panels.js .stage{transition:opacity .01s linear}
   /* ヒーローから渡ってくるあいだは、スクロールで直に濃さを決める */
   .panels.js .stage.fading{transition:none}
-  .panels.js.out .stage{opacity:0}
+  .panels.js.out .stage{opacity:0;transition-delay:.34s}
   /* 消えたあとは、すぐ内容が始まる */
   /* 絵が消えたあと、見出しが出るまでに少し間を置く。
      ここが詰まっていると、見出しがヘッダーに隠れた所で止まってしまい、
@@ -202,6 +205,8 @@ a{color:inherit}
     transition:opacity .45s ease .28s, transform .01s linear .75s}
   .panels.js .slide.on{opacity:1;transform:none;z-index:2;
     transition:opacity .5s cubic-bezier(.22,.61,.36,1), transform .6s cubic-bezier(.22,.61,.36,1)}
+  /* 最後は、絵だけが白い面の上で静かに消える */
+  .panels.js.out .slide{opacity:0;transition:opacity .34s ease}
 }
 /* 広い版は文字が上から56%までなので、もっと切っても大丈夫 */
 @media(max-width:560px) and (min-aspect-ratio:65/100){
