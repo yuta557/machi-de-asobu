@@ -80,6 +80,15 @@
     setTimeout(ok, 8000);   /* 届かないときでも、待ちきりにしない */
   });
 
+  /* 白い面は画面に貼りついているので、パネルの箱から離れたら引っ込める */
+  function away(){
+    var r = box.getBoundingClientRect();
+    box.classList.toggle('away', r.bottom <= 64 || r.top >= innerHeight);
+  }
+  addEventListener('scroll', away, { passive:true });
+  addEventListener('resize', away);
+  away();
+
   /* 開き直したときに、ブラウザは前の場所へ戻す。そこが2枚目や3枚目の途中だと、
      1枚目から順に切り替わってしまい、絵がちらついて見える。
      最初の描画より前に、いまの場所の絵を直に当てておく。
