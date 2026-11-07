@@ -87,7 +87,12 @@
   function away(){
     pend = false;
     var r = box.getBoundingClientRect();
-    box.classList.toggle('away', r.bottom <= 64 || r.top >= innerHeight);
+    var gone = r.bottom <= 64;
+    box.classList.toggle('away', gone || r.top >= innerHeight);
+    /* 絵の箱が上へ抜けたら、必ず「終わった」ことにする。
+       下の内容は絵が出ているあいだ描かない作りなので、
+       合図を取りこぼしても、消えたままにならないように */
+    if(gone) box.classList.add('out');
   }
   function away_soon(){ if(!pend){ pend = true; requestAnimationFrame(away); } }
   addEventListener('scroll', away_soon, { passive:true });
