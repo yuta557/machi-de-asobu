@@ -136,13 +136,17 @@ a{color:inherit}
        バーが出ているあいだは、そのぶん下が隠れるだけ（文字は上半分にある）。
        逆にすると、バーが隠れたときに下から次の内容がのぞいてしまう */
     --h:max(calc(100lvh - 64px),430px);
+    /* 白い面だけは、絵より160px下まで伸ばしておく。
+       URLバーが出入りする一瞬、画面の下がわずかに伸びることがあり、
+       ぴったりだと、うしろのAboutがのぞいてしまう */
+    --cover:calc(var(--h) + 160px);
     --d:max(86svh,400px);
     /* 下をどこまで切ってよいか。狭い版は文字が下（67%）まであるので控えめに */
     --cap:1.40;
     height:calc(3 * var(--d))}
   /* ヘッダー（64px）の下に貼りつける。下の内容は、この白い面のうしろを上がってくる */
-  .stage{position:sticky;top:64px;height:var(--h);overflow:hidden;background:#fff;
-    margin-bottom:calc(-1 * var(--h))}
+  .stage{position:sticky;top:64px;height:var(--cover);overflow:hidden;background:#fff;
+    margin-bottom:calc(-1 * var(--cover))}
   /* 3枚目のあと、絵ごとすっと消して、うしろで待っている内容を見せる */
   .panels.js .stage{transition:opacity .5s ease}
   /* ヒーローから渡ってくるあいだは、スクロールで直に濃さを決める */
