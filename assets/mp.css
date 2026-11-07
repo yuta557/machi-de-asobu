@@ -149,7 +149,10 @@ a{color:inherit}
   .panels.js .stage.fading{transition:none}
   .panels.js.out .stage{opacity:0}
   /* 消えたあとは、すぐ内容が始まる */
-  .panels + .sec{padding-top:clamp(18px,5vw,30px)}
+  /* 絵が消えたあと、見出しが出るまでに少し間を置く。
+     ここが詰まっていると、見出しがヘッダーに隠れた所で止まってしまい、
+     少し戻すと絵が出てきて、結局いちども全部見えない */
+  .panels + .sec{padding-top:clamp(64px,16vw,96px)}
   /* 入れ替えの目印。高さを食わないように浮かせて、画面の真ん中を横切らせる。
      上端を画面の半分ぶんずらしておくと、絵が貼りついた所がちょうど1枚目になる。
      ここは絵の面（lvh）と同じ基準にそろえる。svh のままだと、URLバーが縮んだとき
