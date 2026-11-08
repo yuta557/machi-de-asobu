@@ -80,24 +80,32 @@
     setTimeout(ok, 8000);   /* 届かないときでも、待ちきりにしない */
   });
 
-  /* 白い面は画面に貼りついているので、パネルの箱から離れたら引っ込める。
-     スクロールのたびに位置を測ると、速く動かしたときに描画の足を引っぱって、
-     面の作り直しがおくれる。合図は1コマに1回だけに間引く */
-  var pend = false;
-  function away(){
+  /* 見た目は、1コマに1回の計測ひとつで決める。
+     ・白い面を出すか引っ込めるか（away）
+     ・いま何枚目か（終わったか）
+     この二つを別々の見張りに任せると、速く動かしたときに合図が前後して、
+     絵も下の文章も出ていない――まっ白な――瞬間ができる。だからまとめて決める。
+     測るのは1コマに1回だけ。スクロールのたびに測ると描画の足を引っぱる */
+  var pend = false, at = -1;
+  function look(){
     pend = false;
     var r = box.getBoundingClientRect();
-    var gone = r.bottom <= 64;
+    var gone = r.bottom <= 64;                 /* 箱が上へ抜けた */
     box.classList.toggle('away', gone || r.top >= innerHeight);
-    /* 絵の箱が上へ抜けたら、必ず「終わった」ことにする。
-       下の内容は絵が出ているあいだ描かない作りなので、
-       合図を取りこぼしても、消えたままにならないように */
-    if(gone) box.classList.add('out');
+    /* 目印は箱のなかに同じ間隔で並んでいる。画面の中央がどこまで来たかを数える。
+       （見張りに任せず自分で数えるので、上へ戻るときも同じ順に切り替わる） */
+    var t0 = trigs[0].getBoundingClientRect().top;
+    var step = trigs[0].offsetHeight || innerHeight;
+    var i = Math.floor((innerHeight / 2 - t0) / step);
+    if(i < 0) i = 0;
+    /* 抜けたら必ず「終わった」ことにする。下の文章が、そこから描かれる */
+    if(gone || i > slides.length) i = slides.length;
+    if(i !== at){ at = i; show(i); }
   }
-  function away_soon(){ if(!pend){ pend = true; requestAnimationFrame(away); } }
-  addEventListener('scroll', away_soon, { passive:true });
-  addEventListener('resize', away_soon);
-  away();
+  function look_soon(){ if(!pend){ pend = true; requestAnimationFrame(look); } }
+  addEventListener('scroll', look_soon, { passive:true });
+  addEventListener('resize', look_soon);
+  addEventListener('load', look_soon);
 
   /* 開き直したときに、ブラウザは前の場所へ戻す。そこが2枚目や3枚目の途中だと、
      1枚目から順に切り替わってしまい、絵がちらついて見える。
@@ -130,6 +138,14 @@
   function show(i){
     /* 最後の目印まで来たら、絵ごとすっと消す。うしろで待っている内容が、上から出る */
     if(i >= slides.length){ box.classList.add('out'); return; }
+    if(box.classList.contains('out')){
+      /* 上へ戻ってきたところ。消してあった絵を、待たせずにその場で戻す。
+         ふわりと戻すと、濃さが上がりきるまで白いだけの画面になる */
+      box.classList.add('snap');
+      box.classList.remove('out');
+      void box.offsetWidth;                 /* いまの濃さを、その場で確定させる */
+      requestAnimationFrame(function(){ box.classList.remove('snap'); });
+    }
     box.classList.remove('out');
     slides.forEach(function(el, k){
       var now = (k === i);
@@ -144,10 +160,7 @@
       el.classList.toggle('on', now);
     });
   }
-  var io = new IntersectionObserver(function(list){
-    list.forEach(function(e){ if(e.isIntersecting) show(trigs.indexOf(e.target)); });
-  }, { rootMargin: '-50% 0px -50% 0px', threshold: 0 });
-  trigs.forEach(function(t){ io.observe(t); });
+  look();
 })();
 /* スマホ：ヒーローから1枚目の絵へ、うつり変わるところ。
    そのまま上がってくると固いので、ヒーローを薄くしながら、1枚目を濃くして渡す。

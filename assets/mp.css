@@ -152,10 +152,11 @@ a{color:inherit}
   /* 絵が出ているあいだ、すぐ下の内容は描かない。
      白い面がどこまで描かれるかはブラウザまかせで、画面の下端に届かないことがある。
      覆って隠すかわりに、そこに描くものを無くしておけば、破れても白紙しか見えない。
-     戻すのは、白い面が引くのと同じ瞬間（0.34秒後）。
-     逆に、上へ戻って絵が出るときは、待たずにすぐ消す */
-  .panels.js + .sec{opacity:0;transition:opacity 0s linear 0s}
-  .panels.js.out + .sec{opacity:1;transition:opacity 0s linear .34s}
+     描かないのは、絵がほんとうに画面をおおっているあいだだけ。
+     絵が終わった（out）か、箱から離れた（away）ら、その瞬間から描く。
+     少しでも待たせると、絵も文章も出ていない――まっ白な――瞬間ができる */
+  .panels.js + .sec{visibility:hidden}
+  .panels.js.out + .sec,.panels.js.away + .sec{visibility:visible}
   /* パネルの箱が画面から外れているあいだは、白い面を出さない。
      合図が来ない環境でも消えないよう、既定は「出す」側にしてある */
   .panels.js.away .stage{visibility:hidden}
@@ -219,6 +220,9 @@ a{color:inherit}
     transition:opacity .5s cubic-bezier(.22,.61,.36,1), transform .6s cubic-bezier(.22,.61,.36,1)}
   /* 最後は、絵だけが白い面の上で静かに消える */
   .panels.js.out .slide{opacity:0;transition:opacity .34s ease}
+  /* 上へ戻って絵がよみがえるときは、ふわりとさせない。
+     濃さが上がりきるまでのあいだ、白いだけの画面になってしまう */
+  .panels.js.snap .stage,.panels.js.snap .slide,.panels.js.snap .p-tx{transition:none}
 }
 /* 広い版は文字が上から56%までなので、もっと切っても大丈夫 */
 @media(max-width:560px) and (min-aspect-ratio:65/100){
