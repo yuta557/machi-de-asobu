@@ -222,11 +222,15 @@
 (function(){
   var b = document.querySelector('.burger'), n = document.getElementById('navlinks');
   if(!b || !n) return;
-  function close(){ b.setAttribute('aria-expanded','false'); n.classList.remove('open'); }
+  /* 開いているあいだ、ヘッダーも透かさない白にするための合図 */
+  var bar = document.querySelector('.nav');
+  function mark(on){ if(bar) bar.classList.toggle('menu', on); }
+  function close(){ b.setAttribute('aria-expanded','false'); n.classList.remove('open'); mark(false); }
   b.addEventListener('click', function(){
     var open = b.getAttribute('aria-expanded') === 'true';
     b.setAttribute('aria-expanded', String(!open));
     n.classList.toggle('open', !open);
+    mark(!open);
   });
   n.addEventListener('click', function(e){ if(e.target.tagName === 'A') close(); });
   addEventListener('resize', function(){ if(innerWidth > 860) close(); });

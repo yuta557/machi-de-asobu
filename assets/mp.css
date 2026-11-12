@@ -43,14 +43,19 @@ a{color:inherit}
   .nav-in{padding:0 20px;height:64px} .brand img{height:42px} .brand b{font-size:20px}
   .brand{gap:13px}
   .burger{display:flex}
+  /* メニューの板は、後ろを透かさない。うっすら絵や文字が見えると読みにくい。
+     ぼかしも使わない（下の絵が薄く残って見えるのは同じこと） */
   .nav-links{position:fixed;left:0;right:0;top:64px;margin:0;z-index:59;
-    flex-direction:column;align-items:stretch;gap:0;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);
+    flex-direction:column;align-items:stretch;gap:0;background:#fff;
     border-top:1px solid var(--line);font-size:15.5px;
     max-height:0;overflow:hidden;transition:max-height .25s ease}
   /* 画面が低い機種でも、5項目が切れないように。
      それでも入らないときは、中で動かせるようにしておく */
   .nav-links.open{max-height:calc(100svh - 64px);overflow-y:auto}
   .nav-links a{padding:17px 22px;border-bottom:1px solid var(--line);font-weight:700}
+  /* 開いているあいだは、ヘッダーも同じ白にする。
+     板だけ白くすると、上のヘッダーだけ後ろが透けて、つなぎ目が出る */
+  .nav.menu{background:#fff;backdrop-filter:none;-webkit-backdrop-filter:none}
 }
 
 /* ヒーロー：イラストはそのまま全面に置き、文字を上にのせる */
