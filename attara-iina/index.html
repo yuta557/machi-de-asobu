@@ -1790,8 +1790,8 @@ GAMES.stairs = root => {
     ctx.drawImage(kidOk ? STAIRS_BG : STAIRS_UI, 0, 0, W, H);
     // 絵の文字のまちがい（「ぶむ」「ぶんで」）を、「ふむ」「ふんで」に書きなおす
     ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
-    ctx.fillStyle = '#fefefe'; ctx.fillRect(168, 722, 238, 54); ctx.fillStyle = '#653d1b'; ctx.font = '900 41px "Zen Maru Gothic", sans-serif'; ctx.fillText('じゅうにふむ', 174, 750, 226);
-    ctx.fillStyle = '#fff'; ctx.fillRect(1332, 46, 296, 44); ctx.fillStyle = '#1d559c'; ctx.font = '800 30px "Zen Maru Gothic", sans-serif'; ctx.fillText('じゅうにふんでみよう', 1338, 69, 282);
+    ctx.fillStyle = '#fefefe'; ctx.fillRect(168, 722, 238, 54); ctx.fillStyle = '#653d1b'; ctx.font = '900 36px "Zen Maru Gothic", sans-serif'; ctx.letterSpacing = '3px'; ctx.fillText('じゆうにふむ', 176, 750, 228); ctx.letterSpacing = '0px'; // 文字がつまらないように、少し小さくして間をあける
+    ctx.fillStyle = '#fff'; ctx.fillRect(1332, 46, 296, 44); ctx.fillStyle = '#1d559c'; ctx.font = '800 30px "Zen Maru Gothic", sans-serif'; ctx.fillText('じゆうにふんでみよう', 1338, 69, 282);
     ctx.textBaseline = 'alphabetic';
     const tgt = mode === 'song' && !demo && song && idx < song.seq.length ? song.seq[idx] : -1;
     for (let i = 0; i < 8; i++){ const s = step(i), [x0, y0, x1, y1] = STEPS[i];
