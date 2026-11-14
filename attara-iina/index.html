@@ -2376,6 +2376,8 @@ function drawRabbit(ctx, x, y, n, o = {}){
 }
 
 /* --- まちゲーム：バス停の茶畑でつんだ宇治茶を、うさぎにあげて育てる --- */
+// バス停のQRコード（25×25。machi-play.com/attara-iina/ 、誤り訂正L。https:// をはぶいて、小さくしている）
+const BUS_QR_N = 25, BUS_QR = '1111111000101010101111111100000101010001100100000110111010000010011010111011011101011101111101011101101110100100000010101110110000010110110011010000011111111010101010101111111000000000111001100000000011111011110111110101010100010010100101010110101000111001101010010110010011100001000100100001110000111101011001111110001011101111100000001100000010110010110010011000011100010111000000111001011100110011100100110000110011111111000000000110101011000111001111111010101010101010011100000100001001010001101010111010110111111111111001011101011010100111010111101110101100000010010000110000010110010111010000011111111010011110010000111';
 // おやつの絵：抹茶・抹茶ソフト・抹茶だんご（1コマ 300×300）
 const TEA_TREATS = new Image(); TEA_TREATS.src = 'tea-treats.png';
 const TEA_JAR = new Image(); TEA_JAR.src = 'tea-jar.png'; // スペシャルアイテム：金の茶つぼ
@@ -2387,6 +2389,15 @@ const TEA_BUS = new Image(); TEA_BUS.src = 'tea-bus.png';
 GAMES.game = root => {
   const g = shell(root, 'バスが来るまでに、うさぎにお茶をあげよう', '新芽をおすと、うさぎが食べて大きくなる。10こごとに抹茶のおやつ。虫はおさないでね。');
   const { ctx, W, H, cv, pt } = mkCanvas(g.stage, 640, 340);
+  // バス停のQRコードは、絵の上にSVGでかさねる（キャンバスは小さくするとぼやけて、読みこめないため）
+  { let d = ''; for (let r = 0; r < BUS_QR_N; r++) for (let c = 0; c < BUS_QR_N; c++) if (BUS_QR[r * BUS_QR_N + c] === '1') d += `M${c + 1} ${r + 1}h1v1h-1z`;
+    const qr = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); qr.setAttribute('viewBox', `0 0 ${BUS_QR_N + 2} ${BUS_QR_N + 2}`); qr.setAttribute('shape-rendering', 'crispEdges'); qr.setAttribute('aria-hidden', 'true');
+    qr.innerHTML = `<rect width="${BUS_QR_N + 2}" height="${BUS_QR_N + 2}" fill="#fff"/><path d="${d}" fill="#000"/>`;
+    qr.style.cssText = 'position:absolute;pointer-events:none';
+    g.stage.insertBefore(qr, g.stage.querySelector('.gover')); // 説明カードより下に
+    // 背景の絵の看板にある白い四角（542.4, 57.5 から 33.4×33.4）を、まるごとおおう（絵にもとからあるQRのような模様を、かくす）
+    const fit = () => { const k = cv.offsetWidth / 640; Object.assign(qr.style, { left: cv.offsetLeft + 542.2 * k + 'px', top: cv.offsetTop + 57.4 * k + 'px', width: 33.8 * k + 'px', height: 33.8 * k + 'px' }); };
+    fit(); const ro = new ResizeObserver(fit); ro.observe(cv); onClean(() => ro.disconnect()); }
   const LEVELS = [[0, 'あかちゃん'], [20, 'こども'], [50, 'おにいさん'], [100, 'おとな'], [160, '茶うさぎ名人']];
   let save = { total: 0, visits: 0 }; try { save = JSON.parse(localStorage.getItem('uji-tea-save')) || save; } catch(e){}
   save.leaves = save.leaves || 0;
@@ -2401,7 +2412,14 @@ GAMES.game = root => {
   const grown = () => save.total + (state === 'play' ? fed : 0);
   let shownLv = 0;
   function begin(){ shownLv = levelOf(save.total); save.visits++; persist(); t = 25; fed = 0; picks = 0; treats = []; treatsToday = 0; cut = null; sadT = 0; bugsEaten = 0; shoots = []; bugs = []; pops = []; flies = []; state = 'play'; }
-  cv.onpointerdown = e => { if (state !== 'play' || cut || sadT > 0) return; const [x, y] = pt(e);
+  // うさぎをさわると、ぴょんとはねて、ひとこと（いつでも）
+  const PET = ['くすぐったい！', 'ぴょん！', 'なでなで、うれしい♪', 'お茶、もっとちょうだい', 'ふわふわでしょ？', 'えへへ'];
+  let petAt = 0, petN = 0;
+  function pet(){ const now = performance.now(); if (now - petAt < 350) return; petAt = now;
+    hop = 1; happy = Math.max(happy, .8); tone(FREQ[(petN * 3) % 8] * 2, 0, .1, 'sine', .09); tone(FREQ[(petN * 3 + 2) % 8] * 2, .08, .12, 'sine', .07);
+    pops.push({ x: RB.x, y: RB.y - 140, txt: PET[petN++ % PET.length], a: 1.2, c: '#e85b8f' }); }
+  cv.onpointerdown = e => { { const [px, py] = pt(e); if (px > FIELD + 20 && Math.abs(px - RB.x) < 70 && py > RB.y - 150 && py < RB.y + 20 && !(sadT > 0)){ pet(); return; } }
+    if (state !== 'play' || cut || sadT > 0) return; const [x, y] = pt(e);
     // 虫をおすと、うさぎが虫を食べちゃう：マイナスで、しばらくつめない
     // 虫は新芽の近くに出るので、指に近いほうをえらぶ（新芽をおしたのに虫を食べた、とならないように）
     const near = (list, dist, r) => list.map(o => [o, dist(o)]).filter(p => p[1] < r(p[0])).sort((p, q) => p[1] - q[1])[0];
@@ -2480,7 +2498,7 @@ GAMES.game = root => {
     ctx.fillStyle = '#a9cf8a'; ctx.beginPath(); ctx.moveTo(0, 104); ctx.quadraticCurveTo(200, 60, 360, 96); ctx.quadraticCurveTo(520, 70, 640, 100); ctx.lineTo(640, 110); ctx.lineTo(0, 110); ctx.fill();
     ctx.fillStyle = '#a9a6ae'; ctx.fillRect(0, 96, W, 22);
     ctx.fillStyle = '#dfe7ef'; ctx.fillRect(540, 50, 70, 50); ctx.fillStyle = '#2e7fd0'; ctx.fillRect(532, 44, 86, 8);
-    ctx.fillStyle = '#fff'; ctx.fillRect(552, 60, 26, 26); ctx.fillStyle = '#2b2a30'; for (let i = 0; i < 5; i++) for (let j = 0; j < 5; j++) if ('1110110101011101010111011'[i * 5 + j] === '1') ctx.fillRect(554 + i * 4.4, 62 + j * 4.4, 4.4, 4.4);
+    // バス停のQRコードは、キャンバスの上にかさねたSVG（下の qr）で出す
     ctx.fillStyle = '#2e7fd0'; ctx.font = '700 10px "Zen Maru Gothic", sans-serif'; ctx.fillText('宇治茶', 582, 72); ctx.fillText('育成', 582, 84);
     ctx.fillStyle = '#f2b630'; rr(ctx, bx, 70, 120, 38, 8); ctx.fill(); ctx.fillStyle = '#e8f4fb'; for (let k = 0; k < 4; k++) ctx.fillRect(bx + 10 + k * 26, 78, 20, 12);
     ctx.fillStyle = '#3a3330'; ctx.beginPath(); ctx.arc(bx + 26, 108, 7, 0, 7); ctx.arc(bx + 96, 108, 7, 0, 7); ctx.fill();
@@ -2563,7 +2581,7 @@ GAMES.ar = root => {
     step = 0; ticket = 0; now = Math.floor(rnd(14, 20)); boardC = 1 + Math.floor(Math.random() * 4); miss = 0; called = false; waiting = false; needHelp = false; t0 = performance.now(); render(); }
   const TALK = ['まずは、入口の「番号札」をとってね！', '次は記入台で用紙を書こう。手つづきは2つだよ。',
     () => called ? `あなたの番号！ ${m.first}番窓口へ、急いで！` : '電光板を見て、自分の番号を待とう。', '窓口の人の質問に答えよう。', () => `次は ${m.second}番窓口だよ。こっちこっち！`];
-  function say(){ const s = TALK[step]; return typeof s === 'function' ? s() : s; }
+  function say(){ const s = TALK[step]; return typeof s === 'function' ? s() : s || ''; } // クリアのあと（step 5）は、なにも言わない
   function render(){ g.stat(`ステップ <b>${stepNo()}</b> / 4　まちがい ${miss}`); }
   const stepNo = () => step <= 1 ? step + 1 : step <= 2 ? 3 : 4;
   cv.onpointerdown = e => { const [x, y] = pt(e);
@@ -2577,16 +2595,16 @@ GAMES.ar = root => {
     const gl = glasses(); ctx.drawImage(AR_UI, 0, 0, W, H);
     // 右上：ステップとまちがい
     ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(1210, 72, 25, 0, 7); ctx.fill(); ctx.fillStyle = '#1f6fd6'; ctx.beginPath(); ctx.arc(1210, 72, 22, 0, 7); ctx.fill(); txt(String(stepNo()), 1210, 74, 30, '#fff', 'center');
-    ctx.fillStyle = '#fff'; rr(ctx, 1415, 50, 40, 46, 10); ctx.fill(); txt(String(miss), 1435, 74, 30, '#25324d', 'center');
+    ctx.fillStyle = '#fff'; rr(ctx, 1415, 50, 40, 46, 10); ctx.fill(); txt(miss != null ? String(miss) : '', 1435, 74, 30, '#25324d', 'center');
     // ミッションの文
-    ctx.fillStyle = '#fefdf9'; ctx.fillRect(340, 152, 1080, 72); txt(m.title, 356, 189, 40, '#25324d', 'left', 1060);
+    ctx.fillStyle = '#fefdf9'; ctx.fillRect(340, 152, 1080, 72); if (m) txt(m.title, 356, 189, 40, '#25324d', 'left', 1060);
     // 番号札：とったら、絵のとおり（青いわく・チェック）。まだなら、ふつうのカード
     if (!ticket){ const [x0, y0, x1, y1] = A.ticket; ctx.fillStyle = '#fbfaf5'; ctx.fillRect(x0 - 4, y0 - 4, x1 - x0 + 8, y1 - y0 + 8); ctx.drawImage(AR_UI, 538, 252, 442, 200, x0, y0, x1 - x0, y1 - y0); ctx.fillStyle = '#fdfbf7'; rr(ctx, x0 + 10, y0 + 10, x1 - x0 - 20, y1 - y0 - 22, 18); ctx.fill(); if (ok(AR_TICKET)) ctx.drawImage(AR_TICKET, 150, 258); }
     else { ctx.fillStyle = '#eaf6fd'; ctx.fillRect(240, 402, 140, 40); txt(`あなたは ${ticket}番`, 285, 421, 28, '#25324d', 'center'); }
     // 記入台：書けたら「書けた！」とチェック
     if (step > 1){ ctx.fillStyle = '#fdfbf7'; ctx.fillRect(670, 402, 180, 40); txt('書けた！', 759, 421, 28, '#25324d', 'center'); if (ok(AR_CHECK)) ctx.drawImage(AR_CHECK, 905, 262); }
     // 呼び出し中の番号
-    ctx.fillStyle = '#223152'; ctx.fillRect(1120, 326, 226, 110); txt(String(now), 1233, 362, 70, '#ffd21f', 'center'); txt(`${boardC}番窓口へ`, 1233, 418, 30, '#ffffff', 'center');
+    ctx.fillStyle = '#223152'; ctx.fillRect(1120, 326, 226, 110); if (now != null){ txt(String(now), 1233, 362, 70, '#ffd21f', 'center'); txt(`${boardC}番窓口へ`, 1233, 418, 30, '#ffffff', 'center'); }
     if (called) txt(`あと ${Math.ceil(callT)}びょう`, 1390, 290, 24, '#ffd21f', 'center');
     // メガネをかけていないときは、やさしい説明と小動物は見えない
     if (!gl){ [A.c1, A.c2, A.c3, A.c4].forEach(([x0, , x1]) => { ctx.fillStyle = '#fafcfe'; ctx.fillRect(x0 + 10, 652, x1 - x0 - 20, 70); });
