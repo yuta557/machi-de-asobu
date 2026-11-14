@@ -1642,9 +1642,9 @@ GAMES.cloud = root => {
   onKey((e, d) => { if (e.key.startsWith('Arrow')){ keys[e.key] = d; e.preventDefault(); if (d) target = null; } });
   function confetti(n){ for (let i = 0; i < n; i++) paper.push({ x: rnd(0, W), y: rnd(-120, -6), vx: rnd(-24, 24), vy: rnd(50, 130), r: rnd(0, 6), vr: rnd(-7, 7), s: rnd(5, 10), c: ['#e4362b', '#f2b630', '#2f9a48', '#2e7fd0', '#7d55c7', '#ee7a1c', '#d4417f'][i % 7] }); }
   // 称号（つかまえた回数で決まる）と、つぎへのひとこと
-  const TITLES = [[30, '雲の上のでんせつのおに', 'すごすぎる！ 雲の上で、いちばんのおにだ！'], [25, '雲の上のかみなりおに', 'あとすこしで、でんせつのおに！'], [20, '雲の上のスーパーおに', 'とってもはやい！ 25回をめざそう。'],
-    [15, '雲の上のはやてのおに', 'すみに追いこむと、もっとつかまえられるよ。'], [10, '雲の上のおにごっこ名人', 'いいね！ 15回をめざそう。'], [5, '雲の上のかけだしおに', 'すみに追いこむと、もっとつかまえられるよ。'],
-    [1, '雲の上のおにのたまご', '雲のはしっこに追いつめてみよう。'], [0, '雲の上のおさんぽおに', 'みんなに近づいて、タッチしてみよう。']];
+  const TITLES = [[30, 'でんせつのおに', 'すごすぎる！雲の上で、いちばんのおにだ！'], [25, 'かみなりおに', 'あとすこしで、でんせつのおに！'], [20, 'スーパーおに', 'とってもはやい！25回をめざそう。'],
+    [15, 'はやてのおに', 'すばやい動きで、みんなを追いつめよう！'], [10, 'おにごっこ名人', 'いいね！15回をめざそう。'], [5, 'かけだしおに', 'いい調子！もっとみんなを捕まえよう。'],
+    [1, 'おにのたまご', 'まだまだこれから！みんなをたくさん追いかけよう！'], [0, 'おさんぽおに', 'みんなに近づいて、タッチしてみよう。']];
   function showResult(){ const [, title, tip] = TITLES.find(([n]) => tags >= n);
     g.over(`<div class="tagres"><span class="tagnum">0</span><span class="tagunit">回タッチ！</span></div><p class="tagrank">称号：${title}！</p><p class="tagtip">${tip}</p>`, 'もう一度', start);
     counter = { el: root.querySelector('.tagnum'), t: 0, d: Math.min(1.4, .3 + tags * .05), n: 0 }; }
@@ -1678,6 +1678,8 @@ GAMES.cloud = root => {
         const dx = k.x - me.x, dy = k.y - me.y, d = Math.hypot(dx, dy) || 1;
         k.wa += rnd(-2, 2) * dt; let fx = Math.cos(k.wa) * 45, fy = Math.sin(k.wa) * 45;
         if (d < 140){ const f = 360 * (1 - d / 140); fx += dx / d * f; fy += dy / d * f; }
+        // ほかの子とも、はなれる（重なっておどらないように。横に長い楕円で見る）
+        kids.forEach(o => { if (o === k) return; const ox = (k.x - o.x) / 70, oy = (k.y - o.y) / 42, od = Math.hypot(ox, oy); if (od < 1.3){ const f = 260 * (1.3 - od) / 1.3, u = od || .01; fx += ox / u * f; fy += oy / u * f * .6; } });
         const ex = (k.x - CX) / RX, ey = (k.y - CY) / RY, e2 = ex * ex + ey * ey; if (e2 > .6){ fx -= ex * 900 * (e2 - .6); fy -= ey * 900 * (e2 - .6); }
         k.vx += (fx - k.vx) * Math.min(1, 5 * dt); k.vy += (fy - k.vy) * Math.min(1, 5 * dt);
         const s = Math.hypot(k.vx, k.vy), max = 115; if (s > max){ k.vx *= max / s; k.vy *= max / s; }
@@ -1685,8 +1687,12 @@ GAMES.cloud = root => {
         k.safe = Math.max(0, k.safe - dt);
         if (Math.abs(k.vx) > 12) k.face = Math.sign(k.vx);
         if (d < 34 && k.safe === 0){ tags++; k.safe = .8; chord([2, 4, 7], 2, .04); pops.push({ x: k.x, y: k.y - 50, a: 1 });
-          const a = rnd(0, 6.28); k.x = CX + Math.cos(a) * RX * .75; k.y = CY + Math.sin(a) * RY * .75; }
+          // 出なおす場所は、ほかの子と重ならないところ
+          let best = null; for (let i = 0; i < 12; i++){ const a = rnd(0, 6.28), px = CX + Math.cos(a) * RX * .75, py = CY + Math.sin(a) * RY * .75, gap = Math.min(...kids.filter(o => o !== k).map(o => Math.hypot((px - o.x) / 70, (py - o.y) / 42))); if (!best || gap > best[2]) best = [px, py, gap]; }
+          k.x = best[0]; k.y = best[1]; }
       });
+      // それでも重なっていたら、少しずつおしあう
+      for (let i = 0; i < kids.length; i++) for (let j = i + 1; j < kids.length; j++){ const a = kids[i], b = kids[j], ox = (a.x - b.x) / 62, oy = (a.y - b.y) / 36, od = Math.hypot(ox, oy); if (od < 1){ const u = od || .01, m = (1 - od) * .5; a.x += ox / u * m * 62 * .5; a.y += oy / u * m * 36 * .5; b.x -= ox / u * m * 62 * .5; b.y -= oy / u * m * 36 * .5; } }
       g.stat(`のこり <b>${Math.ceil(t)}</b>秒`);  // タッチの回数は、さいごの発表まで見せない
     }
     if (state === 'ready') dance += dt * 2.2; // ゲームがおわったら、おどるのをやめて止まる
@@ -2002,7 +2008,9 @@ GAMES.glass = root => {
       // 歩く：右向きの6コマを、じゅんばんに
       cell(13 + Math.floor(step * 10 / 6) % 6, shake);
     }
-    const say = msgT > 0 ? msg : wow ? 'わぁ…' : state === 'over' ? 'こわかったけど、楽しかった！' : '';
+    // ガラスの上で止まっているときのひとこと：止まっているあいだ、少しずつかわる（ドキドキが高いと、こわがることばが多め）
+    const WOW = doki > 60 ? ['ドキドキ…', 'たかい…！', '足がふるえる…', 'わぁ…'] : ['わぁ…', 'ドキドキ…', '車が下を通ってる！', 'すごい、まる見え！'];
+    const say = msgT > 0 ? msg : wow ? WOW[Math.floor(Math.max(0, stopT - .6) / 1.6) % WOW.length] : state === 'over' ? 'こわかったけど、楽しかった！' : '';
     if (say){
       ctx.font = '800 30px "Zen Maru Gothic", sans-serif';
       const bw = Math.ceil(ctx.measureText(say).width) + 48, bh = 56, bx = Math.min(W - bw - 20, x + 30), by = Y0 - 20;
