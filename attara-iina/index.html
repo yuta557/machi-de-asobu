@@ -208,6 +208,12 @@ canvas.wb{width:100%;height:210px;background:#fff;border:2px solid #cfc8c2;borde
 .divedemo{display:block;width:clamp(190px,52cqh,240px);height:auto}
 .gcard:has(.divedemo){animation:cardpop .3s ease-out}
 .gcard p.tagrank{font-size:15px;font-weight:900;color:var(--c)}
+/* 称号は、回数がきまってから、ぽんと出す */
+.gcard p.tagrank,.gcard p.tagtip{visibility:hidden}
+.gcard.ranked p.tagrank{visibility:visible;animation:rankpop .45s cubic-bezier(.3,1.6,.5,1)}
+.gcard.ranked p.tagtip{visibility:visible;animation:cardpop .4s .25s ease-out both}
+.gcard p.tagtip{font-size:12.5px;color:var(--muted)}
+@keyframes rankpop{from{transform:scale(.4);opacity:0}}
 .gcard p b{color:var(--c);font-size:16px}
 .ghelp{font-size:12.5px;color:var(--muted);margin:0;line-height:1.6}
 .btn.hold{touch-action:none;user-select:none;-webkit-user-select:none}
@@ -878,6 +884,7 @@ const GAMES = {};
 const KID_FRAMES = [[2,2,143,184,51.4,1.03],[147,2,154,179,67.0,1.03],[303,2,159,181,67.5,1.03],[464,2,153,181,66.9,1.03],[619,2,145,181,60.0,1.03],[303,2,159,181,67.5,1.03],[1299,2,129,241,69.8,1.051],[766,2,143,173,52.2,1.071],[911,2,144,156,61.0,1.071],[1057,2,101,222,47.8,1.154],[1057,2,101,222,47.8,1.154],[1430,2,133,242,54.2,1.051],[1057,2,101,222,47.8,1.154],[2,246,224,260,69.7,1.061],[1299,2,129,241,69.8,1.051],[1430,2,133,242,54.2,1.051],[1565,2,118,157,47.3,1.174],[1685,2,139,176,64.6,1.051],[228,246,138,161,64.0,1.092],[1826,2,148,162,61.9,1.092],[501,246,132,164,53.3,1.112],[635,246,122,178,57.6,1.112],[759,246,105,174,43.2,1.112],[1423,246,134,157,56.7,1.133],[1559,246,129,157,53.0,1.133]];
 const KID_IMG = new Image(); KID_IMG.src = 'badminton-kid.png';
 // 相手（赤い子）の絵：もらった赤い子の表を切りぬいたもの。右向きのコマは左右反転して、全部左（ネットのほう）を向いている。番号の動きは青い子と同じ
+KID_FRAMES[16] = KID_FRAMES[17]; // 青い子の16のコマは、絵に足がないので、ふりおわりのコマを使う
 const RED_FRAMES = [[2,2,132,176,80.6,1.06],[136,2,142,176,83.6,1.06],[280,2,142,175,85.0,1.06],[424,2,145,175,86.0,1.06],[571,2,139,175,83.9,1.06],[712,2,111,174,73.0,1.06],[1361,2,126,242,58.9,1.081],[825,2,144,167,87.5,1.102],[971,2,144,158,81.2,1.102],[1117,2,98,216,54.0,1.187],[1117,2,98,216,54.0,1.187],[1489,2,136,246,79.3,1.081],[1117,2,98,216,54.0,1.187],[2,250,212,236,142.9,1.092],[1361,2,126,242,58.9,1.081],[1489,2,136,246,79.3,1.081],[1627,2,125,198,70.3,1.081],[1754,2,140,174,70.4,1.081],[216,250,141,162,73.8,1.124],[1896,2,148,162,82.1,1.124],[500,250,128,163,69.4,1.145],[630,250,123,176,64.6,1.145],[755,250,106,174,57.4,1.145],[1387,250,133,157,73.1,1.166],[1522,250,149,191,87.6,1.166]];
 const RED_IMG = new Image(); RED_IMG.src = 'badminton-kid-red.png'; // 赤い子も、パネルごとに大きさがちがうので、顔の大きさで補正
 let KID_RED = null; // 相手用：シャツとくつを赤にした絵（ショートパンツの紺はそのまま）
@@ -1440,7 +1447,6 @@ GAMES.badminton = root => {
     }
     // ふわふわのゆか（へこむ）
     puffs.forEach(p => { ctx.globalAlpha = p.a; puff(ctx, p.x - 16, SY(floorAt(p.x)) + 2, 7); puff(ctx, p.x + 16, SY(floorAt(p.x)) + 2, 7); }); ctx.globalAlpha = 1;
-    if (dents.length){ ctx.strokeStyle = 'rgba(46,127,208,.18)'; ctx.lineWidth = 2; ctx.beginPath(); for (let x = 24; x <= W - 24; x += 8){ const y = SY(floorAt(x)) + 4; x === 24 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); } ctx.stroke(); }
     ctx.fillStyle = 'rgba(46,127,208,.12)'; ctx.fillRect(24, SY(HITY - SMASH_H) - 2, NET - MARGIN - 24, 2);
     ctx.fillStyle = 'rgba(46,127,208,.35)'; ctx.font = '700 10px "Zen Maru Gothic", sans-serif'; ctx.fillText('ここより上でスマッシュ', 28, SY(HITY - SMASH_H) - 6);
     if (!useImg()){
@@ -1578,6 +1584,8 @@ GAMES.badminton = root => {
 // 0 赤いぼうし（おに）・1 青・2 緑・3 オレンジ・4 むらさき・5 黄色・6 赤いぼうしが走る（おにが動くとき）
 const CLOUD_KIDS = new Image(); CLOUD_KIDS.src = 'cloud-kids.png';
 let cloudLastSong = -1; // 開きなおしても、同じ曲が続かないように
+// 鬼ごっこの曲（MusMus のフリーBGM）。読みこめないときは、これまでの手作りの曲
+const CLOUD_BGM = new Audio('cloud-bgm.mp3'); CLOUD_BGM.loop = true; CLOUD_BGM.preload = 'auto';
 GAMES.cloud = root => {
   const g = shell(root, '雲の上で、音楽にあわせておにごっこ', 'おしたところへ走って、にげる子にタッチ！');
   const { ctx, W, H, cv, pt } = mkCanvas(g.stage, 640, 360);
@@ -1633,19 +1641,31 @@ GAMES.cloud = root => {
   cv.onpointerleave = () => { target = null; };
   onKey((e, d) => { if (e.key.startsWith('Arrow')){ keys[e.key] = d; e.preventDefault(); if (d) target = null; } });
   function confetti(n){ for (let i = 0; i < n; i++) paper.push({ x: rnd(0, W), y: rnd(-120, -6), vx: rnd(-24, 24), vy: rnd(50, 130), r: rnd(0, 6), vr: rnd(-7, 7), s: rnd(5, 10), c: ['#e4362b', '#f2b630', '#2f9a48', '#2e7fd0', '#7d55c7', '#ee7a1c', '#d4417f'][i % 7] }); }
-  function showResult(){ const rank = tags >= 20 ? '雲の上のスーパーおに！' : tags >= 10 ? '雲の上のおにごっこ名人！' : tags >= 5 ? 'いいね！ すみに追いこむと、もっとつかまえられるよ。' : '雲のはしっこに追いつめてみよう。';
-    g.over(`<div class="tagres"><span class="tagnum">0</span><span class="tagunit">回タッチ！</span></div><p class="tagrank">${rank}</p>`, 'もう一度', start);
+  // 称号（つかまえた回数で決まる）と、つぎへのひとこと
+  const TITLES = [[30, '雲の上のでんせつのおに', 'すごすぎる！ 雲の上で、いちばんのおにだ！'], [25, '雲の上のかみなりおに', 'あとすこしで、でんせつのおに！'], [20, '雲の上のスーパーおに', 'とってもはやい！ 25回をめざそう。'],
+    [15, '雲の上のはやてのおに', 'すみに追いこむと、もっとつかまえられるよ。'], [10, '雲の上のおにごっこ名人', 'いいね！ 15回をめざそう。'], [5, '雲の上のかけだしおに', 'すみに追いこむと、もっとつかまえられるよ。'],
+    [1, '雲の上のおにのたまご', '雲のはしっこに追いつめてみよう。'], [0, '雲の上のおさんぽおに', 'みんなに近づいて、タッチしてみよう。']];
+  function showResult(){ const [, title, tip] = TITLES.find(([n]) => tags >= n);
+    g.over(`<div class="tagres"><span class="tagnum">0</span><span class="tagunit">回タッチ！</span></div><p class="tagrank">称号：${title}！</p><p class="tagtip">${tip}</p>`, 'もう一度', start);
     counter = { el: root.querySelector('.tagnum'), t: 0, d: Math.min(1.4, .3 + tags * .05), n: 0 }; }
-  function start(){ reset(); lastSec = 0; counter = null; paper = []; state = 'play'; beat = 0; beatT = 0; let k; do { k = Math.floor(Math.random() * SONGS.length); } while (k === cloudLastSong); cloudLastSong = k; song = SONGS[k]; document.body.classList.add('dancing'); }
+  function start(){ reset(); lastSec = 0; counter = null; paper = []; state = 'play'; beat = 0; beatT = 0; let k; do { k = Math.floor(Math.random() * SONGS.length); } while (k === cloudLastSong); cloudLastSong = k; song = SONGS[k]; document.body.classList.add('dancing');
+    useBgm = true; clearInterval(bgmFade); CLOUD_BGM.volume = .6; CLOUD_BGM.playbackRate = 1; CLOUD_BGM.currentTime = 0; const pr = CLOUD_BGM.play(); if (pr) pr.catch(() => { useBgm = false; }); }
+  // 曲を、すっと小さくして止める
+  let useBgm = false, bgmFade = null;
+  function stopBgm(){ clearInterval(bgmFade); bgmFade = setInterval(() => { CLOUD_BGM.volume = Math.max(0, CLOUD_BGM.volume - .06); if (CLOUD_BGM.volume <= 0){ clearInterval(bgmFade); CLOUD_BGM.pause(); } }, 50); }
+  onClean(() => { clearInterval(bgmFade); CLOUD_BGM.pause(); });
+  CLOUD_BGM.onerror = () => { useBgm = false; };
   loop(dt => {
     if (state === 'play'){
       t -= dt;
-      if (t <= 0){ t = 0; state = 'finish'; finT = 0; document.body.classList.remove('dancing'); target = null; me.moving = false;
+      if (t <= 0){ t = 0; state = 'finish'; finT = 0; document.body.classList.remove('dancing'); target = null; me.moving = false; stopBgm();
         tone(2100, 0, .16, 'square', .05); tone(2100, .22, .5, 'square', .05); later(() => chord([0, 4, 7]), 160); }
       if (state === 'play' && t <= 5 && Math.ceil(t) !== lastSec){ lastSec = Math.ceil(t); tone(880, 0, .09, 'square', .05); }
-      const bpm = song.bpm + (30 - t) * song.accel, MEL = song.mel; beatT -= dt; dance += dt * bpm / 60 * Math.PI;
-      if (beatT <= 0){ beatT += 30 / bpm * (song.swing ? (beat % 2 ? .67 : 1.33) : 1); const m = MEL[beat % MEL.length]; if (m !== null) tone(deg(m), 0, song.len, song.wave, song.vol);
-        accompany(beat);
+      const bpm = song.bpm + (30 - t) * song.accel, MEL = song.mel; beatT -= dt;
+      dance += dt * bpm / 60 * Math.PI;
+      if (useBgm) CLOUD_BGM.playbackRate = 1 + (30 - t) / 30 * .25; // 時間がへるほど、曲も少しずつ速く（さいごは1.25倍。音の高さはそのまま）
+      if (beatT <= 0){ beatT += 30 / bpm * (song.swing ? (beat % 2 ? .67 : 1.33) : 1); const m = MEL[beat % MEL.length];
+        if (!useBgm){ if (m !== null) tone(deg(m), 0, song.len, song.wave, song.vol); accompany(beat); }
         if (beat % 2 === 0) notes.push({ x: rnd(70, W - 70), y: H - 24, v: rnd(30, 60), ch: beat % 4 ? '♪' : '♫', a: 1 }); beat++; }
       let ax = 0, ay = 0;
       if (target){ const dx = target[0] - me.x, dy = target[1] - me.y, d = Math.hypot(dx, dy); if (d > 12){ ax = dx / d; ay = dy / d; } }
@@ -1664,15 +1684,15 @@ GAMES.cloud = root => {
         k.x += k.vx * dt; k.y += k.vy * dt; if (!inside(k.x, k.y, .95)) toEdge(k, .97);
         k.safe = Math.max(0, k.safe - dt);
         if (Math.abs(k.vx) > 12) k.face = Math.sign(k.vx);
-        if (d < 34 && k.safe === 0){ tags++; k.safe = 1.5; chord([2, 4, 7], 2, .04); pops.push({ x: k.x, y: k.y - 50, a: 1 });
+        if (d < 34 && k.safe === 0){ tags++; k.safe = .8; chord([2, 4, 7], 2, .04); pops.push({ x: k.x, y: k.y - 50, a: 1 });
           const a = rnd(0, 6.28); k.x = CX + Math.cos(a) * RX * .75; k.y = CY + Math.sin(a) * RY * .75; }
       });
       g.stat(`のこり <b>${Math.ceil(t)}</b>秒`);  // タッチの回数は、さいごの発表まで見せない
     }
-    if (state !== 'play') dance += dt * 2.2;
+    if (state === 'ready') dance += dt * 2.2; // ゲームがおわったら、おどるのをやめて止まる
     if (state === 'finish'){ finT += dt; if (finT >= 1.9){ state = 'over'; showResult(); } }
     if (counter){ const c = counter; c.t += dt; const n = Math.min(tags, Math.floor(c.t / c.d * tags)); if (n !== c.n){ c.n = n; c.el.textContent = n; tone(440 * 2 ** (Math.min(n, 30) / 15), 0, .05, 'triangle', .07); }
-      if (c.t >= c.d){ counter = null; c.el.textContent = tags; c.el.parentElement.classList.add('done'); chord([0, 4, 7, 9]); confetti(tags >= 10 ? 26 : 0); } }
+      if (c.t >= c.d){ counter = null; c.el.textContent = tags; c.el.parentElement.classList.add('done'); root.querySelector('.gcard')?.classList.add('ranked'); chord([0, 4, 7, 9]); confetti(tags >= 10 ? 26 : 0); } } // 数がきまってから、称号を出す
     paper.forEach(q => { q.vy += 90 * dt; q.x += q.vx * dt + Math.sin(q.y / 28 + q.r) * .6; q.y += q.vy * dt; q.r += q.vr * dt; }); paper = paper.filter(q => q.y < H + 14);
     notes.forEach(n => { n.y -= n.v * dt; n.a -= dt * .3; }); notes = notes.filter(n => n.a > 0);
     pops.forEach(p => { p.y -= 30 * dt; p.a -= dt; }); pops = pops.filter(p => p.a > 0);
@@ -1705,7 +1725,7 @@ GAMES.cloud = root => {
         ctx.fillStyle = '#e4362b'; rr(ctx, o.x - 20, ly - 13, 40, 19, 9); ctx.fill(); ctx.fillStyle = '#fff'; ctx.fillText('おに', o.x, ly + 1); ctx.textAlign = 'left'; return; }
       if (o.safe > 0 && Math.floor(o.safe * 8) % 2) return;
       const ci = COLS.indexOf(o.c);
-      if (ok) kid(ci + 1, Math.floor(beats * 3 + ci * 2.5) % 12, o.x, o.y, o.face || 1); else dancer(ctx, o.x, o.y, o.c, 1.4, dance + ci * .9, Math.hypot(o.vx, o.vy));
+      if (ok) kid(ci + 1, state === 'finish' || state === 'over' ? 0 : Math.floor(beats * 3 + ci * 2.5) % 12, o.x, o.y, o.face || 1); else dancer(ctx, o.x, o.y, o.c, 1.4, dance + ci * .9, Math.hypot(o.vx, o.vy));
     });
     ctx.font = '700 15px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center';
     pops.forEach(p => { ctx.globalAlpha = p.a; ctx.fillStyle = '#d4417f'; ctx.fillText('タッチ！', p.x, p.y); }); ctx.globalAlpha = 1; ctx.textAlign = 'left';
@@ -1721,8 +1741,8 @@ GAMES.cloud = root => {
 // かいだんの絵（もらったイラスト）
 const STAIRS_UI = new Image(); STAIRS_UI.src = 'stairs-ui.webp';
 // 子どもを切りぬいた背景と、子どもの絵（子どもが段までとんでいく）
-const STAIRS_BG = new Image(); STAIRS_BG.src = 'stairs-bg.jpg';
-const STAIRS_KID = new Image(); STAIRS_KID.src = 'stairs-kid.png';
+const STAIRS_BG = new Image(); STAIRS_BG.src = 'stairs-bg.webp';
+const STAIRS_KID = new Image(); STAIRS_KID.src = 'stairs-kid.webp';
 GAMES.stairs = root => {
   const g = shell(root, 'ふむと音がなる、駅前のかいだん', '段をおすと音がなる。曲を選ぶと、光る段をふんで演奏できます。');
   // もらったイラスト（題・かいだん・ボタン・説明まで1まい）をそのまま表示して、その上で動かす
@@ -1809,7 +1829,8 @@ GAMES.stairs = root => {
     // 子ども：ふんだ段まで、ぴょんととんでいく
     if (kidOk){ const k = Math.min(1, kid.t / HOP), e = k * k * (3 - 2 * k), x = kid.fx + (kid.tx - kid.fx) * e, y = kid.fy + (kid.ty - kid.fy) * e - Math.sin(k * Math.PI) * 60;
       ctx.fillStyle = 'rgba(80,90,110,.18)'; ctx.beginPath(); ctx.ellipse(x, kid.fy + (kid.ty - kid.fy) * e + 2, 30, 7, 0, 0, 7); ctx.fill();
-      ctx.drawImage(STAIRS_KID, x - 52, y - 206 + (k >= 1 ? Math.sin(hop * Math.PI) * -4 : 0)); }
+      // もらった絵の、男の子のところ（254, 279 から 529×1183）を、0.1515倍でかく（高さ179）。足もとのまん中は、絵の x=542 あたり
+      const ks = 206 / 1360, kh = 1183 * ks; ctx.drawImage(STAIRS_KID, 254, 279, 529, 1183, x - (542 - 254) * ks, y - kh + 2 + (k >= 1 ? Math.sin(hop * Math.PI) * -4 : 0), 529 * ks, kh); }
     ctx.font = '800 42px "Zen Maru Gothic", sans-serif'; ctx.textAlign = 'center';
     bubbles.forEach(b => { ctx.globalAlpha = b.a; ctx.lineWidth = 9; ctx.strokeStyle = '#fff'; ctx.strokeText('♪' + b.ch, b.x, b.y); ctx.fillStyle = b.c; ctx.fillText('♪' + b.ch, b.x, b.y); }); ctx.globalAlpha = 1; ctx.textAlign = 'left';
   }
@@ -2701,10 +2722,8 @@ GAMES.wall = root => {
   const addItem = (k, b) => { if (b) classWalls[k].items.push(b); };
   function seed(){
     const S = n => SHAPES.find(x => x.name === n);
-    drawAll('front', S('たいよう'), 110, 80, ORG, 1.2);
     const fd = classWalls.front.d; fd.fillStyle = '#2e7fd0'; fd.font = '28px "Klee One", sans-serif'; fd.fillText('おはよう！', 420, 105); addItem('front', [416, 78, 562, 114]);
     drawAll('left', S('お花'), 320, 182, RED, 1);
-    drawAll('right', S('ねこ'), 215, 118, BLU, 1.3);
     drawAll('back', S('にじ'), 320, 118, RED, 2);
   }
   if (!classWalls){
