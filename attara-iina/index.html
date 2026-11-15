@@ -1041,6 +1041,8 @@ GAMES.badminton = root => {
     if (e.key === 'ArrowDown' && d && !e.repeat){ e.preventDefault(); dive(me); }
     if ((e.key === 'p' || e.key === 'P') && d && !e.repeat && state === 'play' && !picking){ paused = !paused; Object.keys(keys).forEach(k => keys[k] = false); }
   });
+  const turnMq = matchMedia('(orientation:portrait)'), onTurn = () => { if (state === 'play' && !paused){ paused = true; Object.keys(keys).forEach(k => keys[k] = false); } };
+  turnMq.addEventListener('change', onTurn); onClean(() => turnMq.removeEventListener('change', onTurn));
   function hit(p, dir){
     sh.netIn = false; // 打ちなおしたら、またネットインできる
     // 最強の相手は、空中で打ったら、かならず少しあとに下りる（つぎのシャトルにそなえる）
