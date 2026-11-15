@@ -472,7 +472,7 @@ html.modal-open,html.modal-open body{overflow:hidden;overscroll-behavior:none}
 
 <footer>
   <span>まちであそぶ、をつくる ― Playable City 入門ワークショップ（2026.10.3 宇治市産業会館）</span>
-  <span>シートの文はなるべく書かれたままにしています。空らんは、絵で伝えてくれたアイデアです。</span>
+  <span>ここにあるのは、ワークショップで子どもたちが考えてくれたアイデアです。</span>
 </footer>
 
 <div class="gamefs" id="gamefs" role="dialog" aria-modal="true" aria-label="ゲーム" hidden></div>
@@ -2068,20 +2068,20 @@ GAMES.glass = root => {
 
 /* --- 夜の暗い道も楽しく（光る石） --- */
 // 夜の道の絵（4つの場面。高さ 320）。場面のはしまで歩くと、ページがめくれて、次の場面へ
-// path：歩道のまん中の高さ（x ごと）。おくへ行くほど上に、小さくなる
+// path：歩く道すじの高さ（x ごと）。道は右おくへのびているので、左は手前（車道より）、右へ行くほどおく（へいより）へ、ななめに上がる
 const NIGHT_SCENES = [
   // x0〜x1：使うところ（おくの、歩道が細くなるところは切りすてる）
-  { src: 'night-1.jpg', w: 1502, x0: 0, x1: 1000, name: 'いつもの道', path: [[0, 292], [1502, 222]] },
-  { src: 'night-3.jpg', w: 1524, x0: 0, x1: 1000, name: '森の道', path: [[0, 290], [1524, 205]] },
-  { src: 'night-4.jpg', w: 1526, x0: 0, x1: 1000, name: '川ぞいの道', path: [[0, 292], [1526, 238]] },
-  { src: 'night-5.jpg', w: 3053, x0: 520, x1: 1990, name: 'おうちの近く', path: [[0, 284], [1300, 246], [1990, 238]] },
+  { src: 'night-1.webp', w: 958, x0: 0, x1: 958, name: 'いつもの道', path: [[0, 276], [958, 229]] },
+  { src: 'night-3.webp', w: 958, x0: 0, x1: 958, name: '森の道', path: [[0, 273], [958, 215]] },
+  { src: 'night-4.webp', w: 958, x0: 0, x1: 958, name: '川ぞいの道', path: [[0, 286], [958, 237]] },
+  { src: 'night-5.webp', w: 1373, x0: 0, x1: 1373, name: 'おうちの近く', path: [[0, 268], [1373, 201]] },
 ].map(s => (s.img = Object.assign(new Image(), { src: s.src }), s));
 // 歩く女の子の絵：0 立つ・1〜7 歩く・8 歩く（表情の絵）・9 こわがっている・10 下を見ている・11 おどろいている・12 うれしい・13 安心している
 const NIGHT_GIRL = new Image(); NIGHT_GIRL.src = 'night-girl.png';
 GAMES.night = root => {
   const g = shell(root, '夜の歩道を、光る石といっしょに帰ろう', '「歩く」をおしているあいだ進みます。ふんだ石が光ります。');
   const { ctx, W, H, cv } = mkCanvas(g.stage, 640, 320);
-  const S = NIGHT_SCENES, FOREST = 1, SCARE = 300, HOME = 1852, PX = 200, X0 = 60;
+  const S = NIGHT_SCENES, FOREST = 1, SCARE = 300, HOME = 1250, PX = 200, X0 = 60;
   const pathY = (si, lx) => { const P = S[si].path; for (let i = 1; i < P.length; i++) if (lx <= P[i][0] || i === P.length - 1){ const t = clamp((lx - P[i - 1][0]) / (P[i][0] - P[i - 1][0]), 0, 1); return P[i - 1][1] + (P[i][1] - P[i - 1][1]) * t; } };
   const sizeAt = y => clamp(.82 + (y - 232) / 330, .84, 1);   // 歩道が上にあるほど、少しだけ小さく
   // 光る石の形と色（森ではまる・ひし形、川ぞいで形がふえ、おうちの近くはあたたかい色）
@@ -2093,7 +2093,7 @@ GAMES.night = root => {
     for (let lx = si === FOREST ? SCARE + 200 : S[si].x0 + 100, k = 0; lx < end; k++){
       // めずらしい石は、川ぞいの道のまん中あたりに1こだけ
       const kd = si === FOREST + 1 && k === 9 ? 'rare' : SETS[si][k % SETS[si].length], y = pathY(si, lx);
-      stones.push({ si, x: lx + rnd(-5, 5), y: y + 4 + rnd(-3, 4) * sizeAt(y), lit: 0, kind: kd, c: KIND[kd] });
+      stones.push({ si, x: lx + rnd(-5, 5), y: y + rnd(-2, 3) * sizeAt(y), lit: 0, kind: kd, c: KIND[kd] });
       lx += 46 * sizeAt(y) + 8;
     }
   }
@@ -2129,8 +2129,8 @@ GAMES.night = root => {
     'ふむと、光る！': 12, '音もなるんだ！': 12, '星の形だ！': 12, 'さんかくもある！': 12, 'ハートだ！': 12, 'クローバーみたい': 12, '川が、きらきらしてる': 12, 'お月さま、きれい': 13 };
   let sayAge = 0;
   const talk = (t, sec) => { say = t; sayT = sec; sayAge = 0; };
-  const CUES = [[0, 100, '今日は、おそくなっちゃった', 2.4], [0, 480, 'はやく、帰ろう', 2], [0, 800, 'この先は、森の道だ…', 2.2],
-    [1, 80, 'くらいなあ…', 1.8], [1, 860, 'もう、こわくないよ', 2],
+  const CUES = [[0, 100, '今日は、おそくなっちゃった', 2.4], [0, 480, 'はやく、帰ろう', 2],
+    [1, 60, 'この先は、森の道だ…', 1.3], [1, 80, 'くらいなあ…', 1.8], [1, 860, 'もう、こわくないよ', 2],
     [2, 100, '川が、きらきらしてる', 2.2], [2, 600, 'お月さま、きれい', 2],
     [3, 620, 'おうちが、見えてきた！', 2.2], [3, 1500, 'もうすぐ、おうち！', 2]];
   let cueDone, firsts;
@@ -2202,7 +2202,7 @@ GAMES.night = root => {
   const DARK = [.1, .55, .38, .14];
   function bubble(t, bx, by){
     ctx.font = '800 15px "Zen Maru Gothic", sans-serif'; const bw = Math.ceil(ctx.measureText(t).width) + 24, bh = 30;
-    bx = Math.min(W - bw - 8, bx); by = Math.max(6, by);
+    by = Math.max(6, by); // 吹き出しは、画面からはみ出しても、人といっしょに動く
     ctx.fillStyle = '#fff'; ctx.strokeStyle = '#3a4a5f'; ctx.lineWidth = 2; rr(ctx, bx, by, bw, bh, 15); ctx.fill(); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(bx + 12, by + bh - 1); ctx.lineTo(bx + 4, by + bh + 12); ctx.lineTo(bx + 24, by + bh - 1); ctx.closePath(); ctx.fill(); ctx.stroke();
     ctx.fillRect(bx + 11, by + bh - 4, 14, 4);
@@ -2210,7 +2210,7 @@ GAMES.night = root => {
   }
   function scene(now){
     const sc = S[si], cam = clamp(x - PX, sc.x0, sc.x1 - W);
-    if (sc.img.complete && sc.img.naturalWidth > 0) ctx.drawImage(sc.img, cam, 0, W, H, 0, 0, W, H);
+    if (sc.img.complete && sc.img.naturalWidth > 0){ const k = sc.img.naturalHeight / H; ctx.drawImage(sc.img, cam * k, 0, W * k, H * k, 0, 0, W, H); } // 絵は、高さ320に合わせて、大きさをそろえてかく
     else { ctx.fillStyle = '#141b40'; ctx.fillRect(0, 0, W, H); }
     const px = x - cam, wy = pathY(si, x), k = sizeAt(wy);
     if (foundT >= 0) stones.forEach(s => { if (s.si !== si) return; const sx = s.x - cam; if (sx > -40 && sx < W + 40) drawStone(s, sx, now); });
