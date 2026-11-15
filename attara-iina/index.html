@@ -882,6 +882,9 @@ const GAMES = {};
 // 子どものキャラの絵（もらったイラストを切りぬいたもの）：[x, y, w, h, 体のまん中のx, 大きさの補正]
 // 見出しつきの表（赤い子と同じならび）から切りぬいた。パネルごとに子どもの大きさが少しちがうので、移動のコマと同じ大きさに補正している
 const KID_FRAMES = [[2,2,143,184,51.4,1.03],[147,2,154,179,67.0,1.03],[303,2,159,181,67.5,1.03],[464,2,153,181,66.9,1.03],[619,2,145,181,60.0,1.03],[303,2,159,181,67.5,1.03],[1299,2,129,241,69.8,1.051],[766,2,143,173,52.2,1.071],[911,2,144,156,61.0,1.071],[1057,2,101,222,47.8,1.154],[1057,2,101,222,47.8,1.154],[1430,2,133,242,54.2,1.051],[1057,2,101,222,47.8,1.154],[2,246,224,260,69.7,1.061],[1299,2,129,241,69.8,1.051],[1430,2,133,242,54.2,1.051],[1565,2,118,157,47.3,1.174],[1685,2,139,176,64.6,1.051],[228,246,138,161,64.0,1.092],[1826,2,148,162,61.9,1.092],[501,246,132,164,53.3,1.112],[635,246,122,178,57.6,1.112],[759,246,105,174,43.2,1.112],[1423,246,134,157,56.7,1.133],[1559,246,129,157,53.0,1.133]];
+// シャトルの絵（もらった絵。帯の色：赤・青・緑・黄・むらさき・水色）：絵の中の位置 x・はば・高さ・コルクのまん中
+const SHUTTLE_IMG = new Image(); SHUTTLE_IMG.src = 'shuttles.png';
+const SHUTTLE_CELLS = [[0, 228, 304, 182, 42], [228, 221, 307, 177, 41], [456, 218, 309, 175, 40], [684, 223, 308, 177, 42], [912, 220, 310, 175, 42], [1140, 218, 312, 174, 40]];
 const KID_IMG = new Image(); KID_IMG.src = 'badminton-kid.png';
 // 相手（赤い子）の絵：もらった赤い子の表を切りぬいたもの。右向きのコマは左右反転して、全部左（ネットのほう）を向いている。番号の動きは青い子と同じ
 KID_FRAMES[16] = KID_FRAMES[17]; // 青い子の16のコマは、絵に足がないので、ふりおわりのコマを使う
@@ -1501,9 +1504,12 @@ GAMES.badminton = root => {
       // 地面に着いたシャトルは、すぐに消える（雲が、ふわっと出るだけ）
       if (down){ if (sink.t < .45){ ctx.globalAlpha = 1 - sink.t / .45; puff(ctx, sink.x - 10, SY(floorAt(sink.x)) + 4, 8, '#ffffff'); puff(ctx, sink.x + 10, SY(floorAt(sink.x)) + 4, 8, '#ffffff'); ctx.globalAlpha = 1; } return; }
       ctx.save(); ctx.globalAlpha *= 1 - sk * .7; ctx.translate(down ? sink.x : s.x, SY(down ? sink.y : s.y) + sk * 12); ctx.rotate(down ? Math.PI / 2 : Math.atan2(s.vy * KY, s.vx));
-      ctx.fillStyle = '#fff'; ctx.strokeStyle = '#3a3330'; ctx.lineWidth = 1.2;
-      ctx.beginPath(); ctx.moveTo(6, 0); ctx.lineTo(-9, -6); ctx.lineTo(-9, 6); ctx.closePath(); ctx.fill(); ctx.stroke();
-      ctx.fillStyle = ['#e4362b', '#2e7fd0', '#2f9a48', '#f2a20c'][k % 4]; ctx.beginPath(); ctx.arc(6, 0, 3, 0, 7); ctx.fill(); ctx.restore(); ctx.globalAlpha = 1;
+      if (SHUTTLE_IMG.complete && SHUTTLE_IMG.naturalWidth){ // もらった絵のシャトル（コルクを前に、羽根がうしろ）
+        const [sx, sw, shh, cx, cy] = SHUTTLE_CELLS[k % 4], sc = .07; ctx.rotate(Math.PI * 68 / 180); ctx.drawImage(SHUTTLE_IMG, sx, 0, sw, shh, -cx * sc + 2, -cy * sc, sw * sc, shh * sc); }
+      else { ctx.fillStyle = '#fff'; ctx.strokeStyle = '#3a3330'; ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.moveTo(6, 0); ctx.lineTo(-9, -6); ctx.lineTo(-9, 6); ctx.closePath(); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = ['#e4362b', '#2e7fd0', '#2f9a48', '#f2a20c'][k % 4]; ctx.beginPath(); ctx.arc(6, 0, 3, 0, 7); ctx.fill(); }
+      ctx.restore(); ctx.globalAlpha = 1;
     });
     bits.forEach(b => { ctx.globalAlpha = Math.max(0, b.a); ctx.fillStyle = b.col; ctx.beginPath(); ctx.arc(b.x, SY(b.y), b.r, 0, 7); ctx.fill(); }); ctx.globalAlpha = 1;
     ctx.textAlign = 'center';
