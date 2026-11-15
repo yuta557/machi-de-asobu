@@ -1684,7 +1684,7 @@ GAMES.cloud = root => {
   }
   let me, kids, t, tags, state = 'ready', target = null, beat = 0, beatT = 0, notes = [], pops = [], dance = 0, finT = 0, lastSec = 0, paper = [], counter = null;
   const keys = {};
-  function reset(){ me = { x: CX, y: CY, face: 1, moving: false }; kids = COLS.map((c, k) => ({ x: CX + Math.cos(k * 1.26) * 190, y: CY + Math.sin(k * 1.26) * 90, vx: 0, vy: 0, c, safe: 0, wa: rnd(0, 6) })); t = 30; tags = 0; notes = []; pops = []; }
+  function reset(){ me = { x: CX, y: CY, face: 1, moving: false }; kids = COLS.map((c, k) => ({ x: CX + Math.cos(k * 1.26) * 190, y: CY + Math.sin(k * 1.26) * 90, vx: 0, vy: 0, c, safe: 0, wa: rnd(0, 6) })); t = GAME_T; tags = 0; notes = []; pops = []; }
   const aim = e => { target = pt(e); };
   cv.onpointerdown = e => { cv.setPointerCapture(e.pointerId); aim(e); };
   cv.onpointermove = e => { if (e.buttons || e.pointerType === 'mouse') aim(e); };
@@ -1694,17 +1694,24 @@ GAMES.cloud = root => {
   onKey((e, d) => { if (e.key.startsWith('Arrow')){ keys[e.key] = d; e.preventDefault(); if (d) target = null; } });
   function confetti(n){ for (let i = 0; i < n; i++) paper.push({ x: rnd(0, W), y: rnd(-120, -6), vx: rnd(-24, 24), vy: rnd(50, 130), r: rnd(0, 6), vr: rnd(-7, 7), s: rnd(5, 10), c: ['#e4362b', '#f2b630', '#2f9a48', '#2e7fd0', '#7d55c7', '#ee7a1c', '#d4417f'][i % 7] }); }
   // 称号（つかまえた回数で決まる）と、つぎへのひとこと
-  const TITLES = [[30, 'でんせつのおに', 'すごすぎる！雲の上で、いちばんのおにだ！'], [25, 'かみなりおに', 'あとすこしで、でんせつのおに！'], [20, 'スーパーおに', 'とってもはやい！25回をめざそう。'],
-    [15, 'はやてのおに', 'すばやい動きで、みんなを追いつめよう！'], [10, 'おにごっこ名人', 'いいね！15回をめざそう。'], [5, 'かけだしおに', 'いい調子！もっとみんなを捕まえよう。'],
+  // 称号：25秒で、いちばん多くて25回くらい。それにあわせた回数
+  const TITLES = [[24, 'でんせつのおに', 'すごすぎる！雲の上で、いちばんのおにだ！'], [20, 'かみなりおに', 'あとすこしで、でんせつのおに！'], [16, 'スーパーおに', 'とってもはやい！20回をめざそう。'],
+    [12, 'はやてのおに', 'すばやい動きで、みんなを追いつめよう！'], [8, 'おにごっこ名人', 'いいね！12回をめざそう。'], [4, 'かけだしおに', 'いい調子！もっとみんなを捕まえよう。'],
     [1, 'おにのたまご', 'まだまだこれから！みんなをたくさん追いかけよう！'], [0, 'おさんぽおに', 'みんなに近づいて、タッチしてみよう。']];
   function showResult(){ const [, title, tip] = TITLES.find(([n]) => tags >= n);
     g.over(`<div class="tagres"><span class="tagnum">0</span><span class="tagunit">回タッチ！</span></div><p class="tagrank">称号：${title}！</p><p class="tagtip">${tip}</p>`, 'もう一度', start);
     counter = { el: root.querySelector('.tagnum'), t: 0, d: Math.min(1.4, .3 + tags * .05), n: 0 }; }
   function start(){ reset(); lastSec = 0; counter = null; paper = []; state = 'play'; beat = 0; beatT = 0; let k; do { k = Math.floor(Math.random() * SONGS.length); } while (k === cloudLastSong); cloudLastSong = k; song = SONGS[k]; document.body.classList.add('dancing');
-    useBgm = true; CLOUD_BGM.inGame = true; CLOUD_BGM.muted = false; clearInterval(bgmFade); CLOUD_BGM.volume = .6; CLOUD_BGM.playbackRate = 1; CLOUD_BGM.currentTime = 0; const pr = CLOUD_BGM.play(); if (pr) pr.catch(() => { useBgm = false; }); }
+    useBgm = true; CLOUD_BGM.inGame = true; CLOUD_BGM.muted = false; clearInterval(bgmFade); CLOUD_BGM.volume = .6; CLOUD_BGM.playbackRate = 1; CLOUD_BGM.currentTime = BGM_FROM; const pr = CLOUD_BGM.play(); if (pr) pr.catch(() => { useBgm = false; }); }
+  // 曲の13.824秒（0秒からのメロディーとちょうど同じになるところ）から、40秒の「ジャンジャン」がおわるところ（40.85秒）までを、25秒のおにごっこにあわせる。
+  // 少しずつ速くして（1倍 → 1 + BGM_RAMP 倍）、25秒でちょうど40.3秒のところまで進める
+  const GAME_T = 25, BGM_FROM = 13.824, BGM_END = 40.85, BGM_USE = BGM_END - BGM_FROM, BGM_RAMP = 2 * (BGM_USE - GAME_T) / GAME_T;
   // 曲を、すっと小さくして止める
   let useBgm = false, bgmFade = null;
-  function stopBgm(){ clearInterval(bgmFade); bgmFade = setInterval(() => { CLOUD_BGM.volume = Math.max(0, CLOUD_BGM.volume - .06); if (CLOUD_BGM.volume <= 0){ clearInterval(bgmFade); CLOUD_BGM.pause(); CLOUD_BGM.inGame = false; } }, 50); }
+  // 時間がきても、曲は「ジャンジャン」をさいごまで鳴らしてから（BGM_END まで）、すっと小さくして止める
+  function stopBgm(){ clearInterval(bgmFade); CLOUD_BGM.playbackRate = 1 + BGM_RAMP;
+    bgmFade = setInterval(() => { if (CLOUD_BGM.currentTime < BGM_END && !CLOUD_BGM.paused) return;
+      CLOUD_BGM.volume = Math.max(0, CLOUD_BGM.volume - .1); if (CLOUD_BGM.volume <= 0){ clearInterval(bgmFade); CLOUD_BGM.pause(); CLOUD_BGM.inGame = false; } }, 40); }
   onClean(() => { clearInterval(bgmFade); CLOUD_BGM.pause(); CLOUD_BGM.inGame = false; });
   CLOUD_BGM.onerror = () => { useBgm = false; };
   loop(dt => {
@@ -1713,9 +1720,11 @@ GAMES.cloud = root => {
       if (t <= 0){ t = 0; state = 'finish'; finT = 0; document.body.classList.remove('dancing'); target = null; me.moving = false; stopBgm();
         tone(2100, 0, .16, 'square', .05); tone(2100, .22, .5, 'square', .05); later(() => chord([0, 4, 7]), 160); }
       if (state === 'play' && t <= 5 && Math.ceil(t) !== lastSec){ lastSec = Math.ceil(t); tone(880, 0, .09, 'square', .05); }
-      const bpm = song.bpm + (30 - t) * song.accel, MEL = song.mel; beatT -= dt;
+      const bpm = song.bpm + (GAME_T - t) * song.accel * 30 / GAME_T, MEL = song.mel; beatT -= dt;
       dance += dt * bpm / 60 * Math.PI;
-      if (useBgm) CLOUD_BGM.playbackRate = 1 + (30 - t) / 30 * .25; // 時間がへるほど、曲も少しずつ速く（さいごは1.25倍。音の高さはそのまま）
+      // 曲の速さ：時間がへるほど少しずつ速く（音の高さはそのまま）。読みこみで始まりがずれても、のこり時間でちょうど BGM_END に着くように、毎回、逆算してなおす
+      if (useBgm && !CLOUD_BGM.paused){ const e = GAME_T - t, plan = 1 + BGM_RAMP * e / GAME_T, left = t + BGM_RAMP / (2 * GAME_T) * (GAME_T * GAME_T - e * e);
+        const need = BGM_END - CLOUD_BGM.currentTime, k = left > .4 ? clamp(need / left, .7, 1.6) : 1; CLOUD_BGM.playbackRate = clamp(plan * k, .6, 2); }
       if (beatT <= 0){ beatT += 30 / bpm * (song.swing ? (beat % 2 ? .67 : 1.33) : 1); const m = MEL[beat % MEL.length];
         if (!useBgm){ if (m !== null) tone(deg(m), 0, song.len, song.wave, song.vol); accompany(beat); }
         if (beat % 2 === 0) notes.push({ x: rnd(70, W - 70), y: H - 24, v: rnd(30, 60), ch: beat % 4 ? '♪' : '♫', a: 1 }); beat++; }
@@ -1748,7 +1757,7 @@ GAMES.cloud = root => {
       g.stat(`のこり <b>${Math.ceil(t)}</b>秒`);  // タッチの回数は、さいごの発表まで見せない
     }
     if (state === 'ready') dance += dt * 2.2; // ゲームがおわったら、おどるのをやめて止まる
-    if (state === 'finish'){ finT += dt; if (finT >= 1.9){ state = 'over'; showResult(); } }
+    if (state === 'finish'){ finT += dt; if (finT >= 1.9 && !(useBgm && CLOUD_BGM.inGame && finT < 4)){ state = 'over'; showResult(); } } // 曲が鳴りおわってから、結果発表
     if (counter){ const c = counter; c.t += dt; const n = Math.min(tags, Math.floor(c.t / c.d * tags)); if (n !== c.n){ c.n = n; c.el.textContent = n; tone(440 * 2 ** (Math.min(n, 30) / 15), 0, .05, 'triangle', .07); }
       if (c.t >= c.d){ counter = null; c.el.textContent = tags; c.el.parentElement.classList.add('done'); root.querySelector('.gcard')?.classList.add('ranked'); chord([0, 4, 7, 9]); confetti(tags >= 10 ? 26 : 0); } } // 数がきまってから、称号を出す
     paper.forEach(q => { q.vy += 90 * dt; q.x += q.vx * dt + Math.sin(q.y / 28 + q.r) * .6; q.y += q.vy * dt; q.r += q.vr * dt; }); paper = paper.filter(q => q.y < H + 14);
@@ -1792,7 +1801,7 @@ GAMES.cloud = root => {
     paper.forEach(q => { ctx.save(); ctx.translate(q.x, q.y); ctx.rotate(q.r); ctx.fillStyle = q.c; ctx.fillRect(-q.s / 2, -q.s / 3, q.s, q.s * Math.abs(Math.cos(q.r * 1.7)) * .7 + 1); ctx.restore(); });
   }
   reset(); draw();
-  g.over('<h5>雲の上でおにごっこ</h5><p>30秒で何回タッチできるかな？</p>', 'スタート', start);
+  g.over('<h5>雲の上でおにごっこ</h5><p>25秒で何回タッチできるかな？</p>', 'スタート', start);
 };
 
 /* --- ふむと音がなるかいだん --- */
