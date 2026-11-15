@@ -920,7 +920,7 @@ GAMES.badminton = root => {
     { name: 'ステージ1　ふわふわの雲', speed: 1, cpu: 1, balls: 1, miss: .6, whiff: .1, smash: .45, chain: .5, guard: false, kaeshi: .12, sky: ['#d4ebfc', '#f5faff'] },
     { name: 'ステージ2　はやい雲', speed: 1.3, cpu: 1.25, balls: 1, miss: .4, whiff: .06, smash: .9, chain: 1, guard: true, kaeshi: .25, sky: ['#ffe3cc', '#fff6ec'] },
     { name: 'ステージ3　シャトルが2こ', speed: 1.1, cpu: 1.3, balls: 2, miss: .25, whiff: .03, smash: .9, chain: .9, guard: true, kaeshi: .3, sky: ['#e6dcfb', '#f8f4ff'] } ];
-  let stage = 0, shs = [], landSteps = 0;
+  let stage = 0, shs = [], landSteps = 0, landWall = false;
   let me, cpu, sh, score, rally, best = 0, smashes = 0, state = 'intro', target = 160, pops = [], puffs = [], bits = [], dents = [], sink = null, introT = 0, clock = 0;
   const keys = {}; let stageT = 0;
   // 気持ちいい演出：連続スマッシュ・ブロックの数、画面のゆれ、ひかり、ヒットストップ、クリアの紙ふぶき
@@ -940,7 +940,15 @@ GAMES.badminton = root => {
       // チャレンジ2（solid）：相手は凡ミスをしない。後ろの球にも追いつく（点をとれるのは、ラリーに勝ったときだけ）
       ...(c.solid ? { solid: true, cpu: 2.1, miss: .05, whiff: 0, kaeshi: .5 } : {}),
       // パソコンでキーで動かしているときは、うごきやすいので、チャレンジ2の相手を少し強く
-      ...(c.solid && keyMode ? { cpu: 2.45, miss: .02, kaeshi: .62, smash: .95, chain: 1 } : {}) }; }
+      ...(c.solid && keyMode ? { cpu: 2.45, miss: .03, kaeshi: .62, smash: .95, chain: 1 } : {}) }; }
+  // チャレンジ2の相手のミス
+  // ・短い間隔（0.6秒以内）のスマッシュ・スマッシュ返しの応酬が、何回つづいたか（1回ごとに0.3倍ずつ上がる）
+  // ・はげしい応酬が0.8秒以上つづいていて、直前の球との間隔が0.5秒以下なら、さらに2倍（1.6秒で3倍、そのあとも上がる）
+  // ・ラリーの長さでも少しだけ（30回で1.6倍まで）
+  let streak = 0, lastFastC = -9, fastStart = -9, fastGap = 9;
+  function missP(){ const b = ST().miss; if (!ST().solid) return b;
+    const dur = streak > 0 ? clock - fastStart : 0, hot = fastGap <= .5 && dur >= .8 ? 2 + (dur - .8) * 1.25 : 1;
+    return clamp(b * (1 + .02 * Math.min(rally, 30)) * (1 + Math.max(0, streak - 1) * .3) * hot, 0, .4); }
   let keyMode = false; // さいごに使ったのがキーボードか（おしたときだけ切りかえる）
   // 「すとん」を上手に使う相手：最強の相手と、キーで遊んでいるときのチャレンジ2
   const smartDive = () => ST().strong || (ST().solid && keyMode);
@@ -987,7 +995,7 @@ GAMES.badminton = root => {
     if (side && ST().strong){ s.vx = -255; s.vy = -250; }
     return Object.assign(s, { smash: false, cpuMiss: false, cpuSmash: false, whiff: false, by: side ? -1 : 1, wait: delay, serve: true }); }
   // シャトル2このステージでは、少しおくれて、相手からも1こ飛んでくる
-  function serve(side){ shs = [mkShuttle(side, .9)]; for (let i = 1; i < ST().balls; i++) shs.push(mkShuttle(i % 2 ? 1 - side : side, .9 + i * 1.1)); sh = shs[0]; rally = 0; } // 3こ目からは、少しずつおくれて、こうごに飛んでくる
+  function serve(side){ shs = [mkShuttle(side, .9)]; for (let i = 1; i < ST().balls; i++) shs.push(mkShuttle(i % 2 ? 1 - side : side, .9 + i * 1.1)); sh = shs[0]; rally = 0; streak = 0; lastFastC = fastStart = -9; fastGap = 9; } // 3こ目からは、少しずつおくれて、こうごに飛んでくる
   // ふわふわのゆか：へこみ（ばねのようにゆれてもどる）
   const dent = (x, a) => dents.push({ x, a, t: 0 });
   const floorAt = x => FLOOR + dents.reduce((s, d) => s + d.a * Math.exp(-4 * d.t) * Math.cos(11 * d.t) * Math.exp(-(((x - d.x) / 56) ** 2)) * 10, 0);
@@ -995,14 +1003,15 @@ GAMES.badminton = root => {
   const canDive = () => reach > LAST;
   function jump(p){
     if (state !== 'play' || paused) return;
-    if (p.y === 0 && p.vy <= 0){ p.vy = JUMP_V * ST().speed; // 速いステージでは、ジャンプも同じ高さのまま速くなる
+    if (p.y === 0 && p.vy <= 0){ p.upAt = clock; p.vy = JUMP_V * ST().speed; // 速いステージでは、ジャンプも同じ高さのまま速くなる
       soft(523, .12, .08); soft(784, .12, .06); puffs.push({ x: p.x, a: 1 }); dent(p.x, -.6); }
   }
   // 急降下：スマッシュのあと、スマッシュ返しに間に合うように、すとんと地面にもどる（ステージ3をクリアすると、自分も相手も使える）
   function dive(p){
     if (!canDive() || state !== 'play' || paused || p.y <= 12 || p.dive) return;
     p.dive = true; p.vy = Math.min(p.vy, -170 * ST().speed);
-    soft(880, .06, .05); soft(587, .1, .05); pops.push({ x: p.x, y: racketY(p) - 46, a: .8, txt: 'すとん！', c: p === me ? '#2e7fd0' : '#e4362b', size: 14 });
+    // 相手が、とんですぐ（0.3秒以内）に下りるときは、「すとん！」の文字は出さない
+    soft(880, .06, .05); soft(587, .1, .05); if (!(p === cpu && clock - (p.upAt || 0) < .3)) pops.push({ x: p.x, y: racketY(p) - 46, a: .8, txt: 'すとん！', c: p === me ? '#2e7fd0' : '#e4362b', size: 14 });
   }
   // ネットには近づきすぎない（タッチネットは反則）
   const MARGIN = 46;
@@ -1044,7 +1053,8 @@ GAMES.badminton = root => {
   const turnMq = matchMedia('(orientation:portrait)'), onTurn = () => { if (state === 'play' && !paused){ paused = true; Object.keys(keys).forEach(k => keys[k] = false); } };
   turnMq.addEventListener('change', onTurn); onClean(() => turnMq.removeEventListener('change', onTurn));
   function hit(p, dir){
-    sh.netIn = false; // 打ちなおしたら、またネットインできる
+    sh.netIn = false; sh.walled = false; // 打ちなおしたら、またネットインできる
+    if (sh.smash || sh.fast){ fastGap = clock - lastFastC; if (fastGap < .6) streak++; else { streak = 1; fastStart = clock; } lastFastC = clock; } else { streak = 0; fastGap = 9; } // スマッシュやスマッシュ返しを受けたのが、短い間隔で何回・何秒つづいているか
     // 最強の相手は、空中で打ったら、かならず少しあとに下りる（つぎのシャトルにそなえる）
     if (p === cpu && p.y > 12){ p.hitAir = true; if (canDive() && (smartDive() || Math.random() < .65)) p.diveAt = clock + (smartDive() ? rnd(.05, .25) : rnd(.1, .5)); }
     const incoming = (sh.smash || sh.fast) && sh.by === -dir; // 相手のスマッシュを打ち返すところ
@@ -1052,11 +1062,11 @@ GAMES.badminton = root => {
     if (incoming && p.y > 0 && !p.airBlock){ const d = counterShot(dir); if (d){
       sh.vx = d[0]; sh.vy = d[1]; sh.smash = false; sh.fast = true; sh.by = dir; sh.serve = false; sh.read = false;
       if (dir > 0){ // あなたのスマッシュ返し：相手は、スマッシュを受けたときと同じように、ミスしたり、さらにスマッシュ返ししたりする
-        sh.cpuMiss = Math.random() < ST().miss; sh.cpuSmash = false; sh.cpuJumpMiss = false; sh.cpuKaeshi = !sh.cpuMiss && Math.random() < ST().kaeshi;
+        sh.cpuMiss = Math.random() < missP(); sh.cpuSmash = false; sh.cpuJumpMiss = false; sh.cpuKaeshi = !sh.cpuMiss && Math.random() < ST().kaeshi;
         // 相手が空中にいて、ふつうに落ちていては間に合わないときは、たいてい、すとんと下りて受ける
         const spd = ST().speed, grav = JUMP_G * spd * spd, fall = (cpu.vy + Math.sqrt(cpu.vy * cpu.vy + 2 * grav * cpu.y)) / grav, reach2 = (cpu.x - sh.x) / (Math.max(1, sh.vx) * spd);
         // チャレンジ2をキーで遊んでいるときは、スマッシュ返しへの反応もうまく：まず落とさず、空中なら、かならず早めに下りて受ける
-        const sharp2 = ST().solid && keyMode; if (sharp2){ sh.cpuMiss = Math.random() < .02; sh.cpuKaeshi = !sh.cpuMiss && Math.random() < .55; }
+        const sharp2 = ST().solid && keyMode; if (sharp2){ sh.cpuKaeshi = !sh.cpuMiss && Math.random() < .55; }
         sh.cpuDive = canDive() && cpu.y > 12 && (sharp2 ? fall > reach2 - .25 : fall > reach2 - .1) && (ST().strong || sharp2 || Math.random() < .8); if (sh.cpuDive) sh.cpuMiss = sh.cpuKaeshi = false;
         smashes++; cpuCombo = 0; celebrate(true, true, d[2]); }
       else { sh.cpuMiss = sh.cpuSmash = sh.cpuJumpMiss = sh.cpuKaeshi = false; blocks = 0; combo = 0;
@@ -1077,7 +1087,9 @@ GAMES.badminton = root => {
       else {
         const rx = dir > 0 ? cpu.x : me.x;
         let dist;
-        if (far - lo > 120){ // はばがある：うける人から一番遠いところ（少しだけばらつかせる）
+        // チャレンジ2・3で、相手のサーブをスマッシュしたとき：相手がかならずブロックできるように、相手のいるほうへ飛ぶ
+        if (offServe && (ST().solid || ST().strong)) dist = [0, 1, 2, 3, 4, 5, 6].map(k => lo + (far - lo) * k / 6).reduce((a, b) => Math.abs(sh.x + dir * b - rx) < Math.abs(sh.x + dir * a - rx) ? b : a);
+        else if (far - lo > 120){ // はばがある：うける人から一番遠いところ（少しだけばらつかせる）
           dist = [0, 1, 2, 3, 4, 5, 6].map(k => lo + (far - lo) * k / 6).reduce((a, b) => Math.abs(sh.x + dir * b - rx) > Math.abs(sh.x + dir * a - rx) ? b : a) + rnd(-18, 18);
         } else dist = rnd(lo, far);
         land = sh.x + dir * clamp(dist, lo, far);
@@ -1085,7 +1097,8 @@ GAMES.badminton = root => {
     }
     // 相手がミスするのは、あなたのスマッシュを受けたときだけ（6割）。ふつうの球は必ず追いついて返す。スマッシュをねらったジャンプは、たまに（10%）空ぶり
     sh.whiff = false;
-    if (dir > 0){ sh.cpuMiss = smash && !(offServe && ST().guard) && Math.random() < ST().miss; sh.read = smash && offServe && ST().guard; sh.cpuSmash = !smash && Math.random() < (cpuCombo > 0 ? ST().chain : ST().smash); sh.cpuJumpMiss = sh.cpuSmash && Math.random() < ST().whiff;
+    // チャレンジ2・3の相手は、自分のサーブをスマッシュされても、ブロックをミスしない
+    if (dir > 0){ sh.cpuMiss = smash && !(offServe && (ST().guard || ST().solid || ST().strong)) && Math.random() < missP(); sh.read = smash && offServe && ST().guard; sh.cpuSmash = !smash && Math.random() < (cpuCombo > 0 ? ST().chain : ST().smash); sh.cpuJumpMiss = sh.cpuSmash && Math.random() < ST().whiff;
       sh.cpuKaeshi = smash && !sh.read && Math.random() < ST().kaeshi; if (sh.cpuKaeshi) sh.cpuMiss = false; }
     else { sh.cpuMiss = false; sh.cpuSmash = false; sh.cpuJumpMiss = false; sh.read = false; sh.cpuKaeshi = false; }
     if (smash){ const sp = (dir > 0 ? rnd(560, 640) : rnd(480, 540)) * (sh.read ? .62 : 1), dx = land - sh.x, dy = FLOOR - 4 - sh.y, d = Math.hypot(dx, dy);
@@ -1162,13 +1175,14 @@ GAMES.badminton = root => {
       if (ok && land !== null && (dir > 0 ? land > NET + 50 && land < W - 40 : land > 40 && land < NET - 50)){ pick = [vx, vy, land]; break; } }
     return pick; }
   function landing(level = HITY){
+    landWall = false; // とちゅうで雲のかべに当たるか
     if (sh.smash && sh.land){ // スマッシュはまっすぐなので、level の高さを通るところ
       const x0 = sh.x, y0 = sh.y, y1 = FLOOR - 4; landSteps = Math.max(0, (level - y0) / Math.max(1, sh.vy) * 60);
       return x0 + (sh.land - x0) * clamp((level - y0) / (y1 - y0), 0, 1); }
     let x = sh.x, y = sh.y, vx = sh.vx, vy = sh.vy;
     for (let i = 0; i < 400; i++){ vy += GR / 60; vx *= 1 - .22 / 60; x += vx / 60; y += vy / 60;
       if (y < CEIL){ y = CEIL; vy = Math.abs(vy) * .45; }
-      if (x < WALL || x > W - WALL){ const L = x < WALL; x = L ? WALL : W - WALL; vx = (L ? 1 : -1) * Math.min(70, Math.abs(vx) * .3); if (vy > 0) vy *= .35; } if (vy > 0 && y > level){ landSteps = i; break; } } return x; }
+      if (x < WALL || x > W - WALL){ const L = x < WALL; x = L ? WALL : W - WALL; vx = (L ? 1 : -1) * Math.min(70, Math.abs(vx) * .3); if (vy > 0) vy *= .35; landWall = true; } if (vy > 0 && y > level){ landSteps = i; break; } } return x; }
   // ラケットの高さ：ジャンプしているぶん上になる
   const racketY = p => HITY - p.y;
   // ジャンプ中は、うでをのばして少し上まで届く（高いところで打つほど、スマッシュの角度が急になる）
@@ -1200,6 +1214,9 @@ GAMES.badminton = root => {
       me.x = clamp(me.x + clamp(target - me.x, -380 * mv * dt, 380 * mv * dt), 24, NET - MARGIN);
       // 相手の急降下（あそんだ人の使い方をまねしている）：ある程度とびきってから、落ちる時間をへらすために使う
       // 空中で打ったら、0.1〜0.5秒後に下りる／打たないまま頂点まで来たら、やめて下りる／スマッシュ返しに、ふつうに落ちていては間に合わないときに下りる
+      // 点がどちらに入るか決まったら（空ぶり・ラケットより下まで落ちた・もう落ちた）、相手はもうジャンプしない。空中なら、文字も音もなしで、静かにすとんと下りる
+      const settled = !!sink || shs.some(s => !(s.wait > 0) && (s.whiff || s.y > HITY + 40));
+      if (settled && cpu.y > 0 && !cpu.dive){ cpu.dive = true; cpu.vy = Math.min(cpu.vy, -170 * ST().speed); }
       if (canDive() && cpu.y > 140 && cpu.vy <= 0 && !cpu.diveRoll){ cpu.diveRoll = true; if (!cpu.hitAir && !shs.some(s => s.x > NET && s.by !== -1 && !s.wait) && Math.random() < (smartDive() ? .9 : .5)) cpu.diveAt = clock + rnd(0, .2); }
       const topped = cpu.vy < 130; if (cpu.diveAt && clock >= cpu.diveAt && cpu.y > 70 && topped) dive(cpu);
       if (cpu.kd && clock >= cpu.kd && cpu.y > 12) dive(cpu);
@@ -1239,7 +1256,7 @@ GAMES.badminton = root => {
       if (smartDive() && canDive() && cpu.y > 12 && !cpu.dive && (cpu.vy < 130 || keyMode)){ const grav = JUMP_G * spd * spd, fall = (cpu.vy + Math.sqrt(cpu.vy * cpu.vy + 2 * grav * cpu.y)) / grav;
         // 追いかけているシャトルでも、空中では打てない（とどくまでに、ラケットの高さより下へ落ちる）なら、下りて走る
         // あなたのスマッシュが、空中のラケットより下を通りぬけそうなときも、すとんと下りて受ける（とびあがったまま見送らない）
-        const under = c => (c.s.smash || c.s.fast) && c.s.by === 1 && c.s.vx > 0 && c.s.y + c.s.vy * Math.max(0, cpu.x - c.s.x) / c.s.vx > racketY(cpu) + 24;
+        const under = c => (c.s.smash || c.s.fast) && c.s.by === 1 && c.s.vx > 0 && c.s.x < cpu.x && !c.s.walled && c.s.y + c.s.vy * Math.max(0, cpu.x - c.s.x) / c.s.vx > racketY(cpu) + 24;
         if (cands.some(c => ((cpu.hitAir || c.s !== chase || (c.t > fall && Math.abs(c.lx - cpu.x) > 60)) && c.t < fall + .15) || under(c))) dive(cpu); }
       // スマッシュをねらう位置に行くのは、ほかにいそぐシャトルがないときだけ
       const want = pick ? (busy ? pick.lx : pick.lxS) : ST().solid && cpu.press > clock ? NET + 80 : ST().strong ? 510 : 470; // 最強の相手は、奥のスマッシュに間に合うように少し下がって待つ
@@ -1249,10 +1266,10 @@ GAMES.badminton = root => {
       cpu.vx += clamp(desired - cpu.vx, -1100 * ST().cpu * dv * dt, 1100 * ST().cpu * dv * dt);
       cpu.x = clamp(cpu.x + cpu.vx * dt, NET + MARGIN, W - 24);
       // スマッシュをねらうときは、高いところ（SMASH_AT）で当てられるように、シャトルがそこへとどく少し前にジャンプ（速いステージでも、時間で合わせる）
-      if (chase && !busy && chase.cpuSmash && cpu.y === 0 && chase.vy > -60 && chase.x > NET){ sh = chase; const lx = landing(SMASH_AT), tReal = landSteps / 60; // シャトルもジャンプも同じ割合で速くなるので、そのままの時間でくらべる
+      if (!settled && chase && !busy && chase.cpuSmash && cpu.y === 0 && chase.vy > -60 && chase.x > NET){ sh = chase; const lx = landing(SMASH_AT), tReal = landSteps / 60; // シャトルもジャンプも同じ割合で速くなるので、そのままの時間でくらべる
         if (tReal > .2 && tReal < .45 && Math.abs(cpu.x - lx) < 90) jump(cpu); }
-      if (chase && !busy && chase.cpuKaeshi && (chase.smash || chase.fast) && cpu.y === 0 && chase.x > NET){ sh = chase; const lx = landing(178);
-        if (landSteps / 60 < .2 && Math.abs(cpu.x - lx) < 70) jump(cpu); }
+      if (!settled && chase && !busy && chase.cpuKaeshi && (chase.smash || chase.fast) && !chase.walled && cpu.y === 0 && chase.x > NET){ sh = chase; const lx = landing(178); // かべに当たって勢いがなくなる球は、スマッシュ返しできないので、とばない
+        if (!landWall && landSteps / 60 < .2 && Math.abs(cpu.x - lx) < 70) jump(cpu); }
       if (sink){ sink.t += dt; if (sink.t > 1){ const side = sink.side; shs = shs.filter(x => x !== sink.s); sink = null; if (score[0] >= 5){ startClear(); } else if (score[1] >= 5){ state = 'over'; end(); } else serve(1 - side); } } // 点をとった人が次のサーブ（side は落ちたコートなので、その反対）
       else for (const s of shs){ sh = s;
         if (s.wait > 0){ s.wait -= dt; continue; }
@@ -1267,7 +1284,7 @@ GAMES.badminton = root => {
         // 雲の天井・かべ：ぽよんとはね返る
         if (sh.y < CEIL && !sh.smash){ sh.y = CEIL; sh.vy = Math.abs(sh.vy) * .45; burst(sh.x, CEIL - 4, 5); soft(740, .12, .07); pops.push({ x: sh.x, y: CEIL + 26, a: .9, txt: 'ぽよん', c: '#2e7fd0', size: 13 }); }
         // 雲のかべ：ふわっと受けとめて、横の勢いと落ちる速さをへらす（かべぎわでも打ち返すすきができる）
-        if (sh.x < WALL || sh.x > W - WALL){ const L = sh.x < WALL, strong = Math.abs(sh.vx) > 60; sh.x = L ? WALL : W - WALL; sh.vx = (L ? 1 : -1) * Math.min(70, Math.abs(sh.vx) * .3); sh.smash = false;
+        if (sh.x < WALL || sh.x > W - WALL){ const L = sh.x < WALL, strong = Math.abs(sh.vx) > 60; sh.x = L ? WALL : W - WALL; sh.vx = (L ? 1 : -1) * Math.min(70, Math.abs(sh.vx) * .3); sh.smash = false; sh.walled = true;
           if (sh.vy > 0) sh.vy *= .35; if (strong){ burst(sh.x, sh.y, 6); soft(660, .1, .06); pops.push({ x: sh.x + (L ? 34 : -34), y: sh.y - 10, a: .9, txt: 'ぽよん', c: '#2e7fd0', size: 13 }); } }
         if (sh.by !== 1 && sh.x < NET && (sh.vx < 80 || sh.x < 120) && near(me)) hit(me, 1);
         else if (sh.by === -1 && sh.fast && sh.x < NET && me.y > 0 && Math.abs(sh.x - me.x) < 34 && sh.y > racketY(me) + 20 && sh.y < racketY(me) + 64){ me.airBlock = true; hit(me, 1); me.airBlock = false; }
