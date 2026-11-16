@@ -1936,6 +1936,7 @@ const GLASS_ROAD = new Image(); GLASS_ROAD.src = 'glass-road.jpg';
 const GLASS_BRIDGE = new Image(); GLASS_BRIDGE.src = 'glass-bridge.png';
 const GLASS_CARS = new Image(); GLASS_CARS.src = 'glass-cars.png';
 const GLASS_VEH = new Image(); GLASS_VEH.src = 'glass-vehicles.png';
+const GLASS_VEH2 = new Image(); GLASS_VEH2.src = 'glass-vehicles2.png';
 const GLASS_DOWN = new Image(); GLASS_DOWN.src = 'glass-down.jpg';
 GAMES.glass = root => {
   const g = shell(root, '通学路の歩道橋を、わたってみよう', '「歩く」をおしているあいだ進みます。');
@@ -1955,24 +1956,39 @@ GAMES.glass = root => {
     for (const o of cars){ if (o === c || o.lane !== c.lane) continue; const need = o.y - d * ((o.len + c.len) * K / 2 + GAP + 20 * K); if (d > 0 ? need < y : need > y) y = need; }
     c.y = y; }
   // 車の種類：乗用車・タクシー・バス・トラック・軽トラ・救急車・パトカー・バイク
-  // 車の絵：乗用車4台（白・赤・黒・青）と、バス・トラック・救急車・パトカー。長さは K でわった値
-  const KINDS = [['car', 42, 22, 8], ['bus', 77, 30, .7], ['truck', 67, 28, .7], ['ambulance', 50, 24, .5], ['police', 42, 22, .6]];
-  const VEH = { bus: 0, truck: 1, ambulance: 2, police: 3 };
+  // 車の絵：乗用車3台（白・赤・グレー）、バス、2まい目の絵の8台。長さは K でわった値
+  // 2まい目の絵：トラック（グレー・青）、タクシー、パトカー、救急車、消防車、青いほろのトラック、白いバン。[絵の中の x, はば, 高さ, ランプの y（光らないときは null）]
+  const KINDS = [['car', 42, 22, 6], ['bus', 77, 30, .6], ['truck', 64, 30, .4], ['bluetruck', 62, 29, .4], ['taxi', 43, 22, 1], ['police', 43, 22, .5], ['ambulance', 50, 24, .4], ['fire', 61, 30, .3], ['cargo', 57, 30, .4], ['van', 52, 23, .7]];
+  const VEH = { bus: 0 };
+  const VEH2 = { truck: [0, 153, 283, null], bluetruck: [157, 141, 276, null], taxi: [302, 109, 191, null], police: [415, 106, 191, -50], ambulance: [525, 119, 221, -55], fire: [648, 152, 271, 5], cargo: [804, 150, 253, null], van: [958, 113, 228, null] };
+  const SLOW = { bus: 1, truck: 1, bluetruck: 1, fire: 1, cargo: 1 };
   const CAR_COLS = ['#e85b8f', '#2e7fd0', '#ffffff', '#2f9a48', '#e4362b', '#7d55c7', '#9aa3ad', '#3a3330'];
-  function newCar(c){ const tot = KINDS.reduce((a, k) => a + k[3], 0); let r = Math.random() * tot, kind = KINDS[0]; for (const k of KINDS){ if ((r -= k[3]) < 0){ kind = k; break; } }
-    c.kind = kind[0]; c.len = kind[1]; c.w = kind[2]; c.spr = Math.floor(Math.random() * 4); c.c = CAR_COLS[Math.floor(Math.random() * CAR_COLS.length)];
-    c.v = (c.lane < 2 ? -1 : 1) * SP * (c.kind === 'bus' || c.kind === 'truck' ? rnd(70, 100) : c.kind === 'bike' ? rnd(60, 90) : rnd(95, 150)); c.passed = false; return c; }
+  // 同じ車・同じ色の車が、つづけて来すぎないようにする（さいごの4台と同じ車、さいごの2台と同じ色は、えらびなおす）
+  const COLOR = { car0: 'white', car1: 'red', car2: 'gray', bus: 'green', truck: 'white', bluetruck: 'blue', taxi: 'yellow', police: 'black', ambulance: 'white', fire: 'red', cargo: 'blue', van: 'white' };
+  let recent = [];
+  function pickKind(){ const tot = KINDS.reduce((a, k) => a + k[3], 0); let r = Math.random() * tot; for (const k of KINDS){ if ((r -= k[3]) < 0) return k; } return KINDS[0]; }
+  function newCar(c){ let kind, spr, id;
+    for (let i = 0; i < 12; i++){ kind = pickKind(); spr = Math.floor(Math.random() * 3); id = kind[0] === 'car' ? 'car' + spr : kind[0]; /* 白・赤・グレーの3台（4台目の青い車は前後が逆の絵なので使わない） */
+      if (!recent.slice(-4).includes(id) && !recent.slice(-2).some(o => COLOR[o] === COLOR[id])) break; }
+    recent.push(id); if (recent.length > 8) recent.shift();
+    c.kind = kind[0]; c.len = kind[1]; c.w = kind[2]; c.spr = spr; c.c = CAR_COLS[Math.floor(Math.random() * CAR_COLS.length)];
+    c.v = (c.lane < 2 ? -1 : 1) * SP * (SLOW[c.kind] ? rnd(70, 100) : c.kind === 'bike' ? rnd(60, 90) : rnd(95, 150)); c.passed = false; return c; }
   function drawCar(c, lx, now){
     if (c.kind === 'car' && GLASS_CARS.complete && GLASS_CARS.naturalWidth > 0){
       ctx.save(); ctx.translate(lx, c.y); if (c.v < 0) ctx.rotate(Math.PI); ctx.drawImage(GLASS_CARS, c.spr * 110, 0, 110, 200, -55, -100, 110, 200); ctx.restore(); return;
     }
+    if (c.kind in VEH2 && GLASS_VEH2.complete && GLASS_VEH2.naturalWidth > 0){ const [sx, sw, sh2, ly] = VEH2[c.kind];
+      ctx.save(); ctx.translate(lx, c.y); if (c.v < 0) ctx.rotate(Math.PI);
+      ctx.drawImage(GLASS_VEH2, sx, 0, sw, sh2, -sw / 2, -sh2 / 2, sw, sh2);
+      // 救急車・パトカー・消防車は、赤いランプが光る
+      if (ly !== null && Math.floor(now * 5) % 2){
+        const gr = ctx.createRadialGradient(0, ly, 0, 0, ly, 60); gr.addColorStop(0, 'rgba(255,60,50,.7)'); gr.addColorStop(1, 'rgba(255,60,50,0)');
+        ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(0, ly, 60, 0, 7); ctx.fill(); }
+      ctx.restore(); return;
+    }
     if (c.kind in VEH && GLASS_VEH.complete && GLASS_VEH.naturalWidth > 0){
       ctx.save(); ctx.translate(lx, c.y); if (c.v < 0) ctx.rotate(Math.PI);
       ctx.drawImage(GLASS_VEH, VEH[c.kind] * 170, 0, 170, 350, -85, -175, 170, 350);
-      // 救急車とパトカーは、赤いランプが光る
-      if ((c.kind === 'ambulance' || c.kind === 'police') && Math.floor(now * 5) % 2){
-        const ly = c.kind === 'ambulance' ? -10 : -22, gr = ctx.createRadialGradient(0, ly, 0, 0, ly, 60); gr.addColorStop(0, 'rgba(255,60,50,.7)'); gr.addColorStop(1, 'rgba(255,60,50,0)');
-        ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(0, ly, 60, 0, 7); ctx.fill(); }
       ctx.restore(); return;
     }
     const L = c.len, w = c.w; ctx.save(); ctx.translate(lx, c.y); ctx.scale(K, K); if (c.v < 0) ctx.rotate(Math.PI);
@@ -2062,10 +2078,11 @@ GAMES.glass = root => {
   }
   // 足の下を車がとおったときに、キャラクターが言うこと
   const SHOUT = { car: ['車だ！', 'ブーン！'], taxi: ['タクシーだ！'], bus: ['バスだ！ おっきい…'], truck: ['トラックだ！ おっきい…'],
-    kei: ['軽トラだ！'], ambulance: ['救急車だ！ ピーポー'], police: ['パトカーだ！'], bike: ['バイクだ！'] };
+    kei: ['軽トラだ！'], ambulance: ['救急車だ！ ピーポー'], police: ['パトカーだ！'], bike: ['バイクだ！'],
+    bluetruck: ['トラックだ！ おっきい…'], cargo: ['トラックだ！ おっきい…'], fire: ['消防車だ！ ウーウー'], van: ['ワゴン車だ！'] };
   // 足の下を車がとおったときの、おどろき方。[絵, 秒, はねる高さ]
   function surprise(kind){
-    if (kind === 'bus' || kind === 'truck') react = [[5, .45, 14], [3, .6, 0], [7, .7, 0]];
+    if (kind === 'bus' || kind === 'truck' || kind === 'bluetruck' || kind === 'cargo' || kind === 'fire') react = [[5, .45, 14], [3, .6, 0], [7, .7, 0]];
     else if (kind === 'ambulance' || kind === 'police') react = [[3, .5, 6], [7, .9, 0]];
     else if (walking) react = [[7, .8, 5]];
     else react = [[3, .6, 4], [7, .6, 0]];
