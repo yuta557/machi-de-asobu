@@ -289,7 +289,7 @@ const docY = e => e.getBoundingClientRect().top + scrollY;
 const target = () => (scrollY + innerHeight >= document.documentElement.scrollHeight - 4) ? Infinity : scrollY + innerHeight * .62;
 const disc = (x, cx, cy, r) => { if (r <= 0) return; x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.fill(); };
 
-let doneAt = null;
+let doneAt = null, locked = false;
 function draw(time) {
   /* 大きさが変わっていたら、描く前にそろえ直す */
   const now = boxSize();
@@ -299,13 +299,18 @@ function draw(time) {
   const prog = [1, ...h3s.map(h => clamp((t - docY(h)) / (H * .45)))];
   const fr = finale.getBoundingClientRect();
   const S = flowerS(), artH = S * 1.02;  // the flower area at the top of .finale
-  const fp = reduce ? (t > docY(finale) + artH * .5 ? 1 : 0)
-                    : ease(clamp((t - (fr.top + scrollY - H * .15)) / (artH * .5 + H * .25)));
+  let fp = reduce ? (t > docY(finale) + artH * .5 ? 1 : 0)
+                  : ease(clamp((t - (fr.top + scrollY - H * .15)) / (artH * .5 + H * .25)));
+  /* 一度そろったら、そのまま。上へ戻しても、もう崩さない。
+     （はじめに戻すのは、ページを読み込み直したときだけ）
+     そのかわり、余白に浮かんでいた丸はぜんぶ輪の中なので、
+     上へ戻ると余白には何も残らない */
+  if (fp >= .97) locked = true;
+  if (locked) fp = 1;
   const fcx = fr.left + fr.width / 2, fcy = fr.top + S * .5;
   const tm = reduce ? 0 : time / 1000;
   const first = clamp(scrollY / (H * .6));
   if (fp >= .97 && doneAt === null) doneAt = time;
-  if (fp < .9) doneAt = null;
   const since = doneAt === null ? -1 : time - doneAt;
 
   for (const [c, x, op] of [[cM, xM, 'multiply'], [cD, xD, 'darken']]) {
