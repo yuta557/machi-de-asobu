@@ -174,8 +174,10 @@ const deepen = (hex, k) => { const n = parseInt(hex.slice(1), 16), c = [n >> 16,
   return '#' + o.map(v => clamp(v, 0, 255).toString(16).padStart(2, '0')).join(''); };
 const site = { b: '#78A9E5', y: '#FFD875', o: '#F49B79', g: '#65BD99', s: '#80C6E8', p: '#F3AFC1' };
 const PALETTES = [
-  // left/right brightness balanced so the ring reads as symmetric (pink/orange a touch lighter, yellow/sky a touch deeper)
-  { name: '参考画像', petals: { b: '#B9DBF8', y: '#FEEBB3', o: '#FED6C0', g: '#B5E7CF', s: '#B9E5FB', p: '#FEDAE3' }, mult: .42 },
+  /* いま使っている色（案 A-3）。桃・黄・薄緑・緑・空・桃を、真上から時計まわりに。
+     鍵の文字は、もとは色の頭文字だったが、いまは置き場所の名前として読む
+     （b=真上, y=右上, s=右下, g=真下, o=左下, p=左上） */
+  { name: 'A-3', petals: { b: '#FDC4CE', y: '#FEF4BF', s: '#D1F1D4', g: '#C7F0D5', o: '#B8E7F7', p: '#FBCFE4' }, mult: .42 },
   { name: 'サイトの色', petals: Object.fromEntries(Object.entries(site).map(([k, v]) => [k, mixW(v, .45)])), mult: .45 },
   { name: 'ふんわり淡め', petals: { b: '#D3E8FB', y: '#FFF4D3', o: '#FEDDCB', g: '#D2F0E2', s: '#D8F0FC', p: '#FEDFE7' }, mult: .5 },
   { name: 'くすみ', petals: { b: '#B8CBE4', y: '#EFE2B8', o: '#EBC6B1', g: '#BCD7C6', s: '#BEDBE5', p: '#E9C6CF' }, mult: .38 },
@@ -183,7 +185,7 @@ const PALETTES = [
 ];
 PALETTES.forEach(P => { const d = {}; for (const k in P.petals) d[k] = deepen(P.petals[k], .35); P.deep = d;
   const l = {}; for (const k in P.petals) l[k] = deepen(P.petals[k], .12); P.dot = l; });
-let PAL = PALETTES[0]; // 参考画像（固定）
+let PAL = PALETTES[0]; // A-3（固定）
 
 const prose = $('.prose');
 const h3s = $$('.prose h3');
@@ -364,7 +366,7 @@ function applyPalette(i) {
   $$('.mp-hue').forEach(s => s.style.background = PAL.deep[s.dataset.k]);
   $$('.finale-dots i').forEach((e, j) => e.style.background = PAL.deep['bsgyp'[j]]);
 }
-/* 色は参考画像のものに決め打ち */
+/* 色は A-3 に決め打ち。下に残してある他の組み合わせは、見比べ用の控え */
 applyPalette(0);
 
 function loop(time) { draw(time || 0); requestAnimationFrame(loop); }
